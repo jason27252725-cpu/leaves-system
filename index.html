@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.2 跨裝置雙向同步終極版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.3 安全防禦修復版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -167,14 +167,14 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，系統會自動分享權限至全公司裝置，登入與改碼皆能即時同步！</p>
+                    <p class="text-[11px] text-neutral-400">若要在新裝置（如手機）上管理後台，只需在該裝置貼入一次 Token 儲存即可本地記憶。</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
                             <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (管理員發布金鑰 ghp_...)</label>
+                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (發布金鑰 ghp_...)</label>
                             <input type="password" id="githubTokenInput" placeholder="GitHub Token (ghp_...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                     </div>
@@ -272,7 +272,6 @@
             return stored ? stored : HARDCODED_GIST_ID; 
         }
 
-        // 🌟 自動取得 Token (優先讀取輸入框或本機，並自動互同步)
         function getGithubToken() { 
             let inputVal = document.getElementById('githubTokenInput')?.value?.trim();
             if (inputVal) {
@@ -306,18 +305,6 @@
                         if (data.files && data.files[filename]) {
                             const cloudData = JSON.parse(data.files[filename].content);
                             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
-                            
-                            // 🌟 關鍵：自動讀取隱碼 Token 並儲存至本機，賦予手機寫回權限！
-                            if (cloudData.syncToken) {
-                                try {
-                                    let decodedToken = atob(cloudData.syncToken);
-                                    if (decodedToken) {
-                                        localStorage.setItem('shiye_github_token', decodedToken);
-                                        let inputEl = document.getElementById('githubTokenInput');
-                                        if (inputEl && !inputEl.value) inputEl.value = decodedToken;
-                                    }
-                                } catch(e){}
-                            }
 
                             if (codes.length > 0) {
                                 saveCodesToLocal(codes);
@@ -458,7 +445,6 @@
             }
         }
 
-        // 🌟 驗證登入：雙向寫回最新登入紀錄與時間至 Gist
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             const codes = await fetchCodesFromCloud();
@@ -535,7 +521,6 @@
             alert('✅ 已成功從雲端同步最新身分碼、登入紀錄與狀態！');
         }
 
-        // 🌟 新增身分碼：自動讀取 Token 並直接寫入 GitHub 雲端
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
@@ -555,9 +540,9 @@
             if (token) {
                 let success = await pushCodesToCloud(currentCodesList);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機與電腦皆可立即同步使用。`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！`);
                 } else {
-                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 GitHub Token (ghp_...) 是否填寫正確！`);
+                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 Token 是否正確！`);
                 }
             } else {
                 alert(`⚠️ 身分碼已產生：${randomCode}\n請在後台填寫 GitHub Token 並點擊最下方儲存，才能同步至雲端喔！`);
@@ -578,7 +563,6 @@
             }
         }
 
-        // 🌟 渲染表格：登入紀錄 > 0 即顯示綠燈，0 次顯示紅燈
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
@@ -617,7 +601,6 @@
             });
         }
 
-        // 🌟 寫入 Gist：自動將 Token 以安全隱碼寫入 payload，達成多裝置自動授權！
         async function pushCodesToCloud(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -633,7 +616,6 @@
                     apiKey: apiKey,
                     sopUrl: sopUrl,
                     bgList: bgList,
-                    syncToken: btoa(token), // 👈 隱碼加密寫入，讓全公司裝置擁有雙向寫回權限
                     codes: codesArray
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
@@ -681,7 +663,7 @@
 
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：全套系統設定、Token 授權與身分碼已成功寫入 GitHub 雲端資料庫！');
+                alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端資料庫！');
             } else {
                 alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
             }
@@ -716,7 +698,6 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：OpenRouter 智慧多重免費模型自動輪詢
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
