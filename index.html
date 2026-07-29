@@ -105,7 +105,7 @@
             <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/30 backdrop-blur-md">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                    <span class="text-xs font-semibold tracking-widest uppercase">GEMINI AI ASSISTANT</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
                 </div>
                 <button onclick="toggleChatDrawer()" class="text-neutral-400 hover:text-white p-2 text-sm">
                     <i class="fa-solid fa-xmark"></i>
@@ -116,7 +116,7 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (Gemini 2.0 Direct)</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Channel)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.4 雙模金鑰智慧判斷修復版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.0 OpenRouter 萬用通道版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -189,11 +189,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-mono p-6 rounded-2xl space-y-3 border border-emerald-500/30">
-                        <label class="block text-[11px] text-emerald-400 tracking-widest uppercase font-semibold">
-                            <i class="fa-solid fa-bolt mr-1"></i> Google Gemini API Key (Google AI Studio 全公司共用)
+                    <div class="glass-mono p-6 rounded-2xl space-y-3 border border-blue-500/30">
+                        <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
+                            <i class="fa-solid fa-key mr-1"></i> OpenRouter API Key (sk-or-v1-... 全公司共用)
                         </label>
-                        <input type="password" id="apiKeyInput" placeholder="請貼上 Google AI Studio 複製的金鑰" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-emerald-500 transition font-mono">
+                        <input type="password" id="apiKeyInput" placeholder="請貼上 OpenRouter 金鑰 (開頭為 sk-or-v1-...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono">
                     </div>
 
                     <div class="glass-mono p-6 rounded-2xl space-y-3">
@@ -645,7 +645,7 @@
 
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：全套系統設定、Gemini API Key 與身分碼已成功寫入 GitHub 雲端資料庫！');
+                alert('✅ 成功：全套系統設定與 OpenRouter API Key 已成功寫入 GitHub 雲端資料庫！');
             } else {
                 alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
             }
@@ -680,7 +680,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：Google Gemini 雙模金鑰智慧判定與請求 (AQ. 與 AIza 通吃)
+        // 🌟 核心：OpenRouter API 萬用直連 (對接 Gemini 2.0 Flash 免費模型，永遠相容 sk-or-v1- 開頭金鑰)
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -692,7 +692,7 @@
             }
 
             if (!apiKey) {
-                alert('系統尚未設定 Google Gemini API Key，請先由管理員至後台設定。');
+                alert('系統尚未設定 OpenRouter API Key，請先由管理員至後台設定。');
                 return;
             }
 
@@ -704,45 +704,34 @@
             const sopContent = await fetchSopFromGist();
 
             try {
-                const contents = [];
+                const messages = [
+                    { 
+                        role: "system", 
+                        content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` 
+                    }
+                ];
+                
                 chatHistory.forEach(h => {
-                    contents.push({
-                        role: h.role === 'user' ? 'user' : 'model',
-                        parts: [{ text: h.text }]
+                    messages.push({ 
+                        role: h.role === 'user' ? 'user' : 'assistant', 
+                        content: h.text 
                     });
                 });
-                contents.push({
-                    role: 'user',
-                    parts: [{ text: text }]
-                });
+                
+                messages.push({ role: "user", content: text });
 
-                const systemInstruction = {
-                    parts: [{
-                        text: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------`
-                    }]
-                };
-
-                const cleanKey = apiKey.trim();
-                let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
-                const headers = { 'Content-Type': 'application/json' };
-
-                // 🌟 核心判斷：如果是 AQ. 開頭的 Auth Key，使用 Authorization: Bearer Header！
-                if (cleanKey.startsWith('AQ.')) {
-                    headers['Authorization'] = `Bearer ${cleanKey}`;
-                } else {
-                    url += `?key=${cleanKey}`;
-                    headers['x-goog-api-key'] = cleanKey;
-                }
-
-                const res = await fetch(url, {
+                const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                     method: 'POST',
-                    headers: headers,
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey.trim()}`,
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'Leaves Design System'
+                    },
                     body: JSON.stringify({
-                        systemInstruction: systemInstruction,
-                        contents: contents,
-                        generationConfig: {
-                            temperature: 0.3
-                        }
+                        model: "google/gemini-2.0-flash-lite-001:free", // 免費對接最新 Gemini 2.0 模型
+                        messages: messages,
+                        temperature: 0.3
                     })
                 });
 
@@ -750,9 +739,9 @@
                 removeLoading(loadingId);
 
                 if (data.error) {
-                    appendMessage(`Gemini API 錯誤: ${data.error.message || JSON.stringify(data.error)}`, 'assistant', true);
-                } else if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-                    const reply = data.candidates[0].content.parts[0].text;
+                    appendMessage(`OpenRouter API 錯誤: ${data.error.message || JSON.stringify(data.error)}`, 'assistant', true);
+                } else if (data.choices && data.candidates ? false : (data.choices && data.choices[0] && data.choices[0].message)) {
+                    const reply = data.choices[0].message.content;
                     appendMessage(reply, 'assistant', false);
                     chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: reply });
                 } else {
@@ -782,7 +771,7 @@
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini)...</div></div>`);
+            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini 2.0 via OpenRouter)...</div></div>`);
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return id;
         }
