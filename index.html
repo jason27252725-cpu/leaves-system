@@ -104,8 +104,8 @@
         <div id="chatDrawer" class="chat-drawer fixed top-0 right-0 bottom-0 w-full md:w-1/2 chat-drawer-glass z-50 flex flex-col shadow-2xl">
             <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/30 backdrop-blur-md">
                 <div class="flex items-center space-x-3">
-                    <div class="w-2 h-2 bg-white rounded-full"></div>
-                    <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span class="text-xs font-semibold tracking-widest uppercase">GEMINI AI ASSISTANT</span>
                 </div>
                 <button onclick="toggleChatDrawer()" class="text-neutral-400 hover:text-white p-2 text-sm">
                     <i class="fa-solid fa-xmark"></i>
@@ -116,7 +116,7 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (Gemini 1.5 Flash Direct)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v2.4 完全對接修正版</span>
+                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.0 Gemini 原生直連修復版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -189,9 +189,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-mono p-6 rounded-2xl space-y-3">
-                        <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">OpenRouter API Key (全公司共用)</label>
-                        <input type="password" id="apiKeyInput" placeholder="請輸入 OpenRouter API Key" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition">
+                    <div class="glass-mono p-6 rounded-2xl space-y-3 border border-emerald-500/30">
+                        <label class="block text-[11px] text-emerald-400 tracking-widest uppercase font-semibold">
+                            <i class="fa-solid fa-bolt mr-1"></i> Google Gemini API Key (Google AI Studio 全公司共用)
+                        </label>
+                        <input type="password" id="apiKeyInput" placeholder="請貼上 Google AI Studio API Key (開頭為 AIzaSy...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-emerald-500 transition font-mono">
                     </div>
 
                     <div class="glass-mono p-6 rounded-2xl space-y-3">
@@ -205,7 +207,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Management & Status Monitor</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">身分生成碼管理（產生或刪除時將自動推送到 GitHub 雲端，絕不遺失）</p>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">點擊「切換燈號」可調整狀態（🟢 啟用 ➔ 🟡 警告 ➔ 🔴 停用封鎖）</p>
                         </div>
                         <div class="flex items-center space-x-2 w-full md:w-auto">
                             <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
@@ -222,9 +224,8 @@
                                     <th class="p-3.5 font-medium">狀態燈</th>
                                     <th class="p-3.5 font-medium">PASSCODE</th>
                                     <th class="p-3.5 font-medium">名稱</th>
-                                    <th class="p-3.5 font-medium">支援裝置</th>
-                                    <th class="p-3.5 font-medium">建立時間</th>
-                                    <th class="p-3.5 font-medium">登入歷程記錄</th>
+                                    <th class="p-3.5 font-medium">登入總次數</th>
+                                    <th class="p-3.5 font-medium">最新登入時間</th>
                                     <th class="p-3.5 font-medium text-right">操作</th>
                                 </tr>
                             </thead>
@@ -255,8 +256,6 @@
 
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
-        
-        // 🌟 已更新為您截圖中正確使用的真實 Gist ID
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
@@ -339,8 +338,8 @@
 
         function getFallbackCodes() {
             return [
-                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'idle', supportMobile: true, supportIpad: true },
-                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'idle', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true },
                 { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true }
             ];
         }
@@ -440,9 +439,14 @@
             if (!matched) { alert('驗證碼錯誤或不存在'); return; }
             if (authMode === 'admin' && matched.role !== 'admin') { alert('此代碼非管理員權限'); return; }
 
+            // 檢查是否被管理員封鎖
+            if (matched.status === 'disabled') {
+                alert('⚠️ 此通行碼已被管理員停用，暫時無法登入系統！');
+                return;
+            }
+
             matched.logins = matched.logins || [];
             matched.logins.push(new Date().toLocaleString());
-            matched.status = 'active';
 
             currentAuth = matched.role;
             activeCode = matched.code;
@@ -501,7 +505,7 @@
             currentCodesList.push({ 
                 code: randomCode, name: name, role: 'user', 
                 createdAt: new Date().toLocaleString(), logins: [], 
-                status: 'idle', supportMobile: true, supportIpad: true 
+                status: 'active', supportMobile: true, supportIpad: true 
             });
             
             saveCodesToLocal(currentCodesList);
@@ -512,18 +516,18 @@
             if (token) {
                 let success = await pushCodesToCloud(currentCodesList);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動即時同步寫入 GitHub 雲端資料庫！全公司手機皆可立即使用。`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機皆可立即使用。`);
                 } else {
-                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認後台的 GitHub Token (ghp_...) 是否填寫正確！`);
+                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 GitHub Token (ghp_...) 是否填寫正確！`);
                 }
             } else {
-                alert(`⚠️ 身分碼已產生：${randomCode}\n注意：後台尚未填寫 GitHub Token，請先於後台填寫 Token 並儲存，才能同步至 GitHub 雲端資料庫喔！`);
+                alert(`⚠️ 身分碼已產生：${randomCode}\n請在後台填寫 GitHub Token 並點擊最下方儲存，才能同步至雲端喔！`);
             }
         }
 
         async function deleteCode(codeStr) {
             if (codeStr === SPECIAL_ADMIN_CODE) return;
-            if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端資料庫移除。`)) return;
+            if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端移除。`)) return;
 
             currentCodesList = currentCodesList.filter(c => c.code !== codeStr);
             saveCodesToLocal(currentCodesList);
@@ -535,10 +539,17 @@
             }
         }
 
-        function toggleCodeWarning(codeStr) {
+        // 🌟 修復：狀態燈號循環切換（ active 🟢 -> warning 🟡 -> disabled 🔴 -> active 🟢 ）
+        function toggleCodeStatus(codeStr) {
             const matched = currentCodesList.find(c => c.code === codeStr);
             if (matched) {
-                matched.status = matched.status === 'warning' ? 'idle' : 'warning';
+                if (!matched.status || matched.status === 'active' || matched.status === 'idle') {
+                    matched.status = 'warning';
+                } else if (matched.status === 'warning') {
+                    matched.status = 'disabled';
+                } else {
+                    matched.status = 'active';
+                }
                 saveCodesToLocal(currentCodesList);
                 renderCodesTable();
                 pushCodesToCloud(currentCodesList);
@@ -549,18 +560,31 @@
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
             currentCodesList.forEach(c => {
-                let lightColor = c.status === 'active' ? 'bg-emerald-500 animate-pulse' : (c.status === 'warning' ? 'bg-amber-400' : 'bg-red-500');
+                let st = c.status || 'active';
+                let lightColor = 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'; // 🟢 啟用 (綠燈)
+                let statusTitle = '狀態：正常啟用中';
+
+                if (st === 'warning') {
+                    lightColor = 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]'; // 🟡 觀察 (黃燈)
+                    statusTitle = '狀態：警告觀察中';
+                } else if (st === 'disabled') {
+                    lightColor = 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; // 🔴 停用 (紅燈)
+                    statusTitle = '狀態：已停用封鎖';
+                }
+
+                const loginCount = (c.logins || []).length;
+                const lastLogin = (c.logins || []).slice(-1)[0] || '尚無登入';
+
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
                 tr.innerHTML = `
-                    <td class="p-3.5"><span class="inline-block w-3 h-3 rounded-full ${lightColor}" onclick="toggleCodeWarning('${c.code}')" style="cursor:pointer;"></span></td>
+                    <td class="p-3.5"><span class="inline-block w-3 h-3 rounded-full ${lightColor} cursor-pointer" onclick="toggleCodeStatus('${c.code}')" title="${statusTitle} (點擊可切換)"></span></td>
                     <td class="p-3.5 font-mono text-white font-medium select-all">${c.code}</td>
                     <td class="p-3.5 text-neutral-300">${c.name}</td>
-                    <td class="p-3.5 text-neutral-300"><i class="fa-solid fa-mobile-screen"></i> <i class="fa-solid fa-desktop"></i></td>
-                    <td class="p-3.5 text-neutral-400 text-[10px]">${c.createdAt || ''}</td>
-                    <td class="p-3.5 text-neutral-400 text-[10px] truncate max-w-xs">${(c.logins || []).slice(-1)[0] || '尚無登入'}</td>
+                    <td class="p-3.5 text-neutral-300 font-mono"><span class="bg-white/10 px-2 py-0.5 rounded-md text-[11px]">${loginCount} 次</span></td>
+                    <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${lastLogin}</td>
                     <td class="p-3.5 text-right space-x-2">
-                        <button onclick="toggleCodeWarning('${c.code}')" class="text-neutral-400 hover:text-amber-400 text-[10px] border border-neutral-800 px-2 py-1 rounded">切換燈號</button>
+                        <button onclick="toggleCodeStatus('${c.code}')" class="text-neutral-400 hover:text-white text-[10px] border border-neutral-800 px-2 py-1 rounded">切換燈號</button>
                         ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${c.code}')" class="text-neutral-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </td>
                 `;
@@ -624,13 +648,13 @@
             saveCodesToLocal(currentCodesList);
 
             if (!token) {
-                alert('⚠️ 警告：您尚未填寫「GitHub Token (ghp_...)」！\n如果沒有填寫 Token，設定無法推送到 GitHub 雲端資料庫。');
+                alert('⚠️ 警告：您尚未填寫「GitHub Token (ghp_...)」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
                 return;
             }
 
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：全套系統設定與身分碼已成功寫入 GitHub 雲端資料庫！\n即使您關閉電腦或清理快取，資料也永不遺失，手機開機即可同步。');
+                alert('✅ 成功：全套系統設定、Gemini API Key 與身分碼已成功寫入 GitHub 雲端資料庫！');
             } else {
                 alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
             }
@@ -665,6 +689,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
+        // 🌟 核心升級：Google Gemini 1.5 Flash 官方原生 API 直連
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -676,7 +701,7 @@
             }
 
             if (!apiKey) {
-                alert('系統尚未設定 AI API Key，請先由管理員至後台設定。');
+                alert('系統尚未設定 Google Gemini API Key，請先由管理員至後台設定。');
                 return;
             }
 
@@ -688,30 +713,55 @@
             const sopContent = await fetchSopFromGist();
 
             try {
-                const messages = [
-                    { role: "system", content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` }
-                ];
-                chatHistory.forEach(h => messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
-                messages.push({ role: "user", content: text });
+                // 打包 Gemini 歷史對話格式 (user / model)
+                const contents = [];
+                chatHistory.forEach(h => {
+                    contents.push({
+                        role: h.role === 'user' ? 'user' : 'model',
+                        parts: [{ text: h.text }]
+                    });
+                });
+                contents.push({
+                    role: 'user',
+                    parts: [{ text: text }]
+                });
 
-                const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                const systemInstruction = {
+                    parts: [{
+                        text: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------`
+                    }]
+                };
+
+                // 直連 Google 官方 Gemini 1.5 Flash API 端點
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+
+                const res = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'Leaves Design System' },
-                    body: JSON.stringify({ model: "meta-llama/llama-3.1-8b-instruct:free", messages: messages, temperature: 0.3 })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        systemInstruction: systemInstruction,
+                        contents: contents,
+                        generationConfig: {
+                            temperature: 0.3
+                        }
+                    })
                 });
 
                 const data = await res.json();
                 removeLoading(loadingId);
+
                 if (data.error) {
-                    appendMessage(`Error: ${data.error.message}`, 'assistant', true);
-                } else {
-                    const reply = data.choices[0].message.content;
+                    appendMessage(`Gemini API 錯誤: ${data.error.message || JSON.stringify(data.error)}`, 'assistant', true);
+                } else if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+                    const reply = data.candidates[0].content.parts[0].text;
                     appendMessage(reply, 'assistant', false);
                     chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: reply });
+                } else {
+                    appendMessage('未取得有效的 AI 回覆內容，請再試一次。', 'assistant', true);
                 }
             } catch (err) {
                 removeLoading(loadingId);
-                appendMessage('連線失敗', 'assistant', true);
+                appendMessage(`連線失敗: ${err.message}`, 'assistant', true);
             }
         }
 
@@ -733,7 +783,7 @@
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> PROCESSING...</div></div>`);
+            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini)...</div></div>`);
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return id;
         }
