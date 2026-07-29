@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #000; color: #fff; overflow: hidden; }
+        
+        .glass-mono { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .chat-drawer-glass { background: rgba(12, 12, 12, 0.58); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.12); }
+        .glass-card { background: rgba(20, 20, 20, 0.45); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+        .bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+        .bg-slide.active { opacity: 1; }
+
+        .chat-drawer {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .chat-drawer.open {
+            transform: translateX(0);
+        }
+
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+    </style>
+</head>
+<body class="h-full flex flex-col select-none relative">
+
+    <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
+    <div class="fixed inset-0 bg-black/45 z-0 pointer-events-none"></div>
+
+    <!-- 身分驗證/登入遮罩層 -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-3xl flex items-center justify-center p-4 hidden">
+        <div class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-2xl border border-white/20 relative">
+            <div class="text-center space-y-3">
+                <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
+                    <i class="fa-solid fa-cube text-xl"></i>
+                </div>
+                <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN 拾葉設計</h2>
+                <p id="authSubtitle" class="text-xs text-neutral-400 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="passcodeinput" placeholder="PASSCODE" class="w-full bg-neutral-900 border border-neutral-800 rounded-2xl px-4 py-3.5 text-xs text-center tracking-[0.3em] text-white placeholder-neutral-600 focus:outline-none focus:border-white transition">
+                <button onclick="verifyPasscode()" class="w-full bg-white hover:bg-neutral-200 text-black font-semibold py-3.5 rounded-xl transition text-xs tracking-widest uppercase shadow-xl">
+                    ENTER SYSTEM
+                </button>
+            </div>
+            <div class="text-center">
+                <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-500 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主系統介面 -->
+    <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
+        
+        <header class="px-8 py-6 flex justify-between items-center shrink-0 z-20">
+            <div class="space-y-1">
+                <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
+                <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE</p>
+            </div>
+            
+            <div class="flex items-center space-x-6 text-xs tracking-widest">
+                <span id="roleBadge" class="text-[9px] bg-white/10 text-neutral-300 border border-white/20 px-3 py-1 rounded-full font-light tracking-wider">MEMBER</span>
+                <button onclick="toggleChatDrawer()" class="bg-white/15 hover:bg-white/25 border border-white/30 text-white px-4.5 py-2 rounded-xl transition flex items-center space-x-2 backdrop-blur-md shadow-lg">
+                    <i class="fa-solid fa-comments text-xs"></i>
+                    <span>AI 助理</span>
+                </button>
+                <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden">ADMIN</a>
+                <button onclick="logout()" class="text-neutral-400 hover:text-white transition" title="登出">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 flex items-center px-12 pb-12 relative overflow-hidden pointer-events-none">
+            <div class="max-w-2xl space-y-4">
+                <h2 class="text-5xl md:text-7xl font-light tracking-[0.1em] text-white">LEAVES DESIGN</h2>
+                <p class="text-xs md:text-sm font-light tracking-[0.25em] text-neutral-300 border-l-2 border-white/80 pl-4 uppercase">拾葉設計 • 內部智慧空間規範系統</p>
+            </div>
+        </main>
+
+        <!-- 右側聊天對話框 -->
+        <div id="chatDrawer" class="chat-drawer fixed top-0 right-0 bottom-0 w-full md:w-1/2 chat-drawer-glass z-50 flex flex-col shadow-2xl">
+            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/30 backdrop-blur-md">
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-white rounded-full"></div>
+                    <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
+                </div>
+                <button onclick="toggleChatDrawer()" class="text-neutral-400 hover:text-white p-2 text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="flex items-start space-x-3 msg-animate">
+                    <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
+                    <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider">
+                <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台管理系統！
+            </div>
+
+            <div class="p-4 border-t border-white/10 bg-black/40 backdrop-blur-md">
+                <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
+                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-600 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-24 leading-relaxed"></textarea>
+                    <button id="sendBtn" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 後台管理介面 -->
+        <main id="viewAdmin" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl overflow-y-auto p-6 md:p-12 space-y-8 hidden pb-24">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="flex justify-between items-center border-b border-white/10 pb-6">
+                    <div>
+                        <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
+                        <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">全自動雙 Gist 雲端同步管理中心</p>
+                    </div>
+                    <button onclick="navigate('chat')" class="bg-white text-black px-4 py-2 rounded-xl text-xs font-semibold tracking-widest uppercase">
+                        返回主畫面
+                    </button>
+                </div>
+
+                <!-- GitHub 專用設定 -->
+                <div class="glass-mono p-6 rounded-2xl space-y-4 border border-amber-500/30">
+                    <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
+                        <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist Raw 網址
+                    </h3>
+                    <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                </div>
+
+                <div class="glass-mono p-6 rounded-2xl space-y-4 border border-blue-500/30">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-semibold tracking-widest uppercase text-blue-400">
+                            <i class="fa-brands fa-github mr-1.5"></i> 2. 身分組 Passcode 自動同步設定 (Public Gist ID 與 Token)
+                        </h3>
+                        <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
+                    </div>
+                    <p class="text-[11px] text-neutral-400">系統已預設 Gist ID，您只需要填入 GitHub Token 即可一鍵自動寫入！</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
+                            <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (管理員發布金鑰)</label>
+                            <input type="password" id="githubTokenInput" placeholder="GitHub Token (ghp_...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                        </div>
+                    </div>
+                    <input type="text" id="codesGistFilenameInput" placeholder="Gist 檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                </div>
+
+                <div class="glass-mono p-6 rounded-2xl space-y-3 border border-white/20">
+                    <h3 class="text-xs font-semibold tracking-widest uppercase text-white">
+                        <i class="fa-solid fa-eye mr-1.5"></i> 目前 AI 實際讀取的 SOP 內容預覽
+                    </h3>
+                    <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed" placeholder="載入中..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-mono p-6 rounded-2xl space-y-3">
+                        <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">OpenRouter API Key (全公司共用)</label>
+                        <input type="password" id="apiKeyInput" placeholder="請輸入 OpenRouter API Key" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition">
+                    </div>
+
+                    <div class="glass-mono p-6 rounded-2xl space-y-3">
+                        <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">背景輪播圖片網址 (多張請用換行分隔)</label>
+                        <textarea id="bgImagesInput" rows="3" placeholder="https://image1.jpg&#10;https://image2.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono leading-relaxed"></textarea>
+                    </div>
+                </div>
+
+                <!-- 身分組管理區 -->
+                <div class="glass-mono p-6 rounded-2xl space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Management & Status Monitor</h3>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">身分生成碼管理（點擊儲存後將自動發送至 Public Gist，同事即可拿代碼登入）</p>
+                        </div>
+                        <div class="flex items-center space-x-2 w-full md:w-auto">
+                            <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
+                            <button onclick="generateNewCode()" class="bg-white hover:bg-neutral-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition tracking-wider shrink-0">
+                                產生新代碼
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950/50">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase">
+                                    <th class="p-3.5 font-medium">狀態燈</th>
+                                    <th class="p-3.5 font-medium">PASSCODE</th>
+                                    <th class="p-3.5 font-medium">名稱</th>
+                                    <th class="p-3.5 font-medium">支援裝置</th>
+                                    <th class="p-3.5 font-medium">建立時間</th>
+                                    <th class="p-3.5 font-medium">登入歷程記錄</th>
+                                    <th class="p-3.5 font-medium text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="codesTableBody" class="divide-y divide-neutral-900"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-mono p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Error Dialog Reports (SOP 修正區)</h3>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">檢視用戶回報的錯誤回答</p>
+                        </div>
+                        <button onclick="clearErrorLogs()" class="text-[10px] text-neutral-400 hover:text-white border border-neutral-800 px-3 py-1.5 rounded-lg transition">清空日誌</button>
+                    </div>
+                    <div id="errorLogsContainer" class="space-y-3 max-h-60 overflow-y-auto font-mono text-xs"></div>
+                </div>
+
+                <div class="flex justify-end pb-12">
+                    <button onclick="saveAdminSettings()" class="bg-white hover:bg-neutral-200 text-black font-semibold px-8 py-3.5 rounded-xl text-xs transition tracking-widest uppercase shadow-xl">
+                        儲存系統設定並自動同步至 GitHub
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
+        
+        // 🌟 內建固定的身分組雲端 Gist ID
+        const HARDCODED_GIST_ID = '3d0337a00d23812d4d6fb3e68c0a34e0';
+
+        let currentAuth = localStorage.getItem('shiye_auth') || null;
+        let activeCode = localStorage.getItem('shiye_active_code') || null;
+        let authMode = 'user';
+
+        function getStoredGistUrl() { return localStorage.getItem('shiye_gist_url') || ''; }
+        function getCodesGistId() { 
+            let stored = localStorage.getItem('shiye_codes_gist_id');
+            return stored ? stored : HARDCODED_GIST_ID; 
+        }
+        function getGithubToken() { return localStorage.getItem('shiye_github_token') || ''; }
+        function getCodesFilename() { return localStorage.getItem('shiye_codes_filename') || 'shiye-codes.json'; }
+
+        function resetDefaultGistId() {
+            document.getElementById('codesGistIdInput').value = HARDCODED_GIST_ID;
+            localStorage.setItem('shiye_codes_gist_id', HARDCODED_GIST_ID);
+            alert('已回復為程式碼內建預設 Gist ID！');
+        }
+
+        async function fetchSystemConfigFromCloud() {
+            let gistId = getCodesGistId();
+            let filename = getCodesFilename();
+            if (!gistId) return;
+
+            try {
+                const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.files && data.files[filename]) {
+                        const cloudData = JSON.parse(data.files[filename].content);
+                        if (cloudData.codes && Array.isArray(cloudData.codes)) {
+                            localStorage.setItem('shiye_codes_cache', JSON.stringify(cloudData.codes));
+                        }
+                        if (cloudData.apiKey) {
+                            localStorage.setItem('shiye_apikey', cloudData.apiKey);
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+
+        async function fetchSopFromGist() {
+            let rawUrl = getStoredGistUrl();
+            if (!rawUrl) return localStorage.getItem('shiye_sop') || '尚無設定 Gist 網址';
+
+            try {
+                const separator = rawUrl.includes('?') ? '&' : '?';
+                const res = await fetch(`${rawUrl}${separator}t=${Date.now()}`, { cache: 'no-store' });
+                if (res.ok) {
+                    const content = await res.text();
+                    localStorage.setItem('shiye_sop', content);
+                    return content;
+                }
+            } catch (e) {}
+            return localStorage.getItem('shiye_sop') || '尚無SOP內容';
+        }
+
+        async function fetchCodesFromCloud() {
+            await fetchSystemConfigFromCloud();
+            let gistId = getCodesGistId();
+            let filename = getCodesFilename();
+            if (!gistId) return getFallbackCodes();
+
+            try {
+                const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.files && data.files[filename]) {
+                        const content = JSON.parse(data.files[filename].content);
+                        const codes = Array.isArray(content) ? content : (content.codes || []);
+                        if (codes.length > 0) {
+                            localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+                            return codes;
+                        }
+                    }
+                }
+            } catch (e) {}
+
+            const cached = localStorage.getItem('shiye_codes_cache');
+            if (cached) { try { return JSON.parse(cached); } catch(e) {} }
+            return getFallbackCodes();
+        }
+
+        function getFallbackCodes() {
+            return [
+                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'idle', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'idle', supportMobile: true, supportIpad: true },
+                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true }
+            ];
+        }
+
+        let currentCodesList = [];
+
+        async function initData() {
+            currentCodesList = await fetchCodesFromCloud();
+            if (!localStorage.getItem('shiye_bg_list')) {
+                localStorage.setItem('shiye_bg_list', JSON.stringify([
+                    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1920&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop'
+                ]));
+            }
+            if (!localStorage.getItem('shiye_error_logs')) localStorage.setItem('shiye_error_logs', JSON.stringify([]));
+            await fetchSopFromGist();
+        }
+
+        let currentBgIndex = 0;
+        function initBackgroundSlideshow() {
+            const container = document.getElementById('bgSlideshow');
+            const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
+            if (bgList.length === 0) return;
+            container.innerHTML = '';
+            bgList.forEach((url, i) => {
+                const div = document.createElement('div');
+                div.className = `bg-slide ${i === 0 ? 'active' : ''}`;
+                div.style.backgroundImage = `url('${url.trim()}')`;
+                container.appendChild(div);
+            });
+            if (bgList.length > 1) {
+                setInterval(() => {
+                    const slides = container.querySelectorAll('.bg-slide');
+                    if (slides.length === 0) return;
+                    slides[currentBgIndex].classList.remove('active');
+                    currentBgIndex = (currentBgIndex + 1) % slides.length;
+                    slides[currentBgIndex].classList.add('active');
+                }, 5000);
+            }
+        }
+
+        async function checkAuthAndRoute() {
+            currentCodesList = await fetchCodesFromCloud();
+            const authModal = document.getElementById('authModal');
+            const appContainer = document.getElementById('appContainer');
+
+            if (!currentAuth) {
+                authModal.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                return;
+            }
+
+            authModal.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+
+            const roleBadge = document.getElementById('roleBadge');
+            const navAdmin = document.getElementById('navAdmin');
+            if (currentAuth === 'admin') {
+                roleBadge.textContent = 'ADMIN';
+                navAdmin.style.display = 'inline-block';
+            } else {
+                roleBadge.textContent = 'MEMBER';
+                navAdmin.style.display = 'none';
+            }
+
+            if (window.location.hash === '#admin') {
+                if (currentAuth !== 'admin') { alert('權限不足'); window.location.hash = '#chat'; return; }
+                document.getElementById('viewAdmin').classList.remove('hidden');
+                loadAdminForm();
+            } else {
+                document.getElementById('viewAdmin').classList.add('hidden');
+                initBackgroundSlideshow();
+            }
+        }
+
+        function switchAuthMode(e) {
+            e.preventDefault();
+            const subtitle = document.getElementById('authSubtitle');
+            const switchBtn = document.getElementById('authSwitchBtn');
+            document.getElementById('passcodeinput').value = '';
+            if (authMode === 'user') {
+                authMode = 'admin';
+                subtitle.textContent = '請輸入【最高管理員生成碼】';
+                switchBtn.textContent = '切換為一般成員登入通道';
+            } else {
+                authMode = 'user';
+                subtitle.textContent = '請輸入身分生成碼以進入系統';
+                switchBtn.textContent = '切換為管理員登入通道';
+            }
+        }
+
+        async function verifyPasscode() {
+            const val = document.getElementById('passcodeinput').value.trim();
+            const codes = await fetchCodesFromCloud();
+            const matched = codes.find(c => c.code === val);
+            if (!matched) { alert('驗證碼錯誤或不存在'); return; }
+            if (authMode === 'admin' && matched.role !== 'admin') { alert('此代碼非管理員權限'); return; }
+
+            matched.logins = matched.logins || [];
+            matched.logins.push(new Date().toLocaleString());
+            matched.status = 'active';
+
+            currentAuth = matched.role;
+            activeCode = matched.code;
+            localStorage.setItem('shiye_auth', currentAuth);
+            localStorage.setItem('shiye_active_code', activeCode);
+
+            await pushCodesToCloud(codes);
+
+            window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
+            checkAuthAndRoute();
+        }
+
+        async function logout() {
+            currentAuth = null;
+            activeCode = null;
+            localStorage.removeItem('shiye_auth');
+            localStorage.removeItem('shiye_active_code');
+            window.location.hash = '';
+            checkAuthAndRoute();
+        }
+
+        function navigate(target) {
+            window.location.hash = target === 'admin' ? '#admin' : '';
+            checkAuthAndRoute();
+        }
+
+        window.addEventListener('hashchange', checkAuthAndRoute);
+        window.addEventListener('DOMContentLoaded', async () => { await initData(); checkAuthAndRoute(); });
+
+        function toggleChatDrawer() { document.getElementById('chatDrawer').classList.toggle('open'); }
+
+        async function loadAdminForm() {
+            document.getElementById('apiKeyInput').value = localStorage.getItem('shiye_apikey') || '';
+            document.getElementById('gistIdInput').value = getStoredGistUrl();
+            document.getElementById('codesGistIdInput').value = getCodesGistId();
+            document.getElementById('githubTokenInput').value = getGithubToken();
+            document.getElementById('codesGistFilenameInput').value = getCodesFilename();
+            
+            const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
+            document.getElementById('bgImagesInput').value = bgList.join('\n');
+            
+            currentCodesList = await fetchCodesFromCloud();
+            renderCodesTable();
+            renderErrorLogs();
+
+            const content = await fetchSopFromGist();
+            document.getElementById('cloudSopViewer').value = content;
+        }
+
+        function generateNewCode() {
+            const nameInput = document.getElementById('newCodeName');
+            const name = nameInput.value.trim() || '成員';
+            const randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            currentCodesList.push({ 
+                code: randomCode, name: name, role: 'user', 
+                createdAt: new Date().toLocaleString(), logins: [], 
+                status: 'idle', supportMobile: true, supportIpad: true 
+            });
+            nameInput.value = '';
+            renderCodesTable();
+            alert(`✅ 成功產生新生成碼：${randomCode}\n請點擊下方儲存按鈕將其自動寫入 GitHub！`);
+        }
+
+        function deleteCode(codeStr) {
+            if (codeStr === SPECIAL_ADMIN_CODE) return;
+            currentCodesList = currentCodesList.filter(c => c.code !== codeStr);
+            renderCodesTable();
+        }
+
+        function toggleCodeWarning(codeStr) {
+            const matched = currentCodesList.find(c => c.code === codeStr);
+            if (matched) {
+                matched.status = matched.status === 'warning' ? 'idle' : 'warning';
+                renderCodesTable();
+            }
+        }
+
+        function renderCodesTable() {
+            const tbody = document.getElementById('codesTableBody');
+            tbody.innerHTML = '';
+            currentCodesList.forEach(c => {
+                let lightColor = c.status === 'active' ? 'bg-emerald-500 animate-pulse' : (c.status === 'warning' ? 'bg-amber-400' : 'bg-red-500');
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
+                tr.innerHTML = `
+                    <td class="p-3.5"><span class="inline-block w-3 h-3 rounded-full ${lightColor}" onclick="toggleCodeWarning('${c.code}')" style="cursor:pointer;"></span></td>
+                    <td class="p-3.5 font-mono text-white font-medium select-all">${c.code}</td>
+                    <td class="p-3.5 text-neutral-300">${c.name}</td>
+                    <td class="p-3.5 text-neutral-300"><i class="fa-solid fa-mobile-screen"></i> <i class="fa-solid fa-desktop"></i></td>
+                    <td class="p-3.5 text-neutral-400 text-[10px]">${c.createdAt || ''}</td>
+                    <td class="p-3.5 text-neutral-400 text-[10px] truncate max-w-xs">${(c.logins || []).slice(-1)[0] || '尚無登入'}</td>
+                    <td class="p-3.5 text-right space-x-2">
+                        <button onclick="toggleCodeWarning('${c.code}')" class="text-neutral-400 hover:text-amber-400 text-[10px] border border-neutral-800 px-2 py-1 rounded">切換燈號</button>
+                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${c.code}')" class="text-neutral-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function pushCodesToCloud(codesArray) {
+            let gistId = getCodesGistId();
+            let token = getGithubToken();
+            let filename = getCodesFilename();
+            let apiKey = localStorage.getItem('shiye_apikey') || '';
+            if (!gistId || !token) return false;
+
+            try {
+                const payloadData = {
+                    apiKey: apiKey,
+                    codes: codesArray
+                };
+                const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            [filename]: { content: JSON.stringify(payloadData, null, 2) }
+                        }
+                    })
+                });
+                return res.ok;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        async function saveAdminSettings() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const rawUrl = document.getElementById('gistIdInput').value.trim();
+            const codesGistId = document.getElementById('codesGistIdInput').value.trim();
+            const token = document.getElementById('githubTokenInput').value.trim();
+            const filename = document.getElementById('codesGistFilenameInput').value.trim();
+            const bgText = document.getElementById('bgImagesInput').value.trim();
+
+            if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
+            if (rawUrl) localStorage.setItem('shiye_gist_url', rawUrl);
+            if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
+            if (token) localStorage.setItem('shiye_github_token', token);
+            if (filename) localStorage.setItem('shiye_codes_filename', filename);
+            if (bgText) {
+                localStorage.setItem('shiye_bg_list', JSON.stringify(bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0)));
+            }
+
+            const success = await pushCodesToCloud(currentCodesList);
+            if (success) {
+                alert('✅ 成功：系統設定與身分組已自動同步至 GitHub 雲端！');
+            } else {
+                alert('⚠️ 設定已儲存，但 GitHub 自動同步失敗，請檢查 Gist ID 與 Token 是否正確。');
+            }
+            initBackgroundSlideshow();
+        }
+
+        function reportErrorLog(q, a) {
+            const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            logs.unshift({ time: new Date().toLocaleString(), code: activeCode || '未知', question: q, answer: a });
+            localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
+            const toast = document.getElementById('reportToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function renderErrorLogs() {
+            const container = document.getElementById('errorLogsContainer');
+            if(!container) return;
+            const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            container.innerHTML = logs.length === 0 ? '<p class="text-neutral-600">目前尚無回報紀錄。</p>' : logs.map(l => `<div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-1"><p class="text-white"><strong>問:</strong> ${l.question}</p><p class="text-neutral-300"><strong>答:</strong> ${l.answer}</p></div>`).join('');
+        }
+
+        function clearErrorLogs() { localStorage.setItem('shiye_error_logs', JSON.stringify([])); renderErrorLogs(); }
+
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        let chatHistory = [];
+
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            let apiKey = localStorage.getItem('shiye_apikey');
+            if (!apiKey) {
+                await fetchSystemConfigFromCloud();
+                apiKey = localStorage.getItem('shiye_apikey');
+            }
+
+            if (!apiKey) {
+                alert('系統尚未設定 AI API Key，請先由管理員至後台設定。');
+                return;
+            }
+
+            appendMessage(text, 'user');
+            userInput.value = '';
+            userInput.style.height = 'auto';
+
+            const loadingId = appendLoading();
+            const sopContent = await fetchSopFromGist();
+
+            try {
+                const messages = [
+                    { role: "system", content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` }
+                ];
+                chatHistory.forEach(h => messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
+                messages.push({ role: "user", content: text });
+
+                const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'Leaves Design System' },
+                    body: JSON.stringify({ model: "google/gemma-7b-it:free", messages: messages, temperature: 0.3 })
+                });
+
+                const data = await res.json();
+                removeLoading(loadingId);
+                if (data.error) {
+                    appendMessage(`Error: ${data.error.message}`, 'assistant', true);
+                } else {
+                    const reply = data.choices[0].message.content;
+                    appendMessage(reply, 'assistant', false);
+                    chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: reply });
+                }
+            } catch (err) {
+                removeLoading(loadingId);
+                appendMessage('連線失敗', 'assistant', true);
+            }
+        }
+
+        function appendMessage(text, sender, isError = false) {
+            const isUser = sender === 'user';
+            const lastUserMsg = chatHistory.slice(-1)[0]?.text || '';
+            const html = `
+                <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
+                    <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
+                    <div class="${isError ? 'bg-red-950/80 text-red-200' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
+                        <div class="whitespace-pre-wrap">${text}</div>
+                        ${!isUser ? `<div class="flex justify-end pt-1 border-t border-white/10"><button onclick="reportErrorLog('${lastUserMsg.replace(/'/g, "\\'")}', \`${text.replace(/'/g, "\\'")}\`)" class="text-[10px] text-neutral-400 hover:text-amber-400"><i class="fa-solid fa-triangle-exclamation"></i> 回報此回答錯誤</button></div>` : ''}
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function appendLoading() {
+            const id = 'loading_' + Date.now();
+            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> PROCESSING...</div></div>`);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return id;
+        }
+
+        function removeLoading(id) { const el = document.getElementById(id); if (el) el.remove(); }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+    </script>
+</body>
+</html>
