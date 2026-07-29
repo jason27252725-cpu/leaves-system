@@ -116,7 +116,7 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (Gemini 1.5 Flash Direct)</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (Gemini 2.0 Flash Direct)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.1 在線狀態即時監控版</span>
+                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.2 Gemini 最新模型修正版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -432,7 +432,6 @@
             }
         }
 
-        // 🌟 登入：將 status 設為 online (🟢 綠燈)
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             const codes = await fetchCodesFromCloud();
@@ -456,7 +455,6 @@
             checkAuthAndRoute();
         }
 
-        // 🌟 登出：將 status 設為 offline (🔴 紅燈)
         async function logout() {
             if (activeCode) {
                 let codes = await fetchCodesFromCloud();
@@ -546,7 +544,6 @@
             }
         }
 
-        // 🌟 渲染表格：online -> 🟢 綠燈，其他/offline -> 🔴 紅燈
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
@@ -683,7 +680,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：Google Gemini 1.5 Flash 官方原生 API 直連
+        // 🌟 核心：Google Gemini 2.0 Flash 最新官方直連 API
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -725,7 +722,8 @@
                     }]
                 };
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+                // 使用 Google 官方最新 gemini-2.0-flash API 端點
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey.trim()}`;
 
                 const res = await fetch(url, {
                     method: 'POST',
