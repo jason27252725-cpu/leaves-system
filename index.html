@@ -662,7 +662,7 @@
                 const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'Leaves Design System' },
-                    body: JSON.stringify({ model: "google/gemma-7b-it:free", messages: messages, temperature: 0.3 })
+                    body: JSON.stringify({ model: "google/gemma-2-9b-it:free", messages: messages, temperature: 0.3 })
                 });
 
                 const data = await res.json();
