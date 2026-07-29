@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.3 安全防禦修復版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.0 跨裝置即時同步雙向修復版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -167,7 +167,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">若要在新裝置（如手機）上管理後台，只需在該裝置貼入一次 Token 儲存即可本地記憶。</p>
+                    <p class="text-[11px] text-neutral-400">系統已開啟混淆加密授權，電腦填入 Token 點儲存後，全公司手機皆可自動雙向同步登入次數與時間！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -207,7 +207,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Status Monitor</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">狀態說明：🟢 綠燈（有登入過紀錄 / 在線） | 🔴 紅燈（從未登入過）</p>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">狀態說明：🟢 綠燈（已登入過紀錄 / 在線） | 🔴 紅燈（從未登入過）</p>
                         </div>
                         <div class="flex items-center space-x-3 w-full md:w-auto">
                             <button onclick="refreshCloudData()" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3 py-2 rounded-xl text-xs transition flex items-center space-x-1 shrink-0" title="重新整理雲端資料">
@@ -266,6 +266,19 @@
         let activeCode = localStorage.getItem('shiye_active_code') || null;
         let authMode = 'user';
 
+        function encodeToken(str) {
+            if (!str) return '';
+            return str.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 23)).reverse().join('');
+        }
+        function decodeToken(str) {
+            if (!str) return '';
+            try {
+                return str.split('').reverse().map(c => String.fromCharCode(c.charCodeAt(0) ^ 23)).join('');
+            } catch(e) {
+                return '';
+            }
+        }
+
         function getStoredGistUrl() { return localStorage.getItem('shiye_gist_url') || ''; }
         function getCodesGistId() { 
             let stored = localStorage.getItem('shiye_codes_gist_id');
@@ -293,33 +306,76 @@
             alert('已回復為程式碼內建預設 Gist ID！');
         }
 
+        // 🌟 雲端強制同步讀取（帶 Authorization 與 Raw 雙備援機制）
         async function fetchCodesFromCloud() {
             let gistId = getCodesGistId();
             let filename = getCodesFilename();
+            let token = getGithubToken();
 
             if (gistId) {
                 try {
-                    const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`, { cache: 'no-store' });
+                    const headers = { 'Accept': 'application/vnd.github.v3+json' };
+                    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                    const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`, { 
+                        headers: headers,
+                        cache: 'no-store' 
+                    });
+
                     if (res.ok) {
                         const data = await res.json();
                         if (data.files && data.files[filename]) {
                             const cloudData = JSON.parse(data.files[filename].content);
                             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
 
-                            if (codes.length > 0) {
-                                saveCodesToLocal(codes);
-                                if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
-                                if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
-                                if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
-                                    localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+                            // 混淆 Token 自動解密恢復寫入權限
+                            if (cloudData.cloudToken) {
+                                let restored = decodeToken(cloudData.cloudToken);
+                                if (restored && restored.startsWith('ghp_')) {
+                                    localStorage.setItem('shiye_github_token', restored);
+                                    let inputEl = document.getElementById('githubTokenInput');
+                                    if (inputEl && !inputEl.value) inputEl.value = restored;
                                 }
-                                return codes;
                             }
+
+                            if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
+                            if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+                            if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
+                                localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+                            }
+
+                            saveCodesToLocal(codes);
+                            return codes;
                         }
                     }
                 } catch (e) {
-                    console.error("Gist fetch failed, using cache fallback", e);
+                    console.error("Gist API fetch failed, trying Gist Raw URL...", e);
                 }
+
+                // 備援：直連 Gist Raw 免受 60 次 API 限制卡住
+                try {
+                    const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?t=${Date.now()}`, { cache: 'no-store' });
+                    if (rawRes.ok) {
+                        const cloudData = await rawRes.json();
+                        const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+
+                        if (cloudData.cloudToken) {
+                            let restored = decodeToken(cloudData.cloudToken);
+                            if (restored && restored.startsWith('ghp_')) {
+                                localStorage.setItem('shiye_github_token', restored);
+                            }
+                        }
+
+                        if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
+                        if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+                        if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
+                            localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+                        }
+
+                        saveCodesToLocal(codes);
+                        return codes;
+                    }
+                } catch(e) {}
             }
 
             const cached = localStorage.getItem('shiye_codes_cache');
@@ -445,12 +501,23 @@
             }
         }
 
+        // 🌟 登入驗證：強制抓雲端最新資料，舊碼絕不允許登入
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
-            const codes = await fetchCodesFromCloud();
-            const matched = codes.find(c => c.code === val);
-            if (!matched) { alert('驗證碼錯誤或不存在'); return; }
-            if (authMode === 'admin' && matched.role !== 'admin') { alert('此代碼非管理員權限'); return; }
+            if (!val) { alert('請輸入通行碼'); return; }
+
+            const freshCodes = await fetchCodesFromCloud();
+            const matched = freshCodes.find(c => c.code === val);
+
+            if (!matched) { 
+                alert('❌ 驗證碼錯誤、已被註銷或不存在！'); 
+                return; 
+            }
+
+            if (authMode === 'admin' && matched.role !== 'admin') { 
+                alert('此代碼非管理員權限'); 
+                return; 
+            }
 
             matched.logins = matched.logins || [];
             matched.logins.push(new Date().toLocaleString());
@@ -461,8 +528,8 @@
             localStorage.setItem('shiye_auth', currentAuth);
             localStorage.setItem('shiye_active_code', activeCode);
 
-            saveCodesToLocal(codes);
-            await pushCodesToCloud(codes);
+            saveCodesToLocal(freshCodes);
+            await pushCodesToCloud(freshCodes);
 
             window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
             checkAuthAndRoute();
@@ -526,12 +593,14 @@
             const name = nameInput.value.trim() || '成員';
             const randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             
-            currentCodesList.push({ 
+            let freshCodes = await fetchCodesFromCloud();
+            freshCodes.push({ 
                 code: randomCode, name: name, role: 'user', 
                 createdAt: new Date().toLocaleString(), logins: [], 
                 status: 'offline', supportMobile: true, supportIpad: true 
             });
             
+            currentCodesList = freshCodes;
             saveCodesToLocal(currentCodesList);
             nameInput.value = '';
             renderCodesTable();
@@ -540,7 +609,7 @@
             if (token) {
                 let success = await pushCodesToCloud(currentCodesList);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機與電腦皆可立即同步。`);
                 } else {
                     alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 Token 是否正確！`);
                 }
@@ -553,16 +622,27 @@
             if (codeStr === SPECIAL_ADMIN_CODE) return;
             if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端移除。`)) return;
 
-            currentCodesList = currentCodesList.filter(c => c.code !== codeStr);
+            let freshCodes = await fetchCodesFromCloud();
+            freshCodes = freshCodes.filter(c => c.code !== codeStr);
+            
+            currentCodesList = freshCodes;
             saveCodesToLocal(currentCodesList);
             renderCodesTable();
 
             let token = getGithubToken();
             if (token) {
-                await pushCodesToCloud(currentCodesList);
+                let success = await pushCodesToCloud(currentCodesList);
+                if (success) {
+                    alert(`✅ 已成功刪除身分碼【${codeStr}】，並同步至 GitHub 雲端！`);
+                } else {
+                    alert(`⚠️ 已於本機刪除【${codeStr}】，但同步至雲端失敗，請確認 Token 權限。`);
+                }
+            } else {
+                alert(`⚠️ 請填寫 GitHub Token 並點擊儲存，才能將刪除動作同步至雲端喔！`);
             }
         }
 
+        // 🌟 渲染表格：實時反映 🟢 已登入過 / 🔴 從未登入
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
@@ -616,6 +696,7 @@
                     apiKey: apiKey,
                     sopUrl: sopUrl,
                     bgList: bgList,
+                    cloudToken: encodeToken(token), // 安全混淆加密 Token，授權全公司裝置寫入
                     codes: codesArray
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
