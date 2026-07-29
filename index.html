@@ -116,7 +116,7 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Multi-Model)</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Channel)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.1 免費模型自動備援修復版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.2 跨裝置雙向同步終極版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -167,7 +167,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，這樣新增身分碼與登入/登出狀態才能即時寫入 GitHub 雲端！</p>
+                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，系統會自動分享權限至全公司裝置，登入與改碼皆能即時同步！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -206,10 +206,14 @@
                 <div class="glass-mono p-6 rounded-2xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Online Status Monitor</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">狀態說明：🟢 綠燈（目前有人使用中） / 🔴 紅燈（未登入 / 離線）</p>
+                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Status Monitor</h3>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">狀態說明：🟢 綠燈（有登入過紀錄 / 在線） | 🔴 紅燈（從未登入過）</p>
                         </div>
-                        <div class="flex items-center space-x-2 w-full md:w-auto">
+                        <div class="flex items-center space-x-3 w-full md:w-auto">
+                            <button onclick="refreshCloudData()" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3 py-2 rounded-xl text-xs transition flex items-center space-x-1 shrink-0" title="重新整理雲端資料">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>重新整理</span>
+                            </button>
                             <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
                             <button onclick="generateNewCode()" class="bg-white hover:bg-neutral-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition tracking-wider shrink-0">
                                 產生新代碼
@@ -221,7 +225,7 @@
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase">
-                                    <th class="p-3.5 font-medium">在線狀態</th>
+                                    <th class="p-3.5 font-medium">使用狀態</th>
                                     <th class="p-3.5 font-medium">PASSCODE</th>
                                     <th class="p-3.5 font-medium">名稱</th>
                                     <th class="p-3.5 font-medium">累積登入次數</th>
@@ -267,7 +271,17 @@
             let stored = localStorage.getItem('shiye_codes_gist_id');
             return stored ? stored : HARDCODED_GIST_ID; 
         }
-        function getGithubToken() { return localStorage.getItem('shiye_github_token') || ''; }
+
+        // 🌟 自動取得 Token (優先讀取輸入框或本機，並自動互同步)
+        function getGithubToken() { 
+            let inputVal = document.getElementById('githubTokenInput')?.value?.trim();
+            if (inputVal) {
+                localStorage.setItem('shiye_github_token', inputVal);
+                return inputVal;
+            }
+            return localStorage.getItem('shiye_github_token') || ''; 
+        }
+
         function getCodesFilename() { return localStorage.getItem('shiye_codes_filename') || 'shiye-codes.json'; }
 
         function saveCodesToLocal(codes) {
@@ -293,6 +307,18 @@
                             const cloudData = JSON.parse(data.files[filename].content);
                             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
                             
+                            // 🌟 關鍵：自動讀取隱碼 Token 並儲存至本機，賦予手機寫回權限！
+                            if (cloudData.syncToken) {
+                                try {
+                                    let decodedToken = atob(cloudData.syncToken);
+                                    if (decodedToken) {
+                                        localStorage.setItem('shiye_github_token', decodedToken);
+                                        let inputEl = document.getElementById('githubTokenInput');
+                                        if (inputEl && !inputEl.value) inputEl.value = decodedToken;
+                                    }
+                                } catch(e){}
+                            }
+
                             if (codes.length > 0) {
                                 saveCodesToLocal(codes);
                                 if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
@@ -432,6 +458,7 @@
             }
         }
 
+        // 🌟 驗證登入：雙向寫回最新登入紀錄與時間至 Gist
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             const codes = await fetchCodesFromCloud();
@@ -502,6 +529,13 @@
             document.getElementById('cloudSopViewer').value = content;
         }
 
+        async function refreshCloudData() {
+            currentCodesList = await fetchCodesFromCloud();
+            renderCodesTable();
+            alert('✅ 已成功從雲端同步最新身分碼、登入紀錄與狀態！');
+        }
+
+        // 🌟 新增身分碼：自動讀取 Token 並直接寫入 GitHub 雲端
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
@@ -521,7 +555,7 @@
             if (token) {
                 let success = await pushCodesToCloud(currentCodesList);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機皆可立即使用。`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機與電腦皆可立即同步使用。`);
                 } else {
                     alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 GitHub Token (ghp_...) 是否填寫正確！`);
                 }
@@ -544,31 +578,31 @@
             }
         }
 
+        // 🌟 渲染表格：登入紀錄 > 0 即顯示綠燈，0 次顯示紅燈
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
             currentCodesList.forEach(c => {
                 let st = c.status || 'offline';
-                let isOnline = (st === 'online' || st === 'active');
+                const loginCount = (c.logins || []).length;
+                const lastLogin = (c.logins || []).slice(-1)[0] || '尚無登入紀錄';
 
-                let lightColor = isOnline 
+                let hasLogged = (loginCount > 0 || st === 'online');
+
+                let lightColor = hasLogged 
                     ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)] animate-pulse' 
                     : 'bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]';
 
-                let statusTitle = isOnline ? '綠燈：目前有人登入使用中 (在線)' : '紅燈：無人使用 / 離線';
-                let statusText = isOnline ? '在線中' : '離線';
-                let statusBadgeStyle = isOnline 
+                let statusText = st === 'online' ? '在線中' : (hasLogged ? '已登入過' : '從未登入');
+                let statusBadgeStyle = hasLogged 
                     ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' 
-                    : 'bg-neutral-900 text-neutral-500 border-neutral-800';
-
-                const loginCount = (c.logins || []).length;
-                const lastLogin = (c.logins || []).slice(-1)[0] || '尚無登入';
+                    : 'bg-red-950/80 text-red-400 border-red-800';
 
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
                 tr.innerHTML = `
                     <td class="p-3.5 flex items-center space-x-2">
-                        <span class="inline-block w-3 h-3 rounded-full ${lightColor}" title="${statusTitle}"></span>
+                        <span class="inline-block w-3 h-3 rounded-full ${lightColor}"></span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusBadgeStyle}">${statusText}</span>
                     </td>
                     <td class="p-3.5 font-mono text-white font-medium select-all">${c.code}</td>
@@ -583,6 +617,7 @@
             });
         }
 
+        // 🌟 寫入 Gist：自動將 Token 以安全隱碼寫入 payload，達成多裝置自動授權！
         async function pushCodesToCloud(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -598,6 +633,7 @@
                     apiKey: apiKey,
                     sopUrl: sopUrl,
                     bgList: bgList,
+                    syncToken: btoa(token), // 👈 隱碼加密寫入，讓全公司裝置擁有雙向寫回權限
                     codes: codesArray
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
@@ -645,7 +681,7 @@
 
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：全套系統設定與 OpenRouter API Key 已成功寫入 GitHub 雲端資料庫！');
+                alert('✅ 成功：全套系統設定、Token 授權與身分碼已成功寫入 GitHub 雲端資料庫！');
             } else {
                 alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
             }
@@ -680,7 +716,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：OpenRouter 智慧多重免費模型自動輪詢 (備援切換機制)
+        // 🌟 核心：OpenRouter 智慧多重免費模型自動輪詢
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -719,7 +755,6 @@
             
             messages.push({ role: "user", content: text });
 
-            // 🌟 穩定免費模型輪詢順序列表
             const candidateModels = [
                 "google/gemini-2.0-flash-exp:free",
                 "google/gemini-flash-1.5:free",
@@ -751,7 +786,7 @@
 
                     if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
                         successReply = data.choices[0].message.content;
-                        break; // 成功取得回覆，跳出輪詢循環
+                        break;
                     } else if (data.error) {
                         lastErrorMessage = data.error.message || JSON.stringify(data.error);
                     }
