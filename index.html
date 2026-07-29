@@ -141,8 +141,11 @@
             <div class="max-w-4xl mx-auto space-y-8">
                 <div class="flex justify-between items-center border-b border-white/10 pb-6">
                     <div>
-                        <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                        <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">全自動雙 Gist 雲端同步管理中心</p>
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v2.3 GitHub 雲端資料庫優先版</span>
+                        </div>
+                        <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
                     <button onclick="navigate('chat')" class="bg-white text-black px-4 py-2 rounded-xl text-xs font-semibold tracking-widest uppercase">
                         返回主畫面
@@ -164,7 +167,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">請確認 Gist ID 與 GitHub Token 已填寫，儲存時系統會將全套設定一鍵同步至全公司手機！</p>
+                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，這樣新增身分碼時系統才能直接寫入 GitHub 雲端！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -202,7 +205,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Management & Status Monitor</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">身分生成碼管理（點擊儲存後將自動發送至 Public Gist，同事即可拿代碼登入）</p>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">身分生成碼管理（產生或刪除時將自動推送到 GitHub 雲端，絕不遺失）</p>
                         </div>
                         <div class="flex items-center space-x-2 w-full md:w-auto">
                             <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
@@ -243,7 +246,7 @@
 
                 <div class="flex justify-end pb-12">
                     <button onclick="saveAdminSettings()" class="bg-white hover:bg-neutral-200 text-black font-semibold px-8 py-3.5 rounded-xl text-xs transition tracking-widest uppercase shadow-xl">
-                        儲存系統設定並自動同步至 GitHub
+                        儲存全套系統設定至 GitHub 雲端
                     </button>
                 </div>
             </div>
@@ -252,8 +255,6 @@
 
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
-        
-        // 🌟 內建固定的身分組雲端 Gist ID
         const HARDCODED_GIST_ID = '3d0337a00d23812d4d6fb3e68c0a34e0';
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
@@ -274,33 +275,46 @@
             alert('已回復為程式碼內建預設 Gist ID！');
         }
 
-        // 🌟 全網頁開機時，自動向 GitHub Gist 抓取【所有最新雲端設定】
-        async function fetchSystemConfigFromCloud() {
+        // 🌟 核心修正：開機時，強迫【100% 優先向 GitHub 雲端 API 抓取資料】
+        async function fetchCodesFromCloud() {
             let gistId = getCodesGistId();
             let filename = getCodesFilename();
-            if (!gistId) return;
 
-            try {
-                const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.files && data.files[filename]) {
-                        const cloudData = JSON.parse(data.files[filename].content);
-                        if (cloudData.codes && Array.isArray(cloudData.codes)) {
-                            localStorage.setItem('shiye_codes_cache', JSON.stringify(cloudData.codes));
-                        }
-                        if (cloudData.apiKey) {
-                            localStorage.setItem('shiye_apikey', cloudData.apiKey);
-                        }
-                        if (cloudData.sopUrl) {
-                            localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
-                        }
-                        if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
-                            localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+            if (gistId) {
+                try {
+                    const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`, { cache: 'no-store' });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.files && data.files[filename]) {
+                            const cloudData = JSON.parse(data.files[filename].content);
+                            const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+                            
+                            if (codes.length > 0) {
+                                localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+                                if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
+                                if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+                                if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
+                                    localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+                                }
+                                return codes;
+                            }
                         }
                     }
+                } catch (e) {
+                    console.error("Gist fetch failed, using fallback cache", e);
                 }
-            } catch (e) {}
+            }
+
+            // 僅有在網路完全離線時才使用本機快取
+            const cached = localStorage.getItem('shiye_codes_cache');
+            if (cached) {
+                try {
+                    let parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch(e) {}
+            }
+
+            return getFallbackCodes();
         }
 
         async function fetchSopFromGist() {
@@ -317,32 +331,6 @@
                 }
             } catch (e) {}
             return localStorage.getItem('shiye_sop') || '尚無SOP內容';
-        }
-
-        async function fetchCodesFromCloud() {
-            await fetchSystemConfigFromCloud();
-            let gistId = getCodesGistId();
-            let filename = getCodesFilename();
-            if (!gistId) return getFallbackCodes();
-
-            try {
-                const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.files && data.files[filename]) {
-                        const content = JSON.parse(data.files[filename].content);
-                        const codes = Array.isArray(content) ? content : (content.codes || []);
-                        if (codes.length > 0) {
-                            localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
-                            return codes;
-                        }
-                    }
-                }
-            } catch (e) {}
-
-            const cached = localStorage.getItem('shiye_codes_cache');
-            if (cached) { try { return JSON.parse(cached); } catch(e) {} }
-            return getFallbackCodes();
         }
 
         function getFallbackCodes() {
@@ -500,7 +488,8 @@
             document.getElementById('cloudSopViewer').value = content;
         }
 
-        function generateNewCode() {
+        // 🌟 產生新代碼時，自動同步推送至 GitHub 雲端
+        async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
             const randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -510,15 +499,35 @@
                 createdAt: new Date().toLocaleString(), logins: [], 
                 status: 'idle', supportMobile: true, supportIpad: true 
             });
+            
             nameInput.value = '';
             renderCodesTable();
-            alert(`✅ 成功產生新生成碼：${randomCode}\n請點擊下方儲存按鈕將其自動寫入 GitHub！`);
+
+            let token = getGithubToken();
+            if (token) {
+                let success = await pushCodesToCloud(currentCodesList);
+                if (success) {
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動即時同步寫入 GitHub 雲端資料庫！全公司手機皆可立即使用。`);
+                } else {
+                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認後台的 GitHub Token (ghp_...) 是否填寫正確！`);
+                }
+            } else {
+                alert(`⚠️ 身分碼已產生：${randomCode}\n注意：後台尚未填寫 GitHub Token，請先於後台填寫 Token 並儲存，才能同步至 GitHub 雲端資料庫喔！`);
+            }
         }
 
-        function deleteCode(codeStr) {
+        // 🌟 刪除代碼時，自動同步推送至 GitHub 雲端
+        async function deleteCode(codeStr) {
             if (codeStr === SPECIAL_ADMIN_CODE) return;
+            if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端資料庫移除。`)) return;
+
             currentCodesList = currentCodesList.filter(c => c.code !== codeStr);
             renderCodesTable();
+
+            let token = getGithubToken();
+            if (token) {
+                await pushCodesToCloud(currentCodesList);
+            }
         }
 
         function toggleCodeWarning(codeStr) {
@@ -526,6 +535,7 @@
             if (matched) {
                 matched.status = matched.status === 'warning' ? 'idle' : 'warning';
                 renderCodesTable();
+                pushCodesToCloud(currentCodesList);
             }
         }
 
@@ -552,7 +562,7 @@
             });
         }
 
-        // 🌟 將【API Key + SOP 網址 + 背景圖 + 身分碼】打包推送到 GitHub 雲端
+        // 🌟 將【API Key + SOP 網址 + 背景圖 + 身分碼】全套寫入 GitHub 雲端 Gist
         async function pushCodesToCloud(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -606,11 +616,16 @@
                 localStorage.setItem('shiye_bg_list', JSON.stringify(bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0)));
             }
 
+            if (!token) {
+                alert('⚠️ 警告：您尚未填寫「GitHub Token (ghp_...)」！\n如果沒有填寫 Token，設定無法推送到 GitHub 雲端資料庫。');
+                return;
+            }
+
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：系統設定與身分組已全數自動同步至 GitHub 雲端！');
+                alert('✅ 成功：全套系統設定與身分碼已成功寫入 GitHub 雲端資料庫！\n即使您關閉電腦或清理快取，資料也永不遺失，手機開機即可同步。');
             } else {
-                alert('⚠️ 設定已儲存，但 GitHub 自動同步失敗，請檢查 GitHub Token (ghp_...) 是否有正確填寫。');
+                alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
             }
             initBackgroundSlideshow();
         }
@@ -649,7 +664,7 @@
             
             let apiKey = localStorage.getItem('shiye_apikey');
             if (!apiKey) {
-                await fetchSystemConfigFromCloud();
+                await fetchCodesFromCloud();
                 apiKey = localStorage.getItem('shiye_apikey');
             }
 
@@ -672,7 +687,6 @@
                 chatHistory.forEach(h => messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
                 messages.push({ role: "user", content: text });
 
-                // 🌟 使用最穩定且免費的 Meta Llama 3.1 模型
                 const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'Leaves Design System' },
