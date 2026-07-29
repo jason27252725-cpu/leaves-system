@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.3 官方 Header 雙重驗證修正版</span>
+                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.4 雙模金鑰智慧判斷修復版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -680,7 +680,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：Google Gemini 2.0 Flash 官方原生 Header 驗證直連
+        // 🌟 核心：Google Gemini 雙模金鑰智慧判定與請求 (AQ. 與 AIza 通吃)
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -723,14 +723,20 @@
                 };
 
                 const cleanKey = apiKey.trim();
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`;
+                let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+                const headers = { 'Content-Type': 'application/json' };
+
+                // 🌟 核心判斷：如果是 AQ. 開頭的 Auth Key，使用 Authorization: Bearer Header！
+                if (cleanKey.startsWith('AQ.')) {
+                    headers['Authorization'] = `Bearer ${cleanKey}`;
+                } else {
+                    url += `?key=${cleanKey}`;
+                    headers['x-goog-api-key'] = cleanKey;
+                }
 
                 const res = await fetch(url, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'x-goog-api-key': cleanKey // 👈 關鍵修正：同時帶入 Google 官方 API Key 專用 Header
-                    },
+                    headers: headers,
                     body: JSON.stringify({
                         systemInstruction: systemInstruction,
                         contents: contents,
