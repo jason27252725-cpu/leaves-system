@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v2.3 GitHub 雲端資料庫優先版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v2.4 完全對接修正版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -255,7 +255,9 @@
 
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
-        const HARDCODED_GIST_ID = '3d0337a00d23812d4d6fb3e68c0a34e0';
+        
+        // 🌟 已更新為您截圖中正確使用的真實 Gist ID
+        const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
         let activeCode = localStorage.getItem('shiye_active_code') || null;
@@ -269,13 +271,16 @@
         function getGithubToken() { return localStorage.getItem('shiye_github_token') || ''; }
         function getCodesFilename() { return localStorage.getItem('shiye_codes_filename') || 'shiye-codes.json'; }
 
+        function saveCodesToLocal(codes) {
+            localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+        }
+
         function resetDefaultGistId() {
             document.getElementById('codesGistIdInput').value = HARDCODED_GIST_ID;
             localStorage.setItem('shiye_codes_gist_id', HARDCODED_GIST_ID);
             alert('已回復為程式碼內建預設 Gist ID！');
         }
 
-        // 🌟 核心修正：開機時，強迫【100% 優先向 GitHub 雲端 API 抓取資料】
         async function fetchCodesFromCloud() {
             let gistId = getCodesGistId();
             let filename = getCodesFilename();
@@ -290,7 +295,7 @@
                             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
                             
                             if (codes.length > 0) {
-                                localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+                                saveCodesToLocal(codes);
                                 if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
                                 if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
                                 if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
@@ -301,11 +306,10 @@
                         }
                     }
                 } catch (e) {
-                    console.error("Gist fetch failed, using fallback cache", e);
+                    console.error("Gist fetch failed, using cache fallback", e);
                 }
             }
 
-            // 僅有在網路完全離線時才使用本機快取
             const cached = localStorage.getItem('shiye_codes_cache');
             if (cached) {
                 try {
@@ -445,6 +449,7 @@
             localStorage.setItem('shiye_auth', currentAuth);
             localStorage.setItem('shiye_active_code', activeCode);
 
+            saveCodesToLocal(codes);
             await pushCodesToCloud(codes);
 
             window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
@@ -488,7 +493,6 @@
             document.getElementById('cloudSopViewer').value = content;
         }
 
-        // 🌟 產生新代碼時，自動同步推送至 GitHub 雲端
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
@@ -500,6 +504,7 @@
                 status: 'idle', supportMobile: true, supportIpad: true 
             });
             
+            saveCodesToLocal(currentCodesList);
             nameInput.value = '';
             renderCodesTable();
 
@@ -516,12 +521,12 @@
             }
         }
 
-        // 🌟 刪除代碼時，自動同步推送至 GitHub 雲端
         async function deleteCode(codeStr) {
             if (codeStr === SPECIAL_ADMIN_CODE) return;
             if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端資料庫移除。`)) return;
 
             currentCodesList = currentCodesList.filter(c => c.code !== codeStr);
+            saveCodesToLocal(currentCodesList);
             renderCodesTable();
 
             let token = getGithubToken();
@@ -534,6 +539,7 @@
             const matched = currentCodesList.find(c => c.code === codeStr);
             if (matched) {
                 matched.status = matched.status === 'warning' ? 'idle' : 'warning';
+                saveCodesToLocal(currentCodesList);
                 renderCodesTable();
                 pushCodesToCloud(currentCodesList);
             }
@@ -562,7 +568,6 @@
             });
         }
 
-        // 🌟 將【API Key + SOP 網址 + 背景圖 + 身分碼】全套寫入 GitHub 雲端 Gist
         async function pushCodesToCloud(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -615,6 +620,8 @@
             if (bgText) {
                 localStorage.setItem('shiye_bg_list', JSON.stringify(bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0)));
             }
+
+            saveCodesToLocal(currentCodesList);
 
             if (!token) {
                 alert('⚠️ 警告：您尚未填寫「GitHub Token (ghp_...)」！\n如果沒有填寫 Token，設定無法推送到 GitHub 雲端資料庫。');
