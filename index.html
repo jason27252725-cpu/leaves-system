@@ -116,7 +116,7 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Channel)</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Multi-Model)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.0 OpenRouter 萬用通道版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v4.1 免費模型自動備援修復版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -680,7 +680,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心：OpenRouter API 萬用直連 (對接 Gemini 2.0 Flash 免費模型，永遠相容 sk-or-v1- 開頭金鑰)
+        // 🌟 核心：OpenRouter 智慧多重免費模型自動輪詢 (備援切換機制)
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -703,53 +703,70 @@
             const loadingId = appendLoading();
             const sopContent = await fetchSopFromGist();
 
-            try {
-                const messages = [
-                    { 
-                        role: "system", 
-                        content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` 
-                    }
-                ];
-                
-                chatHistory.forEach(h => {
-                    messages.push({ 
-                        role: h.role === 'user' ? 'user' : 'assistant', 
-                        content: h.text 
-                    });
-                });
-                
-                messages.push({ role: "user", content: text });
-
-                const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey.trim()}`,
-                        'HTTP-Referer': window.location.origin,
-                        'X-Title': 'Leaves Design System'
-                    },
-                    body: JSON.stringify({
-                        model: "google/gemini-2.0-flash-lite-001:free", // 免費對接最新 Gemini 2.0 模型
-                        messages: messages,
-                        temperature: 0.3
-                    })
-                });
-
-                const data = await res.json();
-                removeLoading(loadingId);
-
-                if (data.error) {
-                    appendMessage(`OpenRouter API 錯誤: ${data.error.message || JSON.stringify(data.error)}`, 'assistant', true);
-                } else if (data.choices && data.candidates ? false : (data.choices && data.choices[0] && data.choices[0].message)) {
-                    const reply = data.choices[0].message.content;
-                    appendMessage(reply, 'assistant', false);
-                    chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: reply });
-                } else {
-                    appendMessage('未取得有效的 AI 回覆內容，請再試一次。', 'assistant', true);
+            const messages = [
+                { 
+                    role: "system", 
+                    content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` 
                 }
-            } catch (err) {
-                removeLoading(loadingId);
-                appendMessage(`連線失敗: ${err.message}`, 'assistant', true);
+            ];
+            
+            chatHistory.forEach(h => {
+                messages.push({ 
+                    role: h.role === 'user' ? 'user' : 'assistant', 
+                    content: h.text 
+                });
+            });
+            
+            messages.push({ role: "user", content: text });
+
+            // 🌟 穩定免費模型輪詢順序列表
+            const candidateModels = [
+                "google/gemini-2.0-flash-exp:free",
+                "google/gemini-flash-1.5:free",
+                "openrouter/free",
+                "qwen/qwen-2.5-7b-instruct:free"
+            ];
+
+            let successReply = null;
+            let lastErrorMessage = '';
+
+            for (const modelId of candidateModels) {
+                try {
+                    const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey.trim()}`,
+                            'HTTP-Referer': window.location.origin,
+                            'X-Title': 'Leaves Design System'
+                        },
+                        body: JSON.stringify({
+                            model: modelId,
+                            messages: messages,
+                            temperature: 0.3
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
+                        successReply = data.choices[0].message.content;
+                        break; // 成功取得回覆，跳出輪詢循環
+                    } else if (data.error) {
+                        lastErrorMessage = data.error.message || JSON.stringify(data.error);
+                    }
+                } catch (e) {
+                    lastErrorMessage = e.message;
+                }
+            }
+
+            removeLoading(loadingId);
+
+            if (successReply) {
+                appendMessage(successReply, 'assistant', false);
+                chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
+            } else {
+                appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true);
             }
         }
 
@@ -771,7 +788,7 @@
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini 2.0 via OpenRouter)...</div></div>`);
+            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini via OpenRouter)...</div></div>`);
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return id;
         }
