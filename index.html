@@ -143,7 +143,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.0 Gemini 原生直連修復版</span>
+                            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full font-mono">v3.1 在線狀態即時監控版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -167,7 +167,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，這樣新增身分碼時系統才能直接寫入 GitHub 雲端！</p>
+                    <p class="text-[11px] text-neutral-400">請務必輸入 GitHub Token (ghp_...)，這樣新增身分碼與登入/登出狀態才能即時寫入 GitHub 雲端！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -206,8 +206,8 @@
                 <div class="glass-mono p-6 rounded-2xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Management & Status Monitor</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">點擊「切換燈號」可調整狀態（🟢 啟用 ➔ 🟡 警告 ➔ 🔴 停用封鎖）</p>
+                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Passcode Online Status Monitor</h3>
+                            <p class="text-[11px] text-neutral-500 mt-0.5">狀態說明：🟢 綠燈（目前有人使用中） / 🔴 紅燈（未登入 / 離線）</p>
                         </div>
                         <div class="flex items-center space-x-2 w-full md:w-auto">
                             <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
@@ -221,11 +221,11 @@
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase">
-                                    <th class="p-3.5 font-medium">狀態燈</th>
+                                    <th class="p-3.5 font-medium">在線狀態</th>
                                     <th class="p-3.5 font-medium">PASSCODE</th>
                                     <th class="p-3.5 font-medium">名稱</th>
-                                    <th class="p-3.5 font-medium">登入總次數</th>
-                                    <th class="p-3.5 font-medium">最新登入時間</th>
+                                    <th class="p-3.5 font-medium">累積登入次數</th>
+                                    <th class="p-3.5 font-medium">最近登入時間</th>
                                     <th class="p-3.5 font-medium text-right">操作</th>
                                 </tr>
                             </thead>
@@ -338,9 +338,9 @@
 
         function getFallbackCodes() {
             return [
-                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true },
-                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true },
-                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', createdAt: new Date().toLocaleString(), logins: [], status: 'active', supportMobile: true, supportIpad: true }
+                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true }
             ];
         }
 
@@ -432,6 +432,7 @@
             }
         }
 
+        // 🌟 登入：將 status 設為 online (🟢 綠燈)
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             const codes = await fetchCodesFromCloud();
@@ -439,14 +440,9 @@
             if (!matched) { alert('驗證碼錯誤或不存在'); return; }
             if (authMode === 'admin' && matched.role !== 'admin') { alert('此代碼非管理員權限'); return; }
 
-            // 檢查是否被管理員封鎖
-            if (matched.status === 'disabled') {
-                alert('⚠️ 此通行碼已被管理員停用，暫時無法登入系統！');
-                return;
-            }
-
             matched.logins = matched.logins || [];
             matched.logins.push(new Date().toLocaleString());
+            matched.status = 'online';
 
             currentAuth = matched.role;
             activeCode = matched.code;
@@ -460,7 +456,18 @@
             checkAuthAndRoute();
         }
 
+        // 🌟 登出：將 status 設為 offline (🔴 紅燈)
         async function logout() {
+            if (activeCode) {
+                let codes = await fetchCodesFromCloud();
+                let matched = codes.find(c => c.code === activeCode);
+                if (matched) {
+                    matched.status = 'offline';
+                    saveCodesToLocal(codes);
+                    await pushCodesToCloud(codes);
+                }
+            }
+
             currentAuth = null;
             activeCode = null;
             localStorage.removeItem('shiye_auth');
@@ -505,7 +512,7 @@
             currentCodesList.push({ 
                 code: randomCode, name: name, role: 'user', 
                 createdAt: new Date().toLocaleString(), logins: [], 
-                status: 'active', supportMobile: true, supportIpad: true 
+                status: 'offline', supportMobile: true, supportIpad: true 
             });
             
             saveCodesToLocal(currentCodesList);
@@ -539,38 +546,23 @@
             }
         }
 
-        // 🌟 修復：狀態燈號循環切換（ active 🟢 -> warning 🟡 -> disabled 🔴 -> active 🟢 ）
-        function toggleCodeStatus(codeStr) {
-            const matched = currentCodesList.find(c => c.code === codeStr);
-            if (matched) {
-                if (!matched.status || matched.status === 'active' || matched.status === 'idle') {
-                    matched.status = 'warning';
-                } else if (matched.status === 'warning') {
-                    matched.status = 'disabled';
-                } else {
-                    matched.status = 'active';
-                }
-                saveCodesToLocal(currentCodesList);
-                renderCodesTable();
-                pushCodesToCloud(currentCodesList);
-            }
-        }
-
+        // 🌟 渲染表格：online -> 🟢 綠燈，其他/offline -> 🔴 紅燈
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
             currentCodesList.forEach(c => {
-                let st = c.status || 'active';
-                let lightColor = 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'; // 🟢 啟用 (綠燈)
-                let statusTitle = '狀態：正常啟用中';
+                let st = c.status || 'offline';
+                let isOnline = (st === 'online' || st === 'active');
 
-                if (st === 'warning') {
-                    lightColor = 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]'; // 🟡 觀察 (黃燈)
-                    statusTitle = '狀態：警告觀察中';
-                } else if (st === 'disabled') {
-                    lightColor = 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; // 🔴 停用 (紅燈)
-                    statusTitle = '狀態：已停用封鎖';
-                }
+                let lightColor = isOnline 
+                    ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)] animate-pulse' 
+                    : 'bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]';
+
+                let statusTitle = isOnline ? '綠燈：目前有人登入使用中 (在線)' : '紅燈：無人使用 / 離線';
+                let statusText = isOnline ? '在線中' : '離線';
+                let statusBadgeStyle = isOnline 
+                    ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' 
+                    : 'bg-neutral-900 text-neutral-500 border-neutral-800';
 
                 const loginCount = (c.logins || []).length;
                 const lastLogin = (c.logins || []).slice(-1)[0] || '尚無登入';
@@ -578,14 +570,16 @@
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
                 tr.innerHTML = `
-                    <td class="p-3.5"><span class="inline-block w-3 h-3 rounded-full ${lightColor} cursor-pointer" onclick="toggleCodeStatus('${c.code}')" title="${statusTitle} (點擊可切換)"></span></td>
+                    <td class="p-3.5 flex items-center space-x-2">
+                        <span class="inline-block w-3 h-3 rounded-full ${lightColor}" title="${statusTitle}"></span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusBadgeStyle}">${statusText}</span>
+                    </td>
                     <td class="p-3.5 font-mono text-white font-medium select-all">${c.code}</td>
                     <td class="p-3.5 text-neutral-300">${c.name}</td>
                     <td class="p-3.5 text-neutral-300 font-mono"><span class="bg-white/10 px-2 py-0.5 rounded-md text-[11px]">${loginCount} 次</span></td>
                     <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${lastLogin}</td>
                     <td class="p-3.5 text-right space-x-2">
-                        <button onclick="toggleCodeStatus('${c.code}')" class="text-neutral-400 hover:text-white text-[10px] border border-neutral-800 px-2 py-1 rounded">切換燈號</button>
-                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${c.code}')" class="text-neutral-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${c.code}')" class="text-neutral-500 hover:text-white" title="刪除身分碼"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -689,7 +683,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // 🌟 核心升級：Google Gemini 1.5 Flash 官方原生 API 直連
+        // 🌟 核心：Google Gemini 1.5 Flash 官方原生 API 直連
         async function handleSend() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -713,7 +707,6 @@
             const sopContent = await fetchSopFromGist();
 
             try {
-                // 打包 Gemini 歷史對話格式 (user / model)
                 const contents = [];
                 chatHistory.forEach(h => {
                     contents.push({
@@ -732,7 +725,6 @@
                     }]
                 };
 
-                // 直連 Google 官方 Gemini 1.5 Flash API 端點
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
 
                 const res = await fetch(url, {
