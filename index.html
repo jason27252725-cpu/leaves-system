@@ -164,14 +164,14 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">系統已預設 Gist ID，您只需要填入 GitHub Token 即可一鍵自動寫入！</p>
+                    <p class="text-[11px] text-neutral-400">請確認 Gist ID 與 GitHub Token 已填寫，儲存時系統會將全套設定一鍵同步至全公司手機！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
                             <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (管理員發布金鑰)</label>
+                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (管理員發布金鑰 ghp_...)</label>
                             <input type="password" id="githubTokenInput" placeholder="GitHub Token (ghp_...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                     </div>
@@ -274,6 +274,7 @@
             alert('已回復為程式碼內建預設 Gist ID！');
         }
 
+        // 🌟 全網頁開機時，自動向 GitHub Gist 抓取【所有最新雲端設定】
         async function fetchSystemConfigFromCloud() {
             let gistId = getCodesGistId();
             let filename = getCodesFilename();
@@ -290,6 +291,12 @@
                         }
                         if (cloudData.apiKey) {
                             localStorage.setItem('shiye_apikey', cloudData.apiKey);
+                        }
+                        if (cloudData.sopUrl) {
+                            localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+                        }
+                        if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
+                            localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
                         }
                     }
                 }
@@ -545,16 +552,22 @@
             });
         }
 
+        // 🌟 將【API Key + SOP 網址 + 背景圖 + 身分碼】打包推送到 GitHub 雲端
         async function pushCodesToCloud(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
             let apiKey = localStorage.getItem('shiye_apikey') || '';
+            let sopUrl = localStorage.getItem('shiye_gist_url') || '';
+            let bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
+
             if (!gistId || !token) return false;
 
             try {
                 const payloadData = {
                     apiKey: apiKey,
+                    sopUrl: sopUrl,
+                    bgList: bgList,
                     codes: codesArray
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
@@ -595,9 +608,9 @@
 
             const success = await pushCodesToCloud(currentCodesList);
             if (success) {
-                alert('✅ 成功：系統設定與身分組已自動同步至 GitHub 雲端！');
+                alert('✅ 成功：系統設定與身分組已全數自動同步至 GitHub 雲端！');
             } else {
-                alert('⚠️ 設定已儲存，但 GitHub 自動同步失敗，請檢查 Gist ID 與 Token 是否正確。');
+                alert('⚠️ 設定已儲存，但 GitHub 自動同步失敗，請檢查 GitHub Token (ghp_...) 是否有正確填寫。');
             }
             initBackgroundSlideshow();
         }
@@ -659,6 +672,7 @@
                 chatHistory.forEach(h => messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
                 messages.push({ role: "user", content: text });
 
+                // 🌟 使用最穩定且免費的 Meta Llama 3.1 模型
                 const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'Leaves Design System' },
