@@ -46,7 +46,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* 🌟 iOS / iPad 經典解鎖轉場動效 */
         @keyframes iosCardUnlock {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
             40% { transform: scale(0.97); opacity: 0.9; }
@@ -71,7 +70,6 @@
         }
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
-        /* Markdown 精準樣式 (含表格、代碼塊與引用) */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -93,12 +91,10 @@
         .markdown-body p { margin-bottom: 0.5rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
         
-        /* 代碼框與行內代碼 */
         .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.7rem; color: #f3f4f6; }
         .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; }
         .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
         
-        /* 表格排版 */
         .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; }
         .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
         .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
@@ -112,11 +108,9 @@
 </head>
 <body class="h-full flex flex-col select-none relative">
 
-    <!-- 全域大圖輪播背景 -->
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 圖片全螢幕燈箱 Lightbox -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden cursor-zoom-out transition-opacity duration-300">
         <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
             <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
@@ -127,7 +121,6 @@
         </div>
     </div>
 
-    <!-- Apple 風格高透磨砂登入遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/35 backdrop-blur-2xl flex items-center justify-center p-4 hidden transition-all duration-500">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -149,17 +142,15 @@
         </div>
     </div>
 
-    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
-        <!-- 頂部 Header -->
         <header class="px-8 py-6 flex justify-between items-center shrink-0 z-20">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v6.3 終極全能版</span>
+                        <span>v6.4 精準診斷版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -185,7 +176,6 @@
             </div>
         </main>
 
-        <!-- 右側聊天對話框 -->
         <div id="chatDrawer" class="chat-drawer fixed top-0 right-0 bottom-0 w-full md:w-1/2 chat-drawer-glass z-50 flex flex-col shadow-2xl">
             <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/30 backdrop-blur-md">
                 <div class="flex items-center space-x-3">
@@ -214,7 +204,6 @@
                 <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製 AI 回答內容至剪貼簿！
             </div>
 
-            <!-- 輸入區域 (適配 iOS Safe Area) -->
             <div class="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/40 backdrop-blur-md">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-600 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-24 leading-relaxed"></textarea>
@@ -227,14 +216,13 @@
             </div>
         </div>
 
-        <!-- 後台管理介面 -->
         <main id="viewAdmin" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl overflow-y-auto p-6 md:p-12 space-y-8 hidden pb-24">
             <div class="max-w-4xl mx-auto space-y-8">
                 <div class="flex justify-between items-center border-b border-white/10 pb-6">
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.3 終極全能版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.4 精準診斷版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -243,7 +231,6 @@
                     </button>
                 </div>
 
-                <!-- OpenRouter AI 模型監控與診斷 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-purple-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
@@ -278,7 +265,6 @@
                     </div>
                 </div>
 
-                <!-- GitHub 專用設定 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-amber-500/30">
                     <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
                         <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist Raw 網址
@@ -293,7 +279,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">電腦填入 Token 點擊儲存後，全公司手機皆可自動即時讀取最新通行碼與登入紀錄！</p>
+                    <p class="text-[11px] text-neutral-400">請填寫具備 `gist` 權限的 GitHub Token (ghp_...)，點擊儲存後將同步至雲端！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -328,7 +314,6 @@
                     </div>
                 </div>
 
-                <!-- 身分組管理區 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
@@ -364,7 +349,6 @@
                     </div>
                 </div>
 
-                <!-- 錯誤回報專區 (雲端集中同步) -->
                 <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-red-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
                         <div>
@@ -947,7 +931,6 @@
             }
         }
 
-        // 🌟 產生新代碼（含 100% 隨機碰撞防禦）
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
@@ -965,7 +948,6 @@
             try {
                 let freshCodes = await fetchCodesFromCloud();
                 
-                // 🌟 確保新產生的代碼在全域 100% 唯一
                 let randomCode = '';
                 do {
                     randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -982,15 +964,15 @@
                     supportIpad: true 
                 });
 
-                let success = await pushCodesToCloud(freshCodes);
-                if (success) {
+                let result = await pushCodesToCloudWithDetails(freshCodes);
+                if (result.success) {
                     currentCodesList = freshCodes;
                     saveCodesToLocal(currentCodesList);
                     nameInput.value = '';
                     renderCodesTable();
                     alert(`✅ 成功產生新身分碼：${randomCode}\n已 100% 寫入 GitHub 雲端！全公司同仁手機立刻可以登入。`);
                 } else {
-                    alert(`❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否過期或 Gist ID 是否正確。`);
+                    alert(`❌ 寫入 GitHub 雲端失敗！\n錯誤代碼：${result.status} ${result.statusText}\n伺服器訊息：${result.message}`);
                 }
             } catch (err) {
                 alert(`❌ 發生錯誤: ${err.message}`);
@@ -1014,14 +996,14 @@
                 let freshCodes = await fetchCodesFromCloud();
                 freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
                 
-                let success = await pushCodesToCloud(freshCodes);
-                if (success) {
+                let result = await pushCodesToCloudWithDetails(freshCodes);
+                if (result.success) {
                     currentCodesList = freshCodes;
                     saveCodesToLocal(currentCodesList);
                     renderCodesTable();
                     alert(`✅ 已成功從 GitHub 雲端移除身分碼【${codeStr}】！`);
                 } else {
-                    alert(`❌ 雲端刪除失敗，請檢查 GitHub Token 權限。`);
+                    alert(`❌ 雲端刪除失敗！\n錯誤代碼：${result.status} ${result.statusText}`);
                 }
             } catch (err) {
                 alert(`❌ 刪除發生錯誤: ${err.message}`);
@@ -1068,12 +1050,15 @@
             });
         }
 
-        async function pushCodesToCloud(codesArray, customErrorLogs = null) {
+        // 🌟 核心：帶詳細錯誤診斷的雲端發送器
+        async function pushCodesToCloudWithDetails(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
             
-            if (!gistId || !token) return false;
+            if (!gistId || !token) {
+                return { success: false, status: 400, statusText: 'Missing Credentials', message: '未填寫 Gist ID 或 Token' };
+            }
 
             let targetCodes = (codesArray && codesArray.length > 0) ? codesArray : currentCodesList;
             if (!targetCodes || targetCodes.length === 0) {
@@ -1107,10 +1092,26 @@
                         }
                     })
                 });
-                return res.ok;
+
+                if (res.ok) {
+                    return { success: true };
+                } else {
+                    let errData = await res.json().catch(() => ({}));
+                    return { 
+                        success: false, 
+                        status: res.status, 
+                        statusText: res.statusText, 
+                        message: errData.message || (res.status === 401 ? 'Token 無效或過期' : (res.status === 404 ? 'Gist ID 不存在或此 Token 帳號無權限修改' : (res.status === 403 ? 'Token 未勾選 gist 權限' : '未知錯誤')))
+                    };
+                }
             } catch (e) {
-                return false;
+                return { success: false, status: 0, statusText: 'Network Error', message: e.message };
             }
+        }
+
+        async function pushCodesToCloud(codesArray, customErrorLogs = null) {
+            let res = await pushCodesToCloudWithDetails(codesArray, customErrorLogs);
+            return res.success;
         }
 
         async function saveAdminSettings() {
@@ -1142,11 +1143,11 @@
                     return;
                 }
 
-                const success = await pushCodesToCloud(currentCodesList);
-                if (success) {
+                const result = await pushCodesToCloudWithDetails(currentCodesList);
+                if (result.success) {
                     alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端資料庫！');
                 } else {
-                    alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
+                    alert(`❌ 寫入 GitHub 雲端失敗！\n\n【診斷資訊】\n• 狀態碼: HTTP ${result.status} (${result.statusText})\n• 原因說明: ${result.message}\n\n💡 建議排查：\n1. 請確認 Token 是否過期（建議選 No expiration）\n2. 請確認 Token 是否勾選了「gist」權限\n3. 請確認此 Gist ID 是否為該 Token 帳號所擁有。`);
                 }
                 initBackgroundSlideshow();
             } finally {
@@ -1502,7 +1503,6 @@ ${sopContent}
             images.forEach(img => {
                 img.addEventListener('click', () => openLightbox(img.src, img.alt));
                 img.addEventListener('load', () => {
-                    // 智慧平滑滾動：只有靠近底部才滾動
                     const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 180;
                     if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
                 });
