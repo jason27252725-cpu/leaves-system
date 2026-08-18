@@ -71,7 +71,7 @@
         }
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
-        /* Markdown 精準樣式 (含表格與引用) */
+        /* Markdown 精準樣式 (含表格、代碼塊與引用) */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -92,7 +92,11 @@
         .markdown-body strong { color: #ffffff; font-weight: 600; }
         .markdown-body p { margin-bottom: 0.5rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
-        .markdown-body code { background: rgba(255, 255, 255, 0.1); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace; }
+        
+        /* 代碼框與行內代碼 */
+        .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.7rem; color: #f3f4f6; }
+        .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; }
+        .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
         
         /* 表格排版 */
         .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; }
@@ -108,7 +112,7 @@
 </head>
 <body class="h-full flex flex-col select-none relative">
 
-    <!-- 全域大圖輪播背景 (登入前後皆完全同步) -->
+    <!-- 全域大圖輪播背景 -->
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
@@ -155,7 +159,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v6.1 終極全方位版</span>
+                        <span>v6.3 終極全能版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -230,7 +234,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.1 終極全方位版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.3 終極全能版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -337,7 +341,7 @@
                                 <span>重新整理</span>
                             </button>
                             <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
-                            <button onclick="generateNewCode()" class="bg-white hover:bg-neutral-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition tracking-wider shrink-0">
+                            <button onclick="generateNewCode()" id="genNewCodeBtn" class="bg-white hover:bg-neutral-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition tracking-wider shrink-0 shadow-lg">
                                 產生新代碼
                             </button>
                         </div>
@@ -394,7 +398,6 @@
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
-        // 🌟 自訂 Marked.js 解析器：外部連結一律新分頁開啟
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
@@ -455,7 +458,6 @@
             if (e.key === 'Escape') closeLightbox();
         });
 
-        // 🌟 核心修復：依據 msgId 提取純文字進行安全複製
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
             const textToCopy = record ? record.a : '';
@@ -473,8 +475,11 @@
         function encodeToken(str) {
             if (!str) return '';
             try {
-                let xor = str.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
-                return btoa(encodeURIComponent(xor));
+                let shifted = '';
+                for (let i = 0; i < str.length; i++) {
+                    shifted += String.fromCharCode(str.charCodeAt(i) + 7);
+                }
+                return btoa(shifted);
             } catch(e) {
                 return '';
             }
@@ -483,8 +488,12 @@
         function decodeToken(str) {
             if (!str) return '';
             try {
-                let xor = decodeURIComponent(atob(str));
-                return xor.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
+                let unbase64 = atob(str);
+                let unshifted = '';
+                for (let i = 0; i < unbase64.length; i++) {
+                    unshifted += String.fromCharCode(unbase64.charCodeAt(i) - 7);
+                }
+                return unshifted;
             } catch(e) {
                 return '';
             }
@@ -531,55 +540,44 @@
             let filename = getCodesFilename();
             let token = getGithubToken();
 
-            if (gistId) {
-                const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+            if (!gistId) return getFallbackCodes();
+
+            const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+            try {
                 const headers = { 
                     'Accept': 'application/vnd.github.v3+json',
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
+                    'Pragma': 'no-cache'
                 };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                try {
-                    const res = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { 
-                        headers: headers,
-                        cache: 'no-store' 
-                    });
+                const res = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { 
+                    headers: headers,
+                    cache: 'no-store' 
+                });
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.files && data.files[filename]) {
-                            const cloudData = JSON.parse(data.files[filename].content);
-                            const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
-
-                            if (cloudData.cloudToken) {
-                                let restored = decodeToken(cloudData.cloudToken);
-                                if (restored && (restored.startsWith('ghp_') || restored.startsWith('github_pat_') || restored.length > 20)) {
-                                    localStorage.setItem('shiye_github_token', restored);
-                                    let inputEl = document.getElementById('githubTokenInput');
-                                    if (inputEl && !inputEl.value) inputEl.value = restored;
-                                }
-                            }
-
-                            if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) {
-                                localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
-                            }
-
-                            if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
-                            if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
-                            if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
-                                localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
-                            }
-
-                            isCloudLoaded = true;
-                            saveCodesToLocal(codes);
-                            return codes;
-                        }
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.files && data.files[filename] && data.files[filename].content) {
+                        const cloudData = JSON.parse(data.files[filename].content);
+                        return handleCloudDataSuccess(cloudData);
                     }
-                } catch (e) {
-                    console.error("Gist API fetch failed...", e);
                 }
+            } catch (e) {
+                console.warn("API Tier 1 failed, trying Raw CDN Tier 2...", e);
+            }
+
+            try {
+                const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?${randomBuster}`, {
+                    cache: 'no-store'
+                });
+                if (rawRes.ok) {
+                    const cloudData = await rawRes.json();
+                    return handleCloudDataSuccess(cloudData);
+                }
+            } catch (e) {
+                console.warn("Raw CDN Tier 2 failed...", e);
             }
 
             const cached = localStorage.getItem('shiye_codes_cache');
@@ -591,6 +589,33 @@
             }
 
             return getFallbackCodes();
+        }
+
+        function handleCloudDataSuccess(cloudData) {
+            const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+
+            if (cloudData.cloudToken) {
+                let restored = decodeToken(cloudData.cloudToken);
+                if (restored && (restored.startsWith('ghp_') || restored.startsWith('github_pat_') || restored.length > 20)) {
+                    localStorage.setItem('shiye_github_token', restored);
+                    let inputEl = document.getElementById('githubTokenInput');
+                    if (inputEl && !inputEl.value) inputEl.value = restored;
+                }
+            }
+
+            if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) {
+                localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
+            }
+
+            if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
+            if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+            if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
+                localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
+            }
+
+            isCloudLoaded = true;
+            saveCodesToLocal(codes);
+            return codes;
         }
 
         async function fetchSopFromGist() {
@@ -712,7 +737,6 @@
             }
         }
 
-        // 🌟 核心：iOS 絲滑解鎖動效與大小寫不敏感驗證
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -723,11 +747,11 @@
 
             try {
                 const freshCodes = await fetchCodesFromCloud();
-                // 🌟 大小寫不敏感比對，提升手機輸入體驗
-                const matched = freshCodes.find(c => c.code && c.code.toUpperCase() === val.toUpperCase());
+                const cleanInput = val.toUpperCase();
+                const matched = freshCodes.find(c => c.code && c.code.trim().toUpperCase() === cleanInput);
 
                 if (!matched) { 
-                    alert('❌ 驗證碼錯誤、已被註銷或不存在！'); 
+                    alert(`❌ 驗證碼【${val}】錯誤、已被註銷或不存在！\n（已為您即時連線雲端資料庫比對）`); 
                     return; 
                 }
 
@@ -746,9 +770,8 @@
                 localStorage.setItem('shiye_active_code', activeCode);
 
                 saveCodesToLocal(freshCodes);
-                await pushCodesToCloud(freshCodes);
+                pushCodesToCloud(freshCodes).catch(console.error);
 
-                // 觸發 iOS 經典解鎖轉場動效
                 const authModal = document.getElementById('authModal');
                 const authCard = document.getElementById('authCard');
                 const appContainer = document.getElementById('appContainer');
@@ -804,7 +827,6 @@
             checkAuthAndRoute(); 
         });
 
-        // 登入輸入框 Enter 支援
         document.getElementById('passcodeinput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
                 e.preventDefault();
@@ -925,33 +947,56 @@
             }
         }
 
+        // 🌟 產生新代碼（含 100% 隨機碰撞防禦）
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
-            const randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             
-            let freshCodes = await fetchCodesFromCloud();
-            freshCodes.push({ 
-                code: randomCode, name: name, role: 'user', 
-                createdAt: new Date().toLocaleString(), logins: [], 
-                status: 'offline', supportMobile: true, supportIpad: true 
-            });
-            
-            currentCodesList = freshCodes;
-            saveCodesToLocal(currentCodesList);
-            nameInput.value = '';
-            renderCodesTable();
-
             let token = getGithubToken();
-            if (token) {
-                let success = await pushCodesToCloud(currentCodesList);
+            if (!token) {
+                alert('⚠️ 請先在上方【GitHub Token】欄位填寫您的管理員金鑰 (ghp_...) 並儲存，才能將新身分碼發布至雲端給全公司手機使用！');
+                return;
+            }
+
+            const genBtn = document.getElementById('genNewCodeBtn');
+            genBtn.disabled = true;
+            genBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 雲端發布中...';
+
+            try {
+                let freshCodes = await fetchCodesFromCloud();
+                
+                // 🌟 確保新產生的代碼在全域 100% 唯一
+                let randomCode = '';
+                do {
+                    randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                } while (freshCodes.some(c => c.code && c.code.toUpperCase() === randomCode.toUpperCase()));
+
+                freshCodes.push({ 
+                    code: randomCode, 
+                    name: name, 
+                    role: 'user', 
+                    createdAt: new Date().toLocaleString(), 
+                    logins: [], 
+                    status: 'offline', 
+                    supportMobile: true, 
+                    supportIpad: true 
+                });
+
+                let success = await pushCodesToCloud(freshCodes);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機皆可立即同步。`);
+                    currentCodesList = freshCodes;
+                    saveCodesToLocal(currentCodesList);
+                    nameInput.value = '';
+                    renderCodesTable();
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已 100% 寫入 GitHub 雲端！全公司同仁手機立刻可以登入。`);
                 } else {
-                    alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 Token 是否正確！`);
+                    alert(`❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否過期或 Gist ID 是否正確。`);
                 }
-            } else {
-                alert(`⚠️ 身分碼已產生：${randomCode}\n請在後台填寫 GitHub Token 並點擊最下方儲存，才能同步至雲端喔！`);
+            } catch (err) {
+                alert(`❌ 發生錯誤: ${err.message}`);
+            } finally {
+                genBtn.disabled = false;
+                genBtn.innerHTML = '產生新代碼';
             }
         }
 
@@ -959,23 +1004,27 @@
             if (codeStr.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase()) return;
             if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端移除。`)) return;
 
-            let freshCodes = await fetchCodesFromCloud();
-            freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
-            
-            currentCodesList = freshCodes;
-            saveCodesToLocal(currentCodesList);
-            renderCodesTable();
-
             let token = getGithubToken();
-            if (token) {
-                let success = await pushCodesToCloud(currentCodesList);
+            if (!token) {
+                alert('⚠️ 請先填寫 GitHub Token 才能將刪除動作同步至雲端！');
+                return;
+            }
+
+            try {
+                let freshCodes = await fetchCodesFromCloud();
+                freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
+                
+                let success = await pushCodesToCloud(freshCodes);
                 if (success) {
-                    alert(`✅ 已成功刪除身分碼【${codeStr}】，並同步至 GitHub 雲端！`);
+                    currentCodesList = freshCodes;
+                    saveCodesToLocal(currentCodesList);
+                    renderCodesTable();
+                    alert(`✅ 已成功從 GitHub 雲端移除身分碼【${codeStr}】！`);
                 } else {
-                    alert(`⚠️ 已於本機刪除【${codeStr}】，但同步至雲端失敗，請確認 Token 權限。`);
+                    alert(`❌ 雲端刪除失敗，請檢查 GitHub Token 權限。`);
                 }
-            } else {
-                alert(`⚠️ 請填寫 GitHub Token 並點擊儲存，才能將刪除動作同步至雲端喔！`);
+            } catch (err) {
+                alert(`❌ 刪除發生錯誤: ${err.message}`);
             }
         }
 
@@ -1019,7 +1068,6 @@
             });
         }
 
-        // 🌟 雲端防禦同步：防止空值覆蓋
         async function pushCodesToCloud(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -1084,7 +1132,6 @@
                 if (token) localStorage.setItem('shiye_github_token', token);
                 if (filename) localStorage.setItem('shiye_codes_filename', filename);
                 
-                // 🌟 正確支援背景網址清空或更新
                 const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
                 localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
 
@@ -1244,12 +1291,16 @@
                 sendBtnIcon.className = 'fa-solid fa-stop text-xs';
                 sendBtnText.classList.remove('hidden');
                 sendBtn.title = '點擊中斷 AI 回答';
+                userInput.setAttribute('readonly', 'true');
+                userInput.classList.add('opacity-60');
             } else {
                 sendBtn.classList.add('bg-white', 'text-black', 'hover:bg-neutral-200');
                 sendBtn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700', 'px-3');
                 sendBtnIcon.className = 'fa-solid fa-arrow-up text-xs';
                 sendBtnText.classList.add('hidden');
                 sendBtn.title = '發送訊息';
+                userInput.removeAttribute('readonly');
+                userInput.classList.remove('opacity-60');
             }
         }
 
@@ -1451,7 +1502,9 @@ ${sopContent}
             images.forEach(img => {
                 img.addEventListener('click', () => openLightbox(img.src, img.alt));
                 img.addEventListener('load', () => {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    // 智慧平滑滾動：只有靠近底部才滾動
+                    const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 180;
+                    if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
                 });
                 img.addEventListener('error', () => {
                     const fallback = document.createElement('span');
