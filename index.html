@@ -18,7 +18,7 @@
             min-height: 100dvh;
         }
         
-        .glass-mono { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-mono { background: rgba(12, 12, 12, 0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255, 255, 255, 0.12); }
         .chat-drawer-glass { background: rgba(12, 12, 12, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.12); }
         .glass-card { background: rgba(20, 20, 20, 0.45); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
@@ -41,13 +41,37 @@
             transform: translateX(0);
         }
 
+        #chatContainer {
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 🌟 iOS / iPad 經典解鎖轉場動效 */
+        @keyframes iosCardUnlock {
+            0% { transform: scale(1); opacity: 1; filter: blur(0px); }
+            40% { transform: scale(0.97); opacity: 0.9; }
+            100% { transform: scale(1.08); opacity: 0; filter: blur(12px); }
+        }
+        @keyframes iosModalFadeOut {
+            0% { opacity: 1; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
+            100% { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); pointer-events: none; }
+        }
+        @keyframes iosAppEnter {
+            0% { opacity: 0; transform: scale(0.94); filter: blur(4px); }
+            100% { opacity: 1; transform: scale(1); filter: blur(0px); }
+        }
+
+        .ios-unlock-card { animation: iosCardUnlock 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .ios-unlock-modal { animation: iosModalFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .ios-app-enter { animation: iosAppEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
         @keyframes messageAppear {
             0% { opacity: 0; transform: translateY(10px); }
             100% { opacity: 1; transform: translateY(0); }
         }
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
-        /* Markdown 精準樣式 */
+        /* Markdown 精準樣式 (含表格與引用) */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -69,20 +93,28 @@
         .markdown-body p { margin-bottom: 0.5rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
         .markdown-body code { background: rgba(255, 255, 255, 0.1); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace; }
+        
+        /* 表格排版 */
+        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; }
+        .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
+        .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
+        .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+        .markdown-body blockquote { border-left: 3px solid #60a5fa; padding-left: 0.75rem; margin: 0.5rem 0; color: #cbd5e1; font-style: italic; }
 
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
     </style>
 </head>
 <body class="h-full flex flex-col select-none relative">
 
+    <!-- 全域大圖輪播背景 (登入前後皆完全同步) -->
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
-    <div class="fixed inset-0 bg-black/45 z-0 pointer-events-none"></div>
+    <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
     <!-- 圖片全螢幕燈箱 Lightbox -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden cursor-zoom-out transition-opacity duration-300">
-        <div class="relative max-w-4xl max-h-full flex flex-col items-center">
+        <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
             <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
             <p id="lightboxCaption" class="text-xs text-neutral-300 mt-3 font-light tracking-widest bg-neutral-900/80 px-4 py-1.5 rounded-full border border-white/10"></p>
             <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white/20 hover:bg-white text-black hover:text-black w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
@@ -91,24 +123,24 @@
         </div>
     </div>
 
-    <!-- 身分驗證遮罩層 -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-3xl flex items-center justify-center p-4 hidden">
-        <div class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-2xl border border-white/20 relative">
+    <!-- Apple 風格高透磨砂登入遮罩層 -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/35 backdrop-blur-2xl flex items-center justify-center p-4 hidden transition-all duration-500">
+        <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
                     <i class="fa-solid fa-cube text-xl"></i>
                 </div>
                 <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN 拾葉設計</h2>
-                <p id="authSubtitle" class="text-xs text-neutral-400 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
+                <p id="authSubtitle" class="text-xs text-neutral-300 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
             </div>
             <div class="space-y-4">
-                <input type="password" id="passcodeinput" placeholder="PASSCODE" class="w-full bg-neutral-900 border border-neutral-800 rounded-2xl px-4 py-3.5 text-xs text-center tracking-[0.3em] text-white placeholder-neutral-600 focus:outline-none focus:border-white transition">
-                <button onclick="verifyPasscode()" class="w-full bg-white hover:bg-neutral-200 text-black font-semibold py-3.5 rounded-xl transition text-xs tracking-widest uppercase shadow-xl">
+                <input type="password" id="passcodeinput" placeholder="PASSCODE" class="w-full bg-neutral-950/70 border border-neutral-700/80 rounded-2xl px-4 py-3.5 text-xs text-center tracking-[0.3em] text-white placeholder-neutral-500 focus:outline-none focus:border-white transition shadow-inner">
+                <button onclick="verifyPasscode()" id="enterSystemBtn" class="w-full bg-white hover:bg-neutral-200 text-black font-semibold py-3.5 rounded-xl transition text-xs tracking-widest uppercase shadow-xl">
                     ENTER SYSTEM
                 </button>
             </div>
             <div class="text-center">
-                <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-500 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
+                <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-400 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
             </div>
         </div>
     </div>
@@ -116,10 +148,17 @@
     <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
+        <!-- 頂部 Header -->
         <header class="px-8 py-6 flex justify-between items-center shrink-0 z-20">
             <div class="space-y-1">
-                <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
-                <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE</p>
+                <div class="flex items-center space-x-2.5">
+                    <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
+                    <span class="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>v6.1 終極全方位版</span>
+                    </span>
+                </div>
+                <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
             
             <div class="flex items-center space-x-6 text-xs tracking-widest">
@@ -167,9 +206,12 @@
             <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg">
                 <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台雲端管理系統！
             </div>
+            <div id="copyToast" class="hidden mx-6 mb-2 p-2 bg-blue-950/80 border border-blue-800 text-blue-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg">
+                <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製 AI 回答內容至剪貼簿！
+            </div>
 
-            <!-- 輸入區域 -->
-            <div class="p-4 border-t border-white/10 bg-black/40 backdrop-blur-md">
+            <!-- 輸入區域 (適配 iOS Safe Area) -->
+            <div class="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/40 backdrop-blur-md">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-600 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-24 leading-relaxed"></textarea>
                     
@@ -188,7 +230,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.8 終極無瑕旗艦版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.1 終極全方位版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -340,7 +382,7 @@
                 </div>
 
                 <div class="flex justify-end pb-12">
-                    <button onclick="saveAdminSettings()" class="bg-white hover:bg-neutral-200 text-black font-semibold px-8 py-3.5 rounded-xl text-xs transition tracking-widest uppercase shadow-xl">
+                    <button onclick="saveAdminSettings()" id="saveAdminBtn" class="bg-white hover:bg-neutral-200 text-black font-semibold px-8 py-3.5 rounded-xl text-xs transition tracking-widest uppercase shadow-xl">
                         儲存全套系統設定至 GitHub 雲端
                     </button>
                 </div>
@@ -383,6 +425,7 @@
         let isGenerating = false;
         let currentAbortController = null;
         let thinkingTimer = null;
+        let isCloudLoaded = false;
         window.tempMsgStore = {};
 
         function escapeHtml(str) {
@@ -408,12 +451,25 @@
             document.getElementById('imageLightbox').classList.add('hidden');
         }
 
-        // ESC 鍵關閉 Lightbox
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeLightbox();
         });
 
-        // 🌟 升級版安全 XOR + Base64 混淆演算法
+        // 🌟 核心修復：依據 msgId 提取純文字進行安全複製
+        function copyAnswerText(msgId) {
+            const record = window.tempMsgStore[msgId];
+            const textToCopy = record ? record.a : '';
+            if (!textToCopy) return;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2500);
+            }).catch(() => {
+                alert('複製失敗，請手動選取文字複製。');
+            });
+        }
+
         function encodeToken(str) {
             if (!str) return '';
             try {
@@ -434,10 +490,19 @@
             }
         }
 
-        function getStoredGistUrl() { return localStorage.getItem('shiye_gist_url') || ''; }
+        function normalizeGistUrl(url) {
+            if (!url) return '';
+            let u = url.trim();
+            if (u.includes('gist.github.com/') && !u.includes('raw') && !u.includes('gist.githubusercontent.com')) {
+                u = u.replace('gist.github.com/', 'gist.githubusercontent.com/') + '/raw';
+            }
+            return u;
+        }
+
+        function getStoredGistUrl() { return normalizeGistUrl(localStorage.getItem('shiye_gist_url') || ''); }
         function getCodesGistId() { 
             let stored = localStorage.getItem('shiye_codes_gist_id');
-            return stored ? stored : HARDCODED_GIST_ID; 
+            return stored ? stored.trim() : HARDCODED_GIST_ID; 
         }
 
         function getGithubToken() { 
@@ -507,6 +572,7 @@
                                 localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
                             }
 
+                            isCloudLoaded = true;
                             saveCodesToLocal(codes);
                             return codes;
                         }
@@ -552,7 +618,6 @@
         }
 
         async function initData() {
-            currentCodesList = await fetchCodesFromCloud();
             if (!localStorage.getItem('shiye_bg_list')) {
                 localStorage.setItem('shiye_bg_list', JSON.stringify([
                     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop',
@@ -560,6 +625,8 @@
                     'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop'
                 ]));
             }
+            initBackgroundSlideshow();
+            currentCodesList = await fetchCodesFromCloud();
             if (!localStorage.getItem('shiye_error_logs')) localStorage.setItem('shiye_error_logs', JSON.stringify([]));
             await fetchSopFromGist();
         }
@@ -596,11 +663,14 @@
 
         async function checkAuthAndRoute() {
             const authModal = document.getElementById('authModal');
+            const authCard = document.getElementById('authCard');
             const appContainer = document.getElementById('appContainer');
 
             if (!currentAuth) {
-                authModal.classList.remove('hidden');
+                authModal.classList.remove('hidden', 'ios-unlock-modal');
+                authCard.classList.remove('ios-unlock-card');
                 appContainer.classList.add('hidden');
+                appContainer.classList.remove('ios-app-enter');
                 return;
             }
 
@@ -623,7 +693,6 @@
                 loadAdminForm();
             } else {
                 document.getElementById('viewAdmin').classList.add('hidden');
-                initBackgroundSlideshow();
             }
         }
 
@@ -643,43 +712,72 @@
             }
         }
 
+        // 🌟 核心：iOS 絲滑解鎖動效與大小寫不敏感驗證
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
 
-            const freshCodes = await fetchCodesFromCloud();
-            const matched = freshCodes.find(c => c.code === val);
+            const enterBtn = document.getElementById('enterSystemBtn');
+            enterBtn.disabled = true;
+            enterBtn.textContent = 'VERIFYING...';
 
-            if (!matched) { 
-                alert('❌ 驗證碼錯誤、已被註銷或不存在！'); 
-                return; 
+            try {
+                const freshCodes = await fetchCodesFromCloud();
+                // 🌟 大小寫不敏感比對，提升手機輸入體驗
+                const matched = freshCodes.find(c => c.code && c.code.toUpperCase() === val.toUpperCase());
+
+                if (!matched) { 
+                    alert('❌ 驗證碼錯誤、已被註銷或不存在！'); 
+                    return; 
+                }
+
+                if (authMode === 'admin' && matched.role !== 'admin') { 
+                    alert('此代碼非管理員權限'); 
+                    return; 
+                }
+
+                matched.logins = matched.logins || [];
+                matched.logins.push(new Date().toLocaleString());
+                matched.status = 'online';
+
+                currentAuth = matched.role;
+                activeCode = matched.code;
+                localStorage.setItem('shiye_auth', currentAuth);
+                localStorage.setItem('shiye_active_code', activeCode);
+
+                saveCodesToLocal(freshCodes);
+                await pushCodesToCloud(freshCodes);
+
+                // 觸發 iOS 經典解鎖轉場動效
+                const authModal = document.getElementById('authModal');
+                const authCard = document.getElementById('authCard');
+                const appContainer = document.getElementById('appContainer');
+
+                authCard.classList.add('ios-unlock-card');
+                authModal.classList.add('ios-unlock-modal');
+
+                setTimeout(() => {
+                    authModal.classList.add('hidden');
+                    authModal.classList.remove('ios-unlock-modal');
+                    authCard.classList.remove('ios-unlock-card');
+
+                    appContainer.classList.remove('hidden');
+                    appContainer.classList.add('ios-app-enter');
+
+                    window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
+                    checkAuthAndRoute();
+                }, 520);
+
+            } finally {
+                enterBtn.disabled = false;
+                enterBtn.textContent = 'ENTER SYSTEM';
             }
-
-            if (authMode === 'admin' && matched.role !== 'admin') { 
-                alert('此代碼非管理員權限'); 
-                return; 
-            }
-
-            matched.logins = matched.logins || [];
-            matched.logins.push(new Date().toLocaleString());
-            matched.status = 'online';
-
-            currentAuth = matched.role;
-            activeCode = matched.code;
-            localStorage.setItem('shiye_auth', currentAuth);
-            localStorage.setItem('shiye_active_code', activeCode);
-
-            saveCodesToLocal(freshCodes);
-            await pushCodesToCloud(freshCodes);
-
-            window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
-            checkAuthAndRoute();
         }
 
         async function logout() {
             if (activeCode) {
                 let codes = await fetchCodesFromCloud();
-                let matched = codes.find(c => c.code === activeCode);
+                let matched = codes.find(c => c.code && c.code.toUpperCase() === activeCode.toUpperCase());
                 if (matched) {
                     matched.status = 'offline';
                     saveCodesToLocal(codes);
@@ -704,6 +802,14 @@
         window.addEventListener('DOMContentLoaded', async () => { 
             await initData(); 
             checkAuthAndRoute(); 
+        });
+
+        // 登入輸入框 Enter 支援
+        document.getElementById('passcodeinput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+                e.preventDefault();
+                verifyPasscode();
+            }
         });
 
         function toggleChatDrawer() { document.getElementById('chatDrawer').classList.toggle('open'); }
@@ -850,11 +956,11 @@
         }
 
         async function deleteCode(codeStr) {
-            if (codeStr === SPECIAL_ADMIN_CODE) return;
+            if (codeStr.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase()) return;
             if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端移除。`)) return;
 
             let freshCodes = await fetchCodesFromCloud();
-            freshCodes = freshCodes.filter(c => c.code !== codeStr);
+            freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
             
             currentCodesList = freshCodes;
             saveCodesToLocal(currentCodesList);
@@ -892,6 +998,8 @@
                     ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' 
                     : 'bg-red-950/80 text-red-400 border-red-800';
 
+                const isSpecialAdmin = c.code && c.code.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase();
+
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
                 tr.innerHTML = `
@@ -904,14 +1012,14 @@
                     <td class="p-3.5 text-neutral-300 font-mono"><span class="bg-white/10 px-2 py-0.5 rounded-md text-[11px]">${loginCount} 次</span></td>
                     <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${escapeHtml(lastLogin)}</td>
                     <td class="p-3.5 text-right space-x-2">
-                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${escapeHtml(c.code)}')" class="text-neutral-500 hover:text-white" title="刪除身分碼"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        ${!isSpecialAdmin ? `<button onclick="deleteCode('${escapeHtml(c.code)}')" class="text-neutral-500 hover:text-white" title="刪除身分碼"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // 🌟 雲端同步：加入防禦性安全合併，絕不空白覆蓋
+        // 🌟 雲端防禦同步：防止空值覆蓋
         async function pushCodesToCloud(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -919,7 +1027,6 @@
             
             if (!gistId || !token) return false;
 
-            // 確保要寫入的代碼清單安全無誤
             let targetCodes = (codesArray && codesArray.length > 0) ? codesArray : currentCodesList;
             if (!targetCodes || targetCodes.length === 0) {
                 targetCodes = getFallbackCodes();
@@ -959,36 +1066,46 @@
         }
 
         async function saveAdminSettings() {
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-            const rawUrl = document.getElementById('gistIdInput').value.trim();
-            const codesGistId = document.getElementById('codesGistIdInput').value.trim();
-            const token = document.getElementById('githubTokenInput').value.trim();
-            const filename = document.getElementById('codesGistFilenameInput').value.trim();
-            const bgText = document.getElementById('bgImagesInput').value.trim();
+            const saveBtn = document.getElementById('saveAdminBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-1"></i> 雲端同步儲存中...';
 
-            if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
-            if (rawUrl) localStorage.setItem('shiye_gist_url', rawUrl);
-            if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
-            if (token) localStorage.setItem('shiye_github_token', token);
-            if (filename) localStorage.setItem('shiye_codes_filename', filename);
-            if (bgText) {
-                localStorage.setItem('shiye_bg_list', JSON.stringify(bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0)));
+            try {
+                const apiKey = document.getElementById('apiKeyInput').value.trim();
+                const rawUrl = document.getElementById('gistIdInput').value.trim();
+                const codesGistId = document.getElementById('codesGistIdInput').value.trim();
+                const token = document.getElementById('githubTokenInput').value.trim();
+                const filename = document.getElementById('codesGistFilenameInput').value.trim();
+                const bgText = document.getElementById('bgImagesInput').value.trim();
+
+                if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
+                if (rawUrl) localStorage.setItem('shiye_gist_url', normalizeGistUrl(rawUrl));
+                if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
+                if (token) localStorage.setItem('shiye_github_token', token);
+                if (filename) localStorage.setItem('shiye_codes_filename', filename);
+                
+                // 🌟 正確支援背景網址清空或更新
+                const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+                localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
+
+                saveCodesToLocal(currentCodesList);
+
+                if (!token) {
+                    alert('⚠️ 警告：您尚未填寫「GitHub Token」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
+                    return;
+                }
+
+                const success = await pushCodesToCloud(currentCodesList);
+                if (success) {
+                    alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端資料庫！');
+                } else {
+                    alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
+                }
+                initBackgroundSlideshow();
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '儲存全套系統設定至 GitHub 雲端';
             }
-
-            saveCodesToLocal(currentCodesList);
-
-            if (!token) {
-                alert('⚠️ 警告：您尚未填寫「GitHub Token」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
-                return;
-            }
-
-            const success = await pushCodesToCloud(currentCodesList);
-            if (success) {
-                alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端資料庫！');
-            } else {
-                alert('❌ 寫入 GitHub 雲端失敗！請檢查您的 GitHub Token 是否正確。');
-            }
-            initBackgroundSlideshow();
         }
 
         async function reportErrorLog(msgId) {
@@ -996,7 +1113,7 @@
             if (!record) return;
 
             const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-            const userObj = currentCodesList.find(c => c.code === activeCode);
+            const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
             const userName = userObj ? userObj.name : '未知同仁';
 
             logs.unshift({
@@ -1075,18 +1192,22 @@
         }
 
         async function deleteSingleErrorLog(id) {
-            let logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-            logs = logs.filter(l => l.id != id);
-            localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
-            renderErrorLogs();
-            await pushCodesToCloud(currentCodesList, logs);
+            try {
+                let logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+                logs = logs.filter(l => l.id != id);
+                localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
+                renderErrorLogs();
+                await pushCodesToCloud(currentCodesList, logs);
+            } catch(e) {}
         }
 
         async function clearErrorLogs() { 
             if (!confirm('確定要清空所有同仁錯誤回報紀錄嗎？此動作將同步清除雲端紀錄。')) return;
-            localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
-            renderErrorLogs(); 
-            await pushCodesToCloud(currentCodesList, []);
+            try {
+                localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
+                renderErrorLogs(); 
+                await pushCodesToCloud(currentCodesList, []);
+            } catch(e) {}
         }
 
         const chatContainer = document.getElementById('chatContainer');
@@ -1132,7 +1253,6 @@
             }
         }
 
-        // 🌟 核心：全方位防護與自動故障排除發送邏輯
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1244,27 +1364,29 @@ ${sopContent}
                         model: '已手動停止',
                         tokens: 0,
                         time: elapsedSec,
-                        aborted: true
+                        aborted: true,
+                        rawReply: ''
                     });
                 } else if (successReply) {
                     appendMessage(successReply, 'assistant', false, text, {
                         model: usedModelName,
                         tokens: totalTokensUsed,
-                        time: elapsedSec
+                        time: elapsedSec,
+                        rawReply: successReply
                     });
                     chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
                 } else {
                     appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
                         model: '連線異常',
                         tokens: 0,
-                        time: elapsedSec
+                        time: elapsedSec,
+                        rawReply: ''
                     });
                 }
             } catch (err) {
                 removeLoading(loadingId);
                 appendMessage(`系統運行錯誤: ${err.message}`, 'assistant', true, text);
             } finally {
-                // 確保 UI 按鈕與狀態 100% 重置恢復
                 setGeneratingState(false);
                 currentAbortController = null;
                 removeLoading(loadingId);
@@ -1278,6 +1400,8 @@ ${sopContent}
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             if (!isUser) {
                 window.tempMsgStore[msgId] = { q: relatedQuestion, a: text };
+                const keys = Object.keys(window.tempMsgStore);
+                if (keys.length > 50) delete window.tempMsgStore[keys[0]];
             }
 
             let metaFooter = '';
@@ -1297,9 +1421,16 @@ ${sopContent}
                                 <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
                             </span>
                         </div>
-                        <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
-                            <i class="fa-solid fa-triangle-exclamation"></i> <span>回報錯誤</span>
-                        </button>
+                        <div class="flex items-center space-x-2">
+                            ${meta.rawReply ? `
+                                <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
+                                    <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
+                                </button>
+                            ` : ''}
+                            <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
+                                <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
+                            </button>
+                        </div>
                     </div>
                 `;
             }
@@ -1321,6 +1452,12 @@ ${sopContent}
                 img.addEventListener('click', () => openLightbox(img.src, img.alt));
                 img.addEventListener('load', () => {
                     chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+                img.addEventListener('error', () => {
+                    const fallback = document.createElement('span');
+                    fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
+                    fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
+                    img.parentNode.replaceChild(fallback, img);
                 });
             });
 
