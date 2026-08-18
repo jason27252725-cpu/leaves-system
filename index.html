@@ -2,17 +2,24 @@
 <html lang="zh-TW" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #000; color: #fff; overflow: hidden; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #000; 
+            color: #fff; 
+            overflow: hidden; 
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
         
         .glass-mono { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .chat-drawer-glass { background: rgba(12, 12, 12, 0.58); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.12); }
+        .chat-drawer-glass { background: rgba(12, 12, 12, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.12); }
         .glass-card { background: rgba(20, 20, 20, 0.45); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
         .bg-slide {
@@ -41,7 +48,7 @@
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
         /* Markdown 精準樣式 */
-        .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.6; }
+        .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
             border-radius: 0.75rem;
@@ -49,10 +56,15 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
             display: block;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
         }
+        .markdown-body img:hover { transform: scale(1.01); }
+        .markdown-body a { color: #60a5fa; text-decoration: underline; text-underline-offset: 3px; }
+        .markdown-body a:hover { color: #93c5fd; }
         .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
         .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
-        .markdown-body li { margin-bottom: 0.2rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
         .markdown-body strong { color: #ffffff; font-weight: 600; }
         .markdown-body p { margin-bottom: 0.5rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
@@ -67,6 +79,17 @@
 
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/45 z-0 pointer-events-none"></div>
+
+    <!-- 圖片全螢幕燈箱 Lightbox -->
+    <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden cursor-zoom-out transition-opacity duration-300">
+        <div class="relative max-w-4xl max-h-full flex flex-col items-center">
+            <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
+            <p id="lightboxCaption" class="text-xs text-neutral-300 mt-3 font-light tracking-widest bg-neutral-900/80 px-4 py-1.5 rounded-full border border-white/10"></p>
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white/20 hover:bg-white text-black hover:text-black w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
+                <i class="fa-solid fa-xmark text-white"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- 身分驗證遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-3xl flex items-center justify-center p-4 hidden">
@@ -145,11 +168,14 @@
                 <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台雲端管理系統！
             </div>
 
+            <!-- 輸入區域 -->
             <div class="p-4 border-t border-white/10 bg-black/40 backdrop-blur-md">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-600 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-24 leading-relaxed"></textarea>
-                    <button id="sendBtn" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs">
-                        <i class="fa-solid fa-arrow-up"></i>
+                    
+                    <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md" title="發送訊息">
+                        <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
+                        <span id="sendBtnText" class="hidden ml-1 font-sans text-[11px]">中斷</span>
                     </button>
                 </div>
             </div>
@@ -162,7 +188,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.4 終極全功能修正版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.8 終極無瑕旗艦版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -228,8 +254,8 @@
                             <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (發布金鑰 ghp_...)</label>
-                            <input type="password" id="githubTokenInput" placeholder="GitHub Token (ghp_...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                            <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (發布金鑰 ghp_... 或 github_pat_...)</label>
+                            <input type="password" id="githubTokenInput" placeholder="GitHub Token" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
                         </div>
                     </div>
                     <input type="text" id="codesGistFilenameInput" placeholder="Gist 檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
@@ -326,6 +352,20 @@
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
+        // 🌟 自訂 Marked.js 解析器：外部連結一律新分頁開啟
+        if (typeof marked !== 'undefined') {
+            const renderer = new marked.Renderer();
+            renderer.link = function(href, title, text) {
+                const titleAttr = title ? ` title="${title}"` : '';
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
+            };
+            marked.setOptions({
+                renderer: renderer,
+                breaks: true,
+                gfm: true
+            });
+        }
+
         const MONITORED_MODELS = [
             { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、繁中語感極佳、低延遲" },
             { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "最新 Google 實驗模型、高智商" },
@@ -340,6 +380,9 @@
         let slideshowTimer = null;
         let currentBgIndex = 0;
         let currentCodesList = [];
+        let isGenerating = false;
+        let currentAbortController = null;
+        let thinkingTimer = null;
         window.tempMsgStore = {};
 
         function escapeHtml(str) {
@@ -352,14 +395,40 @@
                 .replace(/'/g, '&#039;');
         }
 
+        function openLightbox(src, alt) {
+            const lb = document.getElementById('imageLightbox');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.textContent = alt || '工法照片預覽';
+            lb.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('imageLightbox').classList.add('hidden');
+        }
+
+        // ESC 鍵關閉 Lightbox
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // 🌟 升級版安全 XOR + Base64 混淆演算法
         function encodeToken(str) {
             if (!str) return '';
-            return str.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 23)).reverse().join('');
+            try {
+                let xor = str.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
+                return btoa(encodeURIComponent(xor));
+            } catch(e) {
+                return '';
+            }
         }
+
         function decodeToken(str) {
             if (!str) return '';
             try {
-                return str.split('').reverse().map(c => String.fromCharCode(c.charCodeAt(0) ^ 23)).join('');
+                let xor = decodeURIComponent(atob(str));
+                return xor.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
             } catch(e) {
                 return '';
             }
@@ -421,7 +490,7 @@
 
                             if (cloudData.cloudToken) {
                                 let restored = decodeToken(cloudData.cloudToken);
-                                if (restored && restored.startsWith('ghp_')) {
+                                if (restored && (restored.startsWith('ghp_') || restored.startsWith('github_pat_') || restored.length > 20)) {
                                     localStorage.setItem('shiye_github_token', restored);
                                     let inputEl = document.getElementById('githubTokenInput');
                                     if (inputEl && !inputEl.value) inputEl.value = restored;
@@ -720,7 +789,7 @@
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${apiKey}`,
+                                'Authorization': `Bearer ${apiKey.trim()}`,
                                 'HTTP-Referer': window.location.origin,
                                 'X-Title': 'HealthCheck'
                             },
@@ -842,16 +911,24 @@
             });
         }
 
+        // 🌟 雲端同步：加入防禦性安全合併，絕不空白覆蓋
         async function pushCodesToCloud(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
+            
+            if (!gistId || !token) return false;
+
+            // 確保要寫入的代碼清單安全無誤
+            let targetCodes = (codesArray && codesArray.length > 0) ? codesArray : currentCodesList;
+            if (!targetCodes || targetCodes.length === 0) {
+                targetCodes = getFallbackCodes();
+            }
+
             let apiKey = localStorage.getItem('shiye_apikey') || '';
             let sopUrl = localStorage.getItem('shiye_gist_url') || '';
             let bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
             let errorLogs = customErrorLogs || JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-
-            if (!gistId || !token) return false;
 
             try {
                 const payloadData = {
@@ -860,7 +937,7 @@
                     bgList: bgList,
                     cloudToken: encodeToken(token),
                     errorLogs: errorLogs,
-                    codes: codesArray
+                    codes: targetCodes
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
                     method: 'PATCH',
@@ -901,7 +978,7 @@
             saveCodesToLocal(currentCodesList);
 
             if (!token) {
-                alert('⚠️ 警告：您尚未填寫「GitHub Token (ghp_...)」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
+                alert('⚠️ 警告：您尚未填寫「GitHub Token」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
                 return;
             }
 
@@ -979,7 +1056,7 @@
                             <i class="fa-solid fa-circle-question text-[10px]"></i>
                             <span>同仁當時詢問的問題：</span>
                         </div>
-                        <div class="text-xs text-white bg-neutral-900/80 p-3 rounded-xl border border-neutral-800/80 leading-relaxed select-text font-sans">
+                        <div class="text-xs text-white bg-neutral-900/80 p-3 rounded-xl border border-neutral-800/80 leading-relaxed select-text font-sans whitespace-pre-wrap">
                             ${escapeHtml(l.question)}
                         </div>
                     </div>
@@ -999,7 +1076,7 @@
 
         async function deleteSingleErrorLog(id) {
             let logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-            logs = logs.filter(l => l.id !== id);
+            logs = logs.filter(l => l.id != id);
             localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
             renderErrorLogs();
             await pushCodesToCloud(currentCodesList, logs);
@@ -1015,6 +1092,8 @@
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
+        const sendBtnIcon = document.getElementById('sendBtnIcon');
+        const sendBtnText = document.getElementById('sendBtnText');
         let chatHistory = [];
 
         userInput.addEventListener('input', function() {
@@ -1022,7 +1101,40 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
 
+        function handleSendOrAbort() {
+            if (isGenerating) {
+                abortCurrentGeneration();
+            } else {
+                handleSend();
+            }
+        }
+
+        function abortCurrentGeneration() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+        }
+
+        function setGeneratingState(generating) {
+            isGenerating = generating;
+            if (generating) {
+                sendBtn.classList.remove('bg-white', 'text-black', 'hover:bg-neutral-200');
+                sendBtn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700', 'px-3');
+                sendBtnIcon.className = 'fa-solid fa-stop text-xs';
+                sendBtnText.classList.remove('hidden');
+                sendBtn.title = '點擊中斷 AI 回答';
+            } else {
+                sendBtn.classList.add('bg-white', 'text-black', 'hover:bg-neutral-200');
+                sendBtn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700', 'px-3');
+                sendBtnIcon.className = 'fa-solid fa-arrow-up text-xs';
+                sendBtnText.classList.add('hidden');
+                sendBtn.title = '發送訊息';
+            }
+        }
+
+        // 🌟 核心：全方位防護與自動故障排除發送邏輯
         async function handleSend() {
+            if (isGenerating) return;
             const text = userInput.value.trim();
             if (!text) return;
             
@@ -1037,18 +1149,24 @@
                 return;
             }
 
+            setGeneratingState(true);
+            currentAbortController = new AbortController();
+
             appendMessage(text, 'user');
             userInput.value = '';
             userInput.style.height = 'auto';
 
+            const startTime = performance.now();
             const loadingId = appendLoading();
-            const sopContent = await fetchSopFromGist();
 
-            const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
+            try {
+                const sopContent = await fetchSopFromGist();
+
+                const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或中國大陸慣用語。
-2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。未收錄或未確定的事項請坦白告知，切勿憑空捏造工法數據。
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或大陸用語。
+2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。請完整輸出每個階段與步驟，絕不允許中途截斷。
 3. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
 4. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
 
@@ -1057,63 +1175,103 @@
 ${sopContent}
 ---------------------`;
 
-            const messages = [{ role: "system", content: systemPrompt }];
-            
-            chatHistory.slice(-6).forEach(h => {
-                messages.push({ 
-                    role: h.role === 'user' ? 'user' : 'assistant', 
-                    content: h.text 
-                });
-            });
-            
-            messages.push({ role: "user", content: text });
-
-            let successReply = null;
-            let lastErrorMessage = '';
-
-            for (const modelObj of MONITORED_MODELS) {
-                try {
-                    const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKey.trim()}`,
-                            'HTTP-Referer': window.location.origin,
-                            'X-Title': 'Leaves Design AI'
-                        },
-                        body: JSON.stringify({
-                            model: modelObj.id,
-                            messages: messages,
-                            temperature: 0.2,
-                            max_tokens: 1200
-                        })
+                const messages = [{ role: "system", content: systemPrompt }];
+                
+                chatHistory.slice(-6).forEach(h => {
+                    messages.push({ 
+                        role: h.role === 'user' ? 'user' : 'assistant', 
+                        content: h.text 
                     });
+                });
+                
+                messages.push({ role: "user", content: text });
 
-                    const data = await res.json();
+                let successReply = null;
+                let lastErrorMessage = '';
+                let usedModelName = '';
+                let totalTokensUsed = 0;
+                let isUserAborted = false;
 
-                    if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
-                        successReply = data.choices[0].message.content;
-                        localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
+                for (const modelObj of MONITORED_MODELS) {
+                    if (currentAbortController && currentAbortController.signal.aborted) {
+                        isUserAborted = true;
                         break;
-                    } else if (data.error) {
-                        lastErrorMessage = data.error.message || JSON.stringify(data.error);
                     }
-                } catch (e) {
-                    lastErrorMessage = e.message;
+
+                    try {
+                        const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                            method: 'POST',
+                            signal: currentAbortController.signal,
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${apiKey.trim()}`,
+                                'HTTP-Referer': window.location.origin,
+                                'X-Title': 'Leaves Design AI'
+                            },
+                            body: JSON.stringify({
+                                model: modelObj.id,
+                                messages: messages,
+                                temperature: 0.2,
+                                max_tokens: 4000
+                            })
+                        });
+
+                        const data = await res.json();
+
+                        if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
+                            successReply = data.choices[0].message.content;
+                            usedModelName = modelObj.name;
+                            totalTokensUsed = data.usage?.total_tokens || Math.round((text.length + successReply.length) * 1.3);
+                            localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
+                            break;
+                        } else if (data.error) {
+                            lastErrorMessage = data.error.message || JSON.stringify(data.error);
+                        }
+                    } catch (e) {
+                        if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
+                            isUserAborted = true;
+                            break;
+                        }
+                        lastErrorMessage = e.message;
+                    }
                 }
-            }
 
-            removeLoading(loadingId);
+                const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
+                removeLoading(loadingId);
 
-            if (successReply) {
-                appendMessage(successReply, 'assistant', false, text);
-                chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
-            } else {
-                appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text);
+                if (isUserAborted) {
+                    appendMessage('*(同仁已手動中斷此回覆)*', 'assistant', false, text, {
+                        model: '已手動停止',
+                        tokens: 0,
+                        time: elapsedSec,
+                        aborted: true
+                    });
+                } else if (successReply) {
+                    appendMessage(successReply, 'assistant', false, text, {
+                        model: usedModelName,
+                        tokens: totalTokensUsed,
+                        time: elapsedSec
+                    });
+                    chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
+                } else {
+                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
+                        model: '連線異常',
+                        tokens: 0,
+                        time: elapsedSec
+                    });
+                }
+            } catch (err) {
+                removeLoading(loadingId);
+                appendMessage(`系統運行錯誤: ${err.message}`, 'assistant', true, text);
+            } finally {
+                // 確保 UI 按鈕與狀態 100% 重置恢復
+                setGeneratingState(false);
+                currentAbortController = null;
+                removeLoading(loadingId);
             }
         }
 
-        function appendMessage(text, sender, isError = false, relatedQuestion = '') {
+        function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null) {
             const isUser = sender === 'user';
             const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text));
 
@@ -1122,30 +1280,104 @@ ${sopContent}
                 window.tempMsgStore[msgId] = { q: relatedQuestion, a: text };
             }
 
+            let metaFooter = '';
+            if (!isUser && meta) {
+                metaFooter = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400">
+                        <div class="flex items-center flex-wrap gap-1.5 font-mono">
+                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
+                                <i class="fa-solid fa-microchip text-[8px] text-purple-400"></i> ${escapeHtml(meta.model || 'Gemini')}
+                            </span>
+                            ${meta.tokens > 0 ? `
+                                <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
+                                    <i class="fa-solid fa-bolt text-[8px] text-amber-400"></i> ${meta.tokens} Tokens
+                                </span>
+                            ` : ''}
+                            <span class="text-neutral-500 text-[9px]">
+                                <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
+                            </span>
+                        </div>
+                        <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
+                            <i class="fa-solid fa-triangle-exclamation"></i> <span>回報錯誤</span>
+                        </button>
+                    </div>
+                `;
+            }
+
             const html = `
                 <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
                     <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
                     <div class="${isError ? 'bg-red-950/80 text-red-200' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
-                        <div class="markdown-body">${parsedContent}</div>
-                        ${!isUser ? `<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1"><i class="fa-solid fa-triangle-exclamation"></i> <span>回報此回答錯誤</span></button></div>` : ''}
+                        <div class="${isUser ? 'whitespace-pre-wrap break-words' : 'markdown-body break-words'}">${parsedContent}</div>
+                        ${metaFooter}
                     </div>
                 </div>
             `;
             chatContainer.insertAdjacentHTML('beforeend', html);
+            
+            const newlyAdded = chatContainer.lastElementChild;
+            const images = newlyAdded.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('click', () => openLightbox(img.src, img.alt));
+                img.addEventListener('load', () => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+            });
+
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> 拾葉 AI 思考檢索中...</div></div>`);
+            const startTimestamp = Date.now();
+
+            const html = `
+                <div id="${id}" class="flex items-start space-x-3 msg-animate">
+                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div>
+                    <div class="glass-card p-4 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1.5 shadow-lg border border-purple-500/20">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-notch animate-spin text-purple-400 text-sm"></i>
+                            <span class="font-medium text-white">拾葉 AI 檢索 SOP 中...</span>
+                            <span id="${id}_timer" class="font-mono text-purple-300 text-[11px] bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/80">0.0s</span>
+                        </div>
+                        <div class="text-[10px] text-neutral-400 flex items-center justify-between gap-4">
+                            <span>預估約需 4 ~ 10 秒</span>
+                            <button onclick="abortCurrentGeneration()" class="text-red-400 hover:text-red-300 font-sans text-[10px] flex items-center gap-1 border border-red-900/60 bg-red-950/40 px-2 py-0.5 rounded">
+                                <i class="fa-solid fa-stop text-[8px]"></i> 中斷回答
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', html);
             chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            if (thinkingTimer) clearInterval(thinkingTimer);
+            thinkingTimer = setInterval(() => {
+                const timerEl = document.getElementById(`${id}_timer`);
+                if (timerEl) {
+                    const elapsed = ((Date.now() - startTimestamp) / 1000).toFixed(1);
+                    timerEl.textContent = `${elapsed}s`;
+                }
+            }, 100);
+
             return id;
         }
 
-        function removeLoading(id) { const el = document.getElementById(id); if (el) el.remove(); }
+        function removeLoading(id) { 
+            if (thinkingTimer) {
+                clearInterval(thinkingTimer);
+                thinkingTimer = null;
+            }
+            document.querySelectorAll('[id^="loading_"]').forEach(el => el.remove());
+        }
 
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+        userInput.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { 
+                e.preventDefault(); 
+                handleSend(); 
+            } 
+        });
     </script>
 </body>
 </html>
