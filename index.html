@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
@@ -39,7 +40,25 @@
         }
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
-        ::-webkit-scrollbar { width: 4px; }
+        /* Markdown 精準樣式 */
+        .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.6; }
+        .markdown-body img {
+            max-width: 100%;
+            border-radius: 0.75rem;
+            margin: 0.6rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            display: block;
+        }
+        .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
+        .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
+        .markdown-body li { margin-bottom: 0.2rem; }
+        .markdown-body strong { color: #ffffff; font-weight: 600; }
+        .markdown-body p { margin-bottom: 0.5rem; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body code { background: rgba(255, 255, 255, 0.1); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace; }
+
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
     </style>
@@ -49,7 +68,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/45 z-0 pointer-events-none"></div>
 
-    <!-- 身分驗證/登入遮罩層 -->
+    <!-- 身分驗證遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-3xl flex items-center justify-center p-4 hidden">
         <div class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-2xl border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -116,14 +135,14 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (OpenRouter Channel)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法或材質規範的問題。</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或照片參考。</p>
                     </div>
                 </div>
             </div>
 
-            <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider">
-                <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台管理系統！
+            <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg">
+                <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台雲端管理系統！
             </div>
 
             <div class="p-4 border-t border-white/10 bg-black/40 backdrop-blur-md">
@@ -143,13 +162,48 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.0 跨裝置即時同步雙向修復版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v5.4 終極全功能修正版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
                     <button onclick="navigate('chat')" class="bg-white text-black px-4 py-2 rounded-xl text-xs font-semibold tracking-widest uppercase">
                         返回主畫面
                     </button>
+                </div>
+
+                <!-- OpenRouter AI 模型監控與診斷 -->
+                <div class="glass-mono p-6 rounded-2xl space-y-4 border border-purple-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                        <div>
+                            <h3 class="text-xs font-semibold tracking-widest uppercase text-purple-400">
+                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控
+                            </h3>
+                            <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視各備援模型響應速度與連線狀態</p>
+                        </div>
+                        <button onclick="testAllModelsHealth()" id="testModelsBtn" class="bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-600 px-3.5 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 shrink-0">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>⚡ 立即檢測所有模型連線健康度</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-neutral-950/70 p-3.5 rounded-xl border border-neutral-800 text-xs flex items-center justify-between">
+                        <span class="text-neutral-400">系統最近一次成功調用模型：</span>
+                        <span id="lastUsedModelBadge" class="font-mono text-purple-300 bg-purple-950/80 px-2.5 py-1 rounded-lg border border-purple-800 text-[11px]">尚未有調用紀錄</span>
+                    </div>
+
+                    <div class="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950/50">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase">
+                                    <th class="p-3 font-medium">優先順位</th>
+                                    <th class="p-3 font-medium">模型名稱 (Model ID)</th>
+                                    <th class="p-3 font-medium">模型特點</th>
+                                    <th class="p-3 font-medium text-right">健康狀態 / 延遲</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modelsMonitorTableBody" class="divide-y divide-neutral-900 font-mono text-[11px]"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- GitHub 專用設定 -->
@@ -167,7 +221,7 @@
                         </h3>
                         <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-400 hover:text-white underline">填入內建預設 Gist ID</button>
                     </div>
-                    <p class="text-[11px] text-neutral-400">系統已開啟混淆加密授權，電腦填入 Token 點儲存後，全公司手機皆可自動雙向同步登入次數與時間！</p>
+                    <p class="text-[11px] text-neutral-400">電腦填入 Token 點擊儲存後，全公司手機皆可自動即時讀取最新通行碼與登入紀錄！</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
@@ -238,15 +292,25 @@
                     </div>
                 </div>
 
-                <div class="glass-mono p-6 rounded-2xl space-y-4">
-                    <div class="flex justify-between items-center">
+                <!-- 錯誤回報專區 (雲端集中同步) -->
+                <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-red-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
                         <div>
-                            <h3 class="text-xs font-semibold tracking-widest uppercase text-white">Error Dialog Reports (SOP 修正區)</h3>
-                            <p class="text-[11px] text-neutral-500 mt-0.5">檢視用戶回報的錯誤回答</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                                <h3 class="text-sm font-semibold tracking-widest uppercase text-red-400">同仁對話錯誤回報專區 (雲端集中同步)</h3>
+                            </div>
+                            <p class="text-[11px] text-neutral-400 mt-1">即時同步全公司同仁在手機與各裝置回報的錯誤問答，作為 SOP 更新檢討依據。</p>
                         </div>
-                        <button onclick="clearErrorLogs()" class="text-[10px] text-neutral-400 hover:text-white border border-neutral-800 px-3 py-1.5 rounded-lg transition">清空日誌</button>
+                        <div class="flex items-center space-x-3">
+                            <span id="errorLogsCountBadge" class="text-[11px] bg-red-950/80 text-red-300 border border-red-800 px-3 py-1.5 rounded-xl font-mono">共 0 筆回報</span>
+                            <button onclick="clearErrorLogs()" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 px-3 py-1.5 rounded-xl transition">
+                                清空所有紀錄
+                            </button>
+                        </div>
                     </div>
-                    <div id="errorLogsContainer" class="space-y-3 max-h-60 overflow-y-auto font-mono text-xs"></div>
+                    
+                    <div id="errorLogsContainer" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
                 </div>
 
                 <div class="flex justify-end pb-12">
@@ -262,9 +326,31 @@
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
+        const MONITORED_MODELS = [
+            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、繁中語感極佳、低延遲" },
+            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "最新 Google 實驗模型、高智商" },
+            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型、邏輯嚴密" },
+            { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
+            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
+        ];
+
         let currentAuth = localStorage.getItem('shiye_auth') || null;
         let activeCode = localStorage.getItem('shiye_active_code') || null;
         let authMode = 'user';
+        let slideshowTimer = null;
+        let currentBgIndex = 0;
+        let currentCodesList = [];
+        window.tempMsgStore = {};
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
         function encodeToken(str) {
             if (!str) return '';
@@ -306,18 +392,23 @@
             alert('已回復為程式碼內建預設 Gist ID！');
         }
 
-        // 🌟 雲端強制同步讀取（帶 Authorization 與 Raw 雙備援機制）
         async function fetchCodesFromCloud() {
             let gistId = getCodesGistId();
             let filename = getCodesFilename();
             let token = getGithubToken();
 
             if (gistId) {
-                try {
-                    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-                    if (token) headers['Authorization'] = `Bearer ${token}`;
+                const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+                const headers = { 
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                    const res = await fetch(`https://api.github.com/gists/${gistId}?t=${Date.now()}`, { 
+                try {
+                    const res = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { 
                         headers: headers,
                         cache: 'no-store' 
                     });
@@ -328,7 +419,6 @@
                             const cloudData = JSON.parse(data.files[filename].content);
                             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
 
-                            // 混淆 Token 自動解密恢復寫入權限
                             if (cloudData.cloudToken) {
                                 let restored = decodeToken(cloudData.cloudToken);
                                 if (restored && restored.startsWith('ghp_')) {
@@ -336,6 +426,10 @@
                                     let inputEl = document.getElementById('githubTokenInput');
                                     if (inputEl && !inputEl.value) inputEl.value = restored;
                                 }
+                            }
+
+                            if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) {
+                                localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
                             }
 
                             if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
@@ -349,33 +443,8 @@
                         }
                     }
                 } catch (e) {
-                    console.error("Gist API fetch failed, trying Gist Raw URL...", e);
+                    console.error("Gist API fetch failed...", e);
                 }
-
-                // 備援：直連 Gist Raw 免受 60 次 API 限制卡住
-                try {
-                    const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?t=${Date.now()}`, { cache: 'no-store' });
-                    if (rawRes.ok) {
-                        const cloudData = await rawRes.json();
-                        const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
-
-                        if (cloudData.cloudToken) {
-                            let restored = decodeToken(cloudData.cloudToken);
-                            if (restored && restored.startsWith('ghp_')) {
-                                localStorage.setItem('shiye_github_token', restored);
-                            }
-                        }
-
-                        if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
-                        if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
-                        if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
-                            localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
-                        }
-
-                        saveCodesToLocal(codes);
-                        return codes;
-                    }
-                } catch(e) {}
             }
 
             const cached = localStorage.getItem('shiye_codes_cache');
@@ -413,8 +482,6 @@
             ];
         }
 
-        let currentCodesList = [];
-
         async function initData() {
             currentCodesList = await fetchCodesFromCloud();
             if (!localStorage.getItem('shiye_bg_list')) {
@@ -428,11 +495,16 @@
             await fetchSopFromGist();
         }
 
-        let currentBgIndex = 0;
         function initBackgroundSlideshow() {
+            if (slideshowTimer) {
+                clearInterval(slideshowTimer);
+                slideshowTimer = null;
+            }
+
             const container = document.getElementById('bgSlideshow');
             const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
             if (bgList.length === 0) return;
+            
             container.innerHTML = '';
             bgList.forEach((url, i) => {
                 const div = document.createElement('div');
@@ -440,8 +512,10 @@
                 div.style.backgroundImage = `url('${url.trim()}')`;
                 container.appendChild(div);
             });
+
+            currentBgIndex = 0;
             if (bgList.length > 1) {
-                setInterval(() => {
+                slideshowTimer = setInterval(() => {
                     const slides = container.querySelectorAll('.bg-slide');
                     if (slides.length === 0) return;
                     slides[currentBgIndex].classList.remove('active');
@@ -452,7 +526,6 @@
         }
 
         async function checkAuthAndRoute() {
-            currentCodesList = await fetchCodesFromCloud();
             const authModal = document.getElementById('authModal');
             const appContainer = document.getElementById('appContainer');
 
@@ -501,7 +574,6 @@
             }
         }
 
-        // 🌟 登入驗證：強制抓雲端最新資料，舊碼絕不允許登入
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -560,7 +632,10 @@
         }
 
         window.addEventListener('hashchange', checkAuthAndRoute);
-        window.addEventListener('DOMContentLoaded', async () => { await initData(); checkAuthAndRoute(); });
+        window.addEventListener('DOMContentLoaded', async () => { 
+            await initData(); 
+            checkAuthAndRoute(); 
+        });
 
         function toggleChatDrawer() { document.getElementById('chatDrawer').classList.toggle('open'); }
 
@@ -574,8 +649,14 @@
             const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
             document.getElementById('bgImagesInput').value = bgList.join('\n');
             
+            const lastUsed = localStorage.getItem('shiye_last_used_model');
+            if (lastUsed) {
+                document.getElementById('lastUsedModelBadge').textContent = lastUsed;
+            }
+
             currentCodesList = await fetchCodesFromCloud();
             renderCodesTable();
+            renderModelsMonitorTable();
             renderErrorLogs();
 
             const content = await fetchSopFromGist();
@@ -585,7 +666,88 @@
         async function refreshCloudData() {
             currentCodesList = await fetchCodesFromCloud();
             renderCodesTable();
-            alert('✅ 已成功從雲端同步最新身分碼、登入紀錄與狀態！');
+            renderErrorLogs();
+            alert('✅ 已成功從雲端同步最新身分碼、登入紀錄與錯誤回報！');
+        }
+
+        function renderModelsMonitorTable() {
+            const tbody = document.getElementById('modelsMonitorTableBody');
+            tbody.innerHTML = '';
+            const lastUsed = localStorage.getItem('shiye_last_used_model') || '';
+
+            MONITORED_MODELS.forEach((m, idx) => {
+                const isLast = (m.id === lastUsed);
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-neutral-900 hover:bg-neutral-900/40 transition';
+                tr.innerHTML = `
+                    <td class="p-3 text-neutral-400 font-sans">#${idx + 1}</td>
+                    <td class="p-3">
+                        <div class="text-white font-medium flex items-center space-x-1.5">
+                            <span>${m.name}</span>
+                            ${isLast ? '<span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.2 rounded font-sans">最近調用</span>' : ''}
+                        </div>
+                        <div class="text-[10px] text-neutral-500">${m.id}</div>
+                    </td>
+                    <td class="p-3 text-neutral-400 font-sans text-xs">${m.desc}</td>
+                    <td class="p-3 text-right" id="status_cell_${idx}">
+                        <span class="text-neutral-500 text-[10px]">點擊上方測速</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function testAllModelsHealth() {
+            let apiKey = localStorage.getItem('shiye_apikey') || document.getElementById('apiKeyInput')?.value?.trim();
+            if (!apiKey) {
+                alert('請先填寫 OpenRouter API Key 才能執行連線診斷！');
+                return;
+            }
+
+            const btn = document.getElementById('testModelsBtn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 檢測中...';
+            btn.disabled = true;
+
+            try {
+                for (let i = 0; i < MONITORED_MODELS.length; i++) {
+                    const m = MONITORED_MODELS[i];
+                    const cell = document.getElementById(`status_cell_${i}`);
+                    if (cell) cell.innerHTML = '<span class="text-neutral-400 animate-pulse text-[10px]">Ping...</span>';
+
+                    const startTime = performance.now();
+                    try {
+                        const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${apiKey}`,
+                                'HTTP-Referer': window.location.origin,
+                                'X-Title': 'HealthCheck'
+                            },
+                            body: JSON.stringify({
+                                model: m.id,
+                                messages: [{ role: "user", content: "hi" }],
+                                max_tokens: 2
+                            })
+                        });
+
+                        const elapsed = Math.round(performance.now() - startTime);
+                        const data = await res.json();
+
+                        if (!data.error && data.choices) {
+                            cell.innerHTML = `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-sans">🟢 良好 (${elapsed}ms)</span>`;
+                        } else {
+                            const errMsg = data.error?.message || '維護中';
+                            cell.innerHTML = `<span class="bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[10px] font-sans" title="${errMsg}">🔴 異常 / 繁忙</span>`;
+                        }
+                    } catch (e) {
+                        cell.innerHTML = `<span class="bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[10px] font-sans">🔴 連線逾時</span>`;
+                    }
+                }
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>⚡ 立即檢測所有模型連線健康度</span>';
+                btn.disabled = false;
+            }
         }
 
         async function generateNewCode() {
@@ -609,7 +771,7 @@
             if (token) {
                 let success = await pushCodesToCloud(currentCodesList);
                 if (success) {
-                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機與電腦皆可立即同步。`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已自動寫入 GitHub 雲端！全公司手機皆可立即同步。`);
                 } else {
                     alert(`⚠️ 身分碼已產生：${randomCode}\n但同步至 GitHub 失敗，請確認 Token 是否正確！`);
                 }
@@ -642,7 +804,6 @@
             }
         }
 
-        // 🌟 渲染表格：實時反映 🟢 已登入過 / 🔴 從未登入
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '';
@@ -669,25 +830,26 @@
                         <span class="inline-block w-3 h-3 rounded-full ${lightColor}"></span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusBadgeStyle}">${statusText}</span>
                     </td>
-                    <td class="p-3.5 font-mono text-white font-medium select-all">${c.code}</td>
-                    <td class="p-3.5 text-neutral-300">${c.name}</td>
+                    <td class="p-3.5 font-mono text-white font-medium select-all">${escapeHtml(c.code)}</td>
+                    <td class="p-3.5 text-neutral-300">${escapeHtml(c.name)}</td>
                     <td class="p-3.5 text-neutral-300 font-mono"><span class="bg-white/10 px-2 py-0.5 rounded-md text-[11px]">${loginCount} 次</span></td>
-                    <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${lastLogin}</td>
+                    <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${escapeHtml(lastLogin)}</td>
                     <td class="p-3.5 text-right space-x-2">
-                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${c.code}')" class="text-neutral-500 hover:text-white" title="刪除身分碼"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        ${c.code !== SPECIAL_ADMIN_CODE ? `<button onclick="deleteCode('${escapeHtml(c.code)}')" class="text-neutral-500 hover:text-white" title="刪除身分碼"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        async function pushCodesToCloud(codesArray) {
+        async function pushCodesToCloud(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
             let apiKey = localStorage.getItem('shiye_apikey') || '';
             let sopUrl = localStorage.getItem('shiye_gist_url') || '';
             let bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
+            let errorLogs = customErrorLogs || JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
 
             if (!gistId || !token) return false;
 
@@ -696,7 +858,8 @@
                     apiKey: apiKey,
                     sopUrl: sopUrl,
                     bgList: bgList,
-                    cloudToken: encodeToken(token), // 安全混淆加密 Token，授權全公司裝置寫入
+                    cloudToken: encodeToken(token),
+                    errorLogs: errorLogs,
                     codes: codesArray
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
@@ -751,23 +914,103 @@
             initBackgroundSlideshow();
         }
 
-        function reportErrorLog(q, a) {
+        async function reportErrorLog(msgId) {
+            const record = window.tempMsgStore[msgId];
+            if (!record) return;
+
             const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-            logs.unshift({ time: new Date().toLocaleString(), code: activeCode || '未知', question: q, answer: a });
+            const userObj = currentCodesList.find(c => c.code === activeCode);
+            const userName = userObj ? userObj.name : '未知同仁';
+
+            logs.unshift({
+                id: Date.now(),
+                time: new Date().toLocaleString(),
+                code: activeCode || '未知代碼',
+                name: userName,
+                question: record.q || '（無記錄到問題）',
+                answer: record.a || '（無答案）'
+            });
+
             localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
+            await pushCodesToCloud(currentCodesList, logs);
+
             const toast = document.getElementById('reportToast');
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            setTimeout(() => toast.classList.add('hidden'), 3500);
         }
 
         function renderErrorLogs() {
             const container = document.getElementById('errorLogsContainer');
+            const countBadge = document.getElementById('errorLogsCountBadge');
             if(!container) return;
+            
             const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
-            container.innerHTML = logs.length === 0 ? '<p class="text-neutral-600">目前尚無回報紀錄。</p>' : logs.map(l => `<div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-1"><p class="text-white"><strong>問:</strong> ${l.question}</p><p class="text-neutral-300"><strong>答:</strong> ${l.answer}</p></div>`).join('');
+            countBadge.textContent = `共 ${logs.length} 筆回報`;
+
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center border border-dashed border-neutral-800 rounded-2xl">
+                        <i class="fa-solid fa-circle-check text-neutral-600 text-3xl mb-2"></i>
+                        <p class="text-xs text-neutral-500">目前尚無任何錯誤回報紀錄，系統運作非常良好！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = logs.map(l => `
+                <div class="p-5 bg-neutral-950/90 border border-neutral-800 rounded-2xl space-y-3.5 hover:border-red-500/40 transition">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800/80 pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-red-950 text-red-300 border border-red-800/80 text-[10px] px-2.5 py-0.5 rounded-full font-medium flex items-center">
+                                <i class="fa-solid fa-user mr-1 text-[9px]"></i> ${escapeHtml(l.name)}
+                            </span>
+                            <span class="font-mono text-neutral-400 text-[11px] bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">${escapeHtml(l.code)}</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-neutral-500 text-[11px] font-mono">
+                            <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(l.time)}</span>
+                            <button onclick="deleteSingleErrorLog(${l.id})" class="text-neutral-500 hover:text-red-400 transition" title="刪除此筆紀錄">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="text-[11px] font-semibold tracking-wider text-amber-400 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-question text-[10px]"></i>
+                            <span>同仁當時詢問的問題：</span>
+                        </div>
+                        <div class="text-xs text-white bg-neutral-900/80 p-3 rounded-xl border border-neutral-800/80 leading-relaxed select-text font-sans">
+                            ${escapeHtml(l.question)}
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="text-[11px] font-semibold tracking-wider text-red-400 flex items-center space-x-1">
+                            <i class="fa-solid fa-robot text-[10px]"></i>
+                            <span>AI 當時回覆的答案（待修正）：</span>
+                        </div>
+                        <div class="text-xs text-neutral-300 bg-black/60 p-3.5 rounded-xl border border-red-950/60 leading-relaxed select-text font-sans whitespace-pre-wrap max-h-48 overflow-y-auto">
+                            ${escapeHtml(l.answer)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function clearErrorLogs() { localStorage.setItem('shiye_error_logs', JSON.stringify([])); renderErrorLogs(); }
+        async function deleteSingleErrorLog(id) {
+            let logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            logs = logs.filter(l => l.id !== id);
+            localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
+            renderErrorLogs();
+            await pushCodesToCloud(currentCodesList, logs);
+        }
+
+        async function clearErrorLogs() { 
+            if (!confirm('確定要清空所有同仁錯誤回報紀錄嗎？此動作將同步清除雲端紀錄。')) return;
+            localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
+            renderErrorLogs(); 
+            await pushCodesToCloud(currentCodesList, []);
+        }
 
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
@@ -801,14 +1044,22 @@
             const loadingId = appendLoading();
             const sopContent = await fetchSopFromGist();
 
-            const messages = [
-                { 
-                    role: "system", 
-                    content: `你是「拾葉設計」內部的 AI 助理。以下是公司內部的完整 SOP 記事本內容，請務必根據以下內容精準回答同事的所有問題：\n\n---------------------\n${sopContent}\n---------------------` 
-                }
-            ];
+            const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
+
+【重要準則與回覆約束】：
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或中國大陸慣用語。
+2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。未收錄或未確定的事項請坦白告知，切勿憑空捏造工法數據。
+3. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
+4. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
+
+【拾葉設計內部 SOP 知識庫】：
+---------------------
+${sopContent}
+---------------------`;
+
+            const messages = [{ role: "system", content: systemPrompt }];
             
-            chatHistory.forEach(h => {
+            chatHistory.slice(-6).forEach(h => {
                 messages.push({ 
                     role: h.role === 'user' ? 'user' : 'assistant', 
                     content: h.text 
@@ -817,17 +1068,10 @@
             
             messages.push({ role: "user", content: text });
 
-            const candidateModels = [
-                "google/gemini-2.0-flash-exp:free",
-                "google/gemini-flash-1.5:free",
-                "openrouter/free",
-                "qwen/qwen-2.5-7b-instruct:free"
-            ];
-
             let successReply = null;
             let lastErrorMessage = '';
 
-            for (const modelId of candidateModels) {
+            for (const modelObj of MONITORED_MODELS) {
                 try {
                     const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                         method: 'POST',
@@ -835,12 +1079,13 @@
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${apiKey.trim()}`,
                             'HTTP-Referer': window.location.origin,
-                            'X-Title': 'Leaves Design System'
+                            'X-Title': 'Leaves Design AI'
                         },
                         body: JSON.stringify({
-                            model: modelId,
+                            model: modelObj.id,
                             messages: messages,
-                            temperature: 0.3
+                            temperature: 0.2,
+                            max_tokens: 1200
                         })
                     });
 
@@ -848,6 +1093,7 @@
 
                     if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
                         successReply = data.choices[0].message.content;
+                        localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
                         break;
                     } else if (data.error) {
                         lastErrorMessage = data.error.message || JSON.stringify(data.error);
@@ -860,22 +1106,28 @@
             removeLoading(loadingId);
 
             if (successReply) {
-                appendMessage(successReply, 'assistant', false);
+                appendMessage(successReply, 'assistant', false, text);
                 chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
             } else {
-                appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true);
+                appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text);
             }
         }
 
-        function appendMessage(text, sender, isError = false) {
+        function appendMessage(text, sender, isError = false, relatedQuestion = '') {
             const isUser = sender === 'user';
-            const lastUserMsg = chatHistory.slice(-1)[0]?.text || '';
+            const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text));
+
+            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            if (!isUser) {
+                window.tempMsgStore[msgId] = { q: relatedQuestion, a: text };
+            }
+
             const html = `
                 <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
                     <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
                     <div class="${isError ? 'bg-red-950/80 text-red-200' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
-                        <div class="whitespace-pre-wrap">${text}</div>
-                        ${!isUser ? `<div class="flex justify-end pt-1 border-t border-white/10"><button onclick="reportErrorLog('${lastUserMsg.replace(/'/g, "\\'")}', \`${text.replace(/'/g, "\\'")}\`)" class="text-[10px] text-neutral-400 hover:text-amber-400"><i class="fa-solid fa-triangle-exclamation"></i> 回報此回答錯誤</button></div>` : ''}
+                        <div class="markdown-body">${parsedContent}</div>
+                        ${!isUser ? `<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1"><i class="fa-solid fa-triangle-exclamation"></i> <span>回報此回答錯誤</span></button></div>` : ''}
                     </div>
                 </div>
             `;
@@ -885,7 +1137,7 @@
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> THINKING (Gemini via OpenRouter)...</div></div>`);
+            chatContainer.insertAdjacentHTML('beforeend', `<div id="${id}" class="flex items-start space-x-3 msg-animate"><div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div><div class="glass-card p-4 rounded-2xl text-neutral-400 text-xs tracking-widest"><i class="fa-solid fa-circle-notch animate-spin"></i> 拾葉 AI 思考檢索中...</div></div>`);
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return id;
         }
