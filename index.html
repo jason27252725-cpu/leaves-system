@@ -46,6 +46,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* 🌟 iOS / iPad 經典解鎖轉場動效 */
         @keyframes iosCardUnlock {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
             40% { transform: scale(0.97); opacity: 0.9; }
@@ -70,6 +71,23 @@
         }
         .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
 
+        /* 打字機閃爍游標動效 */
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 5px;
+            height: 12px;
+            background-color: #60a5fa;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s infinite;
+            border-radius: 1px;
+        }
+
+        /* Markdown 精準樣式 (含表格、代碼塊與引用) */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -101,6 +119,12 @@
         .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
         .markdown-body blockquote { border-left: 3px solid #60a5fa; padding-left: 0.75rem; margin: 0.5rem 0; color: #cbd5e1; font-style: italic; }
 
+        @media screen and (max-width: 768px) {
+            #userInput, #passcodeinput {
+                font-size: 16px !important;
+            }
+        }
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
@@ -111,6 +135,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
+    <!-- 圖片全螢幕燈箱 Lightbox -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden cursor-zoom-out transition-opacity duration-300">
         <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
             <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
@@ -148,9 +173,9 @@
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
-                    <span class="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v6.4 精準診斷版</span>
+                    <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                        <span>v7.1 串流極速版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -206,7 +231,7 @@
 
             <div class="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/40 backdrop-blur-md">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-600 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-24 leading-relaxed"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -222,7 +247,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v6.4 精準診斷版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v7.1 串流極速版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -411,7 +436,6 @@
         let currentCodesList = [];
         let isGenerating = false;
         let currentAbortController = null;
-        let thinkingTimer = null;
         let isCloudLoaded = false;
         window.tempMsgStore = {};
 
@@ -442,6 +466,13 @@
             if (e.key === 'Escape') closeLightbox();
         });
 
+        // 🌟 點擊委託：即時支援串流中生成的圖片放大
+        document.getElementById('chatContainer').addEventListener('click', (e) => {
+            if (e.target.tagName === 'IMG' && e.target.closest('.markdown-body')) {
+                openLightbox(e.target.src, e.target.alt);
+            }
+        });
+
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
             const textToCopy = record ? record.a : '';
@@ -463,7 +494,7 @@
                 for (let i = 0; i < str.length; i++) {
                     shifted += String.fromCharCode(str.charCodeAt(i) + 7);
                 }
-                return btoa(shifted);
+                return btoa(unescape(encodeURIComponent(shifted)));
             } catch(e) {
                 return '';
             }
@@ -472,7 +503,7 @@
         function decodeToken(str) {
             if (!str) return '';
             try {
-                let unbase64 = atob(str);
+                let unbase64 = decodeURIComponent(escape(atob(str)));
                 let unshifted = '';
                 for (let i = 0; i < unbase64.length; i++) {
                     unshifted += String.fromCharCode(unbase64.charCodeAt(i) - 7);
@@ -510,7 +541,9 @@
         function getCodesFilename() { return localStorage.getItem('shiye_codes_filename') || 'shiye-codes.json'; }
 
         function saveCodesToLocal(codes) {
-            localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+            try {
+                localStorage.setItem('shiye_codes_cache', JSON.stringify(codes));
+            } catch (e) {}
         }
 
         function resetDefaultGistId() {
@@ -1050,7 +1083,6 @@
             });
         }
 
-        // 🌟 核心：帶詳細錯誤診斷的雲端發送器
         async function pushCodesToCloudWithDetails(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -1267,7 +1299,8 @@
 
         userInput.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            const newH = Math.min(this.scrollHeight, 110);
+            this.style.height = (newH > 24 ? newH : 24) + 'px';
         });
 
         function handleSendOrAbort() {
@@ -1305,6 +1338,7 @@
             }
         }
 
+        // 🌟 串流打字引擎（帶 requestAnimationFrame 效能節流防發燙）
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1336,11 +1370,12 @@
 
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
-【重要準則與回覆約束】：
+【重要準則與深度思考約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或大陸用語。
-2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。請完整輸出每個階段與步驟，絕不允許中途截斷。
-3. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
-4. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
+2. 深度工法思考（思維鏈）：在組織回答時，請主動為同仁檢核「施作工序前後邏輯」、「標準公差數據」、「防水防裂防呆重點」與「驗收關鍵」，絕不泛泛而談。
+3. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。請完整輸出每個階段與步驟，絕不允許中途截斷。
+4. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
+5. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
 
 【拾葉設計內部 SOP 知識庫】：
 ---------------------
@@ -1358,20 +1393,24 @@ ${sopContent}
                 
                 messages.push({ role: "user", content: text });
 
-                let successReply = null;
+                let streamSuccess = false;
                 let lastErrorMessage = '';
                 let usedModelName = '';
-                let totalTokensUsed = 0;
-                let isUserAborted = false;
+                let accumulatedReply = '';
+                let liveMsgElements = null;
+                let renderScheduled = false;
 
                 for (const modelObj of MONITORED_MODELS) {
-                    if (currentAbortController && currentAbortController.signal.aborted) {
-                        isUserAborted = true;
-                        break;
-                    }
+                    if (currentAbortController && currentAbortController.signal.aborted) break;
+
+                    let timeoutTimerId = null;
 
                     try {
-                        const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                        const timeoutPromise = new Promise((_, reject) => {
+                            timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
+                        });
+
+                        const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                             method: 'POST',
                             signal: currentAbortController.signal,
                             headers: { 
@@ -1384,57 +1423,101 @@ ${sopContent}
                                 model: modelObj.id,
                                 messages: messages,
                                 temperature: 0.2,
-                                max_tokens: 4000
+                                max_tokens: 4000,
+                                stream: true
                             })
                         });
 
-                        const data = await res.json();
+                        const res = await Promise.race([fetchPromise, timeoutPromise]);
+                        if (timeoutTimerId) clearTimeout(timeoutTimerId);
 
-                        if (!data.error && data.choices && data.choices[0] && data.choices[0].message) {
-                            successReply = data.choices[0].message.content;
-                            usedModelName = modelObj.name;
-                            totalTokensUsed = data.usage?.total_tokens || Math.round((text.length + successReply.length) * 1.3);
-                            localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
-                            break;
-                        } else if (data.error) {
-                            lastErrorMessage = data.error.message || JSON.stringify(data.error);
+                        if (!res.ok) {
+                            let errJson = await res.json().catch(() => ({}));
+                            lastErrorMessage = errJson.error?.message || `HTTP ${res.status}`;
+                            continue;
                         }
+
+                        const reader = res.body.getReader();
+                        const decoder = new TextDecoder('utf-8');
+                        let buffer = '';
+
+                        usedModelName = modelObj.name;
+                        localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
+
+                        removeLoading(loadingId);
+                        liveMsgElements = createLiveAssistantBubble();
+
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split('\n');
+                            buffer = lines.pop();
+
+                            for (const line of lines) {
+                                const trimmed = line.trim();
+                                if (!trimmed || trimmed.startsWith(':')) continue;
+                                if (trimmed === 'data: [DONE]') break;
+                                if (trimmed.startsWith('data: ')) {
+                                    try {
+                                        const parsed = JSON.parse(trimmed.substring(6));
+                                        const delta = parsed.choices?.[0]?.delta?.content || '';
+                                        if (delta) {
+                                            accumulatedReply += delta;
+                                            // 🌟 利用 requestAnimationFrame 平滑節流渲染，防 CPU 飆高
+                                            if (!renderScheduled) {
+                                                renderScheduled = true;
+                                                requestAnimationFrame(() => {
+                                                    updateLiveBubble(liveMsgElements, accumulatedReply);
+                                                    renderScheduled = false;
+                                                });
+                                            }
+                                        }
+                                    } catch (err) {}
+                                }
+                            }
+                        }
+
+                        streamSuccess = true;
+                        break;
                     } catch (e) {
+                        if (timeoutTimerId) clearTimeout(timeoutTimerId);
                         if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
-                            isUserAborted = true;
                             break;
                         }
                         lastErrorMessage = e.message;
                     }
                 }
 
-                const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
                 removeLoading(loadingId);
+                const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
+                const isUserAborted = currentAbortController && currentAbortController.signal.aborted;
 
-                if (isUserAborted) {
+                if (streamSuccess || accumulatedReply.length > 0) {
+                    finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
+                        model: isUserAborted ? `${usedModelName} (已手動中斷)` : usedModelName,
+                        tokens: Math.round((text.length + accumulatedReply.length) * 1.3),
+                        time: elapsedSec,
+                        rawReply: accumulatedReply
+                    });
+                    if (accumulatedReply.trim()) {
+                        chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: accumulatedReply });
+                    }
+                } else if (isUserAborted) {
                     appendMessage('*(同仁已手動中斷此回覆)*', 'assistant', false, text, {
                         model: '已手動停止',
                         tokens: 0,
-                        time: elapsedSec,
-                        aborted: true,
-                        rawReply: ''
+                        time: elapsedSec
                     });
-                } else if (successReply) {
-                    appendMessage(successReply, 'assistant', false, text, {
-                        model: usedModelName,
-                        tokens: totalTokensUsed,
-                        time: elapsedSec,
-                        rawReply: successReply
-                    });
-                    chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: successReply });
                 } else {
                     appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
                         model: '連線異常',
                         tokens: 0,
-                        time: elapsedSec,
-                        rawReply: ''
+                        time: elapsedSec
                     });
                 }
+
             } catch (err) {
                 removeLoading(loadingId);
                 appendMessage(`系統運行錯誤: ${err.message}`, 'assistant', true, text);
@@ -1443,6 +1526,93 @@ ${sopContent}
                 currentAbortController = null;
                 removeLoading(loadingId);
             }
+        }
+
+        function createLiveAssistantBubble() {
+            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            const html = `
+                <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
+                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
+                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
+                        <div id="${msgId}_content" class="markdown-body break-words">
+                            <span class="typing-cursor"></span>
+                        </div>
+                        <div id="${msgId}_footer" class="hidden"></div>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            return {
+                msgId: msgId,
+                wrapper: document.getElementById(`${msgId}_wrapper`),
+                content: document.getElementById(`${msgId}_content`),
+                footer: document.getElementById(`${msgId}_footer`)
+            };
+        }
+
+        function updateLiveBubble(elements, text) {
+            if (!elements || !elements.content) return;
+            const parsed = typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text);
+            elements.content.innerHTML = parsed + `<span class="typing-cursor"></span>`;
+            
+            const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 220;
+            if (isNearBottom) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function finalizeLiveBubble(elements, fullText, relatedQuestion, meta) {
+            if (!elements || !elements.content) return;
+            
+            const msgId = elements.msgId;
+            window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText };
+            
+            const parsed = typeof marked !== 'undefined' ? marked.parse(fullText) : escapeHtml(fullText);
+            elements.content.innerHTML = parsed;
+
+            if (elements.footer && meta) {
+                elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400";
+                elements.footer.innerHTML = `
+                    <div class="flex items-center flex-wrap gap-1.5 font-mono">
+                        <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
+                            <i class="fa-solid fa-microchip text-[8px] text-purple-400"></i> ${escapeHtml(meta.model || 'Gemini')}
+                        </span>
+                        ${meta.tokens > 0 ? `
+                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
+                                <i class="fa-solid fa-bolt text-[8px] text-amber-400"></i> ${meta.tokens} Tokens
+                            </span>
+                        ` : ''}
+                        <span class="text-neutral-500 text-[9px]">
+                            <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
+                            <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
+                        </button>
+                        <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
+                            <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            const images = elements.wrapper.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('load', () => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+                img.addEventListener('error', () => {
+                    const fallback = document.createElement('span');
+                    fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
+                    fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
+                    img.parentNode.replaceChild(fallback, img);
+                });
+            });
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null) {
@@ -1497,69 +1667,29 @@ ${sopContent}
                 </div>
             `;
             chatContainer.insertAdjacentHTML('beforeend', html);
-            
-            const newlyAdded = chatContainer.lastElementChild;
-            const images = newlyAdded.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('click', () => openLightbox(img.src, img.alt));
-                img.addEventListener('load', () => {
-                    const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 180;
-                    if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
-                });
-                img.addEventListener('error', () => {
-                    const fallback = document.createElement('span');
-                    fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
-                    fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
-                    img.parentNode.replaceChild(fallback, img);
-                });
-            });
-
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function appendLoading() {
             const id = 'loading_' + Date.now();
-            const startTimestamp = Date.now();
-
             const html = `
                 <div id="${id}" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div>
-                    <div class="glass-card p-4 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1.5 shadow-lg border border-purple-500/20">
+                    <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-circle-notch animate-spin text-purple-400 text-sm"></i>
-                            <span class="font-medium text-white">拾葉 AI 檢索 SOP 中...</span>
-                            <span id="${id}_timer" class="font-mono text-purple-300 text-[11px] bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/80">0.0s</span>
-                        </div>
-                        <div class="text-[10px] text-neutral-400 flex items-center justify-between gap-4">
-                            <span>預估約需 4 ~ 10 秒</span>
-                            <button onclick="abortCurrentGeneration()" class="text-red-400 hover:text-red-300 font-sans text-[10px] flex items-center gap-1 border border-red-900/60 bg-red-950/40 px-2 py-0.5 rounded">
-                                <i class="fa-solid fa-stop text-[8px]"></i> 中斷回答
-                            </button>
+                            <i class="fa-solid fa-circle-notch animate-spin text-blue-400 text-xs"></i>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時組織回答中...</span>
                         </div>
                     </div>
                 </div>
             `;
             chatContainer.insertAdjacentHTML('beforeend', html);
             chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            if (thinkingTimer) clearInterval(thinkingTimer);
-            thinkingTimer = setInterval(() => {
-                const timerEl = document.getElementById(`${id}_timer`);
-                if (timerEl) {
-                    const elapsed = ((Date.now() - startTimestamp) / 1000).toFixed(1);
-                    timerEl.textContent = `${elapsed}s`;
-                }
-            }, 100);
-
             return id;
         }
 
         function removeLoading(id) { 
-            if (thinkingTimer) {
-                clearInterval(thinkingTimer);
-                thinkingTimer = null;
-            }
-            document.querySelectorAll('[id^="loading_"]').forEach(el => el.remove());
+            document.querySelectorAll(`[id^="loading_"]`).forEach(el => el.remove());
         }
 
         userInput.addEventListener('keydown', (e) => { 
