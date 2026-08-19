@@ -16,10 +16,11 @@
             overflow: hidden; 
             height: 100vh;
             height: 100dvh;
+            -webkit-font-smoothing: antialiased;
         }
         
         .glass-mono { background: rgba(12, 12, 12, 0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255, 255, 255, 0.12); }
-        .chat-drawer-glass { background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); }
+        .chat-drawer-glass { background: rgba(12, 12, 12, 0.88); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); }
         .glass-card { background: rgba(20, 20, 20, 0.55); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
         .bg-slide {
@@ -35,58 +36,73 @@
 
         /* 登入框縮小消散動畫 */
         @keyframes cardShrinkVanish {
-            0% { transform: scale(1); opacity: 1; filter: blur(0px); }
+            0% { transform: scale(1); opacity: 1; }
             40% { transform: scale(1.02); opacity: 0.95; }
-            100% { transform: scale(0.65); opacity: 0; filter: blur(16px); }
+            100% { transform: scale(0.65); opacity: 0; }
         }
         @keyframes authModalFadeOut {
-            0% { opacity: 1; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
-            100% { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); pointer-events: none; }
+            0% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
         }
         @keyframes appInterfaceEnter {
-            0% { opacity: 0; transform: scale(0.96); filter: blur(6px); }
-            100% { opacity: 1; transform: scale(1); filter: blur(0px); }
+            0% { opacity: 0; transform: scale(0.97); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        .auth-shrink-out { animation: cardShrinkVanish 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .auth-modal-fade { animation: authModalFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .app-enter-anim { animation: appInterfaceEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .auth-shrink-out { animation: cardShrinkVanish 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .auth-modal-fade { animation: authModalFadeOut 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .app-enter-anim { animation: appInterfaceEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* 水滴液態呼吸動效 */
+        /* 水滴呼吸動效 */
         @keyframes liquidBreatheScale {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.15), inset 0 0 12px rgba(255, 255, 255, 0.1);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 255, 255, 0.15), inset 0 0 12px rgba(255, 255, 255, 0.1);
             }
             50% {
                 transform: scale(1.08);
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 28px 6px rgba(96, 165, 250, 0.45), inset 0 0 20px rgba(255, 255, 255, 0.3);
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 28px 6px rgba(96, 165, 250, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.3);
             }
         }
         .liquid-breathe-inner {
             animation: liquidBreatheScale 3.5s infinite ease-in-out;
         }
 
-        /* 水滴展開與收縮轉場 */
+        /* 🌟 水滴物理彈簧展開動效 (乾淨無模糊，徹底消除 Transform 衝突) */
         .chat-drawer {
-            transform-origin: center center;
-            transform: scale(0.2) translateY(20px);
             opacity: 0;
             pointer-events: none;
-            filter: blur(16px);
-            transition: all 0.52s cubic-bezier(0.19, 1, 0.22, 1);
+            visibility: hidden;
+            backface-visibility: hidden;
+            will-change: transform, opacity;
+            transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease, visibility 0.45s;
         }
+
+        /* 手機 & 平板：從畫面中心縮放展開 */
+        @media (max-width: 1023px) {
+            .chat-drawer {
+                transform: scale(0.8) translateY(20px);
+            }
+            .chat-drawer.open {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+                visibility: visible;
+            }
+        }
+
+        /* 電腦端：從右側按鈕向左展開 */
         @media (min-width: 1024px) {
             .chat-drawer {
                 transform-origin: right center;
-                transform: scale(0.15) translate3d(80px, 0, 0);
+                transform: translateX(40px) scale(0.9);
             }
-        }
-        .chat-drawer.open {
-            transform: scale(1) translate3d(0, 0, 0);
-            opacity: 1;
-            pointer-events: auto;
-            filter: blur(0px);
+            .chat-drawer.open {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+                pointer-events: auto;
+                visibility: visible;
+            }
         }
 
         /* 自由文字框選支援 */
@@ -171,11 +187,11 @@
         </div>
     </div>
 
-    <!-- 遮罩背景 (平板與電腦點擊外部收合) -->
-    <div id="chatBackdrop" onclick="toggleChatDrawer(false)" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity duration-300 ui-no-select"></div>
+    <!-- 遮罩背景 (點擊外部收合) -->
+    <div id="chatBackdrop" onclick="toggleChatDrawer(false)" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity duration-300 ui-no-select"></div>
 
     <!-- Apple 高透磨砂登入遮罩層 -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/35 backdrop-blur-2xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
@@ -206,7 +222,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v8.2 旗艦版</span>
+                        <span>v8.4 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -221,7 +237,7 @@
             </div>
         </header>
 
-        <!-- 主頁面留白與意象標語 -->
+        <!-- 主頁面意象標語 -->
         <main class="flex-1 flex items-center px-8 md:px-16 pb-12 relative overflow-hidden pointer-events-none ui-no-select">
             <div class="max-w-2xl space-y-4">
                 <h2 class="text-4xl sm:text-6xl md:text-7xl font-light tracking-[0.1em] text-white leading-tight">LEAVES DESIGN</h2>
@@ -230,8 +246,8 @@
         </main>
 
         <!-- 水滴呼吸按鈕：手機與平板置中，電腦端靠右側 -->
-        <div id="aiFloatingTriggerWrapper" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-auto lg:translate-x-0 lg:right-8 z-30 transition duration-500 ui-no-select">
-            <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/45 hover:bg-black/65 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-2xl group shadow-2xl cursor-pointer">
+        <div id="aiFloatingTriggerWrapper" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-auto lg:translate-x-0 lg:right-8 z-30 transition duration-300 ui-no-select">
+            <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/50 hover:bg-black/70 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-xl group shadow-2xl cursor-pointer">
                 <div class="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)] animate-pulse"></div>
                 <div class="text-left">
                     <div class="text-sm sm:text-base lg:text-sm font-medium tracking-widest text-white flex items-center gap-2">
@@ -243,10 +259,10 @@
             </button>
         </div>
 
-        <!-- 水滴展開對話框：手機全螢幕、平板懸浮窗(560px)、電腦右側(620px) -->
-        <div id="chatDrawer" class="chat-drawer fixed inset-0 sm:inset-auto sm:top-[6vh] sm:bottom-[6vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-[560px] lg:top-0 lg:bottom-0 lg:left-auto lg:translate-x-0 lg:right-0 lg:w-[620px] chat-drawer-glass border border-white/15 sm:rounded-3xl lg:rounded-none z-50 flex flex-col shadow-2xl">
+        <!-- 🌟 水滴展開對話框：iPad 純佈局置中 (sm:inset-x-0 sm:mx-auto sm:w-[560px]) -->
+        <div id="chatDrawer" class="chat-drawer fixed inset-0 sm:inset-x-0 sm:mx-auto sm:top-[6vh] sm:bottom-[6vh] sm:w-[560px] lg:inset-x-auto lg:mx-0 lg:top-0 lg:bottom-0 lg:right-0 lg:w-[620px] chat-drawer-glass border border-white/15 sm:rounded-3xl lg:rounded-none z-50 flex flex-col shadow-2xl">
             
-            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 sm:rounded-t-3xl lg:rounded-none ui-no-select">
+            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/50 backdrop-blur-md shrink-0 sm:rounded-t-3xl lg:rounded-none ui-no-select">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
@@ -256,8 +272,8 @@
                 </button>
             </div>
 
-            <!-- 對話內容區（文字完全可自由選取） -->
-            <div id="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- 對話內容區（加入 min-h-0 防止 Safari 滾動破版） -->
+            <div id="chatContainer" class="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
@@ -275,7 +291,7 @@
             </div>
 
             <!-- 輸入區域 -->
-            <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0 sm:rounded-b-3xl lg:rounded-none">
+            <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/60 backdrop-blur-md shrink-0 sm:rounded-b-3xl lg:rounded-none">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
@@ -294,7 +310,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.2 旗艦版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.4 旗艦版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -483,6 +499,7 @@
         let currentCodesList = [];
         let isGenerating = false;
         let currentAbortController = null;
+        let activeStreamReader = null;
         let isCloudLoaded = false;
         window.tempMsgStore = {};
 
@@ -509,7 +526,6 @@
             document.getElementById('imageLightbox').classList.add('hidden');
         }
 
-        // 🌟 智慧 ESC 鍵監聽（先關閉燈箱，若無燈箱則收合對話框）
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const lb = document.getElementById('imageLightbox');
@@ -521,14 +537,12 @@
             }
         });
 
-        // 點擊委託：即時支援串流中生成的圖片放大
         document.getElementById('chatContainer').addEventListener('click', (e) => {
             if (e.target.tagName === 'IMG' && e.target.closest('.markdown-body')) {
                 openLightbox(e.target.src, e.target.alt);
             }
         });
 
-        // 全域捕捉損壞圖片並替換為安全標籤
         window.addEventListener('error', (e) => {
             if (e.target && e.target.tagName === 'IMG' && e.target.closest('#chatContainer')) {
                 const fallback = document.createElement('span');
@@ -540,18 +554,40 @@
             }
         }, true);
 
+        // 🌟 強化版跨平台複製（相容所有手機內嵌瀏覽器）
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
             const textToCopy = record ? record.a : '';
             if (!textToCopy) return;
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const toast = document.getElementById('copyToast');
-                toast.classList.remove('hidden');
-                setTimeout(() => toast.classList.add('hidden'), 2500);
-            }).catch(() => {
-                alert('複製失敗，請手動選取文字複製。');
-            });
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(showCopyToast).catch(() => fallbackCopy(textToCopy));
+            } else {
+                fallbackCopy(textToCopy);
+            }
+        }
+
+        function fallbackCopy(text) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                textArea.remove();
+                showCopyToast();
+            } catch (err) {
+                alert('複製失敗，請手動框選文字複製。');
+            }
+        }
+
+        function showCopyToast() {
+            const toast = document.getElementById('copyToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
         }
 
         function encodeToken(str) {
@@ -915,7 +951,6 @@
             }
         });
 
-        // 🌟 水滴按鈕、遮罩與對話框同步切換
         function toggleChatDrawer(forceOpen = null) { 
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
@@ -1392,9 +1427,15 @@
             }
         }
 
-        function abortCurrentGeneration() {
+        async function abortCurrentGeneration() {
             if (currentAbortController) {
                 currentAbortController.abort();
+            }
+            if (activeStreamReader) {
+                try {
+                    await activeStreamReader.cancel();
+                } catch(e) {}
+                activeStreamReader = null;
             }
         }
 
@@ -1419,6 +1460,7 @@
             }
         }
 
+        // 🌟 串流打字引擎 (含主動 Reader 釋放與防洩漏)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1518,7 +1560,7 @@ ${sopContent}
                             continue;
                         }
 
-                        const reader = res.body.getReader();
+                        activeStreamReader = res.body.getReader();
                         const decoder = new TextDecoder('utf-8');
                         let buffer = '';
 
@@ -1530,7 +1572,7 @@ ${sopContent}
 
                         let isStreamDone = false;
                         while (!isStreamDone) {
-                            const { done, value } = await reader.read();
+                            const { done, value } = await activeStreamReader.read();
                             if (done) break;
 
                             buffer += decoder.decode(value, { stream: true });
@@ -1571,6 +1613,11 @@ ${sopContent}
                             break;
                         }
                         lastErrorMessage = e.message;
+                    } finally {
+                        if (activeStreamReader) {
+                            try { await activeStreamReader.cancel(); } catch(e) {}
+                            activeStreamReader = null;
+                        }
                     }
                 }
 
@@ -1608,6 +1655,7 @@ ${sopContent}
             } finally {
                 setGeneratingState(false);
                 currentAbortController = null;
+                activeStreamReader = null;
                 removeLoading(loadingId);
             }
         }
