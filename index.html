@@ -14,13 +14,13 @@
             background-color: #000; 
             color: #fff; 
             overflow: hidden; 
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
         }
         
         .glass-mono { background: rgba(12, 12, 12, 0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255, 255, 255, 0.12); }
-        .chat-drawer-glass { background: rgba(12, 12, 12, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.12); }
-        .glass-card { background: rgba(20, 20, 20, 0.45); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .chat-drawer-glass { background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); }
+        .glass-card { background: rgba(20, 20, 20, 0.55); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
         .bg-slide {
             position: absolute;
@@ -33,49 +33,75 @@
         }
         .bg-slide.active { opacity: 1; }
 
-        .chat-drawer {
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .chat-drawer.open {
-            transform: translateX(0);
-        }
-
-        #chatContainer {
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* 🌟 iOS / iPad 經典解鎖轉場動效 */
-        @keyframes iosCardUnlock {
+        /* 登入框縮小消散動畫 */
+        @keyframes cardShrinkVanish {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
-            40% { transform: scale(0.97); opacity: 0.9; }
-            100% { transform: scale(1.08); opacity: 0; filter: blur(12px); }
+            40% { transform: scale(1.02); opacity: 0.95; }
+            100% { transform: scale(0.65); opacity: 0; filter: blur(16px); }
         }
-        @keyframes iosModalFadeOut {
+        @keyframes authModalFadeOut {
             0% { opacity: 1; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
             100% { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); pointer-events: none; }
         }
-        @keyframes iosAppEnter {
-            0% { opacity: 0; transform: scale(0.94); filter: blur(4px); }
+        @keyframes appInterfaceEnter {
+            0% { opacity: 0; transform: scale(0.96); filter: blur(6px); }
             100% { opacity: 1; transform: scale(1); filter: blur(0px); }
         }
 
-        .ios-unlock-card { animation: iosCardUnlock 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .ios-unlock-modal { animation: iosModalFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .ios-app-enter { animation: iosAppEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .auth-shrink-out { animation: cardShrinkVanish 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .auth-modal-fade { animation: authModalFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .app-enter-anim { animation: appInterfaceEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        @keyframes messageAppear {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+        /* 水滴液態呼吸動效 */
+        @keyframes liquidBreatheScale {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.15), inset 0 0 12px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 28px 6px rgba(96, 165, 250, 0.45), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            }
         }
-        .msg-animate { animation: messageAppear 0.3s ease-out forwards; }
+        .liquid-breathe-inner {
+            animation: liquidBreatheScale 3.5s infinite ease-in-out;
+        }
 
-        /* 打字機閃爍游標動效 */
-        @keyframes cursorBlink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        /* 水滴展開與收縮轉場 */
+        .chat-drawer {
+            transform-origin: center center;
+            transform: scale(0.2) translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(16px);
+            transition: all 0.52s cubic-bezier(0.19, 1, 0.22, 1);
         }
+        @media (min-width: 1024px) {
+            .chat-drawer {
+                transform-origin: right center;
+                transform: scale(0.15) translate3d(80px, 0, 0);
+            }
+        }
+        .chat-drawer.open {
+            transform: scale(1) translate3d(0, 0, 0);
+            opacity: 1;
+            pointer-events: auto;
+            filter: blur(0px);
+        }
+
+        /* 自由文字框選支援 */
+        .selectable-text, .markdown-body, .markdown-body *, .user-bubble-text {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            cursor: text;
+        }
+        .ui-no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 打字機閃爍光標 */
+        @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .typing-cursor {
             display: inline-block;
             width: 5px;
@@ -87,7 +113,7 @@
             border-radius: 1px;
         }
 
-        /* Markdown 精準樣式 (含表格、代碼塊與引用) */
+        /* Markdown 精美樣式 */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -120,9 +146,7 @@
         .markdown-body blockquote { border-left: 3px solid #60a5fa; padding-left: 0.75rem; margin: 0.5rem 0; color: #cbd5e1; font-style: italic; }
 
         @media screen and (max-width: 768px) {
-            #userInput, #passcodeinput {
-                font-size: 16px !important;
-            }
+            #userInput, #passcodeinput { font-size: 16px !important; }
         }
 
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -130,8 +154,9 @@
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
     </style>
 </head>
-<body class="h-full flex flex-col select-none relative">
+<body class="h-full flex flex-col relative">
 
+    <!-- 全域大圖輪播背景 -->
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
@@ -146,7 +171,11 @@
         </div>
     </div>
 
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/35 backdrop-blur-2xl flex items-center justify-center p-4 hidden transition-all duration-500">
+    <!-- 遮罩背景 (平板與電腦點擊外部收合) -->
+    <div id="chatBackdrop" onclick="toggleChatDrawer(false)" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity duration-300 ui-no-select"></div>
+
+    <!-- Apple 高透磨砂登入遮罩層 -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/35 backdrop-blur-2xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
@@ -167,73 +196,90 @@
         </div>
     </div>
 
+    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
-        <header class="px-8 py-6 flex justify-between items-center shrink-0 z-20">
+        <!-- 頂部 Header -->
+        <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v7.1 串流極速版</span>
+                        <span>v8.2 旗艦版</span>
                     </span>
                 </div>
-                <p class="text-[9px] text-neutral-400 tracking-widest uppercase">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
+                <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
             
-            <div class="flex items-center space-x-6 text-xs tracking-widest">
+            <div class="flex items-center space-x-4 md:space-x-6 text-xs tracking-widest">
                 <span id="roleBadge" class="text-[9px] bg-white/10 text-neutral-300 border border-white/20 px-3 py-1 rounded-full font-light tracking-wider">MEMBER</span>
-                <button onclick="toggleChatDrawer()" class="bg-white/15 hover:bg-white/25 border border-white/30 text-white px-4.5 py-2 rounded-xl transition flex items-center space-x-2 backdrop-blur-md shadow-lg">
-                    <i class="fa-solid fa-comments text-xs"></i>
-                    <span>AI 助理</span>
-                </button>
-                <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden">ADMIN</a>
-                <button onclick="logout()" class="text-neutral-400 hover:text-white transition" title="登出">
+                <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden text-[11px]">ADMIN</a>
+                <button onclick="logout()" class="text-neutral-400 hover:text-white transition p-1" title="登出">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
             </div>
         </header>
 
-        <main class="flex-1 flex items-center px-12 pb-12 relative overflow-hidden pointer-events-none">
+        <!-- 主頁面留白與意象標語 -->
+        <main class="flex-1 flex items-center px-8 md:px-16 pb-12 relative overflow-hidden pointer-events-none ui-no-select">
             <div class="max-w-2xl space-y-4">
-                <h2 class="text-5xl md:text-7xl font-light tracking-[0.1em] text-white">LEAVES DESIGN</h2>
+                <h2 class="text-4xl sm:text-6xl md:text-7xl font-light tracking-[0.1em] text-white leading-tight">LEAVES DESIGN</h2>
                 <p class="text-xs md:text-sm font-light tracking-[0.25em] text-neutral-300 border-l-2 border-white/80 pl-4 uppercase">拾葉設計 • 內部智慧空間規範系統</p>
             </div>
         </main>
 
-        <div id="chatDrawer" class="chat-drawer fixed top-0 right-0 bottom-0 w-full md:w-1/2 chat-drawer-glass z-50 flex flex-col shadow-2xl">
-            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/30 backdrop-blur-md">
+        <!-- 水滴呼吸按鈕：手機與平板置中，電腦端靠右側 -->
+        <div id="aiFloatingTriggerWrapper" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-auto lg:translate-x-0 lg:right-8 z-30 transition duration-500 ui-no-select">
+            <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/45 hover:bg-black/65 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-2xl group shadow-2xl cursor-pointer">
+                <div class="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)] animate-pulse"></div>
+                <div class="text-left">
+                    <div class="text-sm sm:text-base lg:text-sm font-medium tracking-widest text-white flex items-center gap-2">
+                        <span>AI 助理</span>
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-400 group-hover:rotate-12 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法調度</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- 水滴展開對話框：手機全螢幕、平板懸浮窗(560px)、電腦右側(620px) -->
+        <div id="chatDrawer" class="chat-drawer fixed inset-0 sm:inset-auto sm:top-[6vh] sm:bottom-[6vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-[560px] lg:top-0 lg:bottom-0 lg:left-auto lg:translate-x-0 lg:right-0 lg:w-[620px] chat-drawer-glass border border-white/15 sm:rounded-3xl lg:rounded-none z-50 flex flex-col shadow-2xl">
+            
+            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 sm:rounded-t-3xl lg:rounded-none ui-no-select">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
                 </div>
-                <button onclick="toggleChatDrawer()" class="text-neutral-400 hover:text-white p-2 text-sm">
+                <button onclick="toggleChatDrawer(false)" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-full hover:bg-white/10" title="收回按鈕">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
+            <!-- 對話內容區（文字完全可自由選取） -->
             <div id="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="flex items-start space-x-3 msg-animate">
-                    <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
-                    <div class="glass-card p-4 rounded-2xl max-w-[85%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl">
+                    <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
+                    <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
                         <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或照片參考。</p>
                     </div>
                 </div>
             </div>
 
-            <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg">
+            <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg ui-no-select">
                 <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台雲端管理系統！
             </div>
-            <div id="copyToast" class="hidden mx-6 mb-2 p-2 bg-blue-950/80 border border-blue-800 text-blue-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg">
-                <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製 AI 回答內容至剪貼簿！
+            <div id="copyToast" class="hidden mx-6 mb-2 p-2 bg-blue-950/80 border border-blue-800 text-blue-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg ui-no-select">
+                <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製選取內容至剪貼簿！
             </div>
 
-            <div class="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/40 backdrop-blur-md">
+            <!-- 輸入區域 -->
+            <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0 sm:rounded-b-3xl lg:rounded-none">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
-                    <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md" title="發送訊息">
+                    <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
                         <span id="sendBtnText" class="hidden ml-1 font-sans text-[11px]">中斷</span>
                     </button>
@@ -241,13 +287,14 @@
             </div>
         </div>
 
-        <main id="viewAdmin" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl overflow-y-auto p-6 md:p-12 space-y-8 hidden pb-24">
+        <!-- 後台管理介面 -->
+        <main id="viewAdmin" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl overflow-y-auto p-6 md:p-12 space-y-8 hidden pb-24 ui-no-select">
             <div class="max-w-4xl mx-auto space-y-8">
                 <div class="flex justify-between items-center border-b border-white/10 pb-6">
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v7.1 串流極速版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.2 旗艦版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -294,7 +341,7 @@
                     <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
                         <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist Raw 網址
                     </h3>
-                    <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                    <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                 </div>
 
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-blue-500/30">
@@ -308,21 +355,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">Gist ID (身分碼雲端資料庫)</label>
-                            <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                            <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                         </div>
                         <div>
                             <label class="block text-[10px] text-neutral-500 mb-1">GitHub Token (發布金鑰 ghp_... 或 github_pat_...)</label>
-                            <input type="password" id="githubTokenInput" placeholder="GitHub Token" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                            <input type="password" id="githubTokenInput" placeholder="GitHub Token" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                         </div>
                     </div>
-                    <input type="text" id="codesGistFilenameInput" placeholder="Gist 檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono">
+                    <input type="text" id="codesGistFilenameInput" placeholder="Gist 檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                 </div>
 
                 <div class="glass-mono p-6 rounded-2xl space-y-3 border border-white/20">
                     <h3 class="text-xs font-semibold tracking-widest uppercase text-white">
                         <i class="fa-solid fa-eye mr-1.5"></i> 目前 AI 實際讀取的 SOP 內容預覽
                     </h3>
-                    <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed" placeholder="載入中..."></textarea>
+                    <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed selectable-text" placeholder="載入中..."></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,12 +377,12 @@
                         <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
                             <i class="fa-solid fa-key mr-1"></i> OpenRouter API Key (sk-or-v1-... 全公司共用)
                         </label>
-                        <input type="password" id="apiKeyInput" placeholder="請貼上 OpenRouter 金鑰 (開頭為 sk-or-v1-...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono">
+                        <input type="password" id="apiKeyInput" placeholder="請貼上 OpenRouter 金鑰 (開頭為 sk-or-v1-...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono selectable-text">
                     </div>
 
                     <div class="glass-mono p-6 rounded-2xl space-y-3">
                         <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">背景輪播圖片網址 (多張請用換行分隔)</label>
-                        <textarea id="bgImagesInput" rows="3" placeholder="https://image1.jpg&#10;https://image2.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono leading-relaxed"></textarea>
+                        <textarea id="bgImagesInput" rows="3" placeholder="https://image1.jpg&#10;https://image2.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono leading-relaxed selectable-text"></textarea>
                     </div>
                 </div>
 
@@ -350,7 +397,7 @@
                                 <i class="fa-solid fa-rotate-right"></i>
                                 <span>重新整理</span>
                             </button>
-                            <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white">
+                            <input type="text" id="newCodeName" placeholder="成員名稱 (例: 設計部小王)" class="bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white selectable-text">
                             <button onclick="generateNewCode()" id="genNewCodeBtn" class="bg-white hover:bg-neutral-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition tracking-wider shrink-0 shadow-lg">
                                 產生新代碼
                             </button>
@@ -462,16 +509,36 @@
             document.getElementById('imageLightbox').classList.add('hidden');
         }
 
+        // 🌟 智慧 ESC 鍵監聽（先關閉燈箱，若無燈箱則收合對話框）
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'Escape') {
+                const lb = document.getElementById('imageLightbox');
+                if (lb && !lb.classList.contains('hidden')) {
+                    closeLightbox();
+                } else {
+                    toggleChatDrawer(false);
+                }
+            }
         });
 
-        // 🌟 點擊委託：即時支援串流中生成的圖片放大
+        // 點擊委託：即時支援串流中生成的圖片放大
         document.getElementById('chatContainer').addEventListener('click', (e) => {
             if (e.target.tagName === 'IMG' && e.target.closest('.markdown-body')) {
                 openLightbox(e.target.src, e.target.alt);
             }
         });
+
+        // 全域捕捉損壞圖片並替換為安全標籤
+        window.addEventListener('error', (e) => {
+            if (e.target && e.target.tagName === 'IMG' && e.target.closest('#chatContainer')) {
+                const fallback = document.createElement('span');
+                fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
+                fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
+                if (e.target.parentNode) {
+                    e.target.parentNode.replaceChild(fallback, e.target);
+                }
+            }
+        }, true);
 
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
@@ -581,9 +648,7 @@
                         return handleCloudDataSuccess(cloudData);
                     }
                 }
-            } catch (e) {
-                console.warn("API Tier 1 failed, trying Raw CDN Tier 2...", e);
-            }
+            } catch (e) {}
 
             try {
                 const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?${randomBuster}`, {
@@ -593,9 +658,7 @@
                     const cloudData = await rawRes.json();
                     return handleCloudDataSuccess(cloudData);
                 }
-            } catch (e) {
-                console.warn("Raw CDN Tier 2 failed...", e);
-            }
+            } catch (e) {}
 
             const cached = localStorage.getItem('shiye_codes_cache');
             if (cached) {
@@ -709,10 +772,10 @@
             const appContainer = document.getElementById('appContainer');
 
             if (!currentAuth) {
-                authModal.classList.remove('hidden', 'ios-unlock-modal');
-                authCard.classList.remove('ios-unlock-card');
+                authModal.classList.remove('hidden', 'auth-modal-fade');
+                authCard.classList.remove('auth-shrink-out');
                 appContainer.classList.add('hidden');
-                appContainer.classList.remove('ios-app-enter');
+                appContainer.classList.remove('app-enter-anim');
                 return;
             }
 
@@ -793,16 +856,16 @@
                 const authCard = document.getElementById('authCard');
                 const appContainer = document.getElementById('appContainer');
 
-                authCard.classList.add('ios-unlock-card');
-                authModal.classList.add('ios-unlock-modal');
+                authCard.classList.add('auth-shrink-out');
+                authModal.classList.add('auth-modal-fade');
 
                 setTimeout(() => {
                     authModal.classList.add('hidden');
-                    authModal.classList.remove('ios-unlock-modal');
-                    authCard.classList.remove('ios-unlock-card');
+                    authModal.classList.remove('auth-modal-fade');
+                    authCard.classList.remove('auth-shrink-out');
 
                     appContainer.classList.remove('hidden');
-                    appContainer.classList.add('ios-app-enter');
+                    appContainer.classList.add('app-enter-anim');
 
                     window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
                     checkAuthAndRoute();
@@ -815,6 +878,7 @@
         }
 
         async function logout() {
+            toggleChatDrawer(false);
             if (activeCode) {
                 let codes = await fetchCodesFromCloud();
                 let matched = codes.find(c => c.code && c.code.toUpperCase() === activeCode.toUpperCase());
@@ -851,7 +915,24 @@
             }
         });
 
-        function toggleChatDrawer() { document.getElementById('chatDrawer').classList.toggle('open'); }
+        // 🌟 水滴按鈕、遮罩與對話框同步切換
+        function toggleChatDrawer(forceOpen = null) { 
+            const drawer = document.getElementById('chatDrawer');
+            const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
+            const backdrop = document.getElementById('chatBackdrop');
+            
+            const shouldOpen = (forceOpen !== null) ? forceOpen : !drawer.classList.contains('open');
+
+            if (shouldOpen) {
+                drawer.classList.add('open');
+                if (triggerWrapper) triggerWrapper.classList.add('opacity-0', 'pointer-events-none', 'scale-75');
+                if (backdrop) backdrop.classList.remove('hidden');
+            } else {
+                drawer.classList.remove('open');
+                if (triggerWrapper) triggerWrapper.classList.remove('opacity-0', 'pointer-events-none', 'scale-75');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        }
 
         async function loadAdminForm() {
             document.getElementById('apiKeyInput').value = localStorage.getItem('shiye_apikey') || '';
@@ -1071,8 +1152,8 @@
                         <span class="inline-block w-3 h-3 rounded-full ${lightColor}"></span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusBadgeStyle}">${statusText}</span>
                     </td>
-                    <td class="p-3.5 font-mono text-white font-medium select-all">${escapeHtml(c.code)}</td>
-                    <td class="p-3.5 text-neutral-300">${escapeHtml(c.name)}</td>
+                    <td class="p-3.5 font-mono text-white font-medium select-all selectable-text">${escapeHtml(c.code)}</td>
+                    <td class="p-3.5 text-neutral-300 selectable-text">${escapeHtml(c.name)}</td>
                     <td class="p-3.5 text-neutral-300 font-mono"><span class="bg-white/10 px-2 py-0.5 rounded-md text-[11px]">${loginCount} 次</span></td>
                     <td class="p-3.5 text-neutral-400 text-[10px] font-mono">${escapeHtml(lastLogin)}</td>
                     <td class="p-3.5 text-right space-x-2">
@@ -1232,8 +1313,8 @@
             }
 
             container.innerHTML = logs.map(l => `
-                <div class="p-5 bg-neutral-950/90 border border-neutral-800 rounded-2xl space-y-3.5 hover:border-red-500/40 transition">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800/80 pb-3">
+                <div class="p-5 bg-neutral-950/90 border border-neutral-800 rounded-2xl space-y-3.5 hover:border-red-500/40 transition selectable-text">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800/80 pb-3 ui-no-select">
                         <div class="flex items-center space-x-2.5">
                             <span class="bg-red-950 text-red-300 border border-red-800/80 text-[10px] px-2.5 py-0.5 rounded-full font-medium flex items-center">
                                 <i class="fa-solid fa-user mr-1 text-[9px]"></i> ${escapeHtml(l.name)}
@@ -1249,7 +1330,7 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <div class="text-[11px] font-semibold tracking-wider text-amber-400 flex items-center space-x-1">
+                        <div class="text-[11px] font-semibold tracking-wider text-amber-400 flex items-center space-x-1 ui-no-select">
                             <i class="fa-solid fa-circle-question text-[10px]"></i>
                             <span>同仁當時詢問的問題：</span>
                         </div>
@@ -1259,7 +1340,7 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <div class="text-[11px] font-semibold tracking-wider text-red-400 flex items-center space-x-1">
+                        <div class="text-[11px] font-semibold tracking-wider text-red-400 flex items-center space-x-1 ui-no-select">
                             <i class="fa-solid fa-robot text-[10px]"></i>
                             <span>AI 當時回覆的答案（待修正）：</span>
                         </div>
@@ -1338,7 +1419,6 @@
             }
         }
 
-        // 🌟 串流打字引擎（帶 requestAnimationFrame 效能節流防發燙）
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1371,7 +1451,7 @@
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與深度思考約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或大陸用語。
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字、大陸用語或無意義代碼區塊。
 2. 深度工法思考（思維鏈）：在組織回答時，請主動為同仁檢核「施作工序前後邏輯」、「標準公差數據」、「防水防裂防呆重點」與「驗收關鍵」，絕不泛泛而談。
 3. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部 SOP 規範】。請完整輸出每個階段與步驟，絕不允許中途截斷。
 4. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
@@ -1385,9 +1465,10 @@ ${sopContent}
                 const messages = [{ role: "system", content: systemPrompt }];
                 
                 chatHistory.slice(-6).forEach(h => {
+                    const truncatedContent = h.text.length > 500 ? h.text.substring(0, 500) + '...' : h.text;
                     messages.push({ 
                         role: h.role === 'user' ? 'user' : 'assistant', 
-                        content: h.text 
+                        content: truncatedContent 
                     });
                 });
                 
@@ -1447,7 +1528,8 @@ ${sopContent}
                         removeLoading(loadingId);
                         liveMsgElements = createLiveAssistantBubble();
 
-                        while (true) {
+                        let isStreamDone = false;
+                        while (!isStreamDone) {
                             const { done, value } = await reader.read();
                             if (done) break;
 
@@ -1458,14 +1540,16 @@ ${sopContent}
                             for (const line of lines) {
                                 const trimmed = line.trim();
                                 if (!trimmed || trimmed.startsWith(':')) continue;
-                                if (trimmed === 'data: [DONE]') break;
+                                if (trimmed === 'data: [DONE]') {
+                                    isStreamDone = true;
+                                    break;
+                                }
                                 if (trimmed.startsWith('data: ')) {
                                     try {
                                         const parsed = JSON.parse(trimmed.substring(6));
                                         const delta = parsed.choices?.[0]?.delta?.content || '';
                                         if (delta) {
                                             accumulatedReply += delta;
-                                            // 🌟 利用 requestAnimationFrame 平滑節流渲染，防 CPU 飆高
                                             if (!renderScheduled) {
                                                 renderScheduled = true;
                                                 requestAnimationFrame(() => {
@@ -1532,12 +1616,12 @@ ${sopContent}
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             const html = `
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
-                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">AI</div>
-                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
-                        <div id="${msgId}_content" class="markdown-body break-words">
+                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
+                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
                             <span class="typing-cursor"></span>
                         </div>
-                        <div id="${msgId}_footer" class="hidden"></div>
+                        <div id="${msgId}_footer" class="hidden ui-no-select"></div>
                     </div>
                 </div>
             `;
@@ -1573,7 +1657,7 @@ ${sopContent}
             elements.content.innerHTML = parsed;
 
             if (elements.footer && meta) {
-                elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400";
+                elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select";
                 elements.footer.innerHTML = `
                     <div class="flex items-center flex-wrap gap-1.5 font-mono">
                         <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
@@ -1599,19 +1683,6 @@ ${sopContent}
                 `;
             }
 
-            const images = elements.wrapper.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('load', () => {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                });
-                img.addEventListener('error', () => {
-                    const fallback = document.createElement('span');
-                    fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
-                    fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
-                    img.parentNode.replaceChild(fallback, img);
-                });
-            });
-
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
@@ -1629,7 +1700,7 @@ ${sopContent}
             let metaFooter = '';
             if (!isUser && meta) {
                 metaFooter = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select">
                         <div class="flex items-center flex-wrap gap-1.5 font-mono">
                             <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
                                 <i class="fa-solid fa-microchip text-[8px] text-purple-400"></i> ${escapeHtml(meta.model || 'Gemini')}
@@ -1644,11 +1715,9 @@ ${sopContent}
                             </span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            ${meta.rawReply ? `
-                                <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
-                                    <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
-                                </button>
-                            ` : ''}
+                            <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
+                                <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
+                            </button>
                             <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
                                 <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
                             </button>
@@ -1659,9 +1728,9 @@ ${sopContent}
 
             const html = `
                 <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
-                    <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px]">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
-                    <div class="${isError ? 'bg-red-950/80 text-red-200' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[85%] text-xs font-light leading-relaxed space-y-2">
-                        <div class="${isUser ? 'whitespace-pre-wrap break-words' : 'markdown-body break-words'}">${parsedContent}</div>
+                    <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
+                    <div class="${isError ? 'bg-red-950/80 text-red-200' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
+                        <div class="${isUser ? 'whitespace-pre-wrap break-words user-bubble-text' : 'markdown-body break-words selectable-text'}">${parsedContent}</div>
                         ${metaFooter}
                     </div>
                 </div>
@@ -1673,7 +1742,7 @@ ${sopContent}
         function appendLoading() {
             const id = 'loading_' + Date.now();
             const html = `
-                <div id="${id}" class="flex items-start space-x-3 msg-animate">
+                <div id="${id}" class="flex items-start space-x-3 msg-animate ui-no-select">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px]">AI</div>
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
