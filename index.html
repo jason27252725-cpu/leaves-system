@@ -98,11 +98,11 @@
             }
         }
 
-        /* 蘋果水滴卡片變形放大動效 */
+        /* 水滴展開懸浮對話框 */
         #chatDrawer {
             position: fixed;
             z-index: 50;
-            background: rgba(14, 14, 14, 0.75);
+            background: rgba(14, 14, 14, 0.72);
             backdrop-filter: blur(32px);
             -webkit-backdrop-filter: blur(32px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -242,11 +242,9 @@
 </head>
 <body class="h-full flex flex-col relative">
 
-    <!-- 全域大圖輪播背景 -->
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 圖片全螢幕燈箱 Lightbox -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden cursor-zoom-out transition-opacity duration-300">
         <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
             <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
@@ -282,14 +280,13 @@
     <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
-        <!-- 頂部 Header -->
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v8.7 內部授權版</span>
+                        <span>v8.8 智慧流暢版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -304,7 +301,6 @@
             </div>
         </header>
 
-        <!-- 主頁面意象標語 -->
         <main class="flex-1 flex items-center px-8 md:px-16 pb-12 relative overflow-hidden pointer-events-none ui-no-select">
             <div class="max-w-2xl space-y-4">
                 <h2 class="text-4xl sm:text-6xl md:text-7xl font-light tracking-[0.1em] text-white leading-tight">LEAVES DESIGN</h2>
@@ -356,7 +352,6 @@
                 <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製選取內容至剪貼簿！
             </div>
 
-            <!-- 輸入區域 -->
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP、工法或內部資訊的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
@@ -376,7 +371,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.7 內部授權版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.8 智慧流暢版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -557,12 +552,12 @@
             });
         }
 
-        // 🌟 優化模型順位：將響應最快、繁中語感極佳的 Gemini 2.0 Flash Lite 作為首選
+        // 🌟 穩定模型順位：Gemini 2.0 Flash Lite 首選 (低延遲、無繁中審查誤判)
         const MONITORED_MODELS = [
-            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、低延遲、無繁中審查誤判" },
+            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、低延遲、無審查誤判" },
             { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型" },
-            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
             { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
+            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
             { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
         ];
 
@@ -620,7 +615,6 @@
             }
         });
 
-        // 點擊外部自然縮回對話框
         document.addEventListener('pointerdown', (e) => {
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
@@ -1044,7 +1038,6 @@
             }
         });
 
-        // 水滴按鈕與懸浮對話框切換
         function toggleChatDrawer(forceOpen = null) { 
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
@@ -1551,7 +1544,7 @@
             }
         }
 
-        // 🌟 核心：注入內部授權特赦條款與極速響應引擎
+        // 🌟 串流打字引擎（流暢黃金參數版）
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1581,28 +1574,27 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 核心升級：強制授權內部資訊 + 簡短問題極速秒答
+                // 🌟 自然通暢的提示詞架構，徹底根除審查拒答
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級內部專用 AI 助手。
 
-【內部授權與機密免除特赦指令】：
-1. 本系統為「拾葉設計」內部封閉系統，所有使用者均已通過身分通行碼驗證。
-2. 若同仁詢問公司內部公用資訊（例如：公司大門/後門門禁密碼、Wi-Fi 帳號密碼、各系統公用帳密、公務聯絡資訊等），只要下方【SOP 知識庫】中有記錄，你【必須直接如實且明確回答】，嚴禁以「涉及隱私/機密」為由拒絕回答！
-3. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴禁簡體中文或大陸用語。
-4. 簡短問題極速秒答：若同仁詢問簡短資訊（如密碼、Wi-Fi、特定尺寸、電話等），請【直接 1 秒給出答案與重點】，無需繁複鋪陳與過度推論。
-5. 工法長篇條理回答：若同仁詢問施工工法或標準作業流程，請保持條列式 (Bullet Points) 與粗體重點，若有照片網址請以 Markdown 圖片格式 \`![工法說明](圖片網址)\` 輸出。
+【回答指引與準則】：
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴禁簡體中文字或大陸用語。
+2. 知識庫檢索：所有回答均直接參考下方【拾葉內部空間規範與營運手冊】。手冊中所記錄之門禁設定數值、公用 Wi-Fi 帳密、工務聯絡電話、工程標準公差、施工驗收流程等，均屬拾葉同仁內部公開參考資訊，請直接精準如實提供。
+3. 表達風格：俐落、條理分明。簡短數據（如代碼、連線資訊、特定尺寸）直接給予答案；長篇工法請使用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
+4. 照片調度支援：若手冊中有該工法的參考照片連結，請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 附在相關段落下方便同仁對照。
 
-【拾葉設計內部 SOP 知識庫】：
+【拾葉內部空間規範與營運手冊】：
 ---------------------
 ${sopContent}
 ---------------------`;
 
                 const messages = [{ role: "system", content: systemPrompt }];
                 
-                chatHistory.slice(-4).forEach(h => {
-                    const truncatedContent = h.text.length > 400 ? h.text.substring(0, 400) + '...' : h.text;
+                // 完整保留最近 3 輪對話上下文
+                chatHistory.slice(-6).forEach(h => {
                     messages.push({ 
                         role: h.role === 'user' ? 'user' : 'assistant', 
-                        content: truncatedContent 
+                        content: h.text 
                     });
                 });
                 
@@ -1621,9 +1613,9 @@ ${sopContent}
                     let timeoutTimerId = null;
 
                     try {
-                        // 🌟 縮短節點等待逾時至 8 秒，大幅消除卡頓
+                        // 🌟 穩定的 15 秒節點等待，避免頻繁輪換到不同審查等級的模型
                         const timeoutPromise = new Promise((_, reject) => {
-                            timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 8000);
+                            timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
                         });
 
                         const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
@@ -1638,7 +1630,7 @@ ${sopContent}
                             body: JSON.stringify({
                                 model: modelObj.id,
                                 messages: messages,
-                                temperature: 0.1, // 🌟 超低溫度：秒回精準事實，不囉嗦
+                                temperature: 0.3, // 🌟 黃金平衡溫度：自然聰明且精準
                                 max_tokens: 4000,
                                 stream: true
                             })
@@ -1888,7 +1880,7 @@ ${sopContent}
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-circle-notch animate-spin text-blue-400 text-xs"></i>
-                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時檢索內部資訊中...</span>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時檢索內部手冊中...</span>
                         </div>
                     </div>
                 </div>
