@@ -33,7 +33,6 @@
         }
         .bg-slide.active { opacity: 1; }
 
-        /* 登入框縮小消散動畫 */
         @keyframes cardShrinkVanish {
             0% { transform: scale(1); opacity: 1; }
             40% { transform: scale(1.02); opacity: 0.95; }
@@ -52,7 +51,6 @@
         .auth-modal-fade { animation: authModalFadeOut 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .app-enter-anim { animation: appInterfaceEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* 水滴呼吸動效 */
         @keyframes liquidBreatheScale {
             0%, 100% {
                 transform: scale(1);
@@ -67,7 +65,6 @@
             animation: liquidBreatheScale 3.5s infinite ease-in-out;
         }
 
-        /* 水滴按鈕定位 */
         #aiFloatingTriggerWrapper {
             position: fixed;
             z-index: 30;
@@ -98,11 +95,10 @@
             }
         }
 
-        /* 水滴展開懸浮對話框 */
         #chatDrawer {
             position: fixed;
             z-index: 50;
-            background: rgba(14, 14, 14, 0.72);
+            background: rgba(14, 14, 14, 0.75);
             backdrop-filter: blur(32px);
             -webkit-backdrop-filter: blur(32px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -111,7 +107,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
@@ -119,7 +114,6 @@
             transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* 手機端 (< 768px) */
         @media (max-width: 767px) {
             #chatDrawer {
                 left: 0.75rem;
@@ -137,7 +131,6 @@
             }
         }
 
-        /* 平板端 (768px ~ 1023px) */
         @media (min-width: 768px) and (max-width: 1023px) {
             #chatDrawer {
                 left: 50%;
@@ -156,7 +149,6 @@
             }
         }
 
-        /* 電腦端 (>= 1024px) */
         @media (min-width: 1024px) {
             #chatDrawer {
                 right: 1.5rem;
@@ -175,7 +167,6 @@
             }
         }
 
-        /* 自由文字框選支援 */
         .selectable-text, .markdown-body, .markdown-body *, .user-bubble-text {
             user-select: text !important;
             -webkit-user-select: text !important;
@@ -186,7 +177,6 @@
             -webkit-user-select: none;
         }
 
-        /* 打字機閃爍光標 */
         @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .typing-cursor {
             display: inline-block;
@@ -199,7 +189,6 @@
             border-radius: 1px;
         }
 
-        /* Markdown 精美樣式 */
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
         .markdown-body img {
             max-width: 100%;
@@ -286,7 +275,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v8.8 智慧流暢版</span>
+                        <span>v8.9 核心還原版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -340,7 +329,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、辦公室資訊或照片參考。</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範、公司資訊或照片參考。</p>
                     </div>
                 </div>
             </div>
@@ -354,7 +343,7 @@
 
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP、工法或內部資訊的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP、工法或內部規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -371,7 +360,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.8 智慧流暢版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.9 核心還原版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -552,12 +541,11 @@
             });
         }
 
-        // 🌟 穩定模型順位：Gemini 2.0 Flash Lite 首選 (低延遲、無繁中審查誤判)
         const MONITORED_MODELS = [
-            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、低延遲、無審查誤判" },
+            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、繁中語感極佳、低延遲" },
             { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型" },
-            { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
             { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
+            { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
             { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
         ];
 
@@ -1544,7 +1532,7 @@
             }
         }
 
-        // 🌟 串流打字引擎（流暢黃金參數版）
+        // 🌟 核心：還原 v7.1 經典 AI 邏輯與 temperature: 0.2
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1574,23 +1562,22 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 自然通暢的提示詞架構，徹底根除審查拒答
-                const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級內部專用 AI 助手。
+                // 🌟 v7.1 經典系統提示詞 (總監級條理規範)
+                const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
-【回答指引與準則】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴禁簡體中文字或大陸用語。
-2. 知識庫檢索：所有回答均直接參考下方【拾葉內部空間規範與營運手冊】。手冊中所記錄之門禁設定數值、公用 Wi-Fi 帳密、工務聯絡電話、工程標準公差、施工驗收流程等，均屬拾葉同仁內部公開參考資訊，請直接精準如實提供。
-3. 表達風格：俐落、條理分明。簡短數據（如代碼、連線資訊、特定尺寸）直接給予答案；長篇工法請使用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
-4. 照片調度支援：若手冊中有該工法的參考照片連結，請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 附在相關段落下方便同仁對照。
+【重要準則與回覆約束】：
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字、大陸用語或無意義代碼區塊。
+2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部知識庫】。手冊中記載之工程工法、標準數據、門禁數值、Wi-Fi 帳密與行政須知，均為內部同仁公開參考資料，請完整輸出每個步驟與數據，絕不允許中途截斷或拒絕回答。
+3. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
+4. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
 
-【拾葉內部空間規範與營運手冊】：
+【拾葉設計內部知識庫】：
 ---------------------
 ${sopContent}
 ---------------------`;
 
                 const messages = [{ role: "system", content: systemPrompt }];
                 
-                // 完整保留最近 3 輪對話上下文
                 chatHistory.slice(-6).forEach(h => {
                     messages.push({ 
                         role: h.role === 'user' ? 'user' : 'assistant', 
@@ -1613,7 +1600,6 @@ ${sopContent}
                     let timeoutTimerId = null;
 
                     try {
-                        // 🌟 穩定的 15 秒節點等待，避免頻繁輪換到不同審查等級的模型
                         const timeoutPromise = new Promise((_, reject) => {
                             timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
                         });
@@ -1630,7 +1616,7 @@ ${sopContent}
                             body: JSON.stringify({
                                 model: modelObj.id,
                                 messages: messages,
-                                temperature: 0.3, // 🌟 黃金平衡溫度：自然聰明且精準
+                                temperature: 0.2, // 🌟 還原 v7.1 黃金溫度
                                 max_tokens: 4000,
                                 stream: true
                             })
@@ -1880,7 +1866,7 @@ ${sopContent}
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-circle-notch animate-spin text-blue-400 text-xs"></i>
-                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時檢索內部手冊中...</span>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時檢索內部知識庫中...</span>
                         </div>
                     </div>
                 </div>
