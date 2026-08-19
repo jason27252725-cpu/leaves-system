@@ -20,7 +20,6 @@
         }
         
         .glass-mono { background: rgba(12, 12, 12, 0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255, 255, 255, 0.12); }
-        .chat-drawer-glass { background: rgba(12, 12, 12, 0.88); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); }
         .glass-card { background: rgba(20, 20, 20, 0.55); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
         .bg-slide {
@@ -68,40 +67,111 @@
             animation: liquidBreatheScale 3.5s infinite ease-in-out;
         }
 
-        /* 🌟 水滴物理彈簧展開動效 (乾淨無模糊，徹底消除 Transform 衝突) */
-        .chat-drawer {
+        /* 🌟 水滴按鈕定位 */
+        #aiFloatingTriggerWrapper {
+            position: fixed;
+            z-index: 30;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @media (max-width: 1023px) {
+            #aiFloatingTriggerWrapper {
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            #aiFloatingTriggerWrapper.hidden-trigger {
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+        }
+        @media (min-width: 1024px) {
+            #aiFloatingTriggerWrapper {
+                right: 2rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            #aiFloatingTriggerWrapper.hidden-trigger {
+                opacity: 0;
+                pointer-events: none;
+                transform: translateY(-50%) scale(0.3);
+            }
+        }
+
+        /* 🌟 核心：蘋果水滴卡片變形放大動效 (高透光懸浮，無黑死面) */
+        #chatDrawer {
+            position: fixed;
+            z-index: 50;
+            background: rgba(14, 14, 14, 0.72);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 255, 255, 0.06);
+            border-radius: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
-            backface-visibility: hidden;
             will-change: transform, opacity;
-            transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease, visibility 0.45s;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* 手機 & 平板：從畫面中心縮放展開 */
-        @media (max-width: 1023px) {
-            .chat-drawer {
-                transform: scale(0.8) translateY(20px);
+        /* 手機端 (< 768px) */
+        @media (max-width: 767px) {
+            #chatDrawer {
+                left: 0.75rem;
+                right: 0.75rem;
+                top: 1rem;
+                bottom: 1rem;
+                transform-origin: center center;
+                transform: scale(0.25);
             }
-            .chat-drawer.open {
-                transform: scale(1) translateY(0);
+            #chatDrawer.open {
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
+                transform: scale(1);
             }
         }
 
-        /* 電腦端：從右側按鈕向左展開 */
+        /* 平板端 (768px ~ 1023px)：中央懸浮卡片 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #chatDrawer {
+                left: 50%;
+                top: 50%;
+                width: 580px;
+                max-width: 92vw;
+                height: 85vh;
+                transform-origin: center center;
+                transform: translate(-50%, -50%) scale(0.25);
+            }
+            #chatDrawer.open {
+                opacity: 1;
+                pointer-events: auto;
+                visibility: visible;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* 電腦端 (>= 1024px)：右側懸浮卡片 */
         @media (min-width: 1024px) {
-            .chat-drawer {
+            #chatDrawer {
+                right: 1.5rem;
+                top: 1.5rem;
+                bottom: 1.5rem;
+                width: 620px;
+                max-width: 48vw;
                 transform-origin: right center;
-                transform: translateX(40px) scale(0.9);
+                transform: scale(0.25);
             }
-            .chat-drawer.open {
-                transform: translateX(0) scale(1);
+            #chatDrawer.open {
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
+                transform: scale(1);
             }
         }
 
@@ -187,9 +257,6 @@
         </div>
     </div>
 
-    <!-- 遮罩背景 (點擊外部收合) -->
-    <div id="chatBackdrop" onclick="toggleChatDrawer(false)" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity duration-300 ui-no-select"></div>
-
     <!-- Apple 高透磨砂登入遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
@@ -222,7 +289,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v8.4 旗艦版</span>
+                        <span>v8.6 旗艦無瑕版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -245,8 +312,8 @@
             </div>
         </main>
 
-        <!-- 水滴呼吸按鈕：手機與平板置中，電腦端靠右側 -->
-        <div id="aiFloatingTriggerWrapper" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-auto lg:translate-x-0 lg:right-8 z-30 transition duration-300 ui-no-select">
+        <!-- 水滴呼吸按鈕（手機與平板置中，電腦端靠右側） -->
+        <div id="aiFloatingTriggerWrapper" class="ui-no-select">
             <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/50 hover:bg-black/70 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-xl group shadow-2xl cursor-pointer">
                 <div class="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)] animate-pulse"></div>
                 <div class="text-left">
@@ -259,10 +326,10 @@
             </button>
         </div>
 
-        <!-- 🌟 水滴展開對話框：iPad 純佈局置中 (sm:inset-x-0 sm:mx-auto sm:w-[560px]) -->
-        <div id="chatDrawer" class="chat-drawer fixed inset-0 sm:inset-x-0 sm:mx-auto sm:top-[6vh] sm:bottom-[6vh] sm:w-[560px] lg:inset-x-auto lg:mx-0 lg:top-0 lg:bottom-0 lg:right-0 lg:w-[620px] chat-drawer-glass border border-white/15 sm:rounded-3xl lg:rounded-none z-50 flex flex-col shadow-2xl">
+        <!-- 水滴展開懸浮對話框（高透光質感，背景清晰可見） -->
+        <div id="chatDrawer">
             
-            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/50 backdrop-blur-md shrink-0 sm:rounded-t-3xl lg:rounded-none ui-no-select">
+            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
@@ -272,7 +339,7 @@
                 </button>
             </div>
 
-            <!-- 對話內容區（加入 min-h-0 防止 Safari 滾動破版） -->
+            <!-- 對話內容區（文字完全可自由框選） -->
             <div id="chatContainer" class="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
@@ -291,7 +358,7 @@
             </div>
 
             <!-- 輸入區域 -->
-            <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/60 backdrop-blur-md shrink-0 sm:rounded-b-3xl lg:rounded-none">
+            <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
                     <textarea id="userInput" rows="1" placeholder="輸入關於 SOP 或設計規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
@@ -310,7 +377,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.4 旗艦版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.6 旗艦無瑕版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -440,7 +507,7 @@
                 <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-red-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
                         <div>
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-2.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
                                 <h3 class="text-sm font-semibold tracking-widest uppercase text-red-400">同仁對話錯誤回報專區 (雲端集中同步)</h3>
                             </div>
@@ -470,11 +537,20 @@
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
 
+        // 🌟 強化版自訂 Marked.js 解析器：多型相容物件/字串參數
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
-                const titleAttr = title ? ` title="${title}"` : '';
-                return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
+                let actualHref = href;
+                let actualTitle = title;
+                let actualText = text;
+                if (typeof href === 'object' && href !== null) {
+                    actualHref = href.href || '';
+                    actualTitle = href.title || '';
+                    actualText = href.text || '';
+                }
+                const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
+                return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
             };
             marked.setOptions({
                 renderer: renderer,
@@ -502,6 +578,14 @@
         let activeStreamReader = null;
         let isCloudLoaded = false;
         window.tempMsgStore = {};
+
+        function safeJsonParse(str, fallback = null) {
+            try {
+                return JSON.parse(str) || fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -537,6 +621,19 @@
             }
         });
 
+        // 🌟 核心：點擊外部自然縮回對話框 (無黑死面阻擋)
+        document.addEventListener('pointerdown', (e) => {
+            const drawer = document.getElementById('chatDrawer');
+            const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
+            const lightbox = document.getElementById('imageLightbox');
+            
+            if (drawer && drawer.classList.contains('open')) {
+                if (!drawer.contains(e.target) && !triggerWrapper.contains(e.target) && (!lightbox || !lightbox.contains(e.target))) {
+                    toggleChatDrawer(false);
+                }
+            }
+        });
+
         document.getElementById('chatContainer').addEventListener('click', (e) => {
             if (e.target.tagName === 'IMG' && e.target.closest('.markdown-body')) {
                 openLightbox(e.target.src, e.target.alt);
@@ -554,7 +651,6 @@
             }
         }, true);
 
-        // 🌟 強化版跨平台複製（相容所有手機內嵌瀏覽器）
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
             const textToCopy = record ? record.a : '';
@@ -680,7 +776,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.files && data.files[filename] && data.files[filename].content) {
-                        const cloudData = JSON.parse(data.files[filename].content);
+                        const cloudData = safeJsonParse(data.files[filename].content, {});
                         return handleCloudDataSuccess(cloudData);
                     }
                 }
@@ -698,10 +794,8 @@
 
             const cached = localStorage.getItem('shiye_codes_cache');
             if (cached) {
-                try {
-                    let parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                } catch(e) {}
+                let parsed = safeJsonParse(cached, []);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             }
 
             return getFallbackCodes();
@@ -779,8 +873,8 @@
             }
 
             const container = document.getElementById('bgSlideshow');
-            const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
-            if (bgList.length === 0) return;
+            const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
+            if (!Array.isArray(bgList) || bgList.length === 0) return;
             
             container.innerHTML = '';
             bgList.forEach((url, i) => {
@@ -951,21 +1045,19 @@
             }
         });
 
+        // 🌟 水滴按鈕與懸浮對話框切換
         function toggleChatDrawer(forceOpen = null) { 
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
-            const backdrop = document.getElementById('chatBackdrop');
             
             const shouldOpen = (forceOpen !== null) ? forceOpen : !drawer.classList.contains('open');
 
             if (shouldOpen) {
                 drawer.classList.add('open');
-                if (triggerWrapper) triggerWrapper.classList.add('opacity-0', 'pointer-events-none', 'scale-75');
-                if (backdrop) backdrop.classList.remove('hidden');
+                if (triggerWrapper) triggerWrapper.classList.add('hidden-trigger');
             } else {
                 drawer.classList.remove('open');
-                if (triggerWrapper) triggerWrapper.classList.remove('opacity-0', 'pointer-events-none', 'scale-75');
-                if (backdrop) backdrop.classList.add('hidden');
+                if (triggerWrapper) triggerWrapper.classList.remove('hidden-trigger');
             }
         }
 
@@ -976,8 +1068,8 @@
             document.getElementById('githubTokenInput').value = getGithubToken();
             document.getElementById('codesGistFilenameInput').value = getCodesFilename();
             
-            const bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
-            document.getElementById('bgImagesInput').value = bgList.join('\n');
+            const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
+            document.getElementById('bgImagesInput').value = Array.isArray(bgList) ? bgList.join('\n') : '';
             
             const lastUsed = localStorage.getItem('shiye_last_used_model');
             if (lastUsed) {
@@ -1215,8 +1307,8 @@
 
             let apiKey = localStorage.getItem('shiye_apikey') || '';
             let sopUrl = localStorage.getItem('shiye_gist_url') || '';
-            let bgList = JSON.parse(localStorage.getItem('shiye_bg_list') || '[]');
-            let errorLogs = customErrorLogs || JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            let bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
+            let errorLogs = customErrorLogs || safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
 
             try {
                 const payloadData = {
@@ -1308,7 +1400,7 @@
             const record = window.tempMsgStore[msgId];
             if (!record) return;
 
-            const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            const logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
             const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
             const userName = userObj ? userObj.name : '未知同仁';
 
@@ -1334,7 +1426,7 @@
             const countBadge = document.getElementById('errorLogsCountBadge');
             if(!container) return;
             
-            const logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+            const logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
             countBadge.textContent = `共 ${logs.length} 筆回報`;
 
             if (logs.length === 0) {
@@ -1389,7 +1481,7 @@
 
         async function deleteSingleErrorLog(id) {
             try {
-                let logs = JSON.parse(localStorage.getItem('shiye_error_logs') || '[]');
+                let logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
                 logs = logs.filter(l => l.id != id);
                 localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
                 renderErrorLogs();
@@ -1460,7 +1552,6 @@
             }
         }
 
-        // 🌟 串流打字引擎 (含主動 Reader 釋放與防洩漏)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
