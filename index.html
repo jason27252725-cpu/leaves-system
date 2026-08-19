@@ -244,7 +244,6 @@
         </div>
     </div>
 
-    <!-- Apple 高透磨砂登入遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -266,7 +265,6 @@
         </div>
     </div>
 
-    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
@@ -275,7 +273,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v8.9 核心還原版</span>
+                        <span>v9.0 金鑰輪替池版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -360,7 +358,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v8.9 核心還原版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.0 金鑰輪替池版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -439,11 +437,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 🌟 多金鑰輪替池設定區 -->
                     <div class="glass-mono p-6 rounded-2xl space-y-3 border border-blue-500/30">
-                        <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
-                            <i class="fa-solid fa-key mr-1"></i> OpenRouter API Key (sk-or-v1-... 全公司共用)
-                        </label>
-                        <input type="password" id="apiKeyInput" placeholder="請貼上 OpenRouter 金鑰 (開頭為 sk-or-v1-...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono selectable-text">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
+                                <i class="fa-solid fa-key mr-1"></i> OpenRouter 多金鑰輪替池 (Multi-Key Pool)
+                            </label>
+                            <span id="keyCountBadge" class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded font-mono">1 組金鑰</span>
+                        </div>
+                        <p class="text-[10px] text-neutral-400">可填入多組免費 OpenRouter Key（換行或逗號分隔），遇額度上限將在 0.1 秒內自動無感切換！</p>
+                        <textarea id="apiKeyInput" rows="3" placeholder="sk-or-v1-aaaa...&#10;sk-or-v1-bbbb... (每行貼一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono selectable-text leading-relaxed"></textarea>
                     </div>
 
                     <div class="glass-mono p-6 rounded-2xl space-y-3">
@@ -544,8 +547,8 @@
         const MONITORED_MODELS = [
             { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、繁中語感極佳、低延遲" },
             { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型" },
-            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
             { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
+            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
             { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
         ];
 
@@ -577,6 +580,13 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        // 🌟 核心：多 Key 輪替池解析
+        function getApiKeys() {
+            const raw = localStorage.getItem('shiye_apikey') || '';
+            const list = raw.split(/[\n,]+/).map(k => k.trim()).filter(k => k.length > 10);
+            return list.length > 0 ? list : [];
         }
 
         function openLightbox(src, alt) {
@@ -1042,7 +1052,13 @@
         }
 
         async function loadAdminForm() {
-            document.getElementById('apiKeyInput').value = localStorage.getItem('shiye_apikey') || '';
+            const rawKeys = localStorage.getItem('shiye_apikey') || '';
+            document.getElementById('apiKeyInput').value = rawKeys;
+            
+            const keyCount = getApiKeys().length;
+            const badge = document.getElementById('keyCountBadge');
+            if (badge) badge.textContent = `${keyCount} 組可用金鑰`;
+
             document.getElementById('gistIdInput').value = getStoredGistUrl();
             document.getElementById('codesGistIdInput').value = getCodesGistId();
             document.getElementById('githubTokenInput').value = getGithubToken();
@@ -1100,11 +1116,12 @@
         }
 
         async function testAllModelsHealth() {
-            let apiKey = localStorage.getItem('shiye_apikey') || document.getElementById('apiKeyInput')?.value?.trim();
-            if (!apiKey) {
-                alert('請先填寫 OpenRouter API Key 才能執行連線診斷！');
+            const keys = getApiKeys();
+            if (keys.length === 0) {
+                alert('請先在下方填寫至少一組 OpenRouter API Key 才能執行連線診斷！');
                 return;
             }
+            const apiKey = keys[0];
 
             const btn = document.getElementById('testModelsBtn');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 檢測中...';
@@ -1122,7 +1139,7 @@
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${apiKey.trim()}`,
+                                'Authorization': `Bearer ${apiKey}`,
                                 'HTTP-Referer': window.location.origin,
                                 'X-Title': 'HealthCheck'
                             },
@@ -1365,7 +1382,7 @@
 
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端資料庫！');
+                    alert('✅ 成功：全套系統設定（包含多金鑰輪替池）已成功寫入 GitHub 雲端資料庫！');
                 } else {
                     alert(`❌ 寫入 GitHub 雲端失敗！\n\n【診斷資訊】\n• 狀態碼: HTTP ${result.status} (${result.statusText})\n• 原因說明: ${result.message}\n\n💡 建議排查：\n1. 請確認 Token 是否過期（建議選 No expiration）\n2. 請確認 Token 是否勾選了「gist」權限\n3. 請確認此 Gist ID 是否為該 Token 帳號所擁有。`);
                 }
@@ -1532,20 +1549,20 @@
             }
         }
 
-        // 🌟 核心：還原 v7.1 經典 AI 邏輯與 temperature: 0.2
+        // 🌟 核心：多金鑰輪替池 + v7.1 經典 AI 邏輯 (溫度 0.2)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
             if (!text) return;
             
-            let apiKey = localStorage.getItem('shiye_apikey');
-            if (!apiKey) {
+            let apiKeys = getApiKeys();
+            if (apiKeys.length === 0) {
                 await fetchCodesFromCloud();
-                apiKey = localStorage.getItem('shiye_apikey');
+                apiKeys = getApiKeys();
             }
 
-            if (!apiKey) {
-                alert('系統尚未設定 OpenRouter API Key，請先由管理員至後台設定。');
+            if (apiKeys.length === 0) {
+                alert('系統尚未設定任何 OpenRouter API Key，請先由管理員至後台設定。');
                 return;
             }
 
@@ -1594,100 +1611,113 @@ ${sopContent}
                 let liveMsgElements = null;
                 let renderScheduled = false;
 
-                for (const modelObj of MONITORED_MODELS) {
-                    if (currentAbortController && currentAbortController.signal.aborted) break;
+                // 🌟 雙層循環：Key 輪替池 ➔ 模型備援池
+                keyLoop:
+                for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
+                    const currentKey = apiKeys[kIndex];
 
-                    let timeoutTimerId = null;
+                    for (const modelObj of MONITORED_MODELS) {
+                        if (currentAbortController && currentAbortController.signal.aborted) break keyLoop;
 
-                    try {
-                        const timeoutPromise = new Promise((_, reject) => {
-                            timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
-                        });
+                        let timeoutTimerId = null;
 
-                        const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
-                            method: 'POST',
-                            signal: currentAbortController.signal,
-                            headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${apiKey.trim()}`,
-                                'HTTP-Referer': window.location.origin,
-                                'X-Title': 'Leaves Design AI'
-                            },
-                            body: JSON.stringify({
-                                model: modelObj.id,
-                                messages: messages,
-                                temperature: 0.2, // 🌟 還原 v7.1 黃金溫度
-                                max_tokens: 4000,
-                                stream: true
-                            })
-                        });
+                        try {
+                            const timeoutPromise = new Promise((_, reject) => {
+                                timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
+                            });
 
-                        const res = await Promise.race([fetchPromise, timeoutPromise]);
-                        if (timeoutTimerId) clearTimeout(timeoutTimerId);
+                            const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                                method: 'POST',
+                                signal: currentAbortController.signal,
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${currentKey}`,
+                                    'HTTP-Referer': window.location.origin,
+                                    'X-Title': 'Leaves Design AI'
+                                },
+                                body: JSON.stringify({
+                                    model: modelObj.id,
+                                    messages: messages,
+                                    temperature: 0.2, // 🌟 v7.1 經典溫度
+                                    max_tokens: 4000,
+                                    stream: true
+                                })
+                            });
 
-                        if (!res.ok) {
-                            let errJson = await res.json().catch(() => ({}));
-                            lastErrorMessage = errJson.error?.message || `HTTP ${res.status}`;
-                            continue;
-                        }
+                            const res = await Promise.race([fetchPromise, timeoutPromise]);
+                            if (timeoutTimerId) clearTimeout(timeoutTimerId);
 
-                        activeStreamReader = res.body.getReader();
-                        const decoder = new TextDecoder('utf-8');
-                        let buffer = '';
+                            if (!res.ok) {
+                                let errJson = await res.json().catch(() => ({}));
+                                const errMsg = errJson.error?.message || `HTTP ${res.status}`;
+                                lastErrorMessage = errMsg;
 
-                        usedModelName = modelObj.name;
-                        localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
-
-                        removeLoading(loadingId);
-                        liveMsgElements = createLiveAssistantBubble();
-
-                        let isStreamDone = false;
-                        while (!isStreamDone) {
-                            const { done, value } = await activeStreamReader.read();
-                            if (done) break;
-
-                            buffer += decoder.decode(value, { stream: true });
-                            const lines = buffer.split('\n');
-                            buffer = lines.pop();
-
-                            for (const line of lines) {
-                                const trimmed = line.trim();
-                                if (!trimmed || trimmed.startsWith(':')) continue;
-                                if (trimmed === 'data: [DONE]') {
-                                    isStreamDone = true;
-                                    break;
+                                // 🌟 偵測到額度上限 / 每日限制，立即換下一把 Key！
+                                if (res.status === 429 || errMsg.toLowerCase().includes('rate limit') || errMsg.toLowerCase().includes('free-models-per-day')) {
+                                    console.warn(`金鑰 #${kIndex + 1} 額度用盡，自動切換至下一組金鑰...`);
+                                    break; // 跳出當前 Key 的模型循環，換下一個 Key
                                 }
-                                if (trimmed.startsWith('data: ')) {
-                                    try {
-                                        const parsed = JSON.parse(trimmed.substring(6));
-                                        const delta = parsed.choices?.[0]?.delta?.content || '';
-                                        if (delta) {
-                                            accumulatedReply += delta;
-                                            if (!renderScheduled) {
-                                                renderScheduled = true;
-                                                requestAnimationFrame(() => {
-                                                    updateLiveBubble(liveMsgElements, accumulatedReply);
-                                                    renderScheduled = false;
-                                                });
+                                continue;
+                            }
+
+                            activeStreamReader = res.body.getReader();
+                            const decoder = new TextDecoder('utf-8');
+                            let buffer = '';
+
+                            usedModelName = `${modelObj.name}${apiKeys.length > 1 ? ` (Key #${kIndex + 1})` : ''}`;
+                            localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
+
+                            removeLoading(loadingId);
+                            liveMsgElements = createLiveAssistantBubble();
+
+                            let isStreamDone = false;
+                            while (!isStreamDone) {
+                                const { done, value } = await activeStreamReader.read();
+                                if (done) break;
+
+                                buffer += decoder.decode(value, { stream: true });
+                                const lines = buffer.split('\n');
+                                buffer = lines.pop();
+
+                                for (const line of lines) {
+                                    const trimmed = line.trim();
+                                    if (!trimmed || trimmed.startsWith(':')) continue;
+                                    if (trimmed === 'data: [DONE]') {
+                                        isStreamDone = true;
+                                        break;
+                                    }
+                                    if (trimmed.startsWith('data: ')) {
+                                        try {
+                                            const parsed = JSON.parse(trimmed.substring(6));
+                                            const delta = parsed.choices?.[0]?.delta?.content || '';
+                                            if (delta) {
+                                                accumulatedReply += delta;
+                                                if (!renderScheduled) {
+                                                    renderScheduled = true;
+                                                    requestAnimationFrame(() => {
+                                                        updateLiveBubble(liveMsgElements, accumulatedReply);
+                                                        renderScheduled = false;
+                                                    });
+                                                }
                                             }
-                                        }
-                                    } catch (err) {}
+                                        } catch (err) {}
+                                    }
                                 }
                             }
-                        }
 
-                        streamSuccess = true;
-                        break;
-                    } catch (e) {
-                        if (timeoutTimerId) clearTimeout(timeoutTimerId);
-                        if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
-                            break;
-                        }
-                        lastErrorMessage = e.message;
-                    } finally {
-                        if (activeStreamReader) {
-                            try { await activeStreamReader.cancel(); } catch(e) {}
-                            activeStreamReader = null;
+                            streamSuccess = true;
+                            break keyLoop; // 成功生成，終止所有循環
+                        } catch (e) {
+                            if (timeoutTimerId) clearTimeout(timeoutTimerId);
+                            if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
+                                break keyLoop;
+                            }
+                            lastErrorMessage = e.message;
+                        } finally {
+                            if (activeStreamReader) {
+                                try { await activeStreamReader.cancel(); } catch(e) {}
+                                activeStreamReader = null;
+                            }
                         }
                     }
                 }
@@ -1713,7 +1743,7 @@ ${sopContent}
                         time: elapsedSec
                     });
                 } else {
-                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
+                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有金鑰與免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
                         model: '連線異常',
                         tokens: 0,
                         time: elapsedSec
@@ -1866,7 +1896,7 @@ ${sopContent}
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-circle-notch animate-spin text-blue-400 text-xs"></i>
-                            <span class="font-medium text-white text-[11px]">拾葉 AI 即時檢索內部知識庫中...</span>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 正在調度知識庫...</span>
                         </div>
                     </div>
                 </div>
