@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <script src="[https://cdn.jsdelivr.net/npm/marked/marked.min.js](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #000; 
@@ -244,7 +244,6 @@
         </div>
     </div>
 
-    <!-- Apple 高透磨砂登入遮罩層 -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-xl flex items-center justify-center p-4 hidden transition-all duration-500 ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -266,7 +265,6 @@
         </div>
     </div>
 
-    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden">
         
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
@@ -275,7 +273,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v9.2 智辨閉環版</span>
+                        <span>v9.0 金鑰輪替池版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -329,13 +327,13 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或公司資訊。若發現 SOP 內容有誤，可直接告訴我「SOP 應該修改為...」我會為您建立草稿！</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範、公司資訊或照片參考。</p>
                     </div>
                 </div>
             </div>
 
             <div id="reportToast" class="hidden mx-6 mb-2 p-2.5 bg-emerald-950/80 border border-emerald-800 text-emerald-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg ui-no-select">
-                <i class="fa-solid fa-check-circle mr-1"></i> 已成功處理並同步雲端！
+                <i class="fa-solid fa-check-circle mr-1"></i> 已成功回報錯誤對話至後台雲端管理系統！
             </div>
             <div id="copyToast" class="hidden mx-6 mb-2 p-2 bg-blue-950/80 border border-blue-800 text-blue-300 rounded-xl text-[11px] text-center tracking-wider shadow-lg ui-no-select">
                 <i class="fa-solid fa-clipboard-check mr-1"></i> 已複製選取內容至剪貼簿！
@@ -343,7 +341,7 @@
 
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入問題，或提出「SOP 應修改為...」" class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入關於 SOP、工法或內部規範的問題..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -360,7 +358,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.2 智辨閉環版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.0 金鑰輪替池版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -369,55 +367,6 @@
                     </button>
                 </div>
 
-                <!-- 同仁 SOP 待審核修訂提案專區 -->
-                <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-amber-500/40">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
-                        <div>
-                            <div class="flex items-center space-x-2.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-                                <h3 class="text-sm font-semibold tracking-widest uppercase text-amber-300">同仁 SOP 修訂草稿待審專區 (0 Token 採納)</h3>
-                            </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">同仁在聊天框確認送出的修訂建議，在此進行行數比對與一鍵寫入雲端。</p>
-                        </div>
-                        <span id="pendingProposalsCountBadge" class="text-[11px] bg-amber-950/80 text-amber-300 border border-amber-800 px-3 py-1.5 rounded-xl font-mono">0 筆待審核</span>
-                    </div>
-                    
-                    <div id="pendingProposalsContainer" class="space-y-4 max-h-[500px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <!-- SOP 修訂歷史日誌 (Diff 紀錄) -->
-                <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-emerald-500/30">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
-                        <div>
-                            <div class="flex items-center space-x-2.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                                <h3 class="text-sm font-semibold tracking-widest uppercase text-emerald-300">SOP 雲端修訂日誌 (Diff 行數比對紀錄)</h3>
-                            </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">追蹤每一次知識庫修訂的行數、原文字、新文字與審核人。</p>
-                        </div>
-                        <span id="updateLogsCountBadge" class="text-[11px] bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1.5 rounded-xl font-mono">共 0 筆紀錄</span>
-                    </div>
-                    
-                    <div id="updateLogsContainer" class="space-y-4 max-h-[400px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <!-- SOP 版本快照與一鍵還原 (Rollback) -->
-                <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-blue-500/30">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
-                        <div>
-                            <div class="flex items-center space-x-2.5">
-                                <i class="fa-solid fa-clock-rotate-left text-blue-400 text-sm"></i>
-                                <h3 class="text-sm font-semibold tracking-widest uppercase text-blue-300">SOP 版本歷史快照與一鍵還原 (Rollback)</h3>
-                            </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">每次採納更新前自動留存完整備份，遇問題可 1 秒無損回滾上一版。</p>
-                        </div>
-                        <span id="snapshotsCountBadge" class="text-[11px] bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1.5 rounded-xl font-mono">0 個快照版本</span>
-                    </div>
-                    
-                    <div id="snapshotsContainer" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <!-- OpenRouter AI 模型即時調用與健康監控 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-purple-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
@@ -452,34 +401,13 @@
                     </div>
                 </div>
 
-                <!-- OpenRouter 多金鑰輪替池設定 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-mono p-6 rounded-2xl space-y-3 border border-blue-500/30">
-                        <div class="flex justify-between items-center">
-                            <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
-                                <i class="fa-solid fa-key mr-1"></i> OpenRouter 多金鑰輪替池 (Multi-Key Pool)
-                            </label>
-                            <span id="keyCountBadge" class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded font-mono">1 組金鑰</span>
-                        </div>
-                        <p class="text-[10px] text-neutral-400">可填入多組免費 OpenRouter Key（換行分隔），遇額度上限將在 0.1 秒內自動無感切換！</p>
-                        <textarea id="apiKeyInput" rows="3" placeholder="sk-or-v1-aaaa...&#10;sk-or-v1-bbbb... (每行貼一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono selectable-text leading-relaxed"></textarea>
-                    </div>
-
-                    <div class="glass-mono p-6 rounded-2xl space-y-3">
-                        <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">背景輪播圖片網址 (多張請用換行分隔)</label>
-                        <textarea id="bgImagesInput" rows="3" placeholder="[https://image1.jpg](https://image1.jpg)&#10;[https://image2.jpg](https://image2.jpg)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono leading-relaxed selectable-text"></textarea>
-                    </div>
-                </div>
-
-                <!-- SOP Gist 網址 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-amber-500/30">
                     <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
                         <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist Raw 網址
                     </h3>
-                    <input type="text" id="gistIdInput" placeholder="[https://gist.githubusercontent.com/.../shiye-sop.txt](https://gist.githubusercontent.com/.../shiye-sop.txt)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
+                    <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                 </div>
 
-                <!-- GitHub 身分同步 Gist ID 與 Token -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-blue-500/30">
                     <div class="flex justify-between items-center">
                         <h3 class="text-xs font-semibold tracking-widest uppercase text-blue-400">
@@ -501,7 +429,6 @@
                     <input type="text" id="codesGistFilenameInput" placeholder="Gist 檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                 </div>
 
-                <!-- SOP 內容即時預覽 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-3 border border-white/20">
                     <h3 class="text-xs font-semibold tracking-widest uppercase text-white">
                         <i class="fa-solid fa-eye mr-1.5"></i> 目前 AI 實際讀取的 SOP 內容預覽
@@ -509,7 +436,25 @@
                     <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed selectable-text" placeholder="載入中..."></textarea>
                 </div>
 
-                <!-- 通行碼監控 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 🌟 多金鑰輪替池設定區 -->
+                    <div class="glass-mono p-6 rounded-2xl space-y-3 border border-blue-500/30">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-[11px] text-blue-400 tracking-widest uppercase font-semibold">
+                                <i class="fa-solid fa-key mr-1"></i> OpenRouter 多金鑰輪替池 (Multi-Key Pool)
+                            </label>
+                            <span id="keyCountBadge" class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded font-mono">1 組金鑰</span>
+                        </div>
+                        <p class="text-[10px] text-neutral-400">可填入多組免費 OpenRouter Key（換行或逗號分隔），遇額度上限將在 0.1 秒內自動無感切換！</p>
+                        <textarea id="apiKeyInput" rows="3" placeholder="sk-or-v1-aaaa...&#10;sk-or-v1-bbbb... (每行貼一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-blue-500 transition font-mono selectable-text leading-relaxed"></textarea>
+                    </div>
+
+                    <div class="glass-mono p-6 rounded-2xl space-y-3">
+                        <label class="block text-[11px] text-neutral-400 tracking-widest uppercase font-medium">背景輪播圖片網址 (多張請用換行分隔)</label>
+                        <textarea id="bgImagesInput" rows="3" placeholder="https://image1.jpg&#10;https://image2.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono leading-relaxed selectable-text"></textarea>
+                    </div>
+                </div>
+
                 <div class="glass-mono p-6 rounded-2xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
@@ -545,7 +490,6 @@
                     </div>
                 </div>
 
-                <!-- 錯誤回報專區 -->
                 <div class="glass-mono p-6 md:p-8 rounded-2xl space-y-5 border border-red-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
                         <div>
@@ -563,10 +507,9 @@
                         </div>
                     </div>
                     
-                    <div id="errorLogsContainer" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+                    <div id="errorLogsContainer" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
                 </div>
 
-                <!-- 儲存全套設定 -->
                 <div class="flex justify-end pb-12">
                     <button onclick="saveAdminSettings()" id="saveAdminBtn" class="bg-white hover:bg-neutral-200 text-black font-semibold px-8 py-3.5 rounded-xl text-xs transition tracking-widest uppercase shadow-xl">
                         儲存全套系統設定至 GitHub 雲端
@@ -620,7 +563,6 @@
         let activeStreamReader = null;
         let isCloudLoaded = false;
         window.tempMsgStore = {};
-        window.tempProposalStore = {};
 
         function safeJsonParse(str, fallback = null) {
             try {
@@ -640,6 +582,7 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // 🌟 核心：多 Key 輪替池解析
         function getApiKeys() {
             const raw = localStorage.getItem('shiye_apikey') || '';
             const list = raw.split(/[\n,]+/).map(k => k.trim()).filter(k => k.length > 10);
@@ -687,6 +630,17 @@
                 openLightbox(e.target.src, e.target.alt);
             }
         });
+
+        window.addEventListener('error', (e) => {
+            if (e.target && e.target.tagName === 'IMG' && e.target.closest('#chatContainer')) {
+                const fallback = document.createElement('span');
+                fallback.className = 'inline-block text-[10px] bg-red-950/60 text-red-300 border border-red-800/60 px-2 py-1 rounded-lg my-1 font-mono';
+                fallback.innerHTML = `<i class="fa-regular fa-image mr-1"></i> 🖼️ 圖片無法載入 (請檢查 Gist 照片網址)`;
+                if (e.target.parentNode) {
+                    e.target.parentNode.replaceChild(fallback, e.target);
+                }
+            }
+        }, true);
 
         function copyAnswerText(msgId) {
             const record = window.tempMsgStore[msgId];
@@ -753,8 +707,8 @@
         function normalizeGistUrl(url) {
             if (!url) return '';
             let u = url.trim();
-            if (u.includes('[gist.github.com/](https://gist.github.com/)') && !u.includes('raw') && !u.includes('gist.githubusercontent.com')) {
-                u = u.replace('[gist.github.com/](https://gist.github.com/)', '[gist.githubusercontent.com/](https://gist.githubusercontent.com/)') + '/raw';
+            if (u.includes('gist.github.com/') && !u.includes('raw') && !u.includes('gist.githubusercontent.com')) {
+                u = u.replace('gist.github.com/', 'gist.githubusercontent.com/') + '/raw';
             }
             return u;
         }
@@ -805,7 +759,7 @@
                 };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                const res = await fetch(`[https://api.github.com/gists/$](https://api.github.com/gists/$){gistId}?${randomBuster}`, { 
+                const res = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { 
                     headers: headers,
                     cache: 'no-store' 
                 });
@@ -820,7 +774,7 @@
             } catch (e) {}
 
             try {
-                const rawRes = await fetch(`[https://gist.githubusercontent.com/raw/$](https://gist.githubusercontent.com/raw/$){gistId}/${filename}?${randomBuster}`, {
+                const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?${randomBuster}`, {
                     cache: 'no-store'
                 });
                 if (rawRes.ok) {
@@ -853,15 +807,6 @@
             if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) {
                 localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
             }
-            if (cloudData.pendingProposals && Array.isArray(cloudData.pendingProposals)) {
-                localStorage.setItem('shiye_pending_proposals', JSON.stringify(cloudData.pendingProposals));
-            }
-            if (cloudData.updateLogs && Array.isArray(cloudData.updateLogs)) {
-                localStorage.setItem('shiye_sop_update_logs', JSON.stringify(cloudData.updateLogs));
-            }
-            if (cloudData.snapshots && Array.isArray(cloudData.snapshots)) {
-                localStorage.setItem('shiye_sop_snapshots', JSON.stringify(cloudData.snapshots));
-            }
 
             if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
             if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
@@ -890,60 +835,6 @@
             return localStorage.getItem('shiye_sop') || '尚無SOP內容';
         }
 
-        // 🌟 強化版：智能比對 Gist 檔案鍵值並精準覆寫 (0 Token)
-        async function writeSopToGithubGist(newContent) {
-            let sopUrl = getStoredGistUrl();
-            let token = getGithubToken();
-            if (!token) return { success: false, message: '未設定 GitHub Token' };
-
-            let gistId = '';
-            const match = sopUrl.match(/([a-f0-9]{32})/i);
-            if (match) {
-                gistId = match[1];
-            } else {
-                gistId = getCodesGistId();
-            }
-
-            if (!gistId) return { success: false, message: '無法識別 SOP Gist ID' };
-
-            try {
-                const checkRes = await fetch(`[https://api.github.com/gists/$](https://api.github.com/gists/$){gistId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                let filenameToPatch = 'shiye-sop.txt';
-                if (checkRes.ok) {
-                    const gistInfo = await checkRes.json();
-                    const files = Object.keys(gistInfo.files || {});
-                    const matchedFile = files.find(f => f.endsWith('.txt') || f.endsWith('.md') || f.includes('sop'));
-                    if (matchedFile) filenameToPatch = matchedFile;
-                }
-
-                const res = await fetch(`[https://api.github.com/gists/$](https://api.github.com/gists/$){gistId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            [filenameToPatch]: { content: newContent }
-                        }
-                    })
-                });
-
-                if (res.ok) return { success: true };
-                let err = await res.json().catch(() => ({}));
-                return { success: false, message: err.message || `HTTP ${res.status}` };
-            } catch (e) {
-                return { success: false, message: e.message };
-            }
-        }
-
         function getFallbackCodes() {
             return [
                 { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
@@ -955,17 +846,14 @@
         async function initData() {
             if (!localStorage.getItem('shiye_bg_list')) {
                 localStorage.setItem('shiye_bg_list', JSON.stringify([
-                    '[https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop](https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop)',
-                    '[https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1920&auto=format&fit=crop](https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1920&auto=format&fit=crop)',
-                    '[https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop](https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop)'
+                    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1920&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop'
                 ]));
             }
             initBackgroundSlideshow();
             currentCodesList = await fetchCodesFromCloud();
             if (!localStorage.getItem('shiye_error_logs')) localStorage.setItem('shiye_error_logs', JSON.stringify([]));
-            if (!localStorage.getItem('shiye_pending_proposals')) localStorage.setItem('shiye_pending_proposals', JSON.stringify([]));
-            if (!localStorage.getItem('shiye_sop_update_logs')) localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
-            if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             await fetchSopFromGist();
         }
 
@@ -1178,14 +1066,16 @@
             
             const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
             document.getElementById('bgImagesInput').value = Array.isArray(bgList) ? bgList.join('\n') : '';
+            
+            const lastUsed = localStorage.getItem('shiye_last_used_model');
+            if (lastUsed) {
+                document.getElementById('lastUsedModelBadge').textContent = lastUsed;
+            }
 
             currentCodesList = await fetchCodesFromCloud();
             renderCodesTable();
-            renderErrorLogs();
-            renderPendingProposals();
-            renderUpdateLogs();
-            renderSnapshots();
             renderModelsMonitorTable();
+            renderErrorLogs();
 
             const content = await fetchSopFromGist();
             document.getElementById('cloudSopViewer').value = content;
@@ -1195,15 +1085,11 @@
             currentCodesList = await fetchCodesFromCloud();
             renderCodesTable();
             renderErrorLogs();
-            renderPendingProposals();
-            renderUpdateLogs();
-            renderSnapshots();
-            alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
+            alert('✅ 已成功從雲端同步最新身分碼、登入紀錄與錯誤回報！');
         }
 
         function renderModelsMonitorTable() {
             const tbody = document.getElementById('modelsMonitorTableBody');
-            if (!tbody) return;
             tbody.innerHTML = '';
             const lastUsed = localStorage.getItem('shiye_last_used_model') || '';
 
@@ -1235,6 +1121,7 @@
                 alert('請先在下方填寫至少一組 OpenRouter API Key 才能執行連線診斷！');
                 return;
             }
+            const apiKey = keys[0];
 
             const btn = document.getElementById('testModelsBtn');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 檢測中...';
@@ -1246,279 +1133,39 @@
                     const cell = document.getElementById(`status_cell_${i}`);
                     if (cell) cell.innerHTML = '<span class="text-neutral-400 animate-pulse text-[10px]">Ping...</span>';
 
-                    let success = false;
-                    let elapsed = 0;
-                    let lastErr = '連線逾時';
+                    const startTime = performance.now();
+                    try {
+                        const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${apiKey}`,
+                                'HTTP-Referer': window.location.origin,
+                                'X-Title': 'HealthCheck'
+                            },
+                            body: JSON.stringify({
+                                model: m.id,
+                                messages: [{ role: "user", content: "hi" }],
+                                max_tokens: 2
+                            })
+                        });
 
-                    for (let k = 0; k < keys.length; k++) {
-                        const startTime = performance.now();
-                        try {
-                            const res = await fetch(`[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)`, {
-                                method: 'POST',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${keys[k]}`,
-                                    'HTTP-Referer': window.location.origin,
-                                    'X-Title': 'HealthCheck'
-                                },
-                                body: JSON.stringify({
-                                    model: m.id,
-                                    messages: [{ role: "user", content: "hi" }],
-                                    max_tokens: 2
-                                })
-                            });
+                        const elapsed = Math.round(performance.now() - startTime);
+                        const data = await res.json();
 
-                            elapsed = Math.round(performance.now() - startTime);
-                            const data = await res.json();
-
-                            if (!data.error && data.choices) {
-                                cell.innerHTML = `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-sans">🟢 良好 (${elapsed}ms, Key #${k+1})</span>`;
-                                success = true;
-                                break;
-                            } else {
-                                lastErr = data.error?.message || '限流中';
-                            }
-                        } catch (e) {
-                            lastErr = e.message;
+                        if (!data.error && data.choices) {
+                            cell.innerHTML = `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-sans">🟢 良好 (${elapsed}ms)</span>`;
+                        } else {
+                            const errMsg = data.error?.message || '維護中';
+                            cell.innerHTML = `<span class="bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[10px] font-sans" title="${errMsg}">🔴 異常 / 繁忙</span>`;
                         }
-                    }
-
-                    if (!success && cell) {
-                        cell.innerHTML = `<span class="bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[10px] font-sans" title="${escapeHtml(lastErr)}">🔴 異常 (${escapeHtml(lastErr.substring(0, 15))}...)</span>`;
+                    } catch (e) {
+                        cell.innerHTML = `<span class="bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[10px] font-sans">🔴 連線逾時</span>`;
                     }
                 }
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>⚡ 立即檢測所有模型連線健康度</span>';
                 btn.disabled = false;
-            }
-        }
-
-        function renderPendingProposals() {
-            const container = document.getElementById('pendingProposalsContainer');
-            const badge = document.getElementById('pendingProposalsCountBadge');
-            if (!container) return;
-
-            const list = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            badge.textContent = `${list.length} 筆待審核`;
-
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <i class="fa-solid fa-clipboard-check text-neutral-600 text-2xl mb-1.5"></i>
-                        <p class="text-xs text-neutral-500">目前尚無任何待審核的 SOP 修訂提案</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = list.map(item => `
-                <div class="p-5 bg-neutral-950/90 border border-amber-500/30 rounded-2xl space-y-3 hover:border-amber-400 transition selectable-text">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800 pb-3 ui-no-select">
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] px-2.5 py-0.5 rounded-full font-medium">
-                                <i class="fa-solid fa-user mr-1"></i> ${escapeHtml(item.userName)}
-                            </span>
-                            <span class="text-xs font-semibold text-white">${escapeHtml(item.topic)}</span>
-                        </div>
-                        <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(item.time)}</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                        <div class="bg-red-950/30 border border-red-900/50 p-3 rounded-xl space-y-1">
-                            <span class="text-[10px] font-semibold text-red-400 flex items-center gap-1">
-                                <i class="fa-solid fa-minus"></i> 原 SOP 內容：
-                            </span>
-                            <div class="text-neutral-300 font-mono whitespace-pre-wrap">${escapeHtml(item.oldText)}</div>
-                        </div>
-                        <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded-xl space-y-1">
-                            <span class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> 同仁建議修訂為：
-                            </span>
-                            <div class="text-emerald-200 font-mono whitespace-pre-wrap font-medium">${escapeHtml(item.newText)}</div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-end space-x-2.5 pt-2 border-t border-neutral-900 ui-no-select">
-                        <button onclick="rejectSopProposal(${item.id})" class="text-xs text-neutral-400 hover:text-red-400 bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-xl transition">
-                            <i class="fa-solid fa-xmark mr-1"></i> 駁回提案
-                        </button>
-                        <button onclick="adoptSopProposal(${item.id})" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-1.5 rounded-xl transition flex items-center space-x-1.5 shadow-lg">
-                            <i class="fa-solid fa-check"></i>
-                            <span>✅ 採納並更新雲端 SOP (0 Token)</span>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function adoptSopProposal(proposalId) {
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            let target = proposals.find(p => p.id === proposalId);
-            if (!target) return alert('找不到此提案紀錄');
-
-            if (!confirm(`確定要採納【${target.topic}】的修訂並直接寫入雲端 SOP 嗎？\n系統將自動建立備份快照。`)) return;
-
-            let sopText = await fetchSopFromGist();
-            let oldSnippet = target.oldText.trim();
-            let newSnippet = target.newText.trim();
-
-            let lines = sopText.split('\n');
-            let foundLine = -1;
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i].includes(oldSnippet)) {
-                    foundLine = i + 1;
-                    break;
-                }
-            }
-
-            let lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '局部比對替換';
-            let newSopText = "";
-
-            if (sopText.includes(oldSnippet)) {
-                newSopText = sopText.replace(oldSnippet, newSnippet);
-            } else {
-                newSopText = sopText + `\n\n### 【最新修訂】${target.topic}\n${newSnippet}`;
-                lineRangeInfo = `文末補充 (第 ${lines.length + 1} 行)`;
-            }
-
-            let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            snapshots.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                summary: `修訂前備份：${target.topic}`,
-                content: sopText
-            });
-            if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
-
-            const writeResult = await writeSopToGithubGist(newSopText);
-            if (!writeResult.success) {
-                alert(`❌ 寫入 GitHub SOP 失敗: ${writeResult.message}`);
-                return;
-            }
-
-            let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
-            updateLogs.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                topic: target.topic,
-                proposer: `${target.userName} (${target.userCode})`,
-                reviewer: activeCode || 'ADMIN',
-                lineRange: lineRangeInfo,
-                oldText: oldSnippet,
-                newText: newSnippet
-            });
-            if (updateLogs.length > 50) updateLogs = updateLogs.slice(0, 50);
-
-            proposals = proposals.filter(p => p.id !== proposalId);
-
-            localStorage.setItem('shiye_sop', newSopText);
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
-            localStorage.setItem('shiye_sop_update_logs', JSON.stringify(updateLogs));
-
-            await pushCodesToCloud(currentCodesList);
-            loadAdminForm();
-            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【受影響位置】：${lineRangeInfo}\n已自動建立還原快照備份。`);
-        }
-
-        async function rejectSopProposal(proposalId) {
-            if (!confirm('確定要駁回此修訂提案嗎？')) return;
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            proposals = proposals.filter(p => p.id !== proposalId);
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            renderPendingProposals();
-            await pushCodesToCloud(currentCodesList);
-        }
-
-        function renderUpdateLogs() {
-            const container = document.getElementById('updateLogsContainer');
-            const badge = document.getElementById('updateLogsCountBadge');
-            if (!container) return;
-
-            const list = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
-            badge.textContent = `共 ${list.length} 筆紀錄`;
-
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <p class="text-xs text-neutral-500">尚無 SOP 雲端修訂日誌</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = list.map(l => `
-                <div class="p-4 bg-neutral-950/80 border border-neutral-800 rounded-xl space-y-2 text-xs selectable-text">
-                    <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono border-b border-neutral-900 pb-2">
-                        <span class="text-emerald-400 font-semibold">${escapeHtml(l.topic)}</span>
-                        <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(l.time)} | 提案：${escapeHtml(l.proposer)}</span>
-                    </div>
-                    <div class="text-[11px] text-neutral-300 font-mono bg-neutral-900/50 p-2 rounded-lg space-y-1">
-                        <div class="text-neutral-400 text-[10px]">受影響行數：<strong class="text-white">${escapeHtml(l.lineRange)}</strong></div>
-                        <div class="text-red-400 font-mono line-through">- ${escapeHtml(l.oldText)}</div>
-                        <div class="text-emerald-300 font-mono font-medium">+ ${escapeHtml(l.newText)}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderSnapshots() {
-            const container = document.getElementById('snapshotsContainer');
-            const badge = document.getElementById('snapshotsCountBadge');
-            if (!container) return;
-
-            const list = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            badge.textContent = `${list.length} 個快照版本`;
-
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <p class="text-xs text-neutral-500">尚無歷史快照紀錄（採納更新時將自動建立）</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = list.map(s => `
-                <div class="flex items-center justify-between p-3.5 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs hover:border-blue-500/50 transition">
-                    <div class="space-y-0.5">
-                        <div class="font-medium text-white flex items-center space-x-2">
-                            <span>${escapeHtml(s.summary)}</span>
-                            <span class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.2 rounded font-mono">${escapeHtml(s.time)}</span>
-                        </div>
-                    </div>
-                    <button onclick="rollbackSnapshot(${s.id})" class="text-xs bg-neutral-900 hover:bg-blue-900/60 text-blue-300 border border-blue-800 px-3 py-1.5 rounded-xl transition flex items-center space-x-1 shrink-0">
-                        <i class="fa-solid fa-rotate-left text-[10px]"></i>
-                        <span>一鍵還原至此版</span>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        async function rollbackSnapshot(snapshotId) {
-            let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            let target = snapshots.find(s => s.id === snapshotId);
-            if (!target) return alert('找不到此快照版本');
-
-            if (!confirm(`確定要將雲端 SOP 完整還原至【${target.time}】的備份版本嗎？\n此動作將無損覆蓋現有內容。`)) return;
-
-            const currentSop = await fetchSopFromGist();
-            snapshots.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                summary: `還原前自動快照`,
-                content: currentSop
-            });
-
-            const res = await writeSopToGithubGist(target.content);
-            if (res.success) {
-                localStorage.setItem('shiye_sop', target.content);
-                localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
-                await pushCodesToCloud(currentCodesList);
-                loadAdminForm();
-                alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
-            } else {
-                alert(`❌ 還原失敗: ${res.message}`);
             }
         }
 
@@ -1528,16 +1175,17 @@
             
             let token = getGithubToken();
             if (!token) {
-                alert('⚠️ 請先在上方填寫 GitHub Token 才能將新身分碼發布至雲端！');
+                alert('⚠️ 請先在上方【GitHub Token】欄位填寫您的管理員金鑰 (ghp_...) 並儲存，才能將新身分碼發布至雲端給全公司手機使用！');
                 return;
             }
 
             const genBtn = document.getElementById('genNewCodeBtn');
             genBtn.disabled = true;
-            genBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 發布中...';
+            genBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 雲端發布中...';
 
             try {
                 let freshCodes = await fetchCodesFromCloud();
+                
                 let randomCode = '';
                 do {
                     randomCode = 'SHIYE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -1560,10 +1208,12 @@
                     saveCodesToLocal(currentCodesList);
                     nameInput.value = '';
                     renderCodesTable();
-                    alert(`✅ 成功產生新身分碼：${randomCode}`);
+                    alert(`✅ 成功產生新身分碼：${randomCode}\n已 100% 寫入 GitHub 雲端！全公司同仁手機立刻可以登入。`);
                 } else {
-                    alert(`❌ 寫入雲端失敗：${result.message}`);
+                    alert(`❌ 寫入 GitHub 雲端失敗！\n錯誤代碼：${result.status} ${result.statusText}\n伺服器訊息：${result.message}`);
                 }
+            } catch (err) {
+                alert(`❌ 發生錯誤: ${err.message}`);
             } finally {
                 genBtn.disabled = false;
                 genBtn.innerHTML = '產生新代碼';
@@ -1572,17 +1222,29 @@
 
         async function deleteCode(codeStr) {
             if (codeStr.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase()) return;
-            if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？`)) return;
+            if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？此動作會同時從 GitHub 雲端移除。`)) return;
 
-            let freshCodes = await fetchCodesFromCloud();
-            freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
-            
-            let result = await pushCodesToCloudWithDetails(freshCodes);
-            if (result.success) {
-                currentCodesList = freshCodes;
-                saveCodesToLocal(currentCodesList);
-                renderCodesTable();
-                alert(`✅ 已成功刪除身分碼【${codeStr}】！`);
+            let token = getGithubToken();
+            if (!token) {
+                alert('⚠️ 請先填寫 GitHub Token 才能將刪除動作同步至雲端！');
+                return;
+            }
+
+            try {
+                let freshCodes = await fetchCodesFromCloud();
+                freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
+                
+                let result = await pushCodesToCloudWithDetails(freshCodes);
+                if (result.success) {
+                    currentCodesList = freshCodes;
+                    saveCodesToLocal(currentCodesList);
+                    renderCodesTable();
+                    alert(`✅ 已成功從 GitHub 雲端移除身分碼【${codeStr}】！`);
+                } else {
+                    alert(`❌ 雲端刪除失敗！\n錯誤代碼：${result.status} ${result.statusText}`);
+                }
+            } catch (err) {
+                alert(`❌ 刪除發生錯誤: ${err.message}`);
             }
         }
 
@@ -1593,11 +1255,17 @@
                 let st = c.status || 'offline';
                 const loginCount = (c.logins || []).length;
                 const lastLogin = (c.logins || []).slice(-1)[0] || '尚無登入紀錄';
+
                 let hasLogged = (loginCount > 0 || st === 'online');
 
-                let lightColor = hasLogged ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)] animate-pulse' : 'bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]';
+                let lightColor = hasLogged 
+                    ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)] animate-pulse' 
+                    : 'bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]';
+
                 let statusText = st === 'online' ? '在線中' : (hasLogged ? '已登入過' : '從未登入');
-                let statusBadgeStyle = hasLogged ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : 'bg-red-950/80 text-red-400 border-red-800';
+                let statusBadgeStyle = hasLogged 
+                    ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' 
+                    : 'bg-red-950/80 text-red-400 border-red-800';
 
                 const isSpecialAdmin = c.code && c.code.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase();
 
@@ -1620,23 +1288,24 @@
             });
         }
 
-        async function pushCodesToCloudWithDetails(codesArray) {
+        async function pushCodesToCloudWithDetails(codesArray, customErrorLogs = null) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
             
-            if (!gistId || !token) return { success: false, message: '未填寫 Gist ID 或 Token' };
+            if (!gistId || !token) {
+                return { success: false, status: 400, statusText: 'Missing Credentials', message: '未填寫 Gist ID 或 Token' };
+            }
 
             let targetCodes = (codesArray && codesArray.length > 0) ? codesArray : currentCodesList;
-            if (!targetCodes || targetCodes.length === 0) targetCodes = getFallbackCodes();
+            if (!targetCodes || targetCodes.length === 0) {
+                targetCodes = getFallbackCodes();
+            }
 
             let apiKey = localStorage.getItem('shiye_apikey') || '';
             let sopUrl = localStorage.getItem('shiye_gist_url') || '';
             let bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
-            let errorLogs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
-            let pendingProposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
-            let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
+            let errorLogs = customErrorLogs || safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
 
             try {
                 const payloadData = {
@@ -1645,12 +1314,9 @@
                     bgList: bgList,
                     cloudToken: encodeToken(token),
                     errorLogs: errorLogs,
-                    pendingProposals: pendingProposals,
-                    updateLogs: updateLogs,
-                    snapshots: snapshots,
                     codes: targetCodes
                 };
-                const res = await fetch(`[https://api.github.com/gists/$](https://api.github.com/gists/$){gistId}`, {
+                const res = await fetch(`https://api.github.com/gists/${gistId}`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -1664,16 +1330,24 @@
                     })
                 });
 
-                if (res.ok) return { success: true };
-                let errData = await res.json().catch(() => ({}));
-                return { success: false, message: errData.message || `HTTP ${res.status}` };
+                if (res.ok) {
+                    return { success: true };
+                } else {
+                    let errData = await res.json().catch(() => ({}));
+                    return { 
+                        success: false, 
+                        status: res.status, 
+                        statusText: res.statusText, 
+                        message: errData.message || (res.status === 401 ? 'Token 無效或過期' : (res.status === 404 ? 'Gist ID 不存在或此 Token 帳號無權限修改' : (res.status === 403 ? 'Token 未勾選 gist 權限' : '未知錯誤')))
+                    };
+                }
             } catch (e) {
-                return { success: false, message: e.message };
+                return { success: false, status: 0, statusText: 'Network Error', message: e.message };
             }
         }
 
-        async function pushCodesToCloud(codesArray) {
-            let res = await pushCodesToCloudWithDetails(codesArray);
+        async function pushCodesToCloud(codesArray, customErrorLogs = null) {
+            let res = await pushCodesToCloudWithDetails(codesArray, customErrorLogs);
             return res.success;
         }
 
@@ -1702,15 +1376,15 @@
                 saveCodesToLocal(currentCodesList);
 
                 if (!token) {
-                    alert('⚠️ 警告：請填寫 GitHub Token 才能推送到雲端！');
+                    alert('⚠️ 警告：您尚未填寫「GitHub Token」！\n請填寫 Token 才能順利將設定推送到雲端資料庫。');
                     return;
                 }
 
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端！');
+                    alert('✅ 成功：全套系統設定（包含多金鑰輪替池）已成功寫入 GitHub 雲端資料庫！');
                 } else {
-                    alert(`❌ 寫入失敗: ${result.message}`);
+                    alert(`❌ 寫入 GitHub 雲端失敗！\n\n【診斷資訊】\n• 狀態碼: HTTP ${result.status} (${result.statusText})\n• 原因說明: ${result.message}\n\n💡 建議排查：\n1. 請確認 Token 是否過期（建議選 No expiration）\n2. 請確認 Token 是否勾選了「gist」權限\n3. 請確認此 Gist ID 是否為該 Token 帳號所擁有。`);
                 }
                 initBackgroundSlideshow();
             } finally {
@@ -1737,11 +1411,11 @@
             });
 
             localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, logs);
 
             const toast = document.getElementById('reportToast');
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            setTimeout(() => toast.classList.add('hidden'), 3500);
         }
 
         function renderErrorLogs() {
@@ -1756,78 +1430,69 @@
                 container.innerHTML = `
                     <div class="p-8 text-center border border-dashed border-neutral-800 rounded-2xl">
                         <i class="fa-solid fa-circle-check text-neutral-600 text-3xl mb-2"></i>
-                        <p class="text-xs text-neutral-500">目前尚無任何錯誤回報紀錄</p>
+                        <p class="text-xs text-neutral-500">目前尚無任何錯誤回報紀錄，系統運作非常良好！</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = logs.map(l => `
-                <div class="p-4 bg-neutral-950/90 border border-neutral-800 rounded-xl space-y-2 selectable-text">
-                    <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono border-b border-neutral-900 pb-2">
-                        <span class="text-red-300 font-semibold">${escapeHtml(l.name)} (${escapeHtml(l.code)})</span>
-                        <span>${escapeHtml(l.time)}</span>
+                <div class="p-5 bg-neutral-950/90 border border-neutral-800 rounded-2xl space-y-3.5 hover:border-red-500/40 transition selectable-text">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800/80 pb-3 ui-no-select">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-red-950 text-red-300 border border-red-800/80 text-[10px] px-2.5 py-0.5 rounded-full font-medium flex items-center">
+                                <i class="fa-solid fa-user mr-1 text-[9px]"></i> ${escapeHtml(l.name)}
+                            </span>
+                            <span class="font-mono text-neutral-400 text-[11px] bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">${escapeHtml(l.code)}</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-neutral-500 text-[11px] font-mono">
+                            <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(l.time)}</span>
+                            <button onclick="deleteSingleErrorLog(${l.id})" class="text-neutral-500 hover:text-red-400 transition" title="刪除此筆紀錄">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="text-xs text-white"><strong>問：</strong>${escapeHtml(l.question)}</div>
-                    <div class="text-xs text-neutral-400 font-mono"><strong>答：</strong>${escapeHtml(l.answer)}</div>
+
+                    <div class="space-y-1.5">
+                        <div class="text-[11px] font-semibold tracking-wider text-amber-400 flex items-center space-x-1 ui-no-select">
+                            <i class="fa-solid fa-circle-question text-[10px]"></i>
+                            <span>同仁當時詢問的問題：</span>
+                        </div>
+                        <div class="text-xs text-white bg-neutral-900/80 p-3 rounded-xl border border-neutral-800/80 leading-relaxed select-text font-sans whitespace-pre-wrap">
+                            ${escapeHtml(l.question)}
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="text-[11px] font-semibold tracking-wider text-red-400 flex items-center space-x-1 ui-no-select">
+                            <i class="fa-solid fa-robot text-[10px]"></i>
+                            <span>AI 當時回覆的答案（待修正）：</span>
+                        </div>
+                        <div class="text-xs text-neutral-300 bg-black/60 p-3.5 rounded-xl border border-red-950/60 leading-relaxed select-text font-sans whitespace-pre-wrap max-h-48 overflow-y-auto">
+                            ${escapeHtml(l.answer)}
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
 
+        async function deleteSingleErrorLog(id) {
+            try {
+                let logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
+                logs = logs.filter(l => l.id != id);
+                localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
+                renderErrorLogs();
+                await pushCodesToCloud(currentCodesList, logs);
+            } catch(e) {}
+        }
+
         async function clearErrorLogs() { 
-            if (!confirm('確定要清空所有錯誤回報紀錄嗎？')) return;
-            localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
-            renderErrorLogs(); 
-            await pushCodesToCloud(currentCodesList);
-        }
-
-        // 🌟 同仁在聊天框確認送出 SOP 修訂草稿 (含嚴格雲端校驗)
-        async function submitSopProposal(msgId, btnEl) {
-            const proposalData = window.tempProposalStore[msgId];
-            if (!proposalData) return alert('找不到修訂草稿資料');
-
-            btnEl.disabled = true;
-            btnEl.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 上傳中...';
-
-            const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
-            const userName = userObj ? userObj.name : '同仁';
-
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            proposals.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                userCode: activeCode || 'MEMBER',
-                userName: userName,
-                topic: proposalData.topic,
-                oldText: proposalData.oldText,
-                newText: proposalData.newText
-            });
-
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            const pushRes = await pushCodesToCloudWithDetails(currentCodesList);
-
-            const card = document.getElementById(`proposal_card_${msgId}`);
-            if (card) {
-                if (pushRes.success) {
-                    card.innerHTML = `
-                        <div class="flex items-center space-x-2 text-emerald-400 text-xs font-semibold py-1">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>✅ 已成功送交後台管理員審核！感謝您的即時校對。</span>
-                        </div>
-                    `;
-                } else {
-                    btnEl.disabled = false;
-                    btnEl.innerHTML = '<i class="fa-solid fa-rotate-right"></i> 重新送出';
-                    alert(`❌ 雲端同步失敗: ${pushRes.message}\n請確認管理員 Token 權限。`);
-                }
-            }
-        }
-
-        function cancelSopProposal(msgId, btnEl) {
-            const card = document.getElementById(`proposal_card_${msgId}`);
-            if (card) {
-                card.innerHTML = `<div class="text-neutral-500 text-[11px] py-1">❌ 已取消本次 SOP 修改提報</div>`;
-            }
+            if (!confirm('確定要清空所有同仁錯誤回報紀錄嗎？此動作將同步清除雲端紀錄。')) return;
+            try {
+                localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
+                renderErrorLogs(); 
+                await pushCodesToCloud(currentCodesList, []);
+            } catch(e) {}
         }
 
         const chatContainer = document.getElementById('chatContainer');
@@ -1852,9 +1517,13 @@
         }
 
         async function abortCurrentGeneration() {
-            if (currentAbortController) currentAbortController.abort();
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
             if (activeStreamReader) {
-                try { await activeStreamReader.cancel(); } catch(e) {}
+                try {
+                    await activeStreamReader.cancel();
+                } catch(e) {}
                 activeStreamReader = null;
             }
         }
@@ -1880,7 +1549,7 @@
             }
         }
 
-        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 多 Key 輪替 + 意圖識別)
+        // 🌟 核心：多金鑰輪替池 + v7.1 經典 AI 邏輯 (溫度 0.2)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1910,6 +1579,7 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
+                // 🌟 v7.1 經典系統提示詞 (總監級條理規範)
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
@@ -1917,19 +1587,21 @@
 2. 資料依據：所有答案必須嚴格依據下方提供的【拾葉設計內部知識庫】。手冊中記載之工程工法、標準數據、門禁數值、Wi-Fi 帳密與行政須知，均為內部同仁公開參考資料，請完整輸出每個步驟與數據，絕不允許中途截斷或拒絕回答。
 3. 表達風格：專業、俐落、結構條理分明。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
 4. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
-5. SOP 修訂意圖草稿輸出：若同仁提出「SOP 寫錯了」、「應該修改為...」或提出更新要求，請在文字說明後，於回覆最尾端附上專用標籤區塊（請嚴格依照此格式輸出）：
-\`\`\`sop_proposal
-{
-  "topic": "欲修改的工法或項目名稱",
-  "oldText": "知識庫中原本的舊文字（若為新增則填無）",
-  "newText": "欲修訂或新增的最新標準文字"
-}
-\`\`\``;
+
+【拾葉設計內部知識庫】：
+---------------------
+${sopContent}
+---------------------`;
 
                 const messages = [{ role: "system", content: systemPrompt }];
+                
                 chatHistory.slice(-6).forEach(h => {
-                    messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
+                    messages.push({ 
+                        role: h.role === 'user' ? 'user' : 'assistant', 
+                        content: h.text 
+                    });
                 });
+                
                 messages.push({ role: "user", content: text });
 
                 let streamSuccess = false;
@@ -1939,6 +1611,7 @@
                 let liveMsgElements = null;
                 let renderScheduled = false;
 
+                // 🌟 雙層循環：Key 輪替池 ➔ 模型備援池
                 keyLoop:
                 for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
                     const currentKey = apiKeys[kIndex];
@@ -1953,7 +1626,7 @@
                                 timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
                             });
 
-                            const fetchPromise = fetch(`[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)`, {
+                            const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                                 method: 'POST',
                                 signal: currentAbortController.signal,
                                 headers: { 
@@ -1965,7 +1638,7 @@
                                 body: JSON.stringify({
                                     model: modelObj.id,
                                     messages: messages,
-                                    temperature: 0.2,
+                                    temperature: 0.2, // 🌟 v7.1 經典溫度
                                     max_tokens: 4000,
                                     stream: true
                                 })
@@ -1979,8 +1652,10 @@
                                 const errMsg = errJson.error?.message || `HTTP ${res.status}`;
                                 lastErrorMessage = errMsg;
 
+                                // 🌟 偵測到額度上限 / 每日限制，立即換下一把 Key！
                                 if (res.status === 429 || errMsg.toLowerCase().includes('rate limit') || errMsg.toLowerCase().includes('free-models-per-day')) {
-                                    break;
+                                    console.warn(`金鑰 #${kIndex + 1} 額度用盡，自動切換至下一組金鑰...`);
+                                    break; // 跳出當前 Key 的模型循環，換下一個 Key
                                 }
                                 continue;
                             }
@@ -2031,7 +1706,7 @@
                             }
 
                             streamSuccess = true;
-                            break keyLoop;
+                            break keyLoop; // 成功生成，終止所有循環
                         } catch (e) {
                             if (timeoutTimerId) clearTimeout(timeoutTimerId);
                             if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
@@ -2068,7 +1743,7 @@
                         time: elapsedSec
                     });
                 } else {
-                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '連線忙碌中，請稍後再試。'}`, 'assistant', true, text, {
+                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '所有金鑰與免費模型連線皆忙碌中，請稍後再試。'}`, 'assistant', true, text, {
                         model: '連線異常',
                         tokens: 0,
                         time: elapsedSec
@@ -2110,11 +1785,9 @@
             };
         }
 
-        // 🌟 串流過程中動態遮蔽草稿代碼塊，防止未成形 JSON 閃爍
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
-            const cleanText = text.replace(/```sop_proposal[\s\S]*$/, '').trim();
-            const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
+            const parsed = typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text);
             elements.content.innerHTML = parsed + `<span class="typing-cursor"></span>`;
             
             const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 220;
@@ -2128,45 +1801,9 @@
             
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText };
-
-            let displayText = fullText;
-            let proposalJson = null;
-
-            const match = fullText.match(/```sop_proposal\s*([\s\S]*?)\s*```/);
-            if (match) {
-                displayText = fullText.replace(match[0], '').trim();
-                proposalJson = safeJsonParse(match[1], null);
-            }
-
-            const parsed = typeof marked !== 'undefined' ? marked.parse(displayText) : escapeHtml(displayText);
+            
+            const parsed = typeof marked !== 'undefined' ? marked.parse(fullText) : escapeHtml(fullText);
             elements.content.innerHTML = parsed;
-
-            if (proposalJson && proposalJson.topic) {
-                window.tempProposalStore[msgId] = proposalJson;
-                const proposalCardHtml = `
-                    <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border border-amber-500/40 space-y-3 my-2 shadow-lg">
-                        <div class="flex items-center space-x-2 text-amber-300 text-xs font-semibold">
-                            <i class="fa-solid fa-file-pen"></i>
-                            <span>📝 SOP 修改草稿確認</span>
-                        </div>
-                        <div class="text-[11px] space-y-1 bg-neutral-950/80 p-3 rounded-xl border border-neutral-800">
-                            <p><strong class="text-white">• 項目：</strong><span class="text-neutral-300">${escapeHtml(proposalJson.topic)}</span></p>
-                            <p><strong class="text-red-400">• 原內容：</strong><span class="text-neutral-400 font-mono line-through">${escapeHtml(proposalJson.oldText)}</span></p>
-                            <p><strong class="text-emerald-400">• 修訂為：</strong><span class="text-emerald-200 font-mono font-medium">${escapeHtml(proposalJson.newText)}</span></p>
-                        </div>
-                        <div class="flex items-center space-x-2 pt-1 ui-no-select">
-                            <button onclick="submitSopProposal('${msgId}', this)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 shadow-md">
-                                <i class="fa-solid fa-check"></i>
-                                <span>✅ 確認送出審核</span>
-                            </button>
-                            <button onclick="cancelSopProposal('${msgId}', this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs px-3 py-1.5 rounded-xl transition">
-                                取消
-                            </button>
-                        </div>
-                    </div>
-                `;
-                elements.content.insertAdjacentHTML('beforeend', proposalCardHtml);
-            }
 
             if (elements.footer && meta) {
                 elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select";
@@ -2259,7 +1896,7 @@
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-blue-500/20">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-circle-notch animate-spin text-blue-400 text-xs"></i>
-                            <span class="font-medium text-white text-[11px]">拾葉 AI 正在檢索知識庫...</span>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 正在調度知識庫...</span>
                         </div>
                     </div>
                 </div>
