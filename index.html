@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v9.5 智辨防幻版</span>
+                        <span>v9.8 終極版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -395,7 +395,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.5 智辨防幻版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.8 終極版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -661,7 +661,13 @@
             try {
                 return JSON.parse(str) || fallback;
             } catch (e) {
-                return fallback;
+                // 寬鬆模式：清洗字串中的未轉義換行
+                try {
+                    const cleaned = str.replace(/[\n\r\t]/g, ' ');
+                    return JSON.parse(cleaned) || fallback;
+                } catch(err) {
+                    return fallback;
+                }
             }
         }
 
@@ -917,7 +923,8 @@
                 const separator = rawUrl.includes('?') ? '&' : '?';
                 const res = await fetch(`${rawUrl}${separator}t=${Date.now()}`, { cache: 'no-store' });
                 if (res.ok) {
-                    const content = await res.text();
+                    let content = await res.text();
+                    content = content.replace(/\r\n/g, '\n'); // 統一正規化換行
                     localStorage.setItem('shiye_sop', content);
                     return content;
                 }
@@ -925,13 +932,14 @@
             return localStorage.getItem('shiye_sop') || '尚無SOP內容';
         }
 
+        // 🌟 強化版：相容 20~36 位長度 Gist ID
         async function writeSopToGithubGist(newContent) {
             let sopUrl = getStoredGistUrl();
             let token = getGithubToken();
             if (!token) return { success: false, message: '未設定 GitHub Token' };
 
             let gistId = '';
-            const match = sopUrl.match(/([a-f0-9]{32})/i);
+            const match = sopUrl.match(/([a-f0-9]{20,36})/i);
             if (match) {
                 gistId = match[1];
             } else {
@@ -1390,6 +1398,7 @@
             `).join('');
         }
 
+        // 🌟 核心防禦：空值防呆與換行正規化比對
         async function adoptSopProposal(proposalId) {
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let target = proposals.find(p => p.id === proposalId);
@@ -1398,25 +1407,33 @@
             if (!confirm(`確定要採納【${target.topic}】的修訂並直接寫入雲端 SOP 嗎？\n系統將自動建立備份快照。`)) return;
 
             let sopText = await fetchSopFromGist();
-            let oldSnippet = target.oldText.trim();
-            let newSnippet = target.newText.trim();
+            sopText = sopText.replace(/\r\n/g, '\n');
+            let oldSnippet = (target.oldText || '').trim().replace(/\r\n/g, '\n');
+            let newSnippet = (target.newText || '').trim().replace(/\r\n/g, '\n');
 
             let lines = sopText.split('\n');
             let foundLine = -1;
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i].includes(oldSnippet) && oldSnippet !== '無' && oldSnippet !== '（無）') {
-                    foundLine = i + 1;
-                    break;
+            
+            const isValidOldSnippet = oldSnippet && oldSnippet !== '無' && oldSnippet !== '（無）' && oldSnippet.length > 2;
+
+            if (isValidOldSnippet) {
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].includes(oldSnippet)) {
+                        foundLine = i + 1;
+                        break;
+                    }
                 }
             }
 
-            let lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '局部比對替換';
+            let lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '文末增補';
             let newSopText = "";
 
-            if (oldSnippet !== '無' && oldSnippet !== '（無）' && sopText.includes(oldSnippet)) {
+            // 🌟 嚴格防呆：只有當舊字串確實存在且有效時才局部替換，否則加在文末，絕不覆寫第一行
+            if (isValidOldSnippet && sopText.includes(oldSnippet)) {
                 newSopText = sopText.replace(oldSnippet, newSnippet);
+                lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '局部比對替換';
             } else {
-                newSopText = sopText + `\n\n### 【最新增補】${target.topic}\n${newSnippet}`;
+                newSopText = sopText.trimEnd() + `\n\n### 【最新增補】${target.topic}\n${newSnippet}\n`;
                 lineRangeInfo = `文末增補 (第 ${lines.length + 1} 行)`;
             }
 
@@ -1443,7 +1460,7 @@
                 proposer: `${target.userName} (${target.userCode})`,
                 reviewer: activeCode || 'ADMIN',
                 lineRange: lineRangeInfo,
-                oldText: oldSnippet,
+                oldText: oldSnippet || '（新增）',
                 newText: newSnippet
             });
             if (updateLogs.length > 50) updateLogs = updateLogs.slice(0, 50);
@@ -1919,7 +1936,37 @@
             }
         }
 
-        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 智辨防幻語意檢索 Prompt)
+        // 🌟 核心升級：寬鬆型容錯草稿解析引擎（防止解析崩潰與空遮蔽）
+        function robustProposalExtractor(fullText) {
+            let displayText = fullText;
+            let proposalJson = null;
+
+            // 模式 1: 帶有 ```sop_proposal 或 ```json 標籤
+            const codeMatch = fullText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
+            if (codeMatch) {
+                const parsed = safeJsonParse(codeMatch[1], null);
+                if (parsed && parsed.topic) {
+                    displayText = fullText.replace(codeMatch[0], '').trim();
+                    proposalJson = parsed;
+                    return { displayText, proposalJson };
+                }
+            }
+
+            // 模式 2: AI 輸出裸 JSON 物件
+            const rawMatch = fullText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
+            if (rawMatch) {
+                const parsed = safeJsonParse(rawMatch[1], null);
+                if (parsed && parsed.topic) {
+                    displayText = fullText.replace(rawMatch[0], '').trim();
+                    proposalJson = parsed;
+                    return { displayText, proposalJson };
+                }
+            }
+
+            return { displayText, proposalJson };
+        }
+
+        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 防跳針懲罰 + 極速直答)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -1949,23 +1996,24 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 注入「同義詞智慧映射 ＋ 誠實邊界機制」黃金提示詞
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字、大陸用語或無意義代碼區塊。
-2. 知識庫語意映射與出處鎖定：
-   - 下方提供的【拾葉設計內部知識庫】是全公司工法工序、標準尺寸公差、門禁設定數值、Wi-Fi 帳密、行政制度與廠商聯絡的唯一權威依據。
-   - 請主動對同仁的口語詞彙進行同義詞關聯檢索（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；網路/密碼 ➔ 辦公室公用資訊）。只要知識庫中有相關依據，請完整精準列出步驟與數值。
-3. 誠實邊界與防幻覺機制（嚴禁虛構）：
-   - 若同仁詢問的特定品牌、特殊工法或行政制度在手冊中【完全未收錄】，嚴禁憑空編造通用網路知識充當內部規範！
-   - 請誠實統一口徑回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
-4. 表達風格：專業俐落、條理分明、總監級工務思維。善用條列式清單 (Bullet Points) 與粗體重點，幫助同仁在工地現場秒看秒懂。
-5. 照片調度支援：若 SOP 內容中有提供該工法的參考照片連結（例如 .jpg / .png 網址），請務必使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在相關段落下方便同仁對照。
-6. SOP 修訂/增補意圖草稿輸出：若同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」，請在文字說明後於回覆最尾端附上專用標籤區塊：
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或大陸用語。
+2. 知識庫直答（速度與精準優先）：
+   - 下方提供的【拾葉設計內部知識庫】是全公司工法、尺寸、門禁數值、Wi-Fi 帳密與行政須知的唯一權威依據。
+   - 請主動對同仁的口語詞彙進行同義詞關聯（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；值日生/輪值 ➔ 行政規範）。
+   - 【極速原則】：直接輸出重點答案與數值，【嚴禁】在每句話或文末額外標註「出處：...」、「依據知識庫第X章...」或附註來源引用，保持回答乾淨俐落。
+3. 誠實邊界（嚴禁虛構）：
+   - 若同仁詢問的項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
+4. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。嚴禁重複跳針。
+5. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
+6. SOP 修訂/增補意圖草稿輸出：
+   - 當同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」時，請用【極簡 1 句話】禮貌確認。
+   - 隨後【立即換行】輸出以下專用標籤區塊，嚴禁附加多餘碎念：
 \`\`\`sop_proposal
 {
-  "topic": "欲修改或新增的工法/項目名稱",
+  "topic": "欲修改或新增的項目名稱",
   "oldText": "知識庫中原本的舊文字（若為新增則填無）",
   "newText": "欲修訂或新增的最新標準規範文字"
 }
@@ -2016,6 +2064,7 @@ ${sopContent}
                                     model: modelObj.id,
                                     messages: messages,
                                     temperature: 0.2,
+                                    frequency_penalty: 0.2,
                                     max_tokens: 4000,
                                     stream: true
                                 })
@@ -2162,7 +2211,10 @@ ${sopContent}
 
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
-            const cleanText = text.replace(/```sop_proposal[\s\S]*$/, '').trim();
+            const cleanText = text
+                .replace(/```(?:sop_proposal|json)?[\s\S]*$/, '')
+                .replace(/\{[\s\S]*?"topic"[\s\S]*$/, '')
+                .trim();
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
             elements.content.innerHTML = parsed + `<span class="typing-cursor"></span>`;
             
@@ -2178,14 +2230,7 @@ ${sopContent}
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText };
 
-            let displayText = fullText;
-            let proposalJson = null;
-
-            const match = fullText.match(/```sop_proposal\s*([\s\S]*?)\s*```/);
-            if (match) {
-                displayText = fullText.replace(match[0], '').trim();
-                proposalJson = safeJsonParse(match[1], null);
-            }
+            const { displayText, proposalJson } = robustProposalExtractor(fullText);
 
             const parsed = typeof marked !== 'undefined' ? marked.parse(displayText) : escapeHtml(displayText);
             elements.content.innerHTML = parsed;
