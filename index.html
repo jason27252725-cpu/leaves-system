@@ -178,7 +178,7 @@
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
             }
         }
 
@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v9.8 終極版</span>
+                        <span>v10.0 旗艦管理版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -395,7 +395,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v9.8 終極版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.0 旗艦管理版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -428,9 +428,14 @@
                                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
                                 <h3 class="text-sm font-semibold tracking-widest uppercase text-emerald-300">SOP 雲端修訂日誌 (Diff 行數比對紀錄)</h3>
                             </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">追蹤每一次知識庫修訂的行數、原文字、新文字與審核人。</p>
+                            <p class="text-[11px] text-neutral-400 mt-1">追蹤每一次知識庫修訂的行數、原文字、新文字與審核人（自動保留最新 50 筆）。</p>
                         </div>
-                        <span id="updateLogsCountBadge" class="text-[11px] bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1.5 rounded-xl font-mono">共 0 筆紀錄</span>
+                        <div class="flex items-center space-x-3">
+                            <span id="updateLogsCountBadge" class="text-[11px] bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1.5 rounded-xl font-mono">共 0 筆紀錄</span>
+                            <button onclick="clearUpdateLogs()" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 px-3 py-1.5 rounded-xl transition">
+                                清空修訂日誌
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="updateLogsContainer" class="space-y-4 max-h-[400px] overflow-y-auto pr-1"></div>
@@ -444,9 +449,14 @@
                                 <i class="fa-solid fa-clock-rotate-left text-blue-400 text-sm"></i>
                                 <h3 class="text-sm font-semibold tracking-widest uppercase text-blue-300">SOP 版本歷史快照與一鍵還原 (Rollback)</h3>
                             </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">每次採納更新前自動留存完整備份，遇問題可 1 秒無損回滾上一版。</p>
+                            <p class="text-[11px] text-neutral-400 mt-1">每次採納更新前自動留存完整備份（自動保留最新 20 版），遇問題可 1 秒無損回滾上一版。</p>
                         </div>
-                        <span id="snapshotsCountBadge" class="text-[11px] bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1.5 rounded-xl font-mono">0 個快照版本</span>
+                        <div class="flex items-center space-x-3">
+                            <span id="snapshotsCountBadge" class="text-[11px] bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1.5 rounded-xl font-mono">0 個快照版本</span>
+                            <button onclick="clearSnapshots()" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 px-3 py-1.5 rounded-xl transition">
+                                清空舊快照
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="snapshotsContainer" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
@@ -508,9 +518,13 @@
 
                 <!-- SOP Gist 網址 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-amber-500/30">
-                    <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
-                        <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist Raw 網址
-                    </h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-semibold tracking-widest uppercase text-amber-400">
+                            <i class="fa-brands fa-github mr-1.5"></i> 1. AI 知識庫 (SOP) GitHub Gist 網址
+                        </h3>
+                        <span class="text-[10px] text-emerald-400 font-mono">⚡ 支援 API 即時秒讀</span>
+                    </div>
+                    <p class="text-[10px] text-neutral-400">系統已內建自動去版本化與 API 直讀引擎，貼入任何 Gist 網址皆能秒級自動同步！</p>
                     <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 focus:outline-none focus:border-white transition font-mono selectable-text">
                 </div>
 
@@ -538,9 +552,14 @@
 
                 <!-- SOP 內容即時預覽 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-3 border border-white/20">
-                    <h3 class="text-xs font-semibold tracking-widest uppercase text-white">
-                        <i class="fa-solid fa-eye mr-1.5"></i> 目前 AI 實際讀取的 SOP 內容預覽
-                    </h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-semibold tracking-widest uppercase text-white">
+                            <i class="fa-solid fa-eye mr-1.5"></i> 目前 AI 實際讀取的 SOP 內容預覽 (即時同步)
+                        </h3>
+                        <button onclick="refreshSopViewerOnly()" class="text-[10px] text-blue-400 hover:underline">
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> 手動重新整理預覽
+                        </button>
+                    </div>
                     <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed selectable-text" placeholder="載入中..."></textarea>
                 </div>
 
@@ -661,7 +680,6 @@
             try {
                 return JSON.parse(str) || fallback;
             } catch (e) {
-                // 寬鬆模式：清洗字串中的未轉義換行
                 try {
                     const cleaned = str.replace(/[\n\r\t]/g, ' ');
                     return JSON.parse(cleaned) || fallback;
@@ -791,12 +809,20 @@
             }
         }
 
+        // 🌟 自動濾除 Commit Hash，將所有 Gist 網址轉換為永久最新直連端點
         function normalizeGistUrl(url) {
             if (!url) return '';
             let u = url.trim();
+            
             if (u.includes('gist.github.com/') && !u.includes('raw') && !u.includes('gist.githubusercontent.com')) {
                 u = u.replace('gist.github.com/', 'gist.githubusercontent.com/') + '/raw';
             }
+            
+            const rawCommitRegex = /(gist\.githubusercontent\.com\/[^\/]+\/[a-f0-9]{20,36}\/)raw\/[a-f0-9]{40}\/(.+)$/i;
+            if (rawCommitRegex.test(u)) {
+                u = u.replace(rawCommitRegex, '$1raw/$2');
+            }
+
             return u;
         }
 
@@ -905,7 +931,7 @@
             }
 
             if (cloudData.apiKey) localStorage.setItem('shiye_apikey', cloudData.apiKey);
-            if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', cloudData.sopUrl);
+            if (cloudData.sopUrl) localStorage.setItem('shiye_gist_url', normalizeGistUrl(cloudData.sopUrl));
             if (cloudData.bgList && Array.isArray(cloudData.bgList)) {
                 localStorage.setItem('shiye_bg_list', JSON.stringify(cloudData.bgList));
             }
@@ -915,24 +941,80 @@
             return codes;
         }
 
+        // 🌟 核心：優先透過 GitHub REST API 直連獲取 SOP（0 秒快取延遲）
         async function fetchSopFromGist() {
             let rawUrl = getStoredGistUrl();
-            if (!rawUrl) return localStorage.getItem('shiye_sop') || '尚無設定 Gist 網址';
+            let token = getGithubToken();
+            
+            let gistId = '';
+            const match = (rawUrl || '').match(/([a-f0-9]{20,36})/i);
+            if (match) {
+                gistId = match[1];
+            } else {
+                gistId = getCodesGistId();
+            }
 
-            try {
-                const separator = rawUrl.includes('?') ? '&' : '?';
-                const res = await fetch(`${rawUrl}${separator}t=${Date.now()}`, { cache: 'no-store' });
-                if (res.ok) {
-                    let content = await res.text();
-                    content = content.replace(/\r\n/g, '\n'); // 統一正規化換行
-                    localStorage.setItem('shiye_sop', content);
-                    return content;
-                }
-            } catch (e) {}
-            return localStorage.getItem('shiye_sop') || '尚無SOP內容';
+            const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+            if (gistId) {
+                try {
+                    const headers = { 
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    };
+                    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                    const apiRes = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { 
+                        headers: headers,
+                        cache: 'no-store' 
+                    });
+
+                    if (apiRes.ok) {
+                        const data = await apiRes.json();
+                        const files = data.files || {};
+                        const fileKey = Object.keys(files).find(k => k.endsWith('.txt') || k.endsWith('.md') || k.includes('sop') || files[k].content);
+                        if (fileKey && files[fileKey] && files[fileKey].content) {
+                            let content = files[fileKey].content.replace(/\r\n/g, '\n');
+                            localStorage.setItem('shiye_sop', content);
+                            const viewer = document.getElementById('cloudSopViewer');
+                            if (viewer) viewer.value = content;
+                            return content;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            if (rawUrl) {
+                try {
+                    const cleanUrl = normalizeGistUrl(rawUrl);
+                    const separator = cleanUrl.includes('?') ? '&' : '?';
+                    const res = await fetch(`${cleanUrl}${separator}${randomBuster}`, { cache: 'no-store' });
+                    if (res.ok) {
+                        let content = await res.text();
+                        content = content.replace(/\r\n/g, '\n');
+                        localStorage.setItem('shiye_sop', content);
+                        const viewer = document.getElementById('cloudSopViewer');
+                        if (viewer) viewer.value = content;
+                        return content;
+                    }
+                } catch (e) {}
+            }
+
+            const fallback = localStorage.getItem('shiye_sop') || '尚無SOP內容';
+            const viewer = document.getElementById('cloudSopViewer');
+            if (viewer) viewer.value = fallback;
+            return fallback;
         }
 
-        // 🌟 強化版：相容 20~36 位長度 Gist ID
+        async function refreshSopViewerOnly() {
+            const viewer = document.getElementById('cloudSopViewer');
+            if (viewer) viewer.value = '正在連線 GitHub 雲端即時獲取最新內容...';
+            const content = await fetchSopFromGist();
+            if (viewer) viewer.value = content;
+            alert('✅ 已即時從 GitHub 雲端獲取最新 SOP 內容！');
+        }
+
         async function writeSopToGithubGist(newContent) {
             let sopUrl = getStoredGistUrl();
             let token = getGithubToken();
@@ -1234,8 +1316,7 @@
             renderSnapshots();
             renderModelsMonitorTable();
 
-            const content = await fetchSopFromGist();
-            document.getElementById('cloudSopViewer').value = content;
+            await fetchSopFromGist();
         }
 
         async function refreshCloudData() {
@@ -1245,6 +1326,7 @@
             renderPendingProposals();
             renderUpdateLogs();
             renderSnapshots();
+            await fetchSopFromGist();
             alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
         }
 
@@ -1398,7 +1480,6 @@
             `).join('');
         }
 
-        // 🌟 核心防禦：空值防呆與換行正規化比對
         async function adoptSopProposal(proposalId) {
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let target = proposals.find(p => p.id === proposalId);
@@ -1428,7 +1509,6 @@
             let lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '文末增補';
             let newSopText = "";
 
-            // 🌟 嚴格防呆：只有當舊字串確實存在且有效時才局部替換，否則加在文末，絕不覆寫第一行
             if (isValidOldSnippet && sopText.includes(oldSnippet)) {
                 newSopText = sopText.replace(oldSnippet, newSnippet);
                 lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '局部比對替換';
@@ -1437,6 +1517,7 @@
                 lineRangeInfo = `文末增補 (第 ${lines.length + 1} 行)`;
             }
 
+            // 🌟 快照上限管理：永遠保留最新 20 份
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             snapshots.unshift({
                 id: Date.now(),
@@ -1452,6 +1533,7 @@
                 return;
             }
 
+            // 🌟 修訂日誌上限管理：永遠保留最新 50 筆
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             updateLogs.unshift({
                 id: Date.now(),
@@ -1472,9 +1554,12 @@
             localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
             localStorage.setItem('shiye_sop_update_logs', JSON.stringify(updateLogs));
 
+            const viewer = document.getElementById('cloudSopViewer');
+            if (viewer) viewer.value = newSopText;
+
             await pushCodesToCloud(currentCodesList);
             loadAdminForm();
-            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【受影響位置】：${lineRangeInfo}\n已自動建立還原快照備份。`);
+            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【受影響位置】：${lineRangeInfo}\n已自動建立還原快照備份，後台預覽已同步刷新。`);
         }
 
         async function rejectSopProposal(proposalId) {
@@ -1518,6 +1603,15 @@
             `).join('');
         }
 
+        // 🌟 新增：一鍵清空修訂日誌
+        async function clearUpdateLogs() {
+            if (!confirm('確定要清空所有 SOP 修訂日誌紀錄嗎？此動作將同步更新至雲端資料庫。')) return;
+            localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
+            renderUpdateLogs();
+            await pushCodesToCloud(currentCodesList);
+            alert('✅ 已成功清空所有修訂日誌紀錄！');
+        }
+
         function renderSnapshots() {
             const container = document.getElementById('snapshotsContainer');
             const badge = document.getElementById('snapshotsCountBadge');
@@ -1551,6 +1645,15 @@
             `).join('');
         }
 
+        // 🌟 新增：一鍵清空歷史快照
+        async function clearSnapshots() {
+            if (!confirm('確定要清空所有歷史備份快照嗎？清空後將無法一鍵回滾舊版本。')) return;
+            localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
+            renderSnapshots();
+            await pushCodesToCloud(currentCodesList);
+            alert('✅ 已成功清空歷史快照紀錄！');
+        }
+
         async function rollbackSnapshot(snapshotId) {
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             let target = snapshots.find(s => s.id === snapshotId);
@@ -1570,6 +1673,10 @@
             if (res.success) {
                 localStorage.setItem('shiye_sop', target.content);
                 localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
+                
+                const viewer = document.getElementById('cloudSopViewer');
+                if (viewer) viewer.value = target.content;
+
                 await pushCodesToCloud(currentCodesList);
                 loadAdminForm();
                 alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
@@ -1747,8 +1854,11 @@
                 const filename = document.getElementById('codesGistFilenameInput').value.trim();
                 const bgText = document.getElementById('bgImagesInput').value.trim();
 
+                const normalizedSopUrl = normalizeGistUrl(rawUrl);
+                document.getElementById('gistIdInput').value = normalizedSopUrl;
+
                 if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
-                if (rawUrl) localStorage.setItem('shiye_gist_url', normalizeGistUrl(rawUrl));
+                if (normalizedSopUrl) localStorage.setItem('shiye_gist_url', normalizedSopUrl);
                 if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
                 if (token) localStorage.setItem('shiye_github_token', token);
                 if (filename) localStorage.setItem('shiye_codes_filename', filename);
@@ -1765,7 +1875,8 @@
 
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端！');
+                    await fetchSopFromGist();
+                    alert('✅ 成功：全套系統設定已成功寫入 GitHub 雲端，SOP 即時端點已校正完成！');
                 } else {
                     alert(`❌ 寫入失敗: ${result.message}`);
                 }
@@ -1936,12 +2047,10 @@
             }
         }
 
-        // 🌟 核心升級：寬鬆型容錯草稿解析引擎（防止解析崩潰與空遮蔽）
         function robustProposalExtractor(fullText) {
             let displayText = fullText;
             let proposalJson = null;
 
-            // 模式 1: 帶有 ```sop_proposal 或 ```json 標籤
             const codeMatch = fullText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
             if (codeMatch) {
                 const parsed = safeJsonParse(codeMatch[1], null);
@@ -1952,7 +2061,6 @@
                 }
             }
 
-            // 模式 2: AI 輸出裸 JSON 物件
             const rawMatch = fullText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
             if (rawMatch) {
                 const parsed = safeJsonParse(rawMatch[1], null);
