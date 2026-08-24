@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.1 智聯抗擾版</span>
+                        <span>v10.3 診斷加固版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -395,7 +395,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.1 智聯抗擾版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.3 診斷加固版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -467,7 +467,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-purple-400">
-                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (當前有效模型)
+                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (精準測速版)
                             </h3>
                             <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視旗艦繁中備援模型響應速度與連線狀態</p>
                         </div>
@@ -655,7 +655,6 @@
             });
         }
 
-        // 🌟 核心更新：OpenRouter 當前有效之旗艦繁中免費模型池
         const MONITORED_MODELS = [
             { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型、繁中語感極佳" },
             { id: "deepseek/deepseek-chat:free", name: "DeepSeek V3", desc: "深度思考、長文本邏輯極強" },
@@ -1357,6 +1356,7 @@
             });
         }
 
+        // 🌟 核心優化：將測試 max_tokens 提升至 16，杜絕 DeepSeek/Qwen 因前綴標籤產生的假性異常報錯
         async function testAllModelsHealth() {
             const keys = getApiKeys();
             if (keys.length === 0) {
@@ -1392,7 +1392,7 @@
                                 body: JSON.stringify({
                                     model: m.id,
                                     messages: [{ role: "user", content: "hi" }],
-                                    max_tokens: 2
+                                    max_tokens: 16 // 🌟 提升至 16 確保通過前綴檢測
                                 })
                             });
 
@@ -2042,7 +2042,6 @@
             }
         }
 
-        // 🌟 強化版：清洗 User Safety 標籤與容錯解析
         function cleanGuardrailArtifacts(text) {
             if (!text) return '';
             return text
@@ -2078,7 +2077,6 @@
             return { displayText, proposalJson };
         }
 
-        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 智慧安全標籤過濾 + 瀑布切換)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -2108,15 +2106,15 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 嚴格禁止任何安全審核標籤輸出
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤（如 User Safety: safe）。
-2. 知識庫直答（速度與精準優先）：
+2. 高密度純繁中直答（防止表格截斷）：
    - 下方提供的【拾葉設計內部知識庫】是全公司工法、尺寸、門禁數值、Wi-Fi 帳密與行政須知的唯一權威依據。
-   - 請主動對同仁的口語詞彙進行同義詞關聯（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；值日生/輪值 ➔ 行政規範）。
-   - 【極速原則】：直接輸出重點答案與數值，【嚴禁】在每句話或文末額外標註「出處：...」或引用來源，保持回答乾淨俐落。
+   - 請主動對同仁口語詞彙進行同義詞關聯（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；值日生/輪值 ➔ 行政規範）。
+   - 【防截斷原則】：直接輸出重點答案與數值，【嚴禁】在表格或條列中重複並列中英雙語對照（例如直接寫「地板貼設」，嚴禁寫「flooring installation (地板貼設)」），以確保大型時程表能完整輸出各階段所有細節。
+   - 【極速原則】：嚴禁在每句話或文末額外標註「出處：...」或引用來源，保持回答乾淨俐落。
 3. 誠實邊界（嚴禁虛構）：
    - 若同仁詢問的項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
 4. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
@@ -2178,7 +2176,7 @@ ${sopContent}
                                     messages: messages,
                                     temperature: 0.2,
                                     frequency_penalty: 0.2,
-                                    max_tokens: 4000,
+                                    max_tokens: 8192,
                                     stream: true
                                 })
                             });
@@ -2242,7 +2240,6 @@ ${sopContent}
                                 }
                             }
 
-                            // 🌟 防禦過濾：若回傳內容只包含 User Safety: safe，視為失敗並自動切換下一模型
                             const cleanedCheck = cleanGuardrailArtifacts(accumulatedReply);
                             if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
                                 accumulatedReply = '';
@@ -2272,14 +2269,19 @@ ${sopContent}
                 const isUserAborted = currentAbortController && currentAbortController.signal.aborted;
 
                 if (streamSuccess || accumulatedReply.length > 0) {
+                    const { displayText } = robustProposalExtractor(accumulatedReply);
+
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
                         model: isUserAborted ? `${usedModelName} (已手動中斷)` : usedModelName,
                         tokens: Math.round((text.length + accumulatedReply.length) * 1.3),
                         time: elapsedSec,
                         rawReply: accumulatedReply
                     });
-                    if (accumulatedReply.trim()) {
-                        chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: accumulatedReply });
+
+                    // 🌟 核心淨化：僅將過濾後的純文本存入對話歷史，杜絕多輪對話歷史污染
+                    const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
+                    if (cleanForHistory) {
+                        chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: cleanForHistory });
                     }
                 } else if (isUserAborted) {
                     appendMessage('*(同仁已手動中斷此回覆)*', 'assistant', false, text, {
