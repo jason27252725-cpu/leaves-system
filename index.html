@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.3 診斷加固版</span>
+                        <span>v10.4 極速版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -395,7 +395,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.3 診斷加固版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.4 極速版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -462,12 +462,12 @@
                     <div id="snapshotsContainer" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- OpenRouter AI 最新有效模型即時調用與健康監控 -->
+                <!-- OpenRouter AI 模型即時調用與健康監控 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-purple-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-purple-400">
-                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (精準測速版)
+                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (極速秒測)
                             </h3>
                             <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視旗艦繁中備援模型響應速度與連線狀態</p>
                         </div>
@@ -656,11 +656,11 @@
         }
 
         const MONITORED_MODELS = [
-            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型、繁中語感極佳" },
-            { id: "deepseek/deepseek-chat:free", name: "DeepSeek V3", desc: "深度思考、長文本邏輯極強" },
+            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型、極速直答" },
             { id: "qwen/qwen-2.5-72b-instruct:free", name: "Qwen 2.5 72B", desc: "繁中理解極佳、工程數據精確" },
+            { id: "deepseek/deepseek-chat:free", name: "DeepSeek V3", desc: "深度思考、長文本邏輯極強" },
             { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
-            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道 (最後備援)" }
+            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
         ];
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
@@ -1356,7 +1356,6 @@
             });
         }
 
-        // 🌟 核心優化：將測試 max_tokens 提升至 16，杜絕 DeepSeek/Qwen 因前綴標籤產生的假性異常報錯
         async function testAllModelsHealth() {
             const keys = getApiKeys();
             if (keys.length === 0) {
@@ -1392,7 +1391,7 @@
                                 body: JSON.stringify({
                                     model: m.id,
                                     messages: [{ role: "user", content: "hi" }],
-                                    max_tokens: 16 // 🌟 提升至 16 確保通過前綴檢測
+                                    max_tokens: 16
                                 })
                             });
 
@@ -2077,6 +2076,7 @@
             return { displayText, proposalJson };
         }
 
+        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 6 秒極速斷尾切換 + 淨化歷史)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -2158,8 +2158,9 @@ ${sopContent}
                         let timeoutTimerId = null;
 
                         try {
+                            // 🌟 核心升級：將逾時由 15 秒縮短為 6 秒，6 秒內未回傳即刻切換下一模型
                             const timeoutPromise = new Promise((_, reject) => {
-                                timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 15000);
+                                timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 6000);
                             });
 
                             const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
@@ -2278,7 +2279,6 @@ ${sopContent}
                         rawReply: accumulatedReply
                     });
 
-                    // 🌟 核心淨化：僅將過濾後的純文本存入對話歷史，杜絕多輪對話歷史污染
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
                         chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: cleanForHistory });
