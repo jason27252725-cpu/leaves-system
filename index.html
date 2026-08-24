@@ -178,7 +178,7 @@
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.0 旗艦管理版</span>
+                        <span>v10.1 智聯抗擾版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -395,7 +395,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.0 旗艦管理版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.1 智聯抗擾版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -462,14 +462,14 @@
                     <div id="snapshotsContainer" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- OpenRouter AI 模型即時調用與健康監控 -->
+                <!-- OpenRouter AI 最新有效模型即時調用與健康監控 -->
                 <div class="glass-mono p-6 rounded-2xl space-y-4 border border-purple-500/30">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-purple-400">
-                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控
+                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (當前有效模型)
                             </h3>
-                            <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視各備援模型響應速度與連線狀態</p>
+                            <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視旗艦繁中備援模型響應速度與連線狀態</p>
                         </div>
                         <button onclick="testAllModelsHealth()" id="testModelsBtn" class="bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-600 px-3.5 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 shrink-0">
                             <i class="fa-solid fa-bolt"></i>
@@ -655,12 +655,13 @@
             });
         }
 
+        // 🌟 核心更新：OpenRouter 當前有效之旗艦繁中免費模型池
         const MONITORED_MODELS = [
-            { id: "google/gemini-2.0-flash-lite-001:free", name: "Gemini 2.0 Flash Lite", desc: "極速首選、繁中語感極佳、低延遲" },
-            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型" },
-            { id: "google/gemini-flash-1.5:free", name: "Gemini 1.5 Flash", desc: "老牌穩定備援通道" },
+            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型、繁中語感極佳" },
+            { id: "deepseek/deepseek-chat:free", name: "DeepSeek V3", desc: "深度思考、長文本邏輯極強" },
+            { id: "qwen/qwen-2.5-72b-instruct:free", name: "Qwen 2.5 72B", desc: "繁中理解極佳、工程數據精確" },
             { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
-            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
+            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道 (最後備援)" }
         ];
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
@@ -809,7 +810,6 @@
             }
         }
 
-        // 🌟 自動濾除 Commit Hash，將所有 Gist 網址轉換為永久最新直連端點
         function normalizeGistUrl(url) {
             if (!url) return '';
             let u = url.trim();
@@ -941,7 +941,6 @@
             return codes;
         }
 
-        // 🌟 核心：優先透過 GitHub REST API 直連獲取 SOP（0 秒快取延遲）
         async function fetchSopFromGist() {
             let rawUrl = getStoredGistUrl();
             let token = getGithubToken();
@@ -1517,7 +1516,6 @@
                 lineRangeInfo = `文末增補 (第 ${lines.length + 1} 行)`;
             }
 
-            // 🌟 快照上限管理：永遠保留最新 20 份
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             snapshots.unshift({
                 id: Date.now(),
@@ -1533,7 +1531,6 @@
                 return;
             }
 
-            // 🌟 修訂日誌上限管理：永遠保留最新 50 筆
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             updateLogs.unshift({
                 id: Date.now(),
@@ -1603,7 +1600,6 @@
             `).join('');
         }
 
-        // 🌟 新增：一鍵清空修訂日誌
         async function clearUpdateLogs() {
             if (!confirm('確定要清空所有 SOP 修訂日誌紀錄嗎？此動作將同步更新至雲端資料庫。')) return;
             localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
@@ -1645,7 +1641,6 @@
             `).join('');
         }
 
-        // 🌟 新增：一鍵清空歷史快照
         async function clearSnapshots() {
             if (!confirm('確定要清空所有歷史備份快照嗎？清空後將無法一鍵回滾舊版本。')) return;
             localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
@@ -2047,25 +2042,34 @@
             }
         }
 
+        // 🌟 強化版：清洗 User Safety 標籤與容錯解析
+        function cleanGuardrailArtifacts(text) {
+            if (!text) return '';
+            return text
+                .replace(/User Safety:\s*safe/gi, '')
+                .replace(/Response Safety:\s*safe/gi, '')
+                .trim();
+        }
+
         function robustProposalExtractor(fullText) {
-            let displayText = fullText;
+            let displayText = cleanGuardrailArtifacts(fullText);
             let proposalJson = null;
 
-            const codeMatch = fullText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
+            const codeMatch = displayText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
             if (codeMatch) {
                 const parsed = safeJsonParse(codeMatch[1], null);
                 if (parsed && parsed.topic) {
-                    displayText = fullText.replace(codeMatch[0], '').trim();
+                    displayText = displayText.replace(codeMatch[0], '').trim();
                     proposalJson = parsed;
                     return { displayText, proposalJson };
                 }
             }
 
-            const rawMatch = fullText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
+            const rawMatch = displayText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
             if (rawMatch) {
                 const parsed = safeJsonParse(rawMatch[1], null);
                 if (parsed && parsed.topic) {
-                    displayText = fullText.replace(rawMatch[0], '').trim();
+                    displayText = displayText.replace(rawMatch[0], '').trim();
                     proposalJson = parsed;
                     return { displayText, proposalJson };
                 }
@@ -2074,7 +2078,7 @@
             return { displayText, proposalJson };
         }
 
-        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 防跳針懲罰 + 極速直答)
+        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 智慧安全標籤過濾 + 瀑布切換)
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -2104,21 +2108,22 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
+                // 🌟 嚴格禁止任何安全審核標籤輸出
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出任何簡體中文字或大陸用語。
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤（如 User Safety: safe）。
 2. 知識庫直答（速度與精準優先）：
    - 下方提供的【拾葉設計內部知識庫】是全公司工法、尺寸、門禁數值、Wi-Fi 帳密與行政須知的唯一權威依據。
    - 請主動對同仁的口語詞彙進行同義詞關聯（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；值日生/輪值 ➔ 行政規範）。
-   - 【極速原則】：直接輸出重點答案與數值，【嚴禁】在每句話或文末額外標註「出處：...」、「依據知識庫第X章...」或附註來源引用，保持回答乾淨俐落。
+   - 【極速原則】：直接輸出重點答案與數值，【嚴禁】在每句話或文末額外標註「出處：...」或引用來源，保持回答乾淨俐落。
 3. 誠實邊界（嚴禁虛構）：
    - 若同仁詢問的項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
-4. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。嚴禁重複跳針。
+4. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
 5. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
 6. SOP 修訂/增補意圖草稿輸出：
-   - 當同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」時，請用【極簡 1 句話】禮貌確認。
-   - 隨後【立即換行】輸出以下專用標籤區塊，嚴禁附加多餘碎念：
+   - 當同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」時，請用【極簡 1 句話】確認。
+   - 隨後【立即換行】輸出以下專用標籤區塊：
 \`\`\`sop_proposal
 {
   "topic": "欲修改或新增的項目名稱",
@@ -2237,6 +2242,14 @@ ${sopContent}
                                 }
                             }
 
+                            // 🌟 防禦過濾：若回傳內容只包含 User Safety: safe，視為失敗並自動切換下一模型
+                            const cleanedCheck = cleanGuardrailArtifacts(accumulatedReply);
+                            if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
+                                accumulatedReply = '';
+                                if (liveMsgElements && liveMsgElements.wrapper) liveMsgElements.wrapper.remove();
+                                continue;
+                            }
+
                             streamSuccess = true;
                             break keyLoop;
                         } catch (e) {
@@ -2319,7 +2332,8 @@ ${sopContent}
 
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
-            const cleanText = text
+            let cleanText = cleanGuardrailArtifacts(text);
+            cleanText = cleanText
                 .replace(/```(?:sop_proposal|json)?[\s\S]*$/, '')
                 .replace(/\{[\s\S]*?"topic"[\s\S]*$/, '')
                 .trim();
