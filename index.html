@@ -178,7 +178,7 @@
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.6 穩固旗艦版</span>
+                        <span>v10.7 行級錨定版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -363,7 +363,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或公司資訊。若發現 SOP 內容有誤或需增補，可直接告訴我「SOP 應該修改/新增為...」我會為您建立草稿！</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或公司資訊。若發現 SOP 內容有誤或需增補，可直接告訴我「SOP 應該修改/刪除/新增為...」我會為您建立精準定位草稿！</p>
                     </div>
                 </div>
             </div>
@@ -377,7 +377,7 @@
 
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入問題，或提出「SOP 應修改/新增為...」" class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入問題，或提出「SOP 應修改/刪除/新增為...」" class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -394,7 +394,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.6 穩固旗艦版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.7 行級錨定版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -409,9 +409,9 @@
                         <div>
                             <div class="flex items-center space-x-2.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-                                <h3 class="text-sm font-semibold tracking-widest uppercase text-amber-300">同仁 SOP 修訂草稿待審專區 (0 Token 採納)</h3>
+                                <h3 class="text-sm font-semibold tracking-widest uppercase text-amber-300">同仁 SOP 修訂草稿待審專區 (行級精準比對)</h3>
                             </div>
-                            <p class="text-[11px] text-neutral-400 mt-1">同仁在聊天框確認送出的修訂建議，在此進行行數比對與一鍵寫入雲端。</p>
+                            <p class="text-[11px] text-neutral-400 mt-1">即時鎖定目標行號，支援單行替換、整行切除防破洞與一鍵跳轉預覽檢視。</p>
                         </div>
                         <span id="pendingProposalsCountBadge" class="text-[11px] bg-amber-950/80 text-amber-300 border border-amber-800 px-3 py-1.5 rounded-xl font-mono">0 筆待審核</span>
                     </div>
@@ -559,7 +559,7 @@
                             <i class="fa-solid fa-arrows-rotate mr-1"></i> 手動重新整理預覽
                         </button>
                     </div>
-                    <textarea id="cloudSopViewer" rows="5" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed selectable-text" placeholder="載入中..."></textarea>
+                    <textarea id="cloudSopViewer" rows="6" readonly class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed selectable-text" placeholder="載入中..."></textarea>
                 </div>
 
                 <!-- 通行碼監控 -->
@@ -1012,7 +1012,6 @@
             alert('✅ 已即時從 GitHub 雲端獲取最新 SOP 內容！');
         }
 
-        // 🌟 修復 7：寫入 Gist 時若檔名不標準，自動鎖定 Gist 中的首個現存檔案
         async function writeSopToGithubGist(newContent) {
             let sopUrl = getStoredGistUrl();
             let token = getGithubToken();
@@ -1064,6 +1063,69 @@
             } catch (e) {
                 return { success: false, message: e.message };
             }
+        }
+
+        // 🌟 核心演算法：精準行號錨定定位器（支援去噪正規化比對）
+        function locateSopLine(sopText, oldText, topic = '') {
+            if (!sopText || !oldText || oldText === '無' || oldText === '（無）' || oldText.trim().length < 2) {
+                return { found: false, startLine: -1, endLine: -1, isAppend: true };
+            }
+            const cleanSop = sopText.replace(/\r\n/g, '\n');
+            const lines = cleanSop.split('\n');
+            const cleanOld = oldText.trim().replace(/\r\n/g, '\n');
+            const oldLines = cleanOld.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            
+            if (oldLines.length === 0) return { found: false, startLine: -1, endLine: -1, isAppend: true };
+
+            // 1. 完全精確字串命中
+            const exactIdx = cleanSop.indexOf(cleanOld);
+            if (exactIdx !== -1) {
+                const before = cleanSop.substring(0, exactIdx);
+                const startLine = before.split('\n').length;
+                const count = cleanOld.split('\n').length;
+                return { found: true, startLine: startLine, endLine: startLine + count - 1, isAppend: false, method: 'exact' };
+            }
+
+            // 2. 去符號模糊逐行特徵比對 (去掉 Markdown 清單符號 - *、空格與全半形冒號)
+            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\、\。\(\)\（\）]/g, '').toLowerCase();
+            const normTargetFirst = normalize(oldLines[0]);
+
+            if (normTargetFirst.length >= 2) {
+                for (let i = 0; i < lines.length; i++) {
+                    const normLine = normalize(lines[i]);
+                    if (normLine.includes(normTargetFirst) || normTargetFirst.includes(normLine)) {
+                        let multiMatch = true;
+                        if (oldLines.length > 1) {
+                            for (let j = 1; j < oldLines.length; j++) {
+                                if (i + j >= lines.length || !normalize(lines[i + j]).includes(normalize(oldLines[j]))) {
+                                    multiMatch = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (multiMatch) {
+                            return { found: true, startLine: i + 1, endLine: i + oldLines.length, isAppend: false, method: 'normalized' };
+                        }
+                    }
+                }
+            }
+
+            return { found: false, startLine: -1, endLine: -1, isAppend: true };
+        }
+
+        // 🌟 預覽框快速跳轉高亮指定行
+        function inspectSopLine(lineNum) {
+            const viewer = document.getElementById('cloudSopViewer');
+            if (!viewer || !viewer.value) return;
+            const lines = viewer.value.replace(/\r\n/g, '\n').split('\n');
+            if (lineNum < 1 || lineNum > lines.length) return;
+
+            let charPos = 0;
+            for (let i = 0; i < lineNum - 1; i++) charPos += lines[i].length + 1;
+
+            viewer.focus();
+            viewer.setSelectionRange(charPos, charPos + lines[lineNum - 1].length);
+            viewer.scrollTop = Math.max(0, (lineNum - 3) * 19);
         }
 
         function getFallbackCodes() {
@@ -1177,7 +1239,6 @@
             }
         }
 
-        // 🌟 修復 4：驗證通過後，同步更新記憶體中的 currentCodesList
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -1207,7 +1268,7 @@
 
                 currentAuth = matched.role;
                 activeCode = matched.code;
-                currentCodesList = freshCodes; // 🌟 即刻同步全域陣列
+                currentCodesList = freshCodes;
                 localStorage.setItem('shiye_auth', currentAuth);
                 localStorage.setItem('shiye_active_code', activeCode);
 
@@ -1358,7 +1419,6 @@
             });
         }
 
-        // 🌟 修復 5：健康測速加入 4.5 秒 AbortController 逾時保護，徹底防止介面卡死
         async function testAllModelsHealth() {
             const keys = getApiKeys();
             if (keys.length === 0) {
@@ -1429,6 +1489,7 @@
             }
         }
 
+        // 🌟 渲染待審核專區：即時比對 SOP 行號並提供一鍵跳轉
         function renderPendingProposals() {
             const container = document.getElementById('pendingProposalsContainer');
             const badge = document.getElementById('pendingProposalsCountBadge');
@@ -1447,7 +1508,33 @@
                 return;
             }
 
-            container.innerHTML = list.map(item => `
+            const currentSop = localStorage.getItem('shiye_sop') || '';
+
+            container.innerHTML = list.map(item => {
+                const loc = locateSopLine(currentSop, item.oldText, item.topic);
+                const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test((item.newText || '').trim());
+
+                let locationBadgeHtml = '';
+                if (loc.found) {
+                    locationBadgeHtml = `
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-md font-mono">
+                                📍 鎖定第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行
+                            </span>
+                            <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">
+                                <i class="fa-solid fa-magnifying-glass mr-0.5"></i>查看所在行
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    locationBadgeHtml = `
+                        <span class="text-[10px] bg-amber-950/80 text-amber-300 border border-amber-800 px-2.5 py-0.5 rounded-md font-mono">
+                            ➕ 查無匹配行（將於文末增補）
+                        </span>
+                    `;
+                }
+
+                return `
                 <div class="p-5 bg-neutral-950/90 border border-amber-500/30 rounded-2xl space-y-3 hover:border-amber-400 transition selectable-text">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-800 pb-3 ui-no-select">
                         <div class="flex items-center space-x-2">
@@ -1456,7 +1543,10 @@
                             </span>
                             <span class="text-xs font-semibold text-white">${escapeHtml(item.topic)}</span>
                         </div>
-                        <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(item.time)}</span>
+                        <div class="flex items-center space-x-3">
+                            ${locationBadgeHtml}
+                            <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(item.time)}</span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -1466,11 +1556,11 @@
                             </span>
                             <div class="text-neutral-300 font-mono whitespace-pre-wrap">${escapeHtml(item.oldText)}</div>
                         </div>
-                        <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded-xl space-y-1">
-                            <span class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> 同仁建議修訂/增補為：
+                        <div class="${isDelete ? 'bg-red-950/40 border border-red-700' : 'bg-emerald-950/30 border border-emerald-900/50'} p-3 rounded-xl space-y-1">
+                            <span class="text-[10px] font-semibold ${isDelete ? 'text-red-400' : 'text-emerald-400'} flex items-center gap-1">
+                                <i class="fa-solid ${isDelete ? 'fa-trash' : 'fa-plus'}"></i> ${isDelete ? '執行操作：' : '修訂/增補為：'}
                             </span>
-                            <div class="text-emerald-200 font-mono whitespace-pre-wrap font-medium">${escapeHtml(item.newText)}</div>
+                            <div class="${isDelete ? 'text-red-300 font-bold' : 'text-emerald-200'} font-mono whitespace-pre-wrap font-medium">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(item.newText)}</div>
                         </div>
                     </div>
 
@@ -1484,10 +1574,11 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // 🌟 修復 3：多行 SOP 模糊定位演算法，精準比對首個有效行數
+        // 🌟 核心採納函式：支援整行抽除與行級精確替換
         async function adoptSopProposal(proposalId) {
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let target = proposals.find(p => p.id === proposalId);
@@ -1500,47 +1591,58 @@
             let oldSnippet = (target.oldText || '').trim().replace(/\r\n/g, '\n');
             let newSnippet = (target.newText || '').trim().replace(/\r\n/g, '\n');
 
-            let lines = sopText.split('\n');
-            let foundLine = -1;
-            
-            const isValidOldSnippet = oldSnippet && oldSnippet !== '無' && oldSnippet !== '（無）' && oldSnippet.length > 2;
+            const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test(newSnippet);
+            const loc = locateSopLine(sopText, oldSnippet, target.topic);
 
-            if (isValidOldSnippet) {
-                const targetFirstLine = oldSnippet.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
-                for (let i = 0; i < lines.length; i++) {
-                    if (lines[i].includes(targetFirstLine)) {
-                        foundLine = i + 1;
-                        break;
-                    }
-                }
-            }
-
-            let lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '文末增補';
             let newSopText = "";
+            let lineRangeInfo = "";
 
-            if (isValidOldSnippet && sopText.includes(oldSnippet)) {
-                newSopText = sopText.replace(oldSnippet, newSnippet);
-                lineRangeInfo = (foundLine !== -1) ? `第 ${foundLine} 行` : '局部比對替換';
+            if (loc.found) {
+                const lines = sopText.split('\n');
+                const startIdx = loc.startLine - 1;
+                const count = loc.endLine - loc.startLine + 1;
+
+                if (isDelete) {
+                    // 整行乾淨抽除，防止產生空白破洞
+                    lines.splice(startIdx, count);
+                    // 若抽除後造成連續多重空白行，適度修剪一筆
+                    if (lines[startIdx] === '' && lines[startIdx - 1] === '') {
+                        lines.splice(startIdx, 1);
+                    }
+                    newSopText = lines.join('\n');
+                    lineRangeInfo = `整行抽除第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
+                } else {
+                    // 原地替換
+                    const replacementLines = newSnippet.split('\n');
+                    lines.splice(startIdx, count, ...replacementLines);
+                    newSopText = lines.join('\n');
+                    lineRangeInfo = `精準替換第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
+                }
             } else {
+                // 安全退避：文末增補
+                const lines = sopText.split('\n');
                 newSopText = sopText.trimEnd() + `\n\n### 【最新增補】${target.topic}\n${newSnippet}\n`;
                 lineRangeInfo = `文末增補 (第 ${lines.length + 1} 行)`;
             }
 
+            // 建立歷史快照 (嚴格限制保留 20 版)
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             snapshots.unshift({
                 id: Date.now(),
                 time: new Date().toLocaleString(),
-                summary: `修訂前備份：${target.topic}`,
+                summary: `${isDelete ? '刪除條目' : '修訂條目'}：${target.topic}`,
                 content: sopText
             });
             if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
 
+            // 寫入 GitHub
             const writeResult = await writeSopToGithubGist(newSopText);
             if (!writeResult.success) {
                 alert(`❌ 寫入 GitHub SOP 失敗: ${writeResult.message}`);
                 return;
             }
 
+            // 寫入修訂日誌
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             updateLogs.unshift({
                 id: Date.now(),
@@ -1550,7 +1652,7 @@
                 reviewer: activeCode || 'ADMIN',
                 lineRange: lineRangeInfo,
                 oldText: oldSnippet || '（新增）',
-                newText: newSnippet
+                newText: isDelete ? '【已整列移除】' : newSnippet
             });
             if (updateLogs.length > 50) updateLogs = updateLogs.slice(0, 50);
 
@@ -1566,7 +1668,7 @@
 
             await pushCodesToCloud(currentCodesList);
             loadAdminForm();
-            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【受影響位置】：${lineRangeInfo}\n已自動建立還原快照備份，後台預覽已同步刷新。`);
+            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【操作結果】：${lineRangeInfo}\n已自動建立還原快照備份，後台預覽已同步刷新。`);
         }
 
         async function rejectSopProposal(proposalId) {
@@ -1602,7 +1704,7 @@
                         <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(l.time)} | 提案：${escapeHtml(l.proposer)}</span>
                     </div>
                     <div class="text-[11px] text-neutral-300 font-mono bg-neutral-900/50 p-2 rounded-lg space-y-1">
-                        <div class="text-neutral-400 text-[10px]">受影響行數：<strong class="text-white">${escapeHtml(l.lineRange)}</strong></div>
+                        <div class="text-neutral-400 text-[10px]">受影響位置：<strong class="text-white font-mono">${escapeHtml(l.lineRange)}</strong></div>
                         <div class="text-red-400 font-mono line-through">- ${escapeHtml(l.oldText)}</div>
                         <div class="text-emerald-300 font-mono font-medium">+ ${escapeHtml(l.newText)}</div>
                     </div>
@@ -1659,7 +1761,6 @@
             alert('✅ 已成功清空歷史快照紀錄！');
         }
 
-        // 🌟 修復 6：還原前備份快照嚴格遵守 20 版 FIFO 循環上限
         async function rollbackSnapshot(snapshotId) {
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             let target = snapshots.find(s => s.id === snapshotId);
@@ -2089,7 +2190,6 @@
             return { displayText, proposalJson };
         }
 
-        // 🌟 修復 1 & 2：重試時清空殘留文字，並使用獨立 attemptController 確保逾時真正斷開連線
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -2119,6 +2219,7 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
+                // 🌟 核心約束：要求 AI 在提報修改時，字元級複製舊文字並支援（刪除此條規範）標籤
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
@@ -2136,14 +2237,17 @@
    - 若詢問項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
 5. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
 6. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
-7. SOP 修訂/增補意圖草稿輸出：
-   - 當同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」時，請用【極簡 1 句話】確認。
+7. SOP 修訂/刪除/增補意圖草稿輸出（行級定位標準）：
+   - 當同仁提出「SOP 寫錯了」、「應該修改為...」、「刪除這行規範」或「SOP 應新增...」時，請用【極簡 1 句話】確認。
+   - 【關鍵原則】：\`oldText\` 必須【字元級完全精準複製】知識庫中的舊段落文字（包含清單符號 \`- \`、標點與數字），以利系統以 100% 精準度直接定位行號並原地替換。
+   - 若同仁要求【刪除】某條規範，\`newText\` 請填寫 \`"（刪除此條規範）"\`。
+   - 若為全新條目增補，\`oldText\` 請填寫 \`"無"\`。
    - 隨後【立即換行】輸出以下專用標籤區塊：
 \`\`\`sop_proposal
 {
-  "topic": "欲修改或新增的項目名稱",
-  "oldText": "知識庫中原本的舊文字（若為新增則填無）",
-  "newText": "欲修訂或新增的最新標準規範文字"
+  "topic": "欲修改、刪除或新增的項目名稱",
+  "oldText": "知識庫中一模一樣的原文字（包含符號；若為新增填無）",
+  "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
 }
 \`\`\`
 
@@ -2172,7 +2276,6 @@ ${sopContent}
                     for (const modelObj of MONITORED_MODELS) {
                         if (currentAbortController && currentAbortController.signal.aborted) break keyLoop;
 
-                        // 每次重試前徹底清空殘留狀態，防止文字拼接錯亂
                         accumulatedReply = '';
                         if (liveMsgElements && liveMsgElements.wrapper) {
                             liveMsgElements.wrapper.remove();
@@ -2187,7 +2290,7 @@ ${sopContent}
                         try {
                             const timeoutPromise = new Promise((_, reject) => {
                                 timeoutTimerId = setTimeout(() => {
-                                    attemptAbortController.abort(); // 🌟 真正掐斷後台傳輸
+                                    attemptAbortController.abort();
                                     reject(new Error('節點忙碌逾時，切換下一備援模型'));
                                 }, 6000);
                             });
@@ -2379,6 +2482,7 @@ ${sopContent}
             }
         }
 
+        // 🌟 聊天室草稿卡片：即時計算並顯示目標行號
         function finalizeLiveBubble(elements, fullText, relatedQuestion, meta) {
             if (!elements || !elements.content) return;
             
@@ -2392,16 +2496,41 @@ ${sopContent}
 
             if (proposalJson && proposalJson.topic) {
                 window.tempProposalStore[msgId] = proposalJson;
+                
+                const currentSop = localStorage.getItem('shiye_sop') || '';
+                const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
+                const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test((proposalJson.newText || '').trim());
+
+                let locBadgeHtml = '';
+                if (loc.found) {
+                    locBadgeHtml = `
+                        <div class="text-[10px] text-blue-400 bg-blue-950/60 border border-blue-800 px-2.5 py-1 rounded-lg font-mono flex items-center justify-between">
+                            <span><i class="fa-solid fa-location-crosshairs mr-1"></i>📍 目標精準鎖定：SOP 第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行</span>
+                            <span class="text-neutral-400 text-[9px]">${isDelete ? '【即將整列抽除】' : '【即將原地替換】'}</span>
+                        </div>
+                    `;
+                } else {
+                    locBadgeHtml = `
+                        <div class="text-[10px] text-amber-400 bg-amber-950/60 border border-amber-800 px-2.5 py-1 rounded-lg font-mono flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>➕ 查無完全相符舊行（確認後將於文末安全增補）</span>
+                        </div>
+                    `;
+                }
+
                 const proposalCardHtml = `
                     <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border border-amber-500/40 space-y-3 my-2 shadow-lg">
                         <div class="flex items-center space-x-2 text-amber-300 text-xs font-semibold">
                             <i class="fa-solid fa-file-pen"></i>
-                            <span>📝 SOP 修改/增補草稿確認</span>
+                            <span>📝 SOP 修改/刪除/增補草稿確認</span>
                         </div>
+                        
+                        ${locBadgeHtml}
+
                         <div class="text-[11px] space-y-1 bg-neutral-950/80 p-3 rounded-xl border border-neutral-800">
                             <p><strong class="text-white">• 項目：</strong><span class="text-neutral-300">${escapeHtml(proposalJson.topic)}</span></p>
                             <p><strong class="text-red-400">• 原內容：</strong><span class="text-neutral-400 font-mono line-through">${escapeHtml(proposalJson.oldText)}</span></p>
-                            <p><strong class="text-emerald-400">• 修訂/增補為：</strong><span class="text-emerald-200 font-mono font-medium">${escapeHtml(proposalJson.newText)}</span></p>
+                            <p><strong class="${isDelete ? 'text-red-400 font-bold' : 'text-emerald-400'}">• ${isDelete ? '執行操作：' : '修訂/增補為：'}</strong><span class="${isDelete ? 'text-red-300 font-bold' : 'text-emerald-200'} font-mono font-medium">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(proposalJson.newText)}</span></p>
                         </div>
                         <div class="flex items-center space-x-2 pt-1 ui-no-select">
                             <button onclick="submitSopProposal('${msgId}', this)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-1.5 rounded-xl font-medium transition flex items-center space-x-1.5 shadow-md">
