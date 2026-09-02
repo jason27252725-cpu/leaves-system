@@ -178,7 +178,7 @@
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
             }
         }
 
@@ -310,7 +310,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.4 極速版</span>
+                        <span>v10.6 穩固旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -348,7 +348,6 @@
 
         <!-- 水滴展開懸浮對話框 -->
         <div id="chatDrawer">
-            
             <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -395,7 +394,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.4 極速版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.6 穩固旗艦版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -467,7 +466,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h3 class="text-xs font-semibold tracking-widest uppercase text-purple-400">
-                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (極速秒測)
+                                <i class="fa-solid fa-microchip mr-1.5"></i> OpenRouter AI 模型即時調用與健康監控 (超時防禦測速)
                             </h3>
                             <p class="text-[11px] text-neutral-400 mt-0.5">即時檢視旗艦繁中備援模型響應速度與連線狀態</p>
                         </div>
@@ -1013,6 +1012,7 @@
             alert('✅ 已即時從 GitHub 雲端獲取最新 SOP 內容！');
         }
 
+        // 🌟 修復 7：寫入 Gist 時若檔名不標準，自動鎖定 Gist 中的首個現存檔案
         async function writeSopToGithubGist(newContent) {
             let sopUrl = getStoredGistUrl();
             let token = getGithubToken();
@@ -1040,7 +1040,7 @@
                 if (checkRes.ok) {
                     const gistInfo = await checkRes.json();
                     const files = Object.keys(gistInfo.files || {});
-                    const matchedFile = files.find(f => f.endsWith('.txt') || f.endsWith('.md') || f.includes('sop'));
+                    const matchedFile = files.find(f => f.endsWith('.txt') || f.endsWith('.md') || f.includes('sop')) || files[0];
                     if (matchedFile) filenameToPatch = matchedFile;
                 }
 
@@ -1177,6 +1177,7 @@
             }
         }
 
+        // 🌟 修復 4：驗證通過後，同步更新記憶體中的 currentCodesList
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -1206,6 +1207,7 @@
 
                 currentAuth = matched.role;
                 activeCode = matched.code;
+                currentCodesList = freshCodes; // 🌟 即刻同步全域陣列
                 localStorage.setItem('shiye_auth', currentAuth);
                 localStorage.setItem('shiye_active_code', activeCode);
 
@@ -1356,6 +1358,7 @@
             });
         }
 
+        // 🌟 修復 5：健康測速加入 4.5 秒 AbortController 逾時保護，徹底防止介面卡死
         async function testAllModelsHealth() {
             const keys = getApiKeys();
             if (keys.length === 0) {
@@ -1379,9 +1382,13 @@
 
                     for (let k = 0; k < keys.length; k++) {
                         const startTime = performance.now();
+                        const pingAbort = new AbortController();
+                        const pingTimeout = setTimeout(() => pingAbort.abort(), 4500);
+
                         try {
                             const res = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                                 method: 'POST',
+                                signal: pingAbort.signal,
                                 headers: { 
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${keys[k]}`,
@@ -1394,6 +1401,7 @@
                                     max_tokens: 16
                                 })
                             });
+                            clearTimeout(pingTimeout);
 
                             elapsed = Math.round(performance.now() - startTime);
                             const data = await res.json();
@@ -1406,7 +1414,8 @@
                                 lastErr = data.error?.message || '限流中';
                             }
                         } catch (e) {
-                            lastErr = e.message;
+                            clearTimeout(pingTimeout);
+                            lastErr = (e.name === 'AbortError') ? '響應逾時 (>4.5s)' : e.message;
                         }
                     }
 
@@ -1478,6 +1487,7 @@
             `).join('');
         }
 
+        // 🌟 修復 3：多行 SOP 模糊定位演算法，精準比對首個有效行數
         async function adoptSopProposal(proposalId) {
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let target = proposals.find(p => p.id === proposalId);
@@ -1496,8 +1506,9 @@
             const isValidOldSnippet = oldSnippet && oldSnippet !== '無' && oldSnippet !== '（無）' && oldSnippet.length > 2;
 
             if (isValidOldSnippet) {
+                const targetFirstLine = oldSnippet.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
                 for (let i = 0; i < lines.length; i++) {
-                    if (lines[i].includes(oldSnippet)) {
+                    if (lines[i].includes(targetFirstLine)) {
                         foundLine = i + 1;
                         break;
                     }
@@ -1648,6 +1659,7 @@
             alert('✅ 已成功清空歷史快照紀錄！');
         }
 
+        // 🌟 修復 6：還原前備份快照嚴格遵守 20 版 FIFO 循環上限
         async function rollbackSnapshot(snapshotId) {
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             let target = snapshots.find(s => s.id === snapshotId);
@@ -1662,6 +1674,7 @@
                 summary: `還原前自動快照`,
                 content: currentSop
             });
+            if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
 
             const res = await writeSopToGithubGist(target.content);
             if (res.success) {
@@ -2076,7 +2089,7 @@
             return { displayText, proposalJson };
         }
 
-        // 🌟 核心：v7.1 經典 AI 邏輯 (Temperature 0.2 + 6 秒極速斷尾切換 + 淨化歷史)
+        // 🌟 修復 1 & 2：重試時清空殘留文字，並使用獨立 attemptController 確保逾時真正斷開連線
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
@@ -2110,16 +2123,20 @@
 
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤（如 User Safety: safe）。
-2. 高密度純繁中直答（防止表格截斷）：
-   - 下方提供的【拾葉設計內部知識庫】是全公司工法、尺寸、門禁數值、Wi-Fi 帳密與行政須知的唯一權威依據。
-   - 請主動對同仁口語詞彙進行同義詞關聯（例如：大門/前門 ➔ 門禁密碼；冷氣/排水 ➔ 空調工程；打底/批土 ➔ 油漆工程；角材/天花板 ➔ 木作工程；值日生/輪值 ➔ 行政規範）。
-   - 【防截斷原則】：直接輸出重點答案與數值，【嚴禁】在表格或條列中重複並列中英雙語對照（例如直接寫「地板貼設」，嚴禁寫「flooring installation (地板貼設)」），以確保大型時程表能完整輸出各階段所有細節。
+2. 工法因果與總監思維規範（智商核心）：
+   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先隱蔽後裝飾、先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒或邏輯矛盾。
+   - 【跨工種交接防呆】：若問題涉及跨工種交接面（例如：空調排水與木作天花板出風口開孔、浴室門檻止水墩與地磚完成面高差、木作與石材或鐵件收邊），主動提示交接公差與防衝突預警。
+   - 【尺寸公差精準標註】：嚴格依據知識庫標記尺寸（統一以 cm/mm 明確標註），若有公差或間距規定（如間距 30cm、角材規格、防水試水 48 小時）必須精準交代，嚴禁使用「差不多」、「適當距離」等模糊詞彙。
+3. 高密度純繁中直答（防截斷原則）：
+   - 下方【拾葉內部知識庫】是全公司工法規範的唯一權威依據。
+   - 主動關聯口語同義詞（大門 ➔ 門禁；冷氣 ➔ 空調；批土 ➔ 油漆；角材/天花板 ➔ 木作）。
+   - 直接輸出重點答案，【嚴禁】在表格或條列中重複並列中英雙語對照，確保長篇大型時程表能完整輸出各階段所有細節。
    - 【極速原則】：嚴禁在每句話或文末額外標註「出處：...」或引用來源，保持回答乾淨俐落。
-3. 誠實邊界（嚴禁虛構）：
-   - 若同仁詢問的項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
-4. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
-5. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
-6. SOP 修訂/增補意圖草稿輸出：
+4. 誠實邊界（嚴禁虛構）：
+   - 若詢問項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
+5. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
+6. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
+7. SOP 修訂/增補意圖草稿輸出：
    - 當同仁提出「SOP 寫錯了」、「應該修改為...」或「SOP 應新增...」時，請用【極簡 1 句話】確認。
    - 隨後【立即換行】輸出以下專用標籤區塊：
 \`\`\`sop_proposal
@@ -2155,17 +2172,29 @@ ${sopContent}
                     for (const modelObj of MONITORED_MODELS) {
                         if (currentAbortController && currentAbortController.signal.aborted) break keyLoop;
 
+                        // 每次重試前徹底清空殘留狀態，防止文字拼接錯亂
+                        accumulatedReply = '';
+                        if (liveMsgElements && liveMsgElements.wrapper) {
+                            liveMsgElements.wrapper.remove();
+                            liveMsgElements = null;
+                        }
+
                         let timeoutTimerId = null;
+                        const attemptAbortController = new AbortController();
+                        const onParentAbort = () => attemptAbortController.abort();
+                        currentAbortController.signal.addEventListener('abort', onParentAbort);
 
                         try {
-                            // 🌟 核心升級：將逾時由 15 秒縮短為 6 秒，6 秒內未回傳即刻切換下一模型
                             const timeoutPromise = new Promise((_, reject) => {
-                                timeoutTimerId = setTimeout(() => reject(new Error('節點忙碌逾時，切換下一備援模型')), 6000);
+                                timeoutTimerId = setTimeout(() => {
+                                    attemptAbortController.abort(); // 🌟 真正掐斷後台傳輸
+                                    reject(new Error('節點忙碌逾時，切換下一備援模型'));
+                                }, 6000);
                             });
 
                             const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
                                 method: 'POST',
-                                signal: currentAbortController.signal,
+                                signal: attemptAbortController.signal,
                                 headers: { 
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${currentKey}`,
@@ -2257,6 +2286,7 @@ ${sopContent}
                             }
                             lastErrorMessage = e.message;
                         } finally {
+                            currentAbortController.signal.removeEventListener('abort', onParentAbort);
                             if (activeStreamReader) {
                                 try { await activeStreamReader.cancel(); } catch(e) {}
                                 activeStreamReader = null;
@@ -2282,6 +2312,7 @@ ${sopContent}
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
                         chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: cleanForHistory });
+                        if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
                 } else if (isUserAborted) {
                     appendMessage('*(同仁已手動中斷此回覆)*', 'assistant', false, text, {
