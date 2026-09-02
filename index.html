@@ -128,6 +128,7 @@
             }
         }
 
+        /* 🌟 對話框本體：支援自由拉伸與收合狀態切換 */
         #chatDrawer {
             position: fixed;
             z-index: 50;
@@ -143,12 +144,12 @@
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
-            will-change: transform, opacity;
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            will-change: transform, opacity, width, height, left, top;
+            transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1), transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         @media (max-width: 767px) {
-            #chatDrawer {
+            #chatDrawer:not(.custom-resized) {
                 left: 0.75rem;
                 right: 0.75rem;
                 top: 1rem;
@@ -156,7 +157,7 @@
                 transform-origin: center center;
                 transform: scale(0.25);
             }
-            #chatDrawer.open {
+            #chatDrawer.open:not(.custom-resized) {
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
@@ -165,7 +166,7 @@
         }
 
         @media (min-width: 768px) and (max-width: 1023px) {
-            #chatDrawer {
+            #chatDrawer:not(.custom-resized) {
                 left: 50%;
                 top: 50%;
                 width: 580px;
@@ -174,7 +175,7 @@
                 transform-origin: center center;
                 transform: translate(-50%, -50%) scale(0.25);
             }
-            #chatDrawer.open {
+            #chatDrawer.open:not(.custom-resized) {
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
@@ -183,22 +184,57 @@
         }
 
         @media (min-width: 1024px) {
-            #chatDrawer {
+            #chatDrawer:not(.custom-resized) {
                 right: 1.5rem;
                 top: 1.5rem;
                 bottom: 1.5rem;
                 width: 620px;
-                max-width: 48vw;
+                max-width: 52vw;
                 transform-origin: right center;
                 transform: scale(0.25);
             }
-            #chatDrawer.open {
+            #chatDrawer.open:not(.custom-resized) {
                 opacity: 1;
                 pointer-events: auto;
                 visibility: visible;
                 transform: scale(1);
             }
         }
+
+        /* 🌟 修復 1：客製化尺寸後的開啟與關閉控制，不再發生無法關閉的 BUG */
+        #chatDrawer.custom-resized {
+            transition: opacity 0.25s ease, transform 0.25s ease !important;
+        }
+        #chatDrawer.custom-resized.open {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            transform: none !important;
+        }
+        #chatDrawer.custom-resized:not(.open) {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: scale(0.92) !important;
+        }
+
+        /* 🌟 8 方向拉伸控制把手 */
+        .resize-handle {
+            position: absolute;
+            z-index: 65;
+            touch-action: none;
+        }
+        .resize-handle:hover {
+            background: rgba(96, 165, 250, 0.25);
+        }
+        .resize-t { top: 0; left: 18px; right: 18px; height: 8px; cursor: ns-resize; }
+        .resize-b { bottom: 0; left: 18px; right: 18px; height: 8px; cursor: ns-resize; }
+        .resize-l { left: 0; top: 18px; bottom: 18px; width: 8px; cursor: ew-resize; }
+        .resize-r { right: 0; top: 18px; bottom: 18px; width: 8px; cursor: ew-resize; }
+        .resize-tl { top: 0; left: 0; width: 18px; height: 18px; cursor: nwse-resize; }
+        .resize-tr { top: 0; right: 0; width: 18px; height: 18px; cursor: nesw-resize; }
+        .resize-bl { bottom: 0; left: 0; width: 18px; height: 18px; cursor: nesw-resize; }
+        .resize-br { bottom: 0; right: 0; width: 18px; height: 18px; cursor: nwse-resize; }
 
         .selectable-text, .markdown-body, .markdown-body *, .user-bubble-text {
             user-select: text !important;
@@ -210,21 +246,56 @@
             -webkit-user-select: none;
         }
 
-        @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .typing-cursor {
-            display: inline-block;
-            width: 5px;
-            height: 12px;
-            background-color: #60a5fa;
-            margin-left: 3px;
-            vertical-align: middle;
-            animation: cursorBlink 0.8s infinite;
-            border-radius: 1px;
+        /* 🌟 修復 2：Gemini 極光行級初生動畫（只在單一節點初次誕生時執行 0.35 秒，打字不重複觸發） */
+        @keyframes geminiBlockEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .gemini-enter-anim {
+            animation: geminiBlockEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; }
+        @keyframes geminiGlowPulse {
+            0%, 100% {
+                transform: scale(0.95);
+                opacity: 0.65;
+                box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4);
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+                box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8);
+            }
+        }
+
+        .gemini-cursor {
+            display: inline-block;
+            width: 5px;
+            height: 14px;
+            margin-left: 4px;
+            background: linear-gradient(180deg, #60a5fa 0%, #c084fc 100%);
+            border-radius: 9999px;
+            vertical-align: middle;
+            animation: geminiGlowPulse 1.2s infinite ease-in-out;
+        }
+
+        /* 🌟 核心排版：保證拉伸時文字絕不跑版 */
+        .markdown-body {
+            color: #e5e5e5;
+            font-size: 0.75rem;
+            line-height: 1.65;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
         .markdown-body img {
             max-width: 100%;
+            height: auto;
             border-radius: 0.75rem;
             margin: 0.6rem 0;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -244,10 +315,10 @@
         .markdown-body p:last-child { margin-bottom: 0; }
         
         .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.7rem; color: #f3f4f6; }
-        .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; }
+        .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; max-width: 100%; }
         .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
         
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; }
+        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; max-width: 100%; }
         .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
         .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
         .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
@@ -310,7 +381,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-blue-950/80 text-blue-400 border border-blue-800/80 px-2 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span>v10.7 行級錨定版</span>
+                        <span>v10.9 奢華流光修訂版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -346,16 +417,32 @@
             </button>
         </div>
 
-        <!-- 水滴展開懸浮對話框 -->
+        <!-- 水滴展開懸浮對話框（含 8 方向拉伸感應條） -->
         <div id="chatDrawer">
-            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select">
+            <!-- 8 方向隱形拉伸控制把手 -->
+            <div class="resize-handle resize-t" data-handle="t"></div>
+            <div class="resize-handle resize-b" data-handle="b"></div>
+            <div class="resize-handle resize-l" data-handle="l"></div>
+            <div class="resize-handle resize-r" data-handle="r"></div>
+            <div class="resize-handle resize-tl" data-handle="tl"></div>
+            <div class="resize-handle resize-tr" data-handle="tr"></div>
+            <div class="resize-handle resize-bl" data-handle="bl"></div>
+            <div class="resize-handle resize-br" data-handle="br"></div>
+
+            <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="拖曳標題列可平移視窗，雙擊可還原預設大小">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase">LEAVES AI ASSISTANT</span>
+                    <span class="text-[9px] text-neutral-500 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-arrows-up-down-left-right text-[8px] mr-1"></i>邊緣可自由拉伸</span>
                 </div>
-                <button onclick="toggleChatDrawer(false)" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-full hover:bg-white/10" title="收回按鈕">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <div class="flex items-center space-x-2">
+                    <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原預設視窗大小">
+                        <i class="fa-solid fa-arrow-rotate-left"></i>
+                    </button>
+                    <button onclick="toggleChatDrawer(false)" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-full hover:bg-white/10" title="收回對話框">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="chatContainer" class="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
@@ -394,7 +481,7 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-light tracking-widest uppercase text-white">System Control Panel</h2>
-                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.7 行級錨定版</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-700 px-2.5 py-0.5 rounded-full font-mono">v10.9 穩固旗艦版</span>
                         </div>
                         <p class="text-[11px] text-neutral-500 mt-1 tracking-wider">GitHub Gist 雲端總部資料庫管理中心</p>
                     </div>
@@ -1065,7 +1152,6 @@
             }
         }
 
-        // 🌟 核心演算法：精準行號錨定定位器（支援去噪正規化比對）
         function locateSopLine(sopText, oldText, topic = '') {
             if (!sopText || !oldText || oldText === '無' || oldText === '（無）' || oldText.trim().length < 2) {
                 return { found: false, startLine: -1, endLine: -1, isAppend: true };
@@ -1077,7 +1163,6 @@
             
             if (oldLines.length === 0) return { found: false, startLine: -1, endLine: -1, isAppend: true };
 
-            // 1. 完全精確字串命中
             const exactIdx = cleanSop.indexOf(cleanOld);
             if (exactIdx !== -1) {
                 const before = cleanSop.substring(0, exactIdx);
@@ -1086,7 +1171,6 @@
                 return { found: true, startLine: startLine, endLine: startLine + count - 1, isAppend: false, method: 'exact' };
             }
 
-            // 2. 去符號模糊逐行特徵比對 (去掉 Markdown 清單符號 - *、空格與全半形冒號)
             const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\、\。\(\)\（\）]/g, '').toLowerCase();
             const normTargetFirst = normalize(oldLines[0]);
 
@@ -1113,7 +1197,6 @@
             return { found: false, startLine: -1, endLine: -1, isAppend: true };
         }
 
-        // 🌟 預覽框快速跳轉高亮指定行
         function inspectSopLine(lineNum) {
             const viewer = document.getElementById('cloudSopViewer');
             if (!viewer || !viewer.value) return;
@@ -1151,6 +1234,7 @@
             if (!localStorage.getItem('shiye_sop_update_logs')) localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             await fetchSopFromGist();
+            initDrawerResizer();
         }
 
         function initBackgroundSlideshow() {
@@ -1353,6 +1437,162 @@
             }
         }
 
+        function resetDrawerSize() {
+            const drawer = document.getElementById('chatDrawer');
+            drawer.classList.remove('custom-resized');
+            drawer.style.width = '';
+            drawer.style.height = '';
+            drawer.style.left = '';
+            drawer.style.top = '';
+            drawer.style.right = '';
+            drawer.style.bottom = '';
+            drawer.style.transform = '';
+        }
+
+        /* 🌟 核心功能：全向自由拉伸與拖曳引擎 (含全設備視窗適應邊界保護) */
+        function initDrawerResizer() {
+            const drawer = document.getElementById('chatDrawer');
+            const header = document.getElementById('chatDrawerHeader');
+            if (!drawer) return;
+
+            let isResizing = false;
+            let isDragging = false;
+            let currentHandle = '';
+            let startX, startY, startW, startH, startL, startT;
+
+            const onStartResize = (e, handleType) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isResizing = true;
+                currentHandle = handleType;
+
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const rect = drawer.getBoundingClientRect();
+
+                startX = clientX;
+                startY = clientY;
+                startW = rect.width;
+                startH = rect.height;
+                startL = rect.left;
+                startT = rect.top;
+
+                drawer.classList.add('custom-resized');
+                drawer.style.left = startL + 'px';
+                drawer.style.top = startT + 'px';
+                drawer.style.width = startW + 'px';
+                drawer.style.height = startH + 'px';
+                drawer.style.right = 'auto';
+                drawer.style.bottom = 'auto';
+                drawer.style.transform = 'none';
+
+                document.body.style.userSelect = 'none';
+                document.body.style.cursor = window.getComputedStyle(e.target).cursor;
+            };
+
+            drawer.querySelectorAll('.resize-handle').forEach(el => {
+                const handleType = el.getAttribute('data-handle');
+                el.addEventListener('mousedown', (e) => onStartResize(e, handleType));
+                el.addEventListener('touchstart', (e) => onStartResize(e, handleType), { passive: false });
+            });
+
+            const onStartDrag = (e) => {
+                if (e.target.closest('button') || e.target.classList.contains('resize-handle')) return;
+                isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const rect = drawer.getBoundingClientRect();
+
+                startX = clientX;
+                startY = clientY;
+                startL = rect.left;
+                startT = rect.top;
+                startW = rect.width;
+                startH = rect.height;
+
+                drawer.classList.add('custom-resized');
+                drawer.style.left = startL + 'px';
+                drawer.style.top = startT + 'px';
+                drawer.style.width = startW + 'px';
+                drawer.style.height = startH + 'px';
+                drawer.style.right = 'auto';
+                drawer.style.bottom = 'auto';
+                drawer.style.transform = 'none';
+
+                document.body.style.userSelect = 'none';
+            };
+
+            if (header) {
+                header.addEventListener('mousedown', onStartDrag);
+                header.addEventListener('touchstart', onStartDrag, { passive: false });
+            }
+
+            const onMove = (e) => {
+                if (!isResizing && !isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                // 🌟 修復 3：尺寸下限動態適配手機寬度，不破版
+                const minW = Math.min(320, window.innerWidth - 20);
+                const minH = Math.min(360, window.innerHeight - 30);
+                const maxW = window.innerWidth - 16;
+                const maxH = window.innerHeight - 16;
+
+                if (isDragging) {
+                    let newL = Math.max(8, Math.min(window.innerWidth - startW - 8, startL + dx));
+                    let newT = Math.max(8, Math.min(window.innerHeight - startH - 8, startT + dy));
+                    drawer.style.left = newL + 'px';
+                    drawer.style.top = newT + 'px';
+                    return;
+                }
+
+                if (isResizing) {
+                    let newW = startW;
+                    let newH = startH;
+                    let newL = startL;
+                    let newT = startT;
+
+                    if (currentHandle.includes('r')) newW = Math.min(maxW, Math.max(minW, startW + dx));
+                    if (currentHandle.includes('b')) newH = Math.min(maxH, Math.max(minH, startH + dy));
+                    if (currentHandle.includes('l')) {
+                        const candW = startW - dx;
+                        if (candW >= minW && candW <= maxW) {
+                            newW = candW;
+                            newL = startL + dx;
+                        }
+                    }
+                    if (currentHandle.includes('t')) {
+                        const candH = startH - dy;
+                        if (candH >= minH && candH <= maxH) {
+                            newH = candH;
+                            newT = startT + dy;
+                        }
+                    }
+
+                    drawer.style.width = newW + 'px';
+                    drawer.style.height = newH + 'px';
+                    drawer.style.left = newL + 'px';
+                    drawer.style.top = newT + 'px';
+                }
+            };
+
+            const onEnd = () => {
+                if (isResizing || isDragging) {
+                    isResizing = false;
+                    isDragging = false;
+                    document.body.style.userSelect = '';
+                    document.body.style.cursor = '';
+                }
+            };
+
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        }
+
         async function loadAdminForm() {
             const rawKeys = localStorage.getItem('shiye_apikey') || '';
             document.getElementById('apiKeyInput').value = rawKeys;
@@ -1489,7 +1729,6 @@
             }
         }
 
-        // 🌟 渲染待審核專區：即時比對 SOP 行號並提供一鍵跳轉
         function renderPendingProposals() {
             const container = document.getElementById('pendingProposalsContainer');
             const badge = document.getElementById('pendingProposalsCountBadge');
@@ -1512,7 +1751,8 @@
 
             container.innerHTML = list.map(item => {
                 const loc = locateSopLine(currentSop, item.oldText, item.topic);
-                const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test((item.newText || '').trim());
+                // 🌟 修復 4：更全面的口語化刪除判定
+                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((item.newText || '').trim());
 
                 let locationBadgeHtml = '';
                 if (loc.found) {
@@ -1578,7 +1818,6 @@
             }).join('');
         }
 
-        // 🌟 核心採納函式：支援整行抽除與行級精確替換
         async function adoptSopProposal(proposalId) {
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let target = proposals.find(p => p.id === proposalId);
@@ -1591,7 +1830,7 @@
             let oldSnippet = (target.oldText || '').trim().replace(/\r\n/g, '\n');
             let newSnippet = (target.newText || '').trim().replace(/\r\n/g, '\n');
 
-            const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test(newSnippet);
+            const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test(newSnippet);
             const loc = locateSopLine(sopText, oldSnippet, target.topic);
 
             let newSopText = "";
@@ -1603,29 +1842,24 @@
                 const count = loc.endLine - loc.startLine + 1;
 
                 if (isDelete) {
-                    // 整行乾淨抽除，防止產生空白破洞
                     lines.splice(startIdx, count);
-                    // 若抽除後造成連續多重空白行，適度修剪一筆
                     if (lines[startIdx] === '' && lines[startIdx - 1] === '') {
                         lines.splice(startIdx, 1);
                     }
                     newSopText = lines.join('\n');
                     lineRangeInfo = `整行抽除第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
                 } else {
-                    // 原地替換
                     const replacementLines = newSnippet.split('\n');
                     lines.splice(startIdx, count, ...replacementLines);
                     newSopText = lines.join('\n');
                     lineRangeInfo = `精準替換第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
                 }
             } else {
-                // 安全退避：文末增補
                 const lines = sopText.split('\n');
                 newSopText = sopText.trimEnd() + `\n\n### 【最新增補】${target.topic}\n${newSnippet}\n`;
                 lineRangeInfo = `文末增補 (第 ${lines.length + 1} 行)`;
             }
 
-            // 建立歷史快照 (嚴格限制保留 20 版)
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             snapshots.unshift({
                 id: Date.now(),
@@ -1635,14 +1869,12 @@
             });
             if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
 
-            // 寫入 GitHub
             const writeResult = await writeSopToGithubGist(newSopText);
             if (!writeResult.success) {
                 alert(`❌ 寫入 GitHub SOP 失敗: ${writeResult.message}`);
                 return;
             }
 
-            // 寫入修訂日誌
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             updateLogs.unshift({
                 id: Date.now(),
@@ -2219,7 +2451,6 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 核心約束：要求 AI 在提報修改時，字元級複製舊文字並支援（刪除此條規範）標籤
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
@@ -2449,7 +2680,7 @@ ${sopContent}
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
                         <div id="${msgId}_content" class="markdown-body break-words selectable-text">
-                            <span class="typing-cursor"></span>
+                            <span class="gemini-cursor"></span>
                         </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
@@ -2466,6 +2697,7 @@ ${sopContent}
             };
         }
 
+        // 🌟 修復 2：差量節點替換引擎（完美杜絕打字時的閃爍發虛現象）
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
@@ -2474,18 +2706,47 @@ ${sopContent}
                 .replace(/\{[\s\S]*?"topic"[\s\S]*$/, '')
                 .trim();
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
-            elements.content.innerHTML = parsed + `<span class="typing-cursor"></span>`;
+
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = parsed;
+
+            const existingNodes = elements.content.children;
+            const newNodes = tempContainer.children;
+
+            // 逐個節點平滑更新，新節點賦予 gemini-enter-anim 動態
+            for (let i = 0; i < newNodes.length; i++) {
+                if (i < existingNodes.length - 1) {
+                    if (existingNodes[i].innerHTML !== newNodes[i].innerHTML) {
+                        existingNodes[i].innerHTML = newNodes[i].innerHTML;
+                    }
+                } else {
+                    const cloned = newNodes[i].cloneNode(true);
+                    cloned.classList.add('gemini-enter-anim');
+                    const cursor = elements.content.querySelector('.gemini-cursor');
+                    if (cursor) {
+                        elements.content.insertBefore(cloned, cursor);
+                    } else {
+                        elements.content.appendChild(cloned);
+                    }
+                }
+            }
+
+            // 確保極光呼吸游標始終駐留末端
+            if (!elements.content.querySelector('.gemini-cursor')) {
+                const cursor = document.createElement('span');
+                cursor.className = 'gemini-cursor';
+                elements.content.appendChild(cursor);
+            }
             
-            const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 220;
+            const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 240;
             if (isNearBottom) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
 
-        // 🌟 聊天室草稿卡片：即時計算並顯示目標行號
         function finalizeLiveBubble(elements, fullText, relatedQuestion, meta) {
             if (!elements || !elements.content) return;
-            
+
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText };
 
@@ -2499,7 +2760,7 @@ ${sopContent}
                 
                 const currentSop = localStorage.getItem('shiye_sop') || '';
                 const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
-                const isDelete = /^(刪除|移除|無|（刪除此條規範）|\(刪除此條規範\))$/i.test((proposalJson.newText || '').trim());
+                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((proposalJson.newText || '').trim());
 
                 let locBadgeHtml = '';
                 if (loc.found) {
