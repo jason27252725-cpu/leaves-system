@@ -93,9 +93,7 @@
                 box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 28px 6px rgba(96, 165, 250, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.3);
             }
         }
-        .liquid-breathe-inner {
-            animation: liquidBreatheScale 3.5s infinite ease-in-out;
-        }
+        .liquid-breathe-inner { animation: liquidBreatheScale 3.5s infinite ease-in-out; }
 
         #aiFloatingTriggerWrapper {
             position: fixed;
@@ -103,35 +101,18 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @media (max-width: 1023px) {
-            #aiFloatingTriggerWrapper {
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
-            #aiFloatingTriggerWrapper.hidden-trigger {
-                opacity: 0;
-                pointer-events: none;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
+            #aiFloatingTriggerWrapper { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+            #aiFloatingTriggerWrapper.hidden-trigger { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.3); }
         }
         @media (min-width: 1024px) {
-            #aiFloatingTriggerWrapper {
-                right: 2rem;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-            #aiFloatingTriggerWrapper.hidden-trigger {
-                opacity: 0;
-                pointer-events: none;
-                transform: translateY(-50%) scale(0.3);
-            }
+            #aiFloatingTriggerWrapper { right: 2rem; top: 50%; transform: translateY(-50%); }
+            #aiFloatingTriggerWrapper.hidden-trigger { opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.3); }
         }
 
-        /* 前台對話框本體 */
         #chatDrawer {
             position: fixed;
             z-index: 50;
-            background: rgba(14, 14, 14, 0.8);
+            background: rgba(14, 14, 14, 0.85);
             backdrop-filter: blur(32px);
             -webkit-backdrop-filter: blur(32px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -152,9 +133,7 @@
                 left: 0.75rem; right: 0.75rem; top: 1rem; bottom: 1rem;
                 transform-origin: center center; transform: scale(0.25);
             }
-            #chatDrawer.open:not(.custom-resized) {
-                opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1);
-            }
+            #chatDrawer.open:not(.custom-resized) { opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1); }
         }
 
         @media (min-width: 768px) and (max-width: 1023px) {
@@ -162,9 +141,7 @@
                 left: 50%; top: 50%; width: 580px; max-width: 92vw; height: 85vh;
                 transform-origin: center center; transform: translate(-50%, -50%) scale(0.25);
             }
-            #chatDrawer.open:not(.custom-resized) {
-                opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1);
-            }
+            #chatDrawer.open:not(.custom-resized) { opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1); }
         }
 
         @media (min-width: 1024px) {
@@ -172,27 +149,14 @@
                 right: 1.5rem; top: 1.5rem; bottom: 1.5rem; width: 620px; max-width: 52vw;
                 transform-origin: right center; transform: scale(0.25);
             }
-            #chatDrawer.open:not(.custom-resized) {
-                opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1);
-            }
+            #chatDrawer.open:not(.custom-resized) { opacity: 1; pointer-events: auto; visibility: visible; transform: scale(1); }
         }
 
-        #chatDrawer.custom-resized {
-            transition: opacity 0.25s ease, transform 0.25s ease !important;
-        }
-        #chatDrawer.custom-resized.open {
-            opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; transform: none !important;
-        }
-        #chatDrawer.custom-resized:not(.open) {
-            opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.92) !important;
-        }
+        #chatDrawer.custom-resized { transition: opacity 0.25s ease, transform 0.25s ease !important; }
+        #chatDrawer.custom-resized.open { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; transform: none !important; }
+        #chatDrawer.custom-resized:not(.open) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.92) !important; }
 
-        /* 8 方向拉伸控制把手（滑鼠專用，觸控設備不攔截滑動） */
-        .resize-handle {
-            position: absolute;
-            z-index: 65;
-            touch-action: none;
-        }
+        .resize-handle { position: absolute; z-index: 65; touch-action: none; }
         @media (pointer: fine) {
             .resize-handle:hover { background: rgba(255, 255, 255, 0.2); }
             .resize-t { top: 0; left: 16px; right: 16px; height: 7px; cursor: ns-resize; }
@@ -204,22 +168,14 @@
             .resize-bl { bottom: 0; left: 0; width: 16px; height: 16px; cursor: nesw-resize; }
             .resize-br { bottom: 0; right: 0; width: 16px; height: 16px; cursor: nwse-resize; }
         }
-        @media (pointer: coarse) {
-            .resize-handle { display: none !important; }
-        }
+        @media (pointer: coarse) { .resize-handle { display: none !important; } }
 
-        /* 後台浮動視窗桌面版樣式 */
         @media (min-width: 1024px) {
             .admin-window {
-                position: absolute;
-                background: rgba(15, 15, 15, 0.92);
-                backdrop-filter: blur(32px);
-                -webkit-backdrop-filter: blur(32px);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                border-radius: 1.25rem;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
+                position: absolute; background: rgba(15, 15, 15, 0.92);
+                backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+                border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 1.25rem;
+                display: flex; flex-direction: column; overflow: hidden;
                 box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05);
             }
             .admin-window.active-window {
@@ -227,72 +183,37 @@
                 box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.08);
             }
         }
-
-        /* 行動端與小螢幕自動全螢幕彈窗適配 */
         @media (max-width: 1023px) {
             .admin-window {
-                position: fixed !important;
-                inset: 0.75rem !important;
-                width: auto !important;
-                height: auto !important;
-                max-width: none !important;
-                max-height: none !important;
-                border-radius: 1.25rem !important;
-                z-index: 60 !important;
-                transform: none !important;
-                background: rgba(15, 15, 15, 0.96) !important;
-                backdrop-filter: blur(32px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
+                position: fixed !important; inset: 0.75rem !important; width: auto !important; height: auto !important;
+                border-radius: 1.25rem !important; z-index: 60 !important; background: rgba(15, 15, 15, 0.96) !important;
+                backdrop-filter: blur(32px) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                display: flex; flex-direction: column; overflow: hidden;
             }
         }
 
         .selectable-text, .markdown-body, .markdown-body *, .user-bubble-text {
-            user-select: text !important;
-            -webkit-user-select: text !important;
-            cursor: text;
+            user-select: text !important; -webkit-user-select: text !important; cursor: text;
         }
-        .ui-no-select {
-            user-select: none;
-            -webkit-user-select: none;
-        }
+        .ui-no-select { user-select: none; -webkit-user-select: none; }
 
         @keyframes geminiBlockEnter {
             0% { opacity: 0; transform: translateY(6px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .gemini-enter-anim {
-            animation: geminiBlockEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .gemini-enter-anim { animation: geminiBlockEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes geminiGlowPulse {
-            0%, 100% {
-                transform: scale(0.95);
-                opacity: 0.65;
-                box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4);
-            }
-            50% {
-                transform: scale(1.08);
-                opacity: 1;
-                box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8);
-            }
+            0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
+            50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
         }
         .gemini-cursor {
-            display: inline-block;
-            width: 5px;
-            height: 14px;
-            margin-left: 4px;
+            display: inline-block; width: 5px; height: 14px; margin-left: 4px;
             background: linear-gradient(180deg, #60a5fa 0%, #c084fc 100%);
-            border-radius: 9999px;
-            vertical-align: middle;
-            animation: geminiGlowPulse 1.2s infinite ease-in-out;
+            border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        .markdown-body {
-            color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; word-break: break-word; overflow-wrap: anywhere;
-        }
+        .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; word-break: break-word; overflow-wrap: anywhere; }
         .markdown-body img {
             max-width: 100%; height: auto; border-radius: 0.75rem; margin: 0.6rem 0;
             border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); display: block; cursor: zoom-in;
@@ -311,10 +232,7 @@
         .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
         .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
-        @media screen and (max-width: 768px) {
-            #userInput, #passcodeinput { font-size: 16px !important; }
-        }
-
+        @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
@@ -328,7 +246,7 @@
     <!-- 圖片燈箱 -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden-view cursor-zoom-out transition-opacity duration-300">
         <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
-            <img id="lightboxImg" src="" alt="工法放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
+            <img id="lightboxImg" src="" alt="放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
             <p id="lightboxCaption" class="text-xs text-neutral-300 mt-3 font-light tracking-widest bg-neutral-900/80 px-4 py-1.5 rounded-full border border-white/10"></p>
             <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white/20 hover:bg-white text-black hover:text-black w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
                 <i class="fa-solid fa-xmark text-white"></i>
@@ -360,14 +278,13 @@
 
     <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden-view">
-        
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v11.1 靈動修正版</span>
+                        <span>v11.3 健檢旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -398,7 +315,7 @@
                         <span>AI 助理</span>
                         <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-400 group-hover:rotate-12 transition"></i>
                     </div>
-                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法調度</div>
+                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 施工拍照驗收</div>
                 </div>
             </button>
         </div>
@@ -418,10 +335,10 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI ASSISTANT</span>
-                    <span class="text-[9px] text-neutral-500 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-arrows-up-down-left-right text-[8px] mr-1"></i>可拉伸</span>
+                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-camera text-[8px] mr-1"></i>支援截圖貼上/拍照</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原預設視窗大小">
+                    <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原大小">
                         <i class="fa-solid fa-arrow-rotate-left"></i>
                     </button>
                     <button onclick="toggleChatDrawer(false)" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-full hover:bg-white/10" title="收回對話框">
@@ -434,8 +351,8 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。請隨時向我詢問有關 SOP、工法、材質規範或公司資訊。若發現 SOP 內容有誤或需增補，可直接告訴我「SOP 應該修改/刪除/新增為...」我會為您建立精準定位草稿！</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 視覺多模態已啟用)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法尺寸、提出「SOP 應修改為...」，或**拍照/截圖直接貼上（Ctrl+V）施工照片**，我會以總監視角協助您對照手冊抓漏與驗收！</p>
                     </div>
                 </div>
             </div>
@@ -447,9 +364,29 @@
                 <i class="fa-solid fa-clipboard-check mr-1 text-blue-400"></i> 已複製選取內容至剪貼簿！
             </div>
 
+            <!-- 輸入區域（含圖片預覽列與相機上傳按鈕） -->
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
-                <div class="flex items-center glass-mono rounded-2xl px-4 py-2.5 shadow-xl border border-white/15 focus-within:border-white transition">
-                    <textarea id="userInput" rows="1" placeholder="輸入問題，或提出「SOP 應修改/刪除/新增為...」" class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                <!-- 圖片暫存預覽卡片 -->
+                <div id="imagePreviewBar" class="hidden-view mb-2.5 flex items-center justify-between bg-neutral-900/90 border border-neutral-700 p-2 rounded-2xl">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                        <img id="imagePreviewImg" class="w-10 h-10 object-cover rounded-xl border border-white/20">
+                        <div class="min-w-0">
+                            <p class="text-[11px] text-white truncate font-medium" id="imagePreviewName">施工照片.jpg</p>
+                            <p class="text-[9px] text-emerald-400 font-mono">已完成壓縮，發送時將一併辨識</p>
+                        </div>
+                    </div>
+                    <button onclick="clearPendingImage()" class="text-neutral-400 hover:text-white p-2 text-xs transition" title="移除此照片">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center glass-mono rounded-2xl px-3 py-2 shadow-xl border border-white/15 focus-within:border-white transition">
+                    <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
+                    <button type="button" onclick="document.getElementById('imageFileInput').click()" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0" title="拍照或上傳施工照片 (支援截圖貼上)">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+
+                    <textarea id="userInput" rows="1" placeholder="輸入問題，可點相機拍照或直接貼上截圖 (Ctrl+V)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -461,8 +398,6 @@
 
         <!-- 後台管理介面 -->
         <main id="viewAdmin" class="fixed inset-0 z-40 bg-[#09090b] flex flex-col lg:flex-row overflow-hidden hidden-view ui-no-select">
-            
-            <!-- 左側極簡功能導航列 -->
             <aside class="w-full lg:w-72 bg-neutral-950 border-b lg:border-b-0 lg:border-r border-neutral-800/80 flex flex-col justify-between shrink-0 z-50">
                 <div class="p-4 lg:p-5 border-b border-neutral-800/80 flex lg:block justify-between items-center">
                     <div>
@@ -472,89 +407,55 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.1</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.3</span>
                 </div>
 
-                <!-- 模組清單 -->
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
                     <button onclick="toggleAdminWindow('proposals')" id="nav_btn_proposals" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-file-pen text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">SOP 修訂草稿</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-file-pen text-xs text-neutral-500"></i><span class="tracking-wide">SOP 修訂草稿</span></div>
                         <span id="nav_badge_proposals" class="w-2 h-2 rounded-full bg-amber-400 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('diffLogs')" id="nav_btn_diffLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">修訂日誌 (Diff)</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i><span class="tracking-wide">修訂日誌 (Diff)</span></div>
                         <span id="nav_badge_diffLogs" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('snapshots')" id="nav_btn_snapshots" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-box-archive text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">歷史快照</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-box-archive text-xs text-neutral-500"></i><span class="tracking-wide">歷史快照</span></div>
                         <span id="nav_badge_snapshots" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('sopViewer')" id="nav_btn_sopViewer" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-eye text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">SOP 全文</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-eye text-xs text-neutral-500"></i><span class="tracking-wide">SOP 全文</span></div>
                         <span id="nav_badge_sopViewer" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('passcodes')" id="nav_btn_passcodes" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-users-gear text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">通行碼管理</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-users-gear text-xs text-neutral-500"></i><span class="tracking-wide">通行碼管理</span></div>
                         <span id="nav_badge_passcodes" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('aiMonitor')" id="nav_btn_aiMonitor" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-microchip text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">模型測速</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-microchip text-xs text-neutral-500"></i><span class="tracking-wide">模型測速</span></div>
                         <span id="nav_badge_aiMonitor" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('config')" id="nav_btn_config" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-sliders text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">雲端設定</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-sliders text-xs text-neutral-500"></i><span class="tracking-wide">雲端設定</span></div>
                         <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
-
                     <button onclick="toggleAdminWindow('errorLogs')" id="nav_btn_errorLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-triangle-exclamation text-xs text-neutral-500"></i>
-                            <span class="tracking-wide">錯誤回報</span>
-                        </div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-triangle-exclamation text-xs text-neutral-500"></i><span class="tracking-wide">錯誤回報</span></div>
                         <span id="nav_badge_errorLogs" class="w-2 h-2 rounded-full bg-red-400 hidden-view ml-2"></span>
                     </button>
                 </nav>
 
                 <div class="p-3 lg:p-4 border-t border-neutral-800/80 flex lg:flex-col gap-2">
                     <button onclick="saveAdminSettings()" id="saveAdminBtn" class="flex-1 bg-white hover:bg-neutral-200 text-black py-2.5 rounded-xl text-xs font-semibold tracking-wider transition flex items-center justify-center space-x-1.5 shadow-md">
-                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
-                        <span>同步雲端</span>
+                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i><span>同步雲端</span>
                     </button>
                     <button onclick="navigate('chat')" class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white py-2.5 rounded-xl text-xs font-medium tracking-wider transition flex items-center justify-center space-x-1.5">
-                        <i class="fa-solid fa-arrow-left text-xs"></i>
-                        <span>返回主畫面</span>
+                        <i class="fa-solid fa-arrow-left text-xs"></i><span>返回主畫面</span>
                     </button>
                 </div>
             </aside>
 
-            <!-- 右側自由拖曳與拉伸工作台畫布 -->
+            <!-- 右側自由拖曳與拉伸工作台 -->
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
                 <!-- 視窗 1：SOP 修訂草稿待審專區 -->
@@ -676,7 +577,7 @@
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-microchip text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">AI 模型連線監控</span>
+                            <span class="text-xs font-medium text-white tracking-wider">AI 模型連線監控 (最新多模態模型池)</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button onclick="testAllModelsHealth()" id="testModelsBtn" class="text-[10px] text-neutral-300 hover:text-white bg-neutral-800 px-2.5 py-1 rounded"><i class="fa-solid fa-bolt mr-1"></i>測速</button>
@@ -788,11 +689,11 @@
         }
 
         const MONITORED_MODELS = [
-            { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash Exp", desc: "Google 旗艦高速模型、極速直答" },
-            { id: "qwen/qwen-2.5-72b-instruct:free", name: "Qwen 2.5 72B", desc: "繁中理解極佳、工程數據精確" },
-            { id: "deepseek/deepseek-chat:free", name: "DeepSeek V3", desc: "深度思考、長文本邏輯極強" },
-            { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B", desc: "Meta 開源旗艦大模型" },
-            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方公用負載平衡通道" }
+            { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方智慧路由池 (支援視覺自動分流、極速保證)" },
+            { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B", desc: "Google 最新多模態開源模型 (支援視覺/繁中優)" },
+            { id: "minimax/minimax-m3:free", name: "MiniMax M3", desc: "多模態大模型 (支援圖片分析、百萬上下文)" },
+            { id: "meta-llama/llama-3.2-11b-vision-instruct:free", name: "Llama 3.2 Vision 11B", desc: "Meta 官方視覺開源模型" },
+            { id: "qwen/qwen-2.5-vl-72b-instruct:free", name: "Qwen 2.5 VL 72B", desc: "阿里通義千問視覺旗艦大模型" }
         ];
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
@@ -807,6 +708,82 @@
         let isCloudLoaded = false;
         window.tempMsgStore = {};
         window.tempProposalStore = {};
+
+        let pendingImageBase64 = null;
+        let pendingImageFileName = '';
+
+        function compressAndStoreImage(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            pendingImageFileName = file.name || '貼上截圖.jpg';
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 1280;
+                    let w = img.width, h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                    }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    
+                    pendingImageBase64 = canvas.toDataURL('image/jpeg', 0.82);
+
+                    const previewBar = document.getElementById('imagePreviewBar');
+                    const previewImg = document.getElementById('imagePreviewImg');
+                    const previewName = document.getElementById('imagePreviewName');
+                    if (previewBar && previewImg && previewName) {
+                        previewImg.src = pendingImageBase64;
+                        previewName.textContent = pendingImageFileName;
+                        previewBar.classList.remove('hidden-view');
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleImageSelected(e) {
+            const file = e.target.files[0];
+            if (file) compressAndStoreImage(file);
+            e.target.value = '';
+        }
+
+        function clearPendingImage() {
+            pendingImageBase64 = null;
+            pendingImageFileName = '';
+            const previewBar = document.getElementById('imagePreviewBar');
+            if (previewBar) previewBar.classList.add('hidden-view');
+        }
+
+        // 🌟 剪貼簿貼上 (Ctrl+V / Cmd+V) 與檔案拖曳監聽
+        window.addEventListener('paste', (e) => {
+            const drawer = document.getElementById('chatDrawer');
+            if (!drawer || !drawer.classList.contains('open')) return;
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const file = item.getAsFile();
+                    compressAndStoreImage(file);
+                    break;
+                }
+            }
+        });
+
+        const chatDrawerEl = document.getElementById('chatDrawer');
+        if (chatDrawerEl) {
+            chatDrawerEl.addEventListener('dragover', (e) => e.preventDefault());
+            chatDrawerEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+                    compressAndStoreImage(e.dataTransfer.files[0]);
+                }
+            });
+        }
 
         // 閒置 20 分鐘自動鎖定
         let lastUserActivity = Date.now();
@@ -827,7 +804,6 @@
             checkAuthAndRoute();
         }
 
-        // 設備識別指紋
         function getDeviceTag() {
             const ua = navigator.userAgent;
             let dev = "PC";
@@ -873,9 +849,7 @@
             lb.classList.remove('hidden-view');
         }
 
-        function closeLightbox() {
-            document.getElementById('imageLightbox').classList.add('hidden-view');
-        }
+        function closeLightbox() { document.getElementById('imageLightbox').classList.add('hidden-view'); }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -1005,8 +979,7 @@
             try {
                 const headers = { 
                     'Accept': 'application/vnd.github.v3+json',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
+                    'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache'
                 };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -1114,7 +1087,6 @@
             return fallback;
         }
 
-        // 跨視窗即時聯動廣播
         function broadcastSopUpdate(newContent) {
             const viewer = document.getElementById('cloudSopViewer');
             if (viewer && viewer.value !== newContent) viewer.value = newContent;
@@ -1469,7 +1441,6 @@
             bindWindowDragAndResize(drawer, header, 320, 360, true);
         }
 
-        /* 視窗拖曳與拉伸引擎（支援畫布邊界限制與行動裝置防呆） */
         let globalZIndex = 100;
         function bindWindowDragAndResize(winEl, headerEl, minW = 340, minH = 260, isGlobalModal = false) {
             let isResizing = false;
@@ -2395,6 +2366,13 @@
             this.style.height = (newH > 24 ? newH : 24) + 'px';
         });
 
+        // 🌟 行動裝置鍵盤彈出時自動平滑微滾動，確保視野不被遮擋
+        userInput.addEventListener('focus', function() {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 300);
+        });
+
         function handleSendOrAbort() {
             if (isGenerating) abortCurrentGeneration();
             else handleSend();
@@ -2463,7 +2441,10 @@
         async function handleSend() {
             if (isGenerating) return;
             const text = userInput.value.trim();
-            if (!text) return;
+            const hasImage = !!pendingImageBase64;
+            const currentImgBase64 = pendingImageBase64;
+
+            if (!text && !hasImage) return;
             
             let apiKeys = getApiKeys();
             if (apiKeys.length === 0) {
@@ -2476,10 +2457,11 @@
                 return;
             }
 
+            clearPendingImage();
             setGeneratingState(true);
             currentAbortController = new AbortController();
 
-            appendMessage(text, 'user');
+            appendMessage(text, 'user', false, '', null, currentImgBase64);
             userInput.value = '';
             userInput.style.height = 'auto';
 
@@ -2497,21 +2479,18 @@
    - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先隱蔽後裝飾、先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒或邏輯矛盾。
    - 【跨工種交接防呆】：若問題涉及跨工種交接面（例如：空調排水與木作天花板出風口開孔、浴室門檻止水墩與地磚完成面高差、木作與石材或鐵件收邊），主動提示交接公差與防衝突預警。
    - 【尺寸公差精準標註】：嚴格依據知識庫標記尺寸（統一以 cm/mm 明確標註），若有公差或間距規定（如間距 30cm、角材規格、防水試水 48 小時）必須精準交代，嚴禁使用「差不多」、「適當距離」等模糊詞彙。
-3. 高密度純繁中直答（防截斷原則）：
+3. 施工現場照片視覺分析準則（多模態模式）：
+   - 當同仁上傳現場照片時，請依照工務總監標準進行四步檢驗：
+     1) 【工種判讀】：辨識當前工種階段與施工構件。
+     2) 【工法瑕疵挑毛病】：檢視施作細節（例如角材吊筋固定、冷氣排水斜度、管線交錯防壓、防水塗刷高度均勻度等）。
+     3) 【對照拾葉 SOP】：引用知識庫對應章節提出合格或整改建議。
+     4) 【尺寸量測防呆】：照片僅能判定外觀與工序，嚴禁單憑照片盲猜絕對公差，務必主動提醒同仁持捲尺現場實測。
+4. 高密度純繁中直答（防截斷原則）：
    - 下方【拾葉內部知識庫】是全公司工法規範的唯一權威依據。
-   - 主動關聯口語同義詞（大門 ➔ 門禁；冷氣 ➔ 空調；批土 ➔ 油漆；角材/天花板 ➔ 木作）。
-   - 直接輸出重點答案，【嚴禁】在表格或條列中重複並列中英雙語對照，確保長篇大型時程表能完整輸出各階段所有細節。
-   - 【極速原則】：嚴禁在每句話或文末額外標註「出處：...」或引用來源，保持回答乾淨俐落。
-4. 誠實邊界（嚴禁虛構）：
-   - 若詢問項目在手冊中【完全未收錄】，嚴禁編造通用網路知識！請直接回覆：「拾葉內部手冊目前未收錄【該項目】之專屬規範。如需增補，您可以直接告訴我『SOP 應新增...』，我會為您建立草稿送交後台審核。」
-5. 表達風格：條理分明、總監級思維。善用條列式清單 (Bullet Points) 與粗體重點。
-6. 照片調度支援：若 SOP 內容中有參考照片連結，請使用 Markdown 圖片格式 \`![工法說明](圖片網址)\` 自動附在段落下。
-7. SOP 修訂/刪除/增補意圖草稿輸出（行級定位標準）：
-   - 當同仁提出「SOP 寫錯了」、「應該修改為...」、「刪除這行規範」或「SOP 應新增...」時，請用【極簡 1 句話】確認。
-   - 【關鍵原則】：\`oldText\` 必須【字元級完全精準複製】知識庫中的舊段落文字（包含清單符號 \`- \`、標點與數字），以利系統直接定位行號原地替換。
-   - 若同仁要求【刪除】某條規範，\`newText\` 請填寫 \`"（刪除此條規範）"\`。
-   - 若為全新條目增補，\`oldText\` 請填寫 \`"無"\`。
-   - 隨後【立即換行】輸出以下專用標籤區塊：
+   - 直接輸出重點答案，嚴禁中英雙語重複對照，保持回答乾淨俐落。
+5. 誠實邊界：手冊中完全未收錄之項目嚴禁虛構通用網路知識，直接說明未收錄並引導同仁提出增補建議。
+6. SOP 修訂/刪除/增補意圖草稿輸出：
+   - 當同仁提出修改、刪除或新增時，\`oldText\` 必須字元級完全精準複製原文字，若要求刪除則 \`newText\` 填寫 \`"（刪除此條規範）"\`。
 \`\`\`sop_proposal
 {
   "topic": "欲修改、刪除或新增的項目名稱",
@@ -2526,10 +2505,22 @@ ${sopContent}
 ---------------------`;
 
                 const messages = [{ role: "system", content: systemPrompt }];
+                
                 chatHistory.slice(-6).forEach(h => {
                     messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
                 });
-                messages.push({ role: "user", content: text });
+
+                if (hasImage) {
+                    messages.push({
+                        role: "user",
+                        content: [
+                            { type: "text", text: text || "請幫我分析這張現場施工照片，對照拾葉 SOP 規範檢查工法與驗收注意事項。" },
+                            { type: "image_url", image_url: { url: currentImgBase64 } }
+                        ]
+                    });
+                } else {
+                    messages.push({ role: "user", content: text });
+                }
 
                 let streamSuccess = false;
                 let lastErrorMessage = '';
@@ -2673,14 +2664,15 @@ ${sopContent}
 
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
                         model: isUserAborted ? `${usedModelName} (已手動中斷)` : usedModelName,
-                        tokens: Math.round((text.length + accumulatedReply.length) * 1.3),
+                        tokens: Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3),
                         time: elapsedSec,
                         rawReply: accumulatedReply
                     });
 
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
-                        chatHistory.push({ role: 'user', text: text }, { role: 'assistant', text: cleanForHistory });
+                        const historyPrompt = hasImage ? `[現場照片] ${text || '照片驗收審查'}` : text;
+                        chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
                         if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
                 } else if (isUserAborted) {
@@ -2728,6 +2720,7 @@ ${sopContent}
             };
         }
 
+        // 🌟 修復 3：差量節點替換＋超額節點收縮修剪，杜絕串流重疊與語意碎裂
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
@@ -2752,6 +2745,11 @@ ${sopContent}
                     if (cursor) elements.content.insertBefore(cloned, cursor);
                     else elements.content.appendChild(cloned);
                 }
+            }
+
+            // 超額節點收縮修剪
+            while (elements.content.children.length - 1 > newNodes.length) {
+                elements.content.removeChild(elements.content.children[newNodes.length]);
             }
 
             if (!elements.content.querySelector('.gemini-cursor')) {
@@ -2855,7 +2853,8 @@ ${sopContent}
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null) {
+        // 🌟 修復 1：使用 this.src 參照點擊放大，杜絕 HTML 屬性直接嵌入巨量 Base64 導致崩潰
+        function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImg = null) {
             const isUser = sender === 'user';
             const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text));
 
@@ -2895,10 +2894,17 @@ ${sopContent}
                 `;
             }
 
+            const imgHtml = attachedImg ? `
+                <div class="mb-2">
+                    <img src="${attachedImg}" onclick="openLightbox(this.src, '提問現場照片')" class="max-w-[200px] max-h-[160px] object-cover rounded-xl border border-white/20 shadow-md cursor-zoom-in hover:opacity-90 transition">
+                </div>
+            ` : '';
+
             const html = `
                 <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
                     <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
                     <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
+                        ${imgHtml}
                         <div class="${isUser ? 'whitespace-pre-wrap break-words user-bubble-text' : 'markdown-body break-words selectable-text'}">${parsedContent}</div>
                         ${metaFooter}
                     </div>
@@ -2916,7 +2922,7 @@ ${sopContent}
                     <div class="glass-card p-3.5 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-1 shadow-lg border border-neutral-700">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-circle-notch animate-spin text-neutral-300 text-xs"></i>
-                            <span class="font-medium text-white text-[11px]">拾葉 AI 正在檢索知識庫...</span>
+                            <span class="font-medium text-white text-[11px]">拾葉 AI 正在檢索知識庫與分析工法...</span>
                         </div>
                     </div>
                 </div>
