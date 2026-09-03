@@ -284,7 +284,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v11.3 健檢旗艦版</span>
+                        <span>v11.5 靈動旗艦修復版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -352,7 +352,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 視覺多模態已啟用)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法尺寸、提出「SOP 應修改為...」，或**拍照/截圖直接貼上（Ctrl+V）施工照片**，我會以總監視角協助您對照手冊抓漏與驗收！</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法尺寸、提出「SOP 應修改為...」，或**拍照/截圖直接貼上（Ctrl+V）施工照片**。若回答不滿意，每則回覆下方均支援**一鍵重新回答**！</p>
                     </div>
                 </div>
             </div>
@@ -364,9 +364,8 @@
                 <i class="fa-solid fa-clipboard-check mr-1 text-blue-400"></i> 已複製選取內容至剪貼簿！
             </div>
 
-            <!-- 輸入區域（含圖片預覽列與相機上傳按鈕） -->
+            <!-- 輸入區域 -->
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
-                <!-- 圖片暫存預覽卡片 -->
                 <div id="imagePreviewBar" class="hidden-view mb-2.5 flex items-center justify-between bg-neutral-900/90 border border-neutral-700 p-2 rounded-2xl">
                     <div class="flex items-center space-x-2.5 min-w-0">
                         <img id="imagePreviewImg" class="w-10 h-10 object-cover rounded-xl border border-white/20">
@@ -407,7 +406,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.3</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.5</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -760,7 +759,6 @@
             if (previewBar) previewBar.classList.add('hidden-view');
         }
 
-        // 🌟 剪貼簿貼上 (Ctrl+V / Cmd+V) 與檔案拖曳監聽
         window.addEventListener('paste', (e) => {
             const drawer = document.getElementById('chatDrawer');
             if (!drawer || !drawer.classList.contains('open')) return;
@@ -785,7 +783,6 @@
             });
         }
 
-        // 閒置 20 分鐘自動鎖定
         let lastUserActivity = Date.now();
         const IDLE_LIMIT = 20 * 60 * 1000;
         ['pointerdown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
@@ -849,7 +846,13 @@
             lb.classList.remove('hidden-view');
         }
 
-        function closeLightbox() { document.getElementById('imageLightbox').classList.add('hidden-view'); }
+        // 🌟 修復 4：關閉燈箱時清空 src 引用，釋放記憶體
+        function closeLightbox() { 
+            const lb = document.getElementById('imageLightbox');
+            const img = document.getElementById('lightboxImg');
+            if (img) img.src = '';
+            if (lb) lb.classList.add('hidden-view');
+        }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -881,6 +884,32 @@
             const textToCopy = record ? record.a : '';
             if (!textToCopy) return;
             navigator.clipboard.writeText(textToCopy).then(showCopyToast).catch(() => fallbackCopy(textToCopy));
+        }
+
+        // 🌟 修復 1：清理前次對話紀錄，避免發送連續 user 訊息造成 API 衝突
+        function retryQuestion(msgId) {
+            if (isGenerating) return;
+            const record = window.tempMsgStore[msgId];
+            if (!record || !record.q) {
+                alert('找不到該問題紀錄');
+                return;
+            }
+
+            const promptText = record.q;
+            const attachedImg = record.img || null;
+
+            const wrapper = document.getElementById(`${msgId}_wrapper`);
+            if (wrapper) wrapper.remove();
+
+            if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'assistant') {
+                chatHistory.pop();
+            }
+            if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'user') {
+                chatHistory.pop();
+            }
+
+            delete window.tempMsgStore[msgId];
+            executeAiInference(promptText, attachedImg, true);
         }
 
         function copyMagicLink(codeStr) {
@@ -1130,8 +1159,8 @@
                 });
 
                 if (res.ok) return { success: true };
-                let err = await res.json().catch(() => ({}));
-                return { success: false, message: err.message || `HTTP ${res.status}` };
+                let errData = await res.json().catch(() => ({}));
+                return { success: false, message: errData.message || `HTTP ${res.status}` };
             } catch (e) { return { success: false, message: e.message }; }
         }
 
@@ -1441,6 +1470,7 @@
             bindWindowDragAndResize(drawer, header, 320, 360, true);
         }
 
+        // 🌟 修復 2：完整支援觸控（touchstart/touchmove/touchend），防止 iPad/觸控屏卡死
         let globalZIndex = 100;
         function bindWindowDragAndResize(winEl, headerEl, minW = 340, minH = 260, isGlobalModal = false) {
             let isResizing = false;
@@ -1483,6 +1513,7 @@
             winEl.querySelectorAll('.resize-handle').forEach(el => {
                 const handleType = el.getAttribute('data-handle');
                 el.addEventListener('mousedown', (e) => onStartResize(e, handleType));
+                el.addEventListener('touchstart', (e) => onStartResize(e, handleType), { passive: false });
             });
 
             const onStartDrag = (e) => {
@@ -1508,6 +1539,7 @@
 
             if (headerEl) {
                 headerEl.addEventListener('mousedown', onStartDrag);
+                headerEl.addEventListener('touchstart', onStartDrag, { passive: false });
             }
 
             const onMove = (e) => {
@@ -1561,6 +1593,8 @@
 
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
         }
 
         const ADMIN_WIN_CONFIG = {
@@ -2366,11 +2400,8 @@
             this.style.height = (newH > 24 ? newH : 24) + 'px';
         });
 
-        // 🌟 行動裝置鍵盤彈出時自動平滑微滾動，確保視野不被遮擋
         userInput.addEventListener('focus', function() {
-            setTimeout(() => {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 300);
+            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 300);
         });
 
         function handleSendOrAbort() {
@@ -2445,7 +2476,16 @@
             const currentImgBase64 = pendingImageBase64;
 
             if (!text && !hasImage) return;
-            
+
+            clearPendingImage();
+            appendMessage(text, 'user', false, '', null, currentImgBase64);
+            userInput.value = '';
+            userInput.style.height = 'auto';
+
+            executeAiInference(text, currentImgBase64, false);
+        }
+
+        async function executeAiInference(text, currentImgBase64 = null, isRetry = false) {
             let apiKeys = getApiKeys();
             if (apiKeys.length === 0) {
                 await fetchCodesFromCloud();
@@ -2457,13 +2497,8 @@
                 return;
             }
 
-            clearPendingImage();
             setGeneratingState(true);
             currentAbortController = new AbortController();
-
-            appendMessage(text, 'user', false, '', null, currentImgBase64);
-            userInput.value = '';
-            userInput.style.height = 'auto';
 
             const startTime = performance.now();
             const loadingId = appendLoading();
@@ -2510,7 +2545,7 @@ ${sopContent}
                     messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
                 });
 
-                if (hasImage) {
+                if (currentImgBase64) {
                     messages.push({
                         role: "user",
                         content: [
@@ -2667,11 +2702,11 @@ ${sopContent}
                         tokens: Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3),
                         time: elapsedSec,
                         rawReply: accumulatedReply
-                    });
+                    }, currentImgBase64);
 
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
-                        const historyPrompt = hasImage ? `[現場照片] ${text || '照片驗收審查'}` : text;
+                        const historyPrompt = currentImgBase64 ? `[現場照片] ${text || '照片驗收審查'}` : text;
                         chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
                         if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
@@ -2720,7 +2755,7 @@ ${sopContent}
             };
         }
 
-        // 🌟 修復 3：差量節點替換＋超額節點收縮修剪，杜絕串流重疊與語意碎裂
+        // 🌟 修復 3：差量節點替換＋標籤一致性檢查＋超額收縮修剪，防止代碼塊或清單跑版
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
@@ -2735,7 +2770,9 @@ ${sopContent}
 
             for (let i = 0; i < newNodes.length; i++) {
                 if (i < existingNodes.length - 1) {
-                    if (existingNodes[i].innerHTML !== newNodes[i].innerHTML) {
+                    if (existingNodes[i].tagName !== newNodes[i].tagName) {
+                        elements.content.replaceChild(newNodes[i].cloneNode(true), existingNodes[i]);
+                    } else if (existingNodes[i].innerHTML !== newNodes[i].innerHTML) {
                         existingNodes[i].innerHTML = newNodes[i].innerHTML;
                     }
                 } else {
@@ -2747,7 +2784,6 @@ ${sopContent}
                 }
             }
 
-            // 超額節點收縮修剪
             while (elements.content.children.length - 1 > newNodes.length) {
                 elements.content.removeChild(elements.content.children[newNodes.length]);
             }
@@ -2762,11 +2798,11 @@ ${sopContent}
             if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function finalizeLiveBubble(elements, fullText, relatedQuestion, meta) {
+        function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImg = null) {
             if (!elements || !elements.content) return;
 
             const msgId = elements.msgId;
-            window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText };
+            window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, img: attachedImg };
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = typeof marked !== 'undefined' ? marked.parse(displayText) : escapeHtml(displayText);
@@ -2839,7 +2875,10 @@ ${sopContent}
                             <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
                         </span>
                     </div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2.5">
+                        <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
+                            <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
+                        </button>
                         <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
                             <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
                         </button>
@@ -2853,14 +2892,13 @@ ${sopContent}
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // 🌟 修復 1：使用 this.src 參照點擊放大，杜絕 HTML 屬性直接嵌入巨量 Base64 導致崩潰
         function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImg = null) {
             const isUser = sender === 'user';
             const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text));
 
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             if (!isUser) {
-                window.tempMsgStore[msgId] = { q: relatedQuestion, a: text };
+                window.tempMsgStore[msgId] = { q: relatedQuestion, a: text, img: attachedImg };
                 const keys = Object.keys(window.tempMsgStore);
                 if (keys.length > 50) delete window.tempMsgStore[keys[0]];
             }
@@ -2882,7 +2920,10 @@ ${sopContent}
                                 <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
                             </span>
                         </div>
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2.5">
+                            <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
+                                <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
+                            </button>
                             <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
                                 <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
                             </button>
@@ -2901,7 +2942,7 @@ ${sopContent}
             ` : '';
 
             const html = `
-                <div class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
+                <div id="${msgId}_wrapper" class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
                     <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
                     <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
                         ${imgHtml}
