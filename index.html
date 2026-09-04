@@ -219,7 +219,20 @@
             border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6); display: block; cursor: zoom-in;
             background: rgba(255, 255, 255, 0.04);
         }
-        .markdown-body a { color: #60a5fa; text-decoration: underline; text-underline-offset: 3px; }
+        .markdown-body a {
+            color: #60a5fa; text-decoration: none; border-bottom: 1px dashed rgba(96, 165, 250, 0.6);
+            padding-bottom: 1px; transition: all 0.2s;
+        }
+        .markdown-body a:hover { color: #93c5fd; border-bottom-style: solid; }
+        .markdown-body a.doc-download-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 0.8rem; border-radius: 0.6rem; color: #fff; text-decoration: none;
+            margin: 0.4rem 0; font-weight: 500; font-size: 0.75rem;
+        }
+        .markdown-body a.doc-download-btn:hover {
+            background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.4);
+        }
         .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
         .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
         .markdown-body strong { color: #ffffff; font-weight: 600; }
@@ -282,7 +295,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v11.9 圖文加固版</span>
+                        <span>v12.1 文件加固版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -312,7 +325,7 @@
                         <span>AI 助理</span>
                         <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-400 group-hover:rotate-12 transition"></i>
                     </div>
-                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 智能圖文檢索</div>
+                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP • 智能相簿與文件下載</div>
                 </div>
             </button>
         </div>
@@ -331,7 +344,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI ASSISTANT</span>
-                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-images text-[8px] mr-1"></i>SOP 智能相簿</span>
+                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-folder-open text-[8px] mr-1"></i>圖庫與文件庫</span>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原大小">
@@ -347,8 +360,8 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 智能相簿圖庫已連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法規範、尺寸標註或提出 SOP 修訂。需要參考圖時可直接向我索取，我會為您調閱高解析現場照片；您也可以隨時拍照或貼上截圖讓我分析驗收！</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 圖庫與文件庫已連線)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法規範、索取工法參考圖，或是下載各項施工標語、路權申請書及打掃表格等標準文件；您也可以拍照或貼上現場照片讓我進行檢視！</p>
                     </div>
                 </div>
             </div>
@@ -380,7 +393,7 @@
                         <i class="fa-solid fa-camera"></i>
                     </button>
 
-                    <textarea id="userInput" rows="1" placeholder="輸入問題，可點相機拍照或直接貼上截圖 (Ctrl+V)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="輸入問題，可索取照片、施工標語、路權文件或貼上截圖 (Ctrl+V)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
                     
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -400,7 +413,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.9</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v12.1</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -658,18 +671,22 @@
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
+        const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
-        // 🌟 正則保護：全域截獲任何帶空白的 Markdown 圖片語法，並去除連續重複輸出
-        function sanitizeMarkdownImageLinks(text) {
+        // 🌟 正則保護：自動過濾串流與完成態中圖文及文件連結的空白，並防止連續重複輸出
+        function sanitizeMarkdownMediaLinks(text) {
             if (!text) return '';
             
-            // 替換括號內帶空格的圖片連結為 %20
             let cleaned = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
                 const safeUrl = url.trim().replace(/\s+/g, '%20');
                 return `![${alt}](${safeUrl})`;
             });
 
-            // 去除連續完全相同的圖片語法（防止 AI 單次重複貼出同一張圖）
+            cleaned = cleaned.replace(/\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/documents\/[^)]+)\)/g, function(match, label, url) {
+                const safeUrl = url.trim().replace(/\s+/g, '%20');
+                return `[${label}](${safeUrl})`;
+            });
+
             const seenImages = new Set();
             cleaned = cleaned.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
                 if (seenImages.has(url)) return '';
@@ -688,6 +705,15 @@
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
                 const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
+                
+                if (actualHref && actualHref.includes('/documents/')) {
+                    let icon = 'fa-file-lines';
+                    if (actualHref.endsWith('.pdf')) icon = 'fa-file-pdf text-red-400';
+                    else if (actualHref.endsWith('.docx') || actualHref.endsWith('.doc')) icon = 'fa-file-word text-blue-400';
+                    else if (actualHref.endsWith('.xlsx') || actualHref.endsWith('.xls')) icon = 'fa-file-excel text-emerald-400';
+                    return `<a href="${actualHref}" download target="_blank" rel="noopener noreferrer" class="doc-download-btn"${titleAttr}><i class="fa-solid ${icon}"></i><span>${actualText}</span><i class="fa-solid fa-arrow-down text-[10px] ml-1 text-neutral-400"></i></a>`;
+                }
+
                 return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
             };
             renderer.image = function(href, title, text) {
@@ -723,6 +749,7 @@
         window.tempProposalStore = {};
 
         let photoCatalog = [];
+        let documentCatalog = [];
 
         async function fetchPhotoCatalog() {
             try {
@@ -731,10 +758,26 @@
                     headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
                 });
                 if (res.ok) {
-                    photoCatalog = await res.json();
+                    const data = await res.json();
+                    if (Array.isArray(data)) photoCatalog = data;
                 }
             } catch (e) {
                 console.warn('載入相簿索引 photos.json 失敗:', e);
+            }
+        }
+
+        async function fetchDocumentCatalog() {
+            try {
+                const res = await fetch(`documents.json?_t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) documentCatalog = data;
+                }
+            } catch (e) {
+                console.warn('載入文件索引 documents.json 失敗:', e);
             }
         }
 
@@ -1270,6 +1313,7 @@
             if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             await fetchSopFromGist();
             await fetchPhotoCatalog();
+            await fetchDocumentCatalog();
             initDrawerResizer();
             initAdminWindowManager();
             checkMagicLink();
@@ -1683,9 +1727,8 @@
             const conf = ADMIN_WIN_CONFIG[key];
             if (!conf) return;
             const winEl = document.getElementById(conf.id);
-            if (!winEl) return;
+            if (winEl) winEl.classList.add('hidden-view');
 
-            winEl.classList.add('hidden-view');
             const navBtn = document.getElementById(`nav_btn_${key}`);
             if (navBtn) navBtn.classList.remove('bg-neutral-900', 'text-white');
             const badge = document.getElementById(`nav_badge_${key}`);
@@ -1725,6 +1768,7 @@
             renderModelsMonitorTable();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
+            await fetchDocumentCatalog();
 
             openAdminWindow('proposals');
         }
@@ -1738,6 +1782,7 @@
             renderSnapshots();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
+            await fetchDocumentCatalog();
             alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
         }
 
@@ -2528,9 +2573,8 @@
                 return;
             }
 
-            if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) {
-                await fetchPhotoCatalog();
-            }
+            if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) await fetchPhotoCatalog();
+            if (!Array.isArray(documentCatalog) || documentCatalog.length === 0) await fetchDocumentCatalog();
 
             setGeneratingState(true);
             currentAbortController = new AbortController();
@@ -2549,6 +2593,14 @@
                     }).join('\n');
                 }
 
+                let documentCatalogPrompt = "目前內部文件庫尚無資料。";
+                if (Array.isArray(documentCatalog) && documentCatalog.length > 0) {
+                    documentCatalogPrompt = documentCatalog.map(d => {
+                        const safeUrl = `${GITHUB_REPO_DOC_BASE}${d.name}`.replace(/\s+/g, '%20');
+                        return `- 檔名: "${d.name}" | 說明: "${d.desc}" | 關聯標籤: [${(d.tags || []).join(', ')}] | 下載URL: ${safeUrl}`;
+                    }).join('\n');
+                }
+
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
@@ -2557,18 +2609,20 @@
    - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
    - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
    - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
-3. 施工照片調度規範（嚴格限制與防破圖）：
+3. 施工照片調度規範（按需調度・排版整潔）：
    - 【不要每次回答都附圖】：一般文字諮詢直接以俐落文字回答即可。
    - 【何時才附圖】：當同仁主動要求看照片/參考圖，或正在講解重要隱蔽工程（如全區防水、降板區防水、地坪放樣）需要照片輔助時。
-   - 【格式規範】：若需附圖，請從【內部相簿索引清單】比對最符合的一張，嚴格使用標準 Markdown 圖片格式：
-     \`![圖片說明](圖片URL)\`
-     【強制規則】：
-     a) 圖片語法的小括號內網址絕不能含有空白鍵，若檔名有空格請用 %20 連接。
-     b) 【每次回答嚴格限制最多附 1 張照片】，絕對禁止重複輸出相同或多張照片！
-4. 施工現場照片視覺分析準則（同仁上傳照片模式）：
+   - 【格式規範】：若需附圖，請從【內部相簿索引清單】比對最符合的一張，嚴格使用標準 Markdown 圖片格式：\`![圖片說明](圖片URL)\`。每次回答【最多限附 1 張照片】，絕對禁止重複輸出相同或多張照片！
+4. 標準文件/標語/申請書下載調度規範（重要新功能）：
+   - 當同仁詢問施工標語（如：水泥未乾、鞋套、整潔標語、請勿停車）、路權申請文件（如：路權手冊、道路申請書、範例、一次告知單）或打掃表格時：
+   - 請比對下方【內部文件與標語索引清單】，在回覆中主動附上 Markdown 超連結供同仁下載：
+     \`[下載：檔案名稱](下載URL)\`
+   - 範例：\`[下載：水泥未乾施工標語.docx](URL)\`、\`[下載：施工標語總集170914.pdf](URL)\`
+   - 可以同時列出 1~3 個最相關的下載項目，並簡短說明該文件的使用時機。
+5. 施工現場照片視覺分析準則（同仁上傳照片模式）：
    - 當同仁上傳照片時，依【工種判讀 ➔ 工法瑕疵挑毛病 ➔ 對照拾葉 SOP ➔ 尺寸量測防呆提醒】依序檢核。
-5. 高密度純繁中直答：直接輸出重點答案，嚴禁中英雙語重複對照。
-6. SOP 修訂/刪除/增補意圖草稿輸出：
+6. 高密度純繁中直答：直接輸出重點答案，嚴禁中英雙語重複對照。
+7. SOP 修訂/刪除/增補意圖草稿輸出：
 \`\`\`sop_proposal
 {
   "topic": "欲修改、刪除或新增的項目名稱",
@@ -2580,6 +2634,11 @@
 【內部相簿索引清單】：
 ---------------------
 ${photoCatalogPrompt}
+---------------------
+
+【內部文件與標語索引清單】：
+---------------------
+${documentCatalogPrompt}
 ---------------------
 
 【拾葉設計內部知識庫】：
@@ -2807,16 +2866,15 @@ ${sopContent}
             };
         }
 
-        // 🌟 串流打字中遮蔽未完成的圖片語法，防止跳動
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
             
-            // 串流中若圖片語法尚未閉合，暫時隱藏以防畫面破碎
             cleanText = cleanText.replace(/!\[[^\]]*$/g, '');
+            cleanText = cleanText.replace(/\[([^\]]*)$/g, '');
+            cleanText = sanitizeMarkdownMediaLinks(cleanText);
 
-            cleanText = sanitizeMarkdownImageLinks(cleanText);
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
 
             const tempContainer = document.createElement('div');
@@ -2862,7 +2920,7 @@ ${sopContent}
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, img: attachedImg };
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
-            const safeDisplayText = sanitizeMarkdownImageLinks(displayText);
+            const safeDisplayText = sanitizeMarkdownMediaLinks(displayText);
             const parsed = typeof marked !== 'undefined' ? marked.parse(safeDisplayText) : escapeHtml(safeDisplayText);
             elements.content.innerHTML = parsed;
 
@@ -2952,7 +3010,7 @@ ${sopContent}
 
         function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImg = null) {
             const isUser = sender === 'user';
-            const safeText = sanitizeMarkdownImageLinks(text);
+            const safeText = sanitizeMarkdownMediaLinks(text);
             const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(safeText) : escapeHtml(safeText));
 
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
