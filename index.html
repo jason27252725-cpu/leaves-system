@@ -215,8 +215,9 @@
 
         .markdown-body { color: #e5e5e5; font-size: 0.75rem; line-height: 1.65; word-break: break-word; overflow-wrap: anywhere; }
         .markdown-body img {
-            max-width: 100%; height: auto; border-radius: 0.75rem; margin: 0.6rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); display: block; cursor: zoom-in;
+            max-width: 100%; height: auto; border-radius: 0.75rem; margin: 0.75rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6); display: block; cursor: zoom-in;
+            background: rgba(255, 255, 255, 0.04);
         }
         .markdown-body a { color: #60a5fa; text-decoration: underline; text-underline-offset: 3px; }
         .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
@@ -243,7 +244,6 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 圖片燈箱 -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden-view cursor-zoom-out transition-opacity duration-300">
         <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
             <img id="lightboxImg" src="" alt="放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
@@ -254,7 +254,6 @@
         </div>
     </div>
 
-    <!-- 登入 / 鎖定遮罩層 -->
     <div id="authModal" class="hidden-view ui-no-select">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -276,7 +275,6 @@
         </div>
     </div>
 
-    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden-view">
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
             <div class="space-y-1">
@@ -284,7 +282,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v11.7 健檢加固版</span>
+                        <span>v11.9 圖文加固版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -306,7 +304,6 @@
             </div>
         </main>
 
-        <!-- 水滴呼吸按鈕 -->
         <div id="aiFloatingTriggerWrapper" class="ui-no-select">
             <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/50 hover:bg-black/70 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-xl group shadow-2xl cursor-pointer">
                 <div class="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)] animate-pulse"></div>
@@ -315,12 +312,11 @@
                         <span>AI 助理</span>
                         <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-400 group-hover:rotate-12 transition"></i>
                     </div>
-                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 智能相簿調度</div>
+                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 智能圖文檢索</div>
                 </div>
             </button>
         </div>
 
-        <!-- 水滴展開懸浮對話框 -->
         <div id="chatDrawer">
             <div class="resize-handle resize-t" data-handle="t"></div>
             <div class="resize-handle resize-b" data-handle="b"></div>
@@ -331,7 +327,7 @@
             <div class="resize-handle resize-bl" data-handle="bl"></div>
             <div class="resize-handle resize-br" data-handle="br"></div>
 
-            <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="拖曳標題列可平移視窗，雙擊可還原預設大小">
+            <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="雙擊還原預設大小">
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI ASSISTANT</span>
@@ -351,8 +347,8 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 智能相簿庫已連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法規範、尺寸標註或提出 SOP 修訂建議。在解釋關鍵隱蔽工程或工法時，我會**視需要精準調出對應的照片**輔助說明；您也可以點擊相機或貼上截圖讓我分析現場施工照片！</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 智能相簿圖庫已連線)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法規範、尺寸標註或提出 SOP 修訂。需要參考圖時可直接向我索取，我會為您調閱高解析現場照片；您也可以隨時拍照或貼上截圖讓我分析驗收！</p>
                     </div>
                 </div>
             </div>
@@ -364,7 +360,6 @@
                 <i class="fa-solid fa-clipboard-check mr-1 text-blue-400"></i> 已複製選取內容至剪貼簿！
             </div>
 
-            <!-- 輸入區域 -->
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div id="imagePreviewBar" class="hidden-view mb-2.5 flex items-center justify-between bg-neutral-900/90 border border-neutral-700 p-2 rounded-2xl">
                     <div class="flex items-center space-x-2.5 min-w-0">
@@ -395,7 +390,6 @@
             </div>
         </div>
 
-        <!-- 後台管理介面 -->
         <main id="viewAdmin" class="fixed inset-0 z-40 bg-[#09090b] flex flex-col lg:flex-row overflow-hidden hidden-view ui-no-select">
             <aside class="w-full lg:w-72 bg-neutral-950 border-b lg:border-b-0 lg:border-r border-neutral-800/80 flex flex-col justify-between shrink-0 z-50">
                 <div class="p-4 lg:p-5 border-b border-neutral-800/80 flex lg:block justify-between items-center">
@@ -406,7 +400,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.7</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.9</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -454,9 +448,7 @@
                 </div>
             </aside>
 
-            <!-- 右側自由拖曳與拉伸工作台 -->
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
-                
                 <div id="win_proposals" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -667,7 +659,27 @@
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
 
-        // 🌟 修復 1：Marked 圖片渲染攔截與安全解碼（解決中文檔名與空格重複編碼破圖）
+        // 🌟 正則保護：全域截獲任何帶空白的 Markdown 圖片語法，並去除連續重複輸出
+        function sanitizeMarkdownImageLinks(text) {
+            if (!text) return '';
+            
+            // 替換括號內帶空格的圖片連結為 %20
+            let cleaned = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+                const safeUrl = url.trim().replace(/\s+/g, '%20');
+                return `![${alt}](${safeUrl})`;
+            });
+
+            // 去除連續完全相同的圖片語法（防止 AI 單次重複貼出同一張圖）
+            const seenImages = new Set();
+            cleaned = cleaned.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+                if (seenImages.has(url)) return '';
+                seenImages.add(url);
+                return match;
+            });
+
+            return cleaned;
+        }
+
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
@@ -683,10 +695,8 @@
                 if (typeof href === 'object' && href !== null) {
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
-                let cleanUrl = actualHref.trim();
-                try { cleanUrl = decodeURI(cleanUrl); } catch(e) {}
-                cleanUrl = encodeURI(cleanUrl);
-                return `<img src="${cleanUrl}" alt="${actualText}" title="${actualTitle}" loading="lazy">`;
+                let cleanUrl = actualHref.trim().replace(/\s+/g, '%20');
+                return `<img src="${cleanUrl}" alt="${actualText}" title="${actualTitle}" loading="lazy" onerror="this.style.display='none'">`;
             };
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
         }
@@ -712,10 +722,8 @@
         window.tempMsgStore = {};
         window.tempProposalStore = {};
 
-        // 🌟 智能相簿資料庫快取
         let photoCatalog = [];
 
-        // 🌟 修復 2：強制無快取抓取 photos.json，保證 GitHub 新增照片即時同步
         async function fetchPhotoCatalog() {
             try {
                 const res = await fetch(`photos.json?_t=${Date.now()}`, {
@@ -1545,9 +1553,9 @@
                 const rect = winEl.getBoundingClientRect();
 
                 startX = clientX; startY = clientY;
+                startW = rect.width; startH = rect.height;
                 startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
                 startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
-                startW = rect.width; startH = rect.height;
 
                 winEl.classList.add('custom-resized');
                 winEl.style.left = startL + 'px'; winEl.style.top = startT + 'px';
@@ -1675,8 +1683,9 @@
             const conf = ADMIN_WIN_CONFIG[key];
             if (!conf) return;
             const winEl = document.getElementById(conf.id);
-            if (winEl) winEl.classList.add('hidden-view');
+            if (!winEl) return;
 
+            winEl.classList.add('hidden-view');
             const navBtn = document.getElementById(`nav_btn_${key}`);
             if (navBtn) navBtn.classList.remove('bg-neutral-900', 'text-white');
             const badge = document.getElementById(`nav_badge_${key}`);
@@ -2519,7 +2528,6 @@
                 return;
             }
 
-            // 🌟 修復 3：執行前確認相簿索引庫已加載
             if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) {
                 await fetchPhotoCatalog();
             }
@@ -2533,39 +2541,34 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
-                // 🌟 組裝智能相簿索引文字（提供乾淨 URL）
                 let photoCatalogPrompt = "目前內部相簿庫尚無資料。";
                 if (Array.isArray(photoCatalog) && photoCatalog.length > 0) {
                     photoCatalogPrompt = photoCatalog.map(p => {
-                        const directUrl = `${GITHUB_REPO_IMAGE_BASE}${p.name}`;
-                        return `- 圖片說明: "${p.desc}" | 關聯工法/關鍵字: [${(p.tags || []).join(', ')}] | 圖片URL: ${directUrl}`;
+                        const safeUrl = `${GITHUB_REPO_IMAGE_BASE}${p.name}`.replace(/\s+/g, '%20');
+                        return `- 說明: "${p.desc}" | 關聯標籤: [${(p.tags || []).join(', ')}] | 直連URL: ${safeUrl}`;
                     }).join('\n');
                 }
 
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤（如 User Safety: safe）。
+1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
 2. 工法因果與總監思維規範（智商核心）：
-   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先隱蔽後裝飾、先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒或邏輯矛盾。
-   - 【跨工種交接防呆】：若問題涉及跨工種交接面（例如：空調排水與木作天花板出風口開孔、浴室門檻止水墩與地磚完成面高差、木作與石材或鐵件收邊），主動提示交接公差與防衝突預警。
-   - 【尺寸公差精準標註】：嚴格依據知識庫標記尺寸（統一以 cm/mm 明確標註），若有公差或間距規定（如間距 30cm、角材規格、防水試水 48 小時）必須精準交代，嚴禁使用「差不多」、「適當距離」等模糊詞彙。
-3. 施工現場照片調度原則（按需調度・克制原則）：
-   - 【不要每次回答都附圖】：一般文字概念詢問、尺寸詢問或日常問答，直接以精簡專業的文字條列回答即可，【不需要】主動附圖。
-   - 【僅在以下必要情境才調度相簿照片】：
-     a) 同仁提問明確要求看照片（例如：「有沒有照片」、「附圖說明」、「看參考圖」等）。
-     b) 解釋重要隱蔽工程驗收標準（如浴室全區防水、降板區防水、地坪放樣標準等），需要具體實景照片佐證時。
-   - 【調度方式】：若符合上述情境，請從下方【內部相簿索引清單】比對最符合的一張，在段落適當位置或文末附上 Markdown 圖片語法：\`![圖片說明](圖片URL)\`。每次回答【最多限附 1 張照片】，嚴禁濫發圖片造成版面雜亂。
+   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
+   - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
+   - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
+3. 施工照片調度規範（嚴格限制與防破圖）：
+   - 【不要每次回答都附圖】：一般文字諮詢直接以俐落文字回答即可。
+   - 【何時才附圖】：當同仁主動要求看照片/參考圖，或正在講解重要隱蔽工程（如全區防水、降板區防水、地坪放樣）需要照片輔助時。
+   - 【格式規範】：若需附圖，請從【內部相簿索引清單】比對最符合的一張，嚴格使用標準 Markdown 圖片格式：
+     \`![圖片說明](圖片URL)\`
+     【強制規則】：
+     a) 圖片語法的小括號內網址絕不能含有空白鍵，若檔名有空格請用 %20 連接。
+     b) 【每次回答嚴格限制最多附 1 張照片】，絕對禁止重複輸出相同或多張照片！
 4. 施工現場照片視覺分析準則（同仁上傳照片模式）：
-   - 當同仁拍照上傳現場照片時，請依照工務總監標準進行四步檢驗：
-     1) 【工種判讀】：辨識當前工種階段與施工構件。
-     2) 【工法瑕疵挑毛病】：檢視施作細節。
-     3) 【對照拾葉 SOP】：引用知識庫對應章節提出合格或整改建議。
-     4) 【尺寸量測防呆】：照片僅能判定外觀與工序，嚴禁盲猜尺寸，提醒同仁持捲尺實測。
-5. 高密度純繁中直答：直接輸出重點答案，嚴禁中英雙語重複對照，保持回答乾淨俐落。
-6. 誠實邊界：手冊中完全未收錄之項目嚴禁虛構通用網路知識，直接說明未收錄並引導同仁提出增補建議。
-7. SOP 修訂/刪除/增補意圖草稿輸出：
-   - 當同仁提出修改、刪除或新增時，\`oldText\` 必須字元級完全精準複製原文字，若要求刪除則 \`newText\` 填寫 \`"（刪除此條規範）"\`。
+   - 當同仁上傳照片時，依【工種判讀 ➔ 工法瑕疵挑毛病 ➔ 對照拾葉 SOP ➔ 尺寸量測防呆提醒】依序檢核。
+5. 高密度純繁中直答：直接輸出重點答案，嚴禁中英雙語重複對照。
+6. SOP 修訂/刪除/增補意圖草稿輸出：
 \`\`\`sop_proposal
 {
   "topic": "欲修改、刪除或新增的項目名稱",
@@ -2804,10 +2807,16 @@ ${sopContent}
             };
         }
 
+        // 🌟 串流打字中遮蔽未完成的圖片語法，防止跳動
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
+            
+            // 串流中若圖片語法尚未閉合，暫時隱藏以防畫面破碎
+            cleanText = cleanText.replace(/!\[[^\]]*$/g, '');
+
+            cleanText = sanitizeMarkdownImageLinks(cleanText);
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
 
             const tempContainer = document.createElement('div');
@@ -2853,7 +2862,8 @@ ${sopContent}
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, img: attachedImg };
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
-            const parsed = typeof marked !== 'undefined' ? marked.parse(displayText) : escapeHtml(displayText);
+            const safeDisplayText = sanitizeMarkdownImageLinks(displayText);
+            const parsed = typeof marked !== 'undefined' ? marked.parse(safeDisplayText) : escapeHtml(safeDisplayText);
             elements.content.innerHTML = parsed;
 
             if (proposalJson && proposalJson.topic) {
@@ -2942,7 +2952,8 @@ ${sopContent}
 
         function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImg = null) {
             const isUser = sender === 'user';
-            const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(text) : escapeHtml(text));
+            const safeText = sanitizeMarkdownImageLinks(text);
+            const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(safeText) : escapeHtml(safeText));
 
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             if (!isUser) {
