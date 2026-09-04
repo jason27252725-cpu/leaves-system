@@ -284,7 +284,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v11.5 靈動旗艦修復版</span>
+                        <span>v11.7 健檢加固版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -315,7 +315,7 @@
                         <span>AI 助理</span>
                         <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-400 group-hover:rotate-12 transition"></i>
                     </div>
-                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 施工拍照驗收</div>
+                    <div class="text-[10px] text-neutral-400 tracking-wider font-light">SOP 工法 • 智能相簿調度</div>
                 </div>
             </button>
         </div>
@@ -335,7 +335,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI ASSISTANT</span>
-                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-camera text-[8px] mr-1"></i>支援截圖貼上/拍照</span>
+                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-images text-[8px] mr-1"></i>SOP 智能相簿</span>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原大小">
@@ -351,8 +351,8 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 視覺多模態已啟用)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法尺寸、提出「SOP 應修改為...」，或**拍照/截圖直接貼上（Ctrl+V）施工照片**。若回答不滿意，每則回覆下方均支援**一鍵重新回答**！</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 智能相簿庫已連線)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接向我詢問工法規範、尺寸標註或提出 SOP 修訂建議。在解釋關鍵隱蔽工程或工法時，我會**視需要精準調出對應的照片**輔助說明；您也可以點擊相機或貼上截圖讓我分析現場施工照片！</p>
                     </div>
                 </div>
             </div>
@@ -406,7 +406,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.5</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v11.7</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -457,7 +457,6 @@
             <!-- 右側自由拖曳與拉伸工作台 -->
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
-                <!-- 視窗 1：SOP 修訂草稿待審專區 -->
                 <div id="win_proposals" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -474,7 +473,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 2：SOP 雲端修訂日誌 -->
                 <div id="win_diffLogs" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -493,7 +491,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 3：SOP 版本歷史快照 -->
                 <div id="win_snapshots" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -512,7 +509,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 4：雲端 SOP 全文檢視 -->
                 <div id="win_sopViewer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -530,7 +526,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 5：通行碼與設備監控 -->
                 <div id="win_passcodes" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -570,7 +565,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 6：AI 模型健康測速 -->
                 <div id="win_aiMonitor" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -604,7 +598,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 7：金鑰與 Gist 雲端設定 -->
                 <div id="win_config" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -647,7 +640,6 @@
                     </div>
                 </div>
 
-                <!-- 視窗 8：同仁對話錯誤回報專區 -->
                 <div id="win_errorLogs" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -673,7 +665,9 @@
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
+        const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
 
+        // 🌟 修復 1：Marked 圖片渲染攔截與安全解碼（解決中文檔名與空格重複編碼破圖）
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
@@ -683,6 +677,16 @@
                 }
                 const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
                 return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
+            };
+            renderer.image = function(href, title, text) {
+                let actualHref = href, actualTitle = title || '', actualText = text || '';
+                if (typeof href === 'object' && href !== null) {
+                    actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
+                }
+                let cleanUrl = actualHref.trim();
+                try { cleanUrl = decodeURI(cleanUrl); } catch(e) {}
+                cleanUrl = encodeURI(cleanUrl);
+                return `<img src="${cleanUrl}" alt="${actualText}" title="${actualTitle}" loading="lazy">`;
             };
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
         }
@@ -707,6 +711,24 @@
         let isCloudLoaded = false;
         window.tempMsgStore = {};
         window.tempProposalStore = {};
+
+        // 🌟 智能相簿資料庫快取
+        let photoCatalog = [];
+
+        // 🌟 修復 2：強制無快取抓取 photos.json，保證 GitHub 新增照片即時同步
+        async function fetchPhotoCatalog() {
+            try {
+                const res = await fetch(`photos.json?_t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+                });
+                if (res.ok) {
+                    photoCatalog = await res.json();
+                }
+            } catch (e) {
+                console.warn('載入相簿索引 photos.json 失敗:', e);
+            }
+        }
 
         let pendingImageBase64 = null;
         let pendingImageFileName = '';
@@ -846,7 +868,6 @@
             lb.classList.remove('hidden-view');
         }
 
-        // 🌟 修復 4：關閉燈箱時清空 src 引用，釋放記憶體
         function closeLightbox() { 
             const lb = document.getElementById('imageLightbox');
             const img = document.getElementById('lightboxImg');
@@ -886,7 +907,6 @@
             navigator.clipboard.writeText(textToCopy).then(showCopyToast).catch(() => fallbackCopy(textToCopy));
         }
 
-        // 🌟 修復 1：清理前次對話紀錄，避免發送連續 user 訊息造成 API 衝突
         function retryQuestion(msgId) {
             if (isGenerating) return;
             const record = window.tempMsgStore[msgId];
@@ -1241,6 +1261,7 @@
             if (!localStorage.getItem('shiye_sop_update_logs')) localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             await fetchSopFromGist();
+            await fetchPhotoCatalog();
             initDrawerResizer();
             initAdminWindowManager();
             checkMagicLink();
@@ -1470,7 +1491,6 @@
             bindWindowDragAndResize(drawer, header, 320, 360, true);
         }
 
-        // 🌟 修復 2：完整支援觸控（touchstart/touchmove/touchend），防止 iPad/觸控屏卡死
         let globalZIndex = 100;
         function bindWindowDragAndResize(winEl, headerEl, minW = 340, minH = 260, isGlobalModal = false) {
             let isResizing = false;
@@ -1525,9 +1545,9 @@
                 const rect = winEl.getBoundingClientRect();
 
                 startX = clientX; startY = clientY;
-                startW = rect.width; startH = rect.height;
                 startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
                 startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
+                startW = rect.width; startH = rect.height;
 
                 winEl.classList.add('custom-resized');
                 winEl.style.left = startL + 'px'; winEl.style.top = startT + 'px';
@@ -1695,6 +1715,7 @@
             renderSnapshots();
             renderModelsMonitorTable();
             await fetchSopFromGist();
+            await fetchPhotoCatalog();
 
             openAdminWindow('proposals');
         }
@@ -1707,6 +1728,7 @@
             renderUpdateLogs();
             renderSnapshots();
             await fetchSopFromGist();
+            await fetchPhotoCatalog();
             alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
         }
 
@@ -2497,6 +2519,11 @@
                 return;
             }
 
+            // 🌟 修復 3：執行前確認相簿索引庫已加載
+            if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) {
+                await fetchPhotoCatalog();
+            }
+
             setGeneratingState(true);
             currentAbortController = new AbortController();
 
@@ -2506,6 +2533,15 @@
             try {
                 const sopContent = await fetchSopFromGist();
 
+                // 🌟 組裝智能相簿索引文字（提供乾淨 URL）
+                let photoCatalogPrompt = "目前內部相簿庫尚無資料。";
+                if (Array.isArray(photoCatalog) && photoCatalog.length > 0) {
+                    photoCatalogPrompt = photoCatalog.map(p => {
+                        const directUrl = `${GITHUB_REPO_IMAGE_BASE}${p.name}`;
+                        return `- 圖片說明: "${p.desc}" | 關聯工法/關鍵字: [${(p.tags || []).join(', ')}] | 圖片URL: ${directUrl}`;
+                    }).join('\n');
+                }
+
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
@@ -2514,17 +2550,21 @@
    - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先隱蔽後裝飾、先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒或邏輯矛盾。
    - 【跨工種交接防呆】：若問題涉及跨工種交接面（例如：空調排水與木作天花板出風口開孔、浴室門檻止水墩與地磚完成面高差、木作與石材或鐵件收邊），主動提示交接公差與防衝突預警。
    - 【尺寸公差精準標註】：嚴格依據知識庫標記尺寸（統一以 cm/mm 明確標註），若有公差或間距規定（如間距 30cm、角材規格、防水試水 48 小時）必須精準交代，嚴禁使用「差不多」、「適當距離」等模糊詞彙。
-3. 施工現場照片視覺分析準則（多模態模式）：
-   - 當同仁上傳現場照片時，請依照工務總監標準進行四步檢驗：
+3. 施工現場照片調度原則（按需調度・克制原則）：
+   - 【不要每次回答都附圖】：一般文字概念詢問、尺寸詢問或日常問答，直接以精簡專業的文字條列回答即可，【不需要】主動附圖。
+   - 【僅在以下必要情境才調度相簿照片】：
+     a) 同仁提問明確要求看照片（例如：「有沒有照片」、「附圖說明」、「看參考圖」等）。
+     b) 解釋重要隱蔽工程驗收標準（如浴室全區防水、降板區防水、地坪放樣標準等），需要具體實景照片佐證時。
+   - 【調度方式】：若符合上述情境，請從下方【內部相簿索引清單】比對最符合的一張，在段落適當位置或文末附上 Markdown 圖片語法：\`![圖片說明](圖片URL)\`。每次回答【最多限附 1 張照片】，嚴禁濫發圖片造成版面雜亂。
+4. 施工現場照片視覺分析準則（同仁上傳照片模式）：
+   - 當同仁拍照上傳現場照片時，請依照工務總監標準進行四步檢驗：
      1) 【工種判讀】：辨識當前工種階段與施工構件。
-     2) 【工法瑕疵挑毛病】：檢視施作細節（例如角材吊筋固定、冷氣排水斜度、管線交錯防壓、防水塗刷高度均勻度等）。
+     2) 【工法瑕疵挑毛病】：檢視施作細節。
      3) 【對照拾葉 SOP】：引用知識庫對應章節提出合格或整改建議。
-     4) 【尺寸量測防呆】：照片僅能判定外觀與工序，嚴禁單憑照片盲猜絕對公差，務必主動提醒同仁持捲尺現場實測。
-4. 高密度純繁中直答（防截斷原則）：
-   - 下方【拾葉內部知識庫】是全公司工法規範的唯一權威依據。
-   - 直接輸出重點答案，嚴禁中英雙語重複對照，保持回答乾淨俐落。
-5. 誠實邊界：手冊中完全未收錄之項目嚴禁虛構通用網路知識，直接說明未收錄並引導同仁提出增補建議。
-6. SOP 修訂/刪除/增補意圖草稿輸出：
+     4) 【尺寸量測防呆】：照片僅能判定外觀與工序，嚴禁盲猜尺寸，提醒同仁持捲尺實測。
+5. 高密度純繁中直答：直接輸出重點答案，嚴禁中英雙語重複對照，保持回答乾淨俐落。
+6. 誠實邊界：手冊中完全未收錄之項目嚴禁虛構通用網路知識，直接說明未收錄並引導同仁提出增補建議。
+7. SOP 修訂/刪除/增補意圖草稿輸出：
    - 當同仁提出修改、刪除或新增時，\`oldText\` 必須字元級完全精準複製原文字，若要求刪除則 \`newText\` 填寫 \`"（刪除此條規範）"\`。
 \`\`\`sop_proposal
 {
@@ -2533,6 +2573,11 @@
   "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
 }
 \`\`\`
+
+【內部相簿索引清單】：
+---------------------
+${photoCatalogPrompt}
+---------------------
 
 【拾葉設計內部知識庫】：
 ---------------------
@@ -2707,7 +2752,11 @@ ${sopContent}
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
                         const historyPrompt = currentImgBase64 ? `[現場照片] ${text || '照片驗收審查'}` : text;
-                        chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
+                        if (!isRetry) {
+                            chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
+                        } else {
+                            chatHistory.push({ role: 'assistant', text: cleanForHistory });
+                        }
                         if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
                 } else if (isUserAborted) {
@@ -2755,7 +2804,6 @@ ${sopContent}
             };
         }
 
-        // 🌟 修復 3：差量節點替換＋標籤一致性檢查＋超額收縮修剪，防止代碼塊或清單跑版
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
             let cleanText = cleanGuardrailArtifacts(text);
