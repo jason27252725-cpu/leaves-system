@@ -208,6 +208,12 @@
         }
         .ui-no-select { user-select: none; -webkit-user-select: none; }
 
+        @keyframes geminiBlockEnter {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .gemini-enter-anim { animation: geminiBlockEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
         @keyframes geminiGlowPulse {
             0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
             50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
@@ -218,7 +224,7 @@
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        /* 🌟 Gemini 原生排版與雙向字級連動 */
+        /* 🌟 Gemini 原生排版與主標題/一般內容字粗細解耦 */
         .markdown-body, .user-bubble-text { 
             font-family: var(--ui-font-family);
             font-size: var(--ui-chat-font-size); 
@@ -347,7 +353,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 -->
+    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 (修復點擊冒泡阻斷) -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -393,11 +399,10 @@
             </div>
         </div>
 
-        <!-- 🌟 紅框位置：版本標籤 -->
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.4 終極全能版</span>
+                <span>v14.3 終極穩定版</span>
             </span>
         </div>
     </div>
@@ -410,7 +415,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.4 旗艦版</span>
+                        <span>v14.3 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -461,7 +466,6 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI</span>
-                    <!-- 🌟 資安標籤 (對話隱私保護中) -->
                     <div class="flex items-center space-x-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-700/80 px-3 py-1 rounded-full font-medium tracking-wide shadow-sm" title="獨立工作階段，無文字監控與歷史儲存">
                         <i class="fa-solid fa-shield-halved text-[10px]"></i>
                         <span>對話隱私保護中</span>
@@ -528,7 +532,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.4</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.3</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -586,7 +590,7 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
-                <!-- 🌟 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
+                <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -683,7 +687,7 @@
                     </div>
                 </div>
 
-                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 (含手動即時刷新按鈕) -->
+                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -932,7 +936,6 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
-        // 🌟 自動捕捉修復：將 "(連結: https://...)" 轉化為微縮圖語法
         function sanitizeMarkdownMediaLinks(text) {
             if (!text) return '';
             
@@ -944,13 +947,6 @@
             cleaned = cleaned.replace(/\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/documents\/[^)]+)\)/g, function(match, label, url) {
                 const safeUrl = url.trim().replace(/\s+/g, '%20');
                 return `[${label}](${safeUrl})`;
-            });
-
-            // 🌟 自動修復 AI 偶爾吐出的「說明 (連結: https://...)」格式
-            cleaned = cleaned.replace(/([^\n\r!\[\]]+?)\s*[\(（](?:連結|網址|下載)?[:：]?\s*(https:\/\/raw\.githubusercontent\.com\/[^\/]+\/[^\/]+\/main\/images\/[^)\s]+)[\)）]/g, function(match, alt, url) {
-                const cleanAlt = alt.replace(/^[\s\-\*•\d\.\:]+/, '').trim();
-                const safeUrl = url.trim().replace(/\s+/g, '%20');
-                return `\n\n![${cleanAlt || '工法照片'}](${safeUrl})\n\n`;
             });
 
             const seenImages = new Set();
@@ -1059,7 +1055,6 @@
         let activeStreamReader = null;
         let isCloudLoaded = false;
         let renderTimerId = null;
-        let tokenSyncTimerId = null;
         window.tempMsgStore = {};
         window.tempProposalStore = {};
 
@@ -1068,7 +1063,6 @@
 
         let pendingImages = [];
 
-        // 🌟 預設三端分立 UI 資料結構
         let currentUiSettings = {
             pc: { opacity: 0.88, blur: 32, fontScale: 1.0, titleWeight: 600, bodyWeight: 400, pcDrawerW: 620 },
             mobile: { opacity: 0.92, blur: 24, fontScale: 0.95, titleWeight: 600, bodyWeight: 400 },
@@ -1210,6 +1204,7 @@
             }
         }
 
+        // 🌟 強化多圖壓縮 ＋ 錯誤容錯處理 (1024px, 0.78 品質防 413 報錯)
         function compressAndAppendImage(file) {
             if (!file || !file.type.startsWith('image/')) return;
 
@@ -1555,19 +1550,8 @@
             return getFallbackCodes();
         }
 
-        // 🌟 修正：雲端拉回數據時與本機 Token 累計取最大值合併，徹底杜絕刷新時被歸零
         function handleCloudDataSuccess(cloudData) {
-            const cloudCodes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
-            const localCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
-
-            const mergedCodes = cloudCodes.map(cc => {
-                const lc = localCodes.find(item => item.code && cc.code && item.code.toUpperCase() === cc.code.toUpperCase());
-                return {
-                    ...cc,
-                    totalTokens: Math.max(cc.totalTokens || 0, lc?.totalTokens || 0),
-                    requestCount: Math.max(cc.requestCount || 0, lc?.requestCount || 0)
-                };
-            });
+            const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
 
             if (cloudData.cloudToken) {
                 let restored = decodeToken(cloudData.cloudToken);
@@ -1604,8 +1588,8 @@
             }
 
             isCloudLoaded = true;
-            saveCodesToLocal(mergedCodes);
-            return mergedCodes;
+            saveCodesToLocal(codes);
+            return codes;
         }
 
         async function fetchSopFromGist() {
@@ -2286,7 +2270,6 @@
             }).join('');
         }
 
-        // 🌟 手動刷新用量（雙向合併防抖）
         async function refreshUsageStatsManually() {
             const btn = document.getElementById('refreshUsageBtn');
             btn.innerHTML = '<i class="fa-solid fa-rotate-right animate-spin text-[9px]"></i><span>刷新中...</span>';
@@ -3173,32 +3156,27 @@
                     }).join('\n');
                 }
 
-                // 🌟 優化提示詞：嚴格禁止開場客套大話與後設宣告，要求直奔主題、俐落收尾
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
-2. 【嚴格禁止開場廢話與後設宣告】：
-   - 開頭第一句【直接切入重點工法或答覆】，絕對不要寫任何自我介紹、寒暄或宣告性廢話（例如嚴禁出現：「歡迎來到拾葉設計」、「作為資深總監，我為您說明...」、「我會在每個步驟下方插入照片以達成圖文並茂...」）。
-   - 請直接開始輸出流程步驟，說具體施工內容即可！
-3. 【緊扣主題、拒絕偏題與大話空話】：
-   - 專注解答同仁問題與拾葉內部標準 SOP，不談泛泛的設計哲學，不將問題無限上綱。最後一個施工步驟說明完畢後【立即俐落結束】，嚴禁在文末發散偏題或做長篇感嘆。
-4. 工法因果與尺寸公差（智商核心）：
-   - 【工序嚴格遵循】：先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝。
-   - 【尺寸精確標註】：明確標註 cm/mm，預留完成面與交接公差。
-5. 【圖文並茂規範（禁止純文字網址）】：
-   - 介紹施工流程時，主動調閱【內部相簿索引清單】中的照片，自然穿插在各步驟下方。
-   - 【絕對禁止輸出純文字網址】：嚴禁寫出「(連結: https://...)」或「[說明](網址)」。展示照片【唯一合法格式】是 Markdown 圖片格式：\`![說明](圖片URL)\`，前方必須有「!」。
-6. 標準文件/標語/申請書下載：
-   - 提及施工標語、路權手冊、清潔表時，在文末附上超連結：\`[下載：檔案名稱](下載URL)\`。
-7. 現場多照片審核：
-   - 同仁上傳照片時，依【工種判讀 ➔ 細節瑕疵 ➔ 對照 SOP ➔ 防呆提醒】列點檢核。
-8. SOP 修訂草稿輸出：
+2. 工法因果與總監思維規範（智商核心）：
+   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
+   - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
+   - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
+3. 【圖文並茂主動調度核心規範】：
+   - 當同仁詢問整體施工流程、階段工法（如：毛胚屋全流程、放樣工序、泥作防水、保護工程等），你【必須主動】調閱下方【內部相簿索引清單】中的相關照片！
+   - 請將照片【自然穿插在各個對應步驟之下】，達成「圖文合一」的教學效果。每次介紹完整流程時，請依步驟豐富度主動附上 2～5 張不同照片，絕對不要只給純文字。
+4. 標準文件/標語/申請書下載調度：
+   - 當同仁提及施工標語、路權手冊、清潔表、公所道路申請書時，請在文末主動附上 Markdown 超連結：\`[下載：檔案名稱](下載URL)\`。
+5. 施工現場多照片審核（同仁上傳多張照片模式）：
+   - 當同仁上傳 1 張或多張照片時，請逐張對照，並依【工種判讀 ➔ 細節瑕疵挑毛病 ➔ 對照拾葉 SOP 規範 ➔ 尺寸防呆提醒】全面進行總監級專業點評。
+6. SOP 修訂/刪除/增補意圖草稿輸出：
 \`\`\`sop_proposal
 {
-  "topic": "項目名稱",
-  "oldText": "知識庫原文字（新增填無）",
-  "newText": "最新規範文字（刪除填寫：（刪除此條規範））"
+  "topic": "欲修改、刪除或新增的項目名稱",
+  "oldText": "知識庫中一模一樣的原文字（包含符號；若為新增填無）",
+  "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
 }
 \`\`\`
 
@@ -3238,7 +3216,7 @@ ${sopContent}
                 let usedModelName = '';
                 let accumulatedReply = '';
                 let liveMsgElements = null;
-                let hasReceivedFirstToken = false;
+                let renderScheduled = false;
 
                 keyLoop:
                 for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
@@ -3263,7 +3241,7 @@ ${sopContent}
                                 timeoutTimerId = setTimeout(() => {
                                     attemptAbortController.abort();
                                     reject(new Error('節點忙碌逾時，切換下一備援模型'));
-                                }, 7500);
+                                }, 7000);
                             });
 
                             const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
@@ -3278,8 +3256,8 @@ ${sopContent}
                                 body: JSON.stringify({
                                     model: modelObj.id,
                                     messages: messages,
-                                    temperature: 0.2,
-                                    frequency_penalty: 0.25,
+                                    temperature: 0.25,
+                                    frequency_penalty: 0.2,
                                     max_tokens: 8192,
                                     stream: true
                                 })
@@ -3306,6 +3284,9 @@ ${sopContent}
                             usedModelName = `${modelObj.name}${apiKeys.length > 1 ? ` (Key #${kIndex + 1})` : ''}`;
                             localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
 
+                            loadingTracker.stop();
+                            liveMsgElements = createLiveAssistantBubble();
+
                             let isStreamDone = false;
                             while (!isStreamDone) {
                                 const { done, value } = await activeStreamReader.read();
@@ -3324,20 +3305,13 @@ ${sopContent}
                                             const parsed = JSON.parse(trimmed.substring(6));
                                             const delta = parsed.choices?.[0]?.delta?.content || '';
                                             if (delta) {
-                                                // 🌟 真正收到第一個文字時，思考進度條才平滑退場
-                                                if (!hasReceivedFirstToken) {
-                                                    hasReceivedFirstToken = true;
-                                                    loadingTracker.stop();
-                                                    liveMsgElements = createLiveAssistantBubble();
-                                                }
-
                                                 accumulatedReply += delta;
                                                 if (!renderScheduled) {
                                                     renderScheduled = true;
                                                     renderTimerId = setTimeout(() => {
                                                         updateLiveBubble(liveMsgElements, accumulatedReply);
                                                         renderScheduled = false;
-                                                    }, 50);
+                                                    }, 60);
                                                 }
                                             }
                                         } catch (err) {}
@@ -3379,7 +3353,7 @@ ${sopContent}
                 if (streamSuccess || accumulatedReply.length > 0) {
                     const { displayText } = robustProposalExtractor(accumulatedReply);
 
-                    // 🌟 重新讀取本地緩存並累加 Token（雙向安全儲存）
+                    // 🌟 重新讀取本地最新緩存，安全累加 Token（防多分頁競爭覆蓋）
                     const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
                     if (activeCode) {
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
@@ -3389,12 +3363,6 @@ ${sopContent}
                             matched.requestCount = (matched.requestCount || 0) + 1;
                             currentCodesList = latestCodes;
                             saveCodesToLocal(latestCodes);
-
-                            // 🌟 延遲防抖自動推送到雲端 Gist
-                            clearTimeout(tokenSyncTimerId);
-                            tokenSyncTimerId = setTimeout(() => {
-                                pushCodesToCloud(currentCodesList).catch(() => {});
-                            }, 4000);
                         }
                     }
 
@@ -3437,14 +3405,13 @@ ${sopContent}
             }
         }
 
-        // 🌟 思考動畫：平滑漸進直到收到第一個實體字元才銷毀
         function appendThinkingLoading() {
             const id = 'loading_' + Date.now();
             const steps = [
                 "正在剖析施工工種與工序階段...",
-                "檢索內部知識庫與施工規範 (Gist)...",
-                "調閱現場工程照片庫 (毛胚屋/放樣/防水)...",
-                "核對尺寸公差與跨工種交接防呆...",
+                "檢索拾葉內部知識庫與施工規範 (Gist)...",
+                "比對現場工程照片庫 (毛胚屋/放樣/防水)...",
+                "檢核驗收尺寸公差與跨工種防衝突預警...",
                 "正在生成圖文並茂指導教學..."
             ];
             let currentStepIdx = 0;
@@ -3457,7 +3424,7 @@ ${sopContent}
                             <i class="fa-solid fa-wand-magic-sparkles text-blue-400 text-xs animate-spin"></i>
                             <span id="${id}_text" class="font-medium text-white text-[11px] transition-opacity duration-300">${steps[0]}</span>
                         </div>
-                        <div class="w-full bg-neutral-800/80 h-1.5 rounded-full overflow-hidden">
+                        <div class="w-full bg-neutral-800/80 h-1 rounded-full overflow-hidden">
                             <div id="${id}_bar" class="bg-gradient-to-r from-blue-400 to-emerald-400 h-full w-1/5 transition-all duration-700 ease-out"></div>
                         </div>
                     </div>
@@ -3485,7 +3452,7 @@ ${sopContent}
                     if (textEl) textEl.textContent = '雲端多模態節點運算中，即將輸出圖文...';
                     if (barEl) barEl.style.width = '98%';
                 }
-            }, 1200);
+            }, 1300);
 
             return {
                 id: id,
