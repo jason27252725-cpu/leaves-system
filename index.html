@@ -9,12 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         
         :root {
             --ui-drawer-opacity: 0.88;
             --ui-drawer-blur: 32px;
-            --ui-font-scale: 1;
+            --ui-font-family: 'Plus Jakarta Sans', 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+            --ui-chat-font-size: 15px;
+            --ui-chat-line-height: 1.65;
             --ui-pc-drawer-w: 620px;
         }
 
@@ -26,7 +28,7 @@
             height: 100dvh;
             background-color: #000;
             color: #fff;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--ui-font-family);
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -62,7 +64,7 @@
             position: fixed;
             inset: 0;
             z-index: 50;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             display: flex;
@@ -179,7 +181,7 @@
 
         @media (min-width: 1024px) {
             .admin-window {
-                position: absolute; background: rgba(15, 15, 15, 0.92);
+                position: absolute; background: rgba(15, 15, 15, 0.94);
                 backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
                 border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 1.25rem;
                 display: flex; flex-direction: column; overflow: hidden;
@@ -220,19 +222,97 @@
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        .markdown-body { 
-            color: #e5e5e5; 
-            font-size: calc(0.75rem * var(--ui-font-scale)); 
-            line-height: 1.65; 
+        /* 🌟 Gemini 原生排版與雙向字級連動 */
+        .markdown-body, .user-bubble-text { 
+            font-family: var(--ui-font-family);
+            font-size: var(--ui-chat-font-size); 
+            line-height: var(--ui-chat-line-height); 
             word-break: break-word; 
             overflow-wrap: anywhere; 
         }
-        .markdown-body img {
-            max-width: 100%; height: auto; border-radius: 0.85rem; margin: 0.8rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); display: block; cursor: zoom-in;
-            background: rgba(255, 255, 255, 0.04); transition: transform 0.2s ease;
+        .markdown-body { color: #e5e5e5; }
+
+        /* 🌟 縮圖與設計感外框（含放大角標） */
+        .img-thumb-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 0.6rem 0;
+            border-radius: 0.85rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
         }
-        .markdown-body img:hover { transform: scale(1.01); }
+        .img-thumb-wrapper:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(96, 165, 250, 0.3);
+        }
+        .img-thumb-wrapper img {
+            width: 220px;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+        .img-thumb-badge {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 2px 7px;
+            border-radius: 9999px;
+            font-size: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .img-thumb-wrapper:hover .img-thumb-badge {
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+        }
+
+        /* 🌟 漫畫氣泡風格彈出卡片 (Comic Popover Balloon) */
+        #comicPopover {
+            position: fixed;
+            z-index: 110;
+            max-width: 540px;
+            width: 90vw;
+            background: rgba(18, 18, 18, 0.96);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.92) translateY(8px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #comicPopover.pop-active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+        #comicPopoverTail {
+            position: absolute;
+            bottom: -10px;
+            left: 36px;
+            width: 18px;
+            height: 18px;
+            background: rgba(18, 18, 18, 0.96);
+            border-right: 2px solid rgba(255, 255, 255, 0.25);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+            transform: rotate(45deg);
+        }
+
         .markdown-body a {
             color: #60a5fa; text-decoration: none; border-bottom: 1px dashed rgba(96, 165, 250, 0.6);
             padding-bottom: 1px; transition: all 0.2s;
@@ -272,31 +352,31 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 圖片燈箱 -->
-    <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden-view cursor-zoom-out transition-opacity duration-300">
-        <div class="relative max-w-4xl max-h-full flex flex-col items-center" onclick="event.stopPropagation()">
-            <img id="lightboxImg" src="" alt="放大圖" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/20">
-            <p id="lightboxCaption" class="text-xs text-neutral-300 mt-3 font-light tracking-widest bg-neutral-900/80 px-4 py-1.5 rounded-full border border-white/10"></p>
-            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white/20 hover:bg-white text-black hover:text-black w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
-                <i class="fa-solid fa-xmark text-white"></i>
+    <!-- 漫畫氣泡風格浮動放大框 -->
+    <div id="comicPopover" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10 text-xs">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-camera text-blue-400 text-xs"></i>
+                <span id="comicPopoverTitle" class="font-medium text-white truncate max-w-[340px]">工法照片</span>
+            </div>
+            <button onclick="closeComicPopover()" class="text-neutral-400 hover:text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/10 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
             </button>
         </div>
+        <div class="relative overflow-hidden rounded-xl bg-black/60 flex items-center justify-center min-h-[160px]">
+            <img id="comicPopoverImg" src="" alt="工法放大圖" class="max-h-[60vh] w-auto object-contain rounded-xl">
+        </div>
+        <div id="comicPopoverTail"></div>
     </div>
 
-    <!-- 登入卡片（含版本標籤與連線狀態） -->
-    <div id="authModal" class="hidden-view ui-no-select">
+    <!-- 登入介面 (版本標籤獨立懸浮於紅框位置) -->
+    <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-7 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
                     <i class="fa-solid fa-cube text-xl"></i>
                 </div>
-                <div class="flex items-center justify-center space-x-2">
-                    <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN</h2>
-                    <span class="text-[9px] bg-neutral-900/90 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono flex items-center gap-1.5 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v13.2 金鑰防護版</span>
-                    </span>
-                </div>
+                <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN</h2>
                 <p id="authSubtitle" class="text-xs text-neutral-300 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
             </div>
             <div class="space-y-4">
@@ -309,6 +389,14 @@
                 <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-400 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
             </div>
         </div>
+
+        <!-- 🌟 紅框位置：版本標籤 -->
+        <div class="mt-4 flex items-center justify-center">
+            <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>v14.1 加固正式版</span>
+            </span>
+        </div>
     </div>
 
     <!-- 主系統介面 -->
@@ -319,7 +407,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v13.2 金鑰防護版</span>
+                        <span>v14.1 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -366,11 +454,14 @@
             <div class="resize-handle resize-bl" data-handle="bl"></div>
             <div class="resize-handle resize-br" data-handle="br"></div>
 
-            <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="雙擊還原預設大小">
-                <div class="flex items-center space-x-3">
+            <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-5 py-4 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="雙擊還原預設大小">
+                <div class="flex items-center space-x-2.5">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                    <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI ASSISTANT</span>
-                    <span class="text-[9px] text-neutral-400 font-mono hidden sm:inline-block border border-white/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-shield-halved text-[8px] mr-1 text-emerald-400"></i>安全防護中</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI</span>
+                    <div class="flex items-center space-x-1 text-[9px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2.5 py-0.5 rounded-full font-sans tracking-normal" title="此對話為同仁獨立工作階段，無雲端文字監控與歷史儲存">
+                        <i class="fa-solid fa-shield-halved text-[8px]"></i>
+                        <span>端點隱私保護 • 零對話監控與儲存</span>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="resetDrawerSize()" class="text-neutral-400 hover:text-white p-2 text-xs transition rounded-full hover:bg-white/10" title="還原大小">
@@ -386,8 +477,8 @@
                 <div class="flex items-start space-x-3 msg-animate">
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 text-xs font-light tracking-wide leading-relaxed shadow-xl selectable-text">
-                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 全面安全加密連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上對應照片**進行教學；需要各類施工標語、路權申請書也能一鍵下載！您也可以點選相機**一次選取最多 5 張現場照片**讓我分析驗收。</p>
+                        <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即以漫畫對話框彈出放大！需要施工標語、路權申請書也能一鍵下載。</p>
                     </div>
                 </div>
             </div>
@@ -433,13 +524,17 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v13.2</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.1</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
                     <button onclick="toggleAdminWindow('uiCustomizer')" id="nav_btn_uiCustomizer" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-palette text-xs text-blue-400"></i><span class="tracking-wide text-white">多端 UI 客製</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-palette text-xs text-blue-400"></i><span class="tracking-wide text-white">多端 UI 畫布</span></div>
                         <span id="nav_badge_uiCustomizer" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
+                    </button>
+                    <button onclick="toggleAdminWindow('tokenAnalytics')" id="nav_btn_tokenAnalytics" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-chart-pie text-xs text-emerald-400"></i><span class="tracking-wide text-white">用量與身分統計</span></div>
+                        <span id="nav_badge_tokenAnalytics" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('proposals')" id="nav_btn_proposals" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-file-pen text-xs text-neutral-500"></i><span class="tracking-wide">SOP 修訂草稿</span></div>
@@ -487,13 +582,13 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
-                <!-- 多端獨立 UI 視覺微調器 -->
+                <!-- 多端 UI 視覺畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-palette text-xs text-blue-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">多端 UI 介面視覺客製中心</span>
+                            <span class="text-xs font-medium text-white tracking-wider">多端 UI 介面與排版畫布</span>
                         </div>
                         <button onclick="closeAdminWindow('uiCustomizer')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
@@ -523,7 +618,7 @@
 
                             <div class="space-y-1.5">
                                 <div class="flex justify-between items-center text-neutral-300">
-                                    <span>聊天文字大小倍率 (Font Scale)</span>
+                                    <span>Gemini 聊天文字大小倍率</span>
                                     <span id="val_font_scale" class="font-mono text-neutral-400">1.0x</span>
                                 </div>
                                 <input type="range" min="0.85" max="1.20" step="0.05" id="input_font_scale" oninput="handleUiSliderChange('fontScale', this.value)" class="w-full accent-white">
@@ -539,8 +634,40 @@
                         </div>
 
                         <div class="p-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-[11px] text-neutral-400 space-y-1">
-                            <p>💡 調整三端個別參數後，點選左下角「<strong>同步雲端</strong>」。</p>
-                            <p>同仁使用電腦、手機或 iPad 開啟時，系統會自動辨識並載入對應的最佳視覺排版！</p>
+                            <p>💡 系統字型已預設貼齊 Google Gemini 規範（<strong>Plus Jakarta Sans + Noto Sans TC</strong>，字級 15px、行高 1.65）。</p>
+                            <p>調整參數後點選左下角「<strong>同步雲端</strong>」，全公司電腦、手機與 iPad 將自動同步最新介面！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 -->
+                <div id="win_tokenAnalytics" class="admin-window hidden-view">
+                    <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
+                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
+                        <div class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-chart-pie text-xs text-emerald-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">身分組 AI 用量分析與 API 監控</span>
+                        </div>
+                        <button onclick="closeAdminWindow('tokenAnalytics')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
+                        <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-neutral-300 font-medium">全公司累計消耗 Tokens</span>
+                                <span id="totalTokensAllCodesBadge" class="font-mono text-emerald-400 font-semibold">0 Tokens</span>
+                            </div>
+                            <div class="w-full bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800">
+                                <div id="totalUsageProgressBar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-0 transition-all duration-700"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
+                                <span>模型池：OpenRouter Free Tier</span>
+                                <span id="activeKeyHealthBadge" class="text-emerald-400">🟢 金鑰狀態正常</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-medium text-neutral-300 tracking-wider">各成員 / 身分組用量分佈佔比</h3>
+                            <div id="passcodeUsageListContainer" class="space-y-2.5 text-xs"></div>
                         </div>
                     </div>
                 </div>
@@ -779,6 +906,7 @@
             return cleaned;
         }
 
+        // 🌟 縮圖安全渲染：改用 data-* 屬性，杜絕字串拼接引號語法錯誤
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
@@ -804,10 +932,90 @@
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
                 let cleanUrl = actualHref.trim().replace(/\s+/g, '%20');
-                return `<img src="${cleanUrl}" alt="${actualText}" title="${actualTitle}" loading="lazy" onerror="this.style.display='none'">`;
+                const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
+                
+                return `
+                    <div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視">
+                        <img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                        <div class="img-thumb-badge">
+                            <i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i>
+                            <span>檢視大圖</span>
+                        </div>
+                    </div>
+                `;
             };
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
         }
+
+        // 🌟 漫畫氣泡開關與定位
+        function openComicPopover(triggerEl, src, caption) {
+            const pop = document.getElementById('comicPopover');
+            const img = document.getElementById('comicPopoverImg');
+            const title = document.getElementById('comicPopoverTitle');
+            const tail = document.getElementById('comicPopoverTail');
+
+            img.src = src;
+            title.textContent = caption || '施工參考圖';
+
+            const rect = triggerEl.getBoundingClientRect();
+            const popW = Math.min(540, window.innerWidth * 0.9);
+            
+            let topPos = rect.top - 20;
+            let leftPos = rect.left;
+
+            if (leftPos + popW > window.innerWidth) {
+                leftPos = window.innerWidth - popW - 20;
+            }
+            if (leftPos < 20) leftPos = 20;
+
+            if (topPos < 80) {
+                topPos = rect.bottom + 15;
+                tail.style.top = '-10px';
+                tail.style.bottom = 'auto';
+                tail.style.borderTop = '2px solid rgba(255, 255, 255, 0.25)';
+                tail.style.borderLeft = '2px solid rgba(255, 255, 255, 0.25)';
+                tail.style.borderRight = 'none';
+                tail.style.borderBottom = 'none';
+            } else {
+                tail.style.top = 'auto';
+                tail.style.bottom = '-10px';
+                tail.style.borderRight = '2px solid rgba(255, 255, 255, 0.25)';
+                tail.style.borderBottom = '2px solid rgba(255, 255, 255, 0.25)';
+                tail.style.borderTop = 'none';
+                tail.style.borderLeft = 'none';
+            }
+
+            pop.style.left = `${leftPos}px`;
+            pop.style.top = `${Math.max(20, topPos)}px`;
+            pop.classList.add('pop-active');
+        }
+
+        function closeComicPopover() {
+            const pop = document.getElementById('comicPopover');
+            if (pop) pop.classList.remove('pop-active');
+        }
+
+        // 🌟 事件委派監聽點擊縮圖
+        document.getElementById('chatContainer').addEventListener('click', (e) => {
+            const wrapper = e.target.closest('.img-thumb-wrapper');
+            if (wrapper) {
+                const src = wrapper.getAttribute('data-src');
+                const caption = wrapper.getAttribute('data-caption');
+                openComicPopover(wrapper, src, caption);
+            }
+        });
+
+        // 🌟 滾動聊天室時自動平滑隱藏彈出氣泡
+        document.getElementById('chatContainer').addEventListener('scroll', () => {
+            closeComicPopover();
+        }, { passive: true });
+
+        document.addEventListener('click', (e) => {
+            const pop = document.getElementById('comicPopover');
+            if (pop && pop.classList.contains('pop-active') && !pop.contains(e.target) && !e.target.closest('.img-thumb-wrapper')) {
+                closeComicPopover();
+            }
+        });
 
         const MONITORED_MODELS = [
             { id: "openrouter/free", name: "OpenRouter Auto Free", desc: "官方智慧路由池 (支援視覺自動分流、極速保證)" },
@@ -860,7 +1068,7 @@
 
             root.style.setProperty('--ui-drawer-opacity', s.opacity || 0.88);
             root.style.setProperty('--ui-drawer-blur', `${s.blur || 32}px`);
-            root.style.setProperty('--ui-font-scale', s.fontScale || 1.0);
+            root.style.setProperty('--ui-chat-font-size', `${15 * (s.fontScale || 1.0)}px`);
             if (dev === 'pc' && s.pcDrawerW) {
                 root.style.setProperty('--ui-pc-drawer-w', `${s.pcDrawerW}px`);
             }
@@ -941,19 +1149,16 @@
             }
         }
 
+        // 🌟 強化多圖壓縮與防 413 壓測機制 (限制長邊 1024px, 品質 0.78)
         function compressAndAppendImage(file) {
             if (!file || !file.type.startsWith('image/')) return;
-            if (pendingImages.length >= 5) {
-                alert('單次最多同時上傳 5 張現場施工照片，以確保 AI 視覺辨識之最高精確度！');
-                return;
-            }
 
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 1280;
+                    const maxDim = 1024;
                     let w = img.width, h = img.height;
                     if (w > maxDim || h > maxDim) {
                         if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
@@ -963,7 +1168,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
                     
-                    const base64 = canvas.toDataURL('image/jpeg', 0.82);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.78);
                     pendingImages.push({
                         id: Date.now() + Math.random().toString(36).substring(2, 6),
                         name: file.name || '照片.jpg',
@@ -976,12 +1181,19 @@
             reader.readAsDataURL(file);
         }
 
+        // 🌟 限制多選同步防呆截斷
         function handleMultiImagesSelected(e) {
             const files = Array.from(e.target.files);
-            if (pendingImages.length + files.length > 5) {
-                alert('單次最多上傳 5 張照片，系統將自動為您保留前 5 張。');
+            const remaining = 5 - pendingImages.length;
+            if (remaining <= 0) {
+                alert('已達單次上傳上限 (最多 5 張照片)');
+                e.target.value = '';
+                return;
             }
-            files.slice(0, 5 - pendingImages.length).forEach(f => compressAndAppendImage(f));
+            if (files.length > remaining) {
+                alert(`單次最多上傳 5 張，已自動為您選取前 ${remaining} 張。`);
+            }
+            files.slice(0, remaining).forEach(f => compressAndAppendImage(f));
             e.target.value = '';
         }
 
@@ -1022,10 +1234,14 @@
             const drawer = document.getElementById('chatDrawer');
             if (!drawer || !drawer.classList.contains('open')) return;
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            const remaining = 5 - pendingImages.length;
+            if (remaining <= 0) return;
+            
             for (let item of items) {
                 if (item.type.indexOf('image') !== -1) {
                     const file = item.getAsFile();
                     compressAndAppendImage(file);
+                    break;
                 }
             }
         });
@@ -1035,8 +1251,10 @@
             chatDrawerEl.addEventListener('dragover', (e) => e.preventDefault());
             chatDrawerEl.addEventListener('drop', (e) => {
                 e.preventDefault();
+                const remaining = 5 - pendingImages.length;
+                if (remaining <= 0) return;
                 if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                    Array.from(e.dataTransfer.files).slice(0, 5 - pendingImages.length).forEach(f => compressAndAppendImage(f));
+                    Array.from(e.dataTransfer.files).slice(0, remaining).forEach(f => compressAndAppendImage(f));
                 }
             });
         }
@@ -1096,43 +1314,21 @@
             return list.length > 0 ? list : [];
         }
 
-        function openLightbox(src, alt) {
-            const lb = document.getElementById('imageLightbox');
-            const img = document.getElementById('lightboxImg');
-            const cap = document.getElementById('lightboxCaption');
-            img.src = src; cap.textContent = alt || '工法照片預覽';
-            lb.classList.remove('hidden-view');
-        }
-
-        function closeLightbox() { 
-            const lb = document.getElementById('imageLightbox');
-            const img = document.getElementById('lightboxImg');
-            if (img) img.src = '';
-            if (lb) lb.classList.add('hidden-view');
-        }
-
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                const lb = document.getElementById('imageLightbox');
-                if (lb && !lb.classList.contains('hidden-view')) closeLightbox();
-                else toggleChatDrawer(false);
+                closeComicPopover();
+                toggleChatDrawer(false);
             }
         });
 
         document.addEventListener('pointerdown', (e) => {
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
-            const lightbox = document.getElementById('imageLightbox');
+            const pop = document.getElementById('comicPopover');
             if (drawer && drawer.classList.contains('open')) {
-                if (!drawer.contains(e.target) && !triggerWrapper.contains(e.target) && (!lightbox || !lightbox.contains(e.target))) {
+                if (!drawer.contains(e.target) && !triggerWrapper.contains(e.target) && (!pop || !pop.contains(e.target))) {
                     toggleChatDrawer(false);
                 }
-            }
-        });
-
-        document.getElementById('chatContainer').addEventListener('click', (e) => {
-            if (e.target.tagName === 'IMG' && e.target.closest('.markdown-body')) {
-                openLightbox(e.target.src, e.target.alt);
             }
         });
 
@@ -1311,7 +1507,6 @@
             if (cloudData.updateLogs && Array.isArray(cloudData.updateLogs)) localStorage.setItem('shiye_sop_update_logs', JSON.stringify(cloudData.updateLogs));
             if (cloudData.snapshots && Array.isArray(cloudData.snapshots)) localStorage.setItem('shiye_sop_snapshots', JSON.stringify(cloudData.snapshots));
 
-            // 🌟 核心防禦：安全讀取 API Key（自動判定是否為加密字串）
             if (cloudData.apiKey) {
                 let rawKey = cloudData.apiKey;
                 if (!rawKey.startsWith('sk-or-v1-')) {
@@ -1493,9 +1688,9 @@
 
         function getFallbackCodes() {
             return [
-                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
-                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
-                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true }
+                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true }
             ];
         }
 
@@ -1884,7 +2079,8 @@
 
         const ADMIN_WIN_CONFIG = {
             uiCustomizer: { id: 'win_uiCustomizer', defaultW: 560, defaultH: 520, defaultX: 15, defaultY: 15 },
-            proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 30, defaultY: 30 },
+            tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 640, defaultH: 520, defaultX: 30, defaultY: 25 },
+            proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
             snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 80, defaultY: 80 },
             sopViewer: { id: 'win_sopViewer', defaultW: 660, defaultH: 520, defaultX: 110, defaultY: 30 },
@@ -1958,6 +2154,53 @@
             else openAdminWindow(key);
         }
 
+        function renderTokenAnalytics() {
+            const container = document.getElementById('passcodeUsageListContainer');
+            const totalBadge = document.getElementById('totalTokensAllCodesBadge');
+            const bar = document.getElementById('totalUsageProgressBar');
+            if (!container) return;
+
+            let totalTokensAll = 0;
+            currentCodesList.forEach(c => {
+                totalTokensAll += (c.totalTokens || 0);
+            });
+
+            totalBadge.textContent = `${totalTokensAll.toLocaleString()} Tokens`;
+            bar.style.width = totalTokensAll > 0 ? '100%' : '0%';
+
+            if (currentCodesList.length === 0) {
+                container.innerHTML = '<p class="text-neutral-500">尚無任何身分碼紀錄</p>';
+                return;
+            }
+
+            container.innerHTML = currentCodesList.map(c => {
+                const tokens = c.totalTokens || 0;
+                const reqs = c.requestCount || 0;
+                const pct = totalTokensAll > 0 ? Math.round((tokens / totalTokensAll) * 100) : 0;
+
+                return `
+                    <div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-white font-medium">${escapeHtml(c.name)}</span>
+                                <span class="text-[10px] text-neutral-500 font-mono">(${escapeHtml(c.code)})</span>
+                            </div>
+                            <div class="text-[11px] font-mono text-neutral-300">
+                                <span class="text-emerald-400 font-semibold">${tokens.toLocaleString()}</span> Tokens (${pct}%)
+                            </div>
+                        </div>
+                        <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-400 h-full rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
+                            <span>累計問答：${reqs} 次</span>
+                            <span>身分權限：${c.role === 'admin' ? '最高管理員' : '一般同仁'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         async function loadAdminForm() {
             const rawKeys = localStorage.getItem('shiye_apikey') || '';
             document.getElementById('apiKeyInput').value = rawKeys;
@@ -1981,6 +2224,7 @@
             renderUpdateLogs();
             renderSnapshots();
             renderModelsMonitorTable();
+            renderTokenAnalytics();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
@@ -1996,6 +2240,7 @@
             renderPendingProposals();
             renderUpdateLogs();
             renderSnapshots();
+            renderTokenAnalytics();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
@@ -2412,6 +2657,8 @@
                     code: randomCode, 
                     name: name, 
                     role: 'user', 
+                    totalTokens: 0,
+                    requestCount: 0,
                     createdAt: new Date().toLocaleString(), 
                     logins: [], 
                     status: 'offline', 
@@ -2425,6 +2672,7 @@
                     saveCodesToLocal(currentCodesList);
                     nameInput.value = '';
                     renderCodesTable();
+                    renderTokenAnalytics();
                     alert(`✅ 成功產生新身分碼：${randomCode}`);
                 } else {
                     alert(`❌ 寫入雲端失敗：${result.message}`);
@@ -2447,6 +2695,7 @@
                 currentCodesList = freshCodes;
                 saveCodesToLocal(currentCodesList);
                 renderCodesTable();
+                renderTokenAnalytics();
                 alert(`✅ 已成功刪除身分碼【${codeStr}】！`);
             }
         }
@@ -2505,7 +2754,7 @@
 
             try {
                 const payloadData = {
-                    apiKey: encodeToken(apiKey), // 🌟 密鑰加密寫入 Gist，防洩漏自動銷毀
+                    apiKey: encodeToken(apiKey),
                     sopUrl: sopUrl,
                     bgList: bgList,
                     cloudToken: encodeToken(token),
@@ -2568,7 +2817,7 @@
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
                     await fetchSopFromGist();
-                    alert('✅ 成功：全套設定（含多端 UI 視覺與金鑰加密防護）已同步至 GitHub 雲端！');
+                    alert('✅ 成功：全套設定（含多端 UI 畫布、資安金鑰加密與用量追蹤）已同步至 GitHub 雲端！');
                 } else {
                     alert(`❌ 寫入失敗: ${result.message}`);
                 }
@@ -3019,9 +3268,20 @@ ${sopContent}
                 if (streamSuccess || accumulatedReply.length > 0) {
                     const { displayText } = robustProposalExtractor(accumulatedReply);
 
+                    // 🌟 本地安全累計 Token（避免高頻寫入 Gist 撞限流與覆蓋衝突）
+                    const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
+                    if (activeCode) {
+                        const matched = currentCodesList.find(c => c.code && c.code.toUpperCase() === activeCode.toUpperCase());
+                        if (matched) {
+                            matched.totalTokens = (matched.totalTokens || 0) + estimatedTokens;
+                            matched.requestCount = (matched.requestCount || 0) + 1;
+                            saveCodesToLocal(currentCodesList);
+                        }
+                    }
+
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
                         model: isUserAborted ? `${usedModelName} (已手動中斷)` : usedModelName,
-                        tokens: Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3),
+                        tokens: estimatedTokens,
                         time: elapsedSec,
                         rawReply: accumulatedReply
                     }, currentImgs);
@@ -3331,7 +3591,10 @@ ${sopContent}
                 imgsHtml = `
                     <div class="flex flex-wrap gap-2 mb-2">
                         ${attachedImgs.map(img => `
-                            <img src="${img.base64}" onclick="openLightbox(this.src, '${escapeHtml(img.name)}')" class="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl border border-white/20 shadow-md cursor-zoom-in hover:opacity-90 transition">
+                            <div class="img-thumb-wrapper" data-src="${img.base64}" data-caption="${escapeHtml(img.name)}" style="margin:0;">
+                                <img src="${img.base64}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover">
+                                <div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[8px]"></i></div>
+                            </div>
                         `).join('')}
                     </div>
                 `;
