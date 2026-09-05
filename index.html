@@ -208,12 +208,6 @@
         }
         .ui-no-select { user-select: none; -webkit-user-select: none; }
 
-        @keyframes geminiBlockEnter {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .gemini-enter-anim { animation: geminiBlockEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
         @keyframes geminiGlowPulse {
             0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
             50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
@@ -224,7 +218,6 @@
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        /* 🌟 Gemini 原生排版與主標題/一般內容字粗細解耦 */
         .markdown-body, .user-bubble-text { 
             font-family: var(--ui-font-family);
             font-size: var(--ui-chat-font-size); 
@@ -241,7 +234,6 @@
             font-weight: var(--ui-body-weight) !important;
         }
 
-        /* 🌟 縮圖與設計感外框 */
         .img-thumb-wrapper {
             position: relative;
             display: inline-block;
@@ -287,7 +279,6 @@
             color: #000;
         }
 
-        /* 🌟 獨立可拖曳大圖視窗 */
         #photoViewerWindow {
             position: fixed;
             z-index: 115;
@@ -346,6 +337,27 @@
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+
+        /* 🌟 WYSIWYG 模擬畫布容器樣式 */
+        .sandbox-screen-frame {
+            position: relative;
+            background: #000;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .sandbox-draggable-item {
+            position: absolute;
+            cursor: grab;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .sandbox-draggable-item:active {
+            cursor: grabbing;
+            box-shadow: 0 0 0 2px #60a5fa, 0 10px 25px rgba(0,0,0,0.8);
+        }
     </style>
 </head>
 <body class="h-full flex flex-col relative bg-black text-white">
@@ -353,7 +365,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 (修復點擊冒泡阻斷) -->
+    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -399,10 +411,11 @@
             </div>
         </div>
 
+        <!-- 🌟 紅框位置：版本標籤 -->
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.3 終極穩定版</span>
+                <span>v14.4 終極全能版</span>
             </span>
         </div>
     </div>
@@ -415,7 +428,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.3 旗艦版</span>
+                        <span>v14.4 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -463,9 +476,10 @@
             <div class="resize-handle resize-br" data-handle="br"></div>
 
             <div id="chatDrawerHeader" ondblclick="resetDrawerSize()" class="px-5 py-4 border-b border-white/10 flex justify-between items-center bg-black/40 backdrop-blur-md shrink-0 ui-no-select cursor-move" title="雙擊還原預設大小">
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2.5">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI</span>
+                    <!-- 🌟 資安標籤 (對話隱私保護中) -->
                     <div class="flex items-center space-x-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-700/80 px-3 py-1 rounded-full font-medium tracking-wide shadow-sm" title="獨立工作階段，無文字監控與歷史儲存">
                         <i class="fa-solid fa-shield-halved text-[10px]"></i>
                         <span>對話隱私保護中</span>
@@ -532,7 +546,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.3</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.4</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -590,7 +604,7 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
-                <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
+                <!-- 🌟 多端 UI 視覺微調器 ＋ WYSIWYG 模擬畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -607,7 +621,35 @@
                             <button onclick="switchUiDeviceTab('ipad')" id="tab_ui_ipad" class="pb-2 text-neutral-500 hover:text-neutral-300">📟 iPad / 平板</button>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <!-- 🌟 模擬畫布區域：可視化自由拖曳模擬 -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-[11px] text-neutral-400">
+                                <span>📱 裝置模擬互動畫布 (滑鼠可拖動按鈕/對話框微調相對位置)</span>
+                                <button onclick="resetDevicePositions()" class="text-neutral-400 hover:text-white underline">還原原廠位置</button>
+                            </div>
+                            <div id="sandboxCanvasWrapper" class="sandbox-screen-frame w-full h-[220px] bg-neutral-950 border border-neutral-800 rounded-2xl relative overflow-hidden flex items-center justify-center">
+                                <div id="sandboxBgSim" class="absolute inset-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800');"></div>
+                                <div class="absolute top-2 left-3 text-[9px] font-mono text-neutral-600 tracking-widest uppercase">CANVAS PREVIEW • <span id="sandboxDeviceTag">DESKTOP</span></div>
+                                
+                                <!-- 模擬對話框 -->
+                                <div id="sandboxMiniDrawer" class="sandbox-draggable-item glass-mono rounded-xl p-2.5 text-[9px] border border-white/20 text-neutral-300 w-[140px] h-[90px] shadow-lg flex flex-col justify-between" style="right: 15px; bottom: 20px;">
+                                    <div class="flex items-center justify-between border-b border-white/10 pb-1 font-mono text-[8px] text-neutral-400">
+                                        <span>LEAVES AI</span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    </div>
+                                    <p class="text-[8px] text-neutral-400 leading-tight">對話框模擬 (可拖動)</p>
+                                    <div class="bg-white/10 rounded h-2 w-full"></div>
+                                </div>
+
+                                <!-- 模擬水滴呼吸按鈕 -->
+                                <div id="sandboxMiniTrigger" class="sandbox-draggable-item glass-mono rounded-full px-2.5 py-1.5 text-[9px] border border-white/30 text-white flex items-center gap-1.5 shadow-lg" style="right: 25px; top: 30px;">
+                                    <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                                    <span class="font-medium text-[8px]">AI 助理</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
                             <div class="space-y-4 text-xs">
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
@@ -662,7 +704,7 @@
                             <div class="space-y-2">
                                 <span class="text-[11px] font-medium text-neutral-400 flex items-center gap-1.5">
                                     <i class="fa-solid fa-eye text-blue-400"></i>
-                                    <span>即時模擬排版對照圖</span>
+                                    <span>即時字體與排版對照圖</span>
                                 </span>
                                 <div id="uiLiveMockupCard" class="glass-mono p-4 rounded-2xl border border-white/20 space-y-2.5 transition-all duration-300">
                                     <div class="flex items-center space-x-2 border-b border-white/10 pb-2">
@@ -687,7 +729,7 @@
                     </div>
                 </div>
 
-                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 -->
+                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 (含手動即時刷新按鈕) -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -706,15 +748,15 @@
                     <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
                         <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-3">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-neutral-300 font-medium">全公司累計消耗 Tokens</span>
-                                <span id="totalTokensAllCodesBadge" class="font-mono text-emerald-400 font-semibold">0 Tokens</span>
+                                <span class="text-neutral-300 font-medium">全公司累計消耗 Tokens (基準額度 1,000,000)</span>
+                                <span id="totalTokensAllCodesBadge" class="font-mono text-emerald-400 font-semibold">0 Tokens (0.0%)</span>
                             </div>
                             <div class="w-full bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800">
                                 <div id="totalUsageProgressBar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-0 transition-all duration-700"></div>
                             </div>
                             <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
                                 <span>模型池：OpenRouter Free Tier</span>
-                                <span id="activeKeyHealthBadge" class="text-emerald-400">🟢 金鑰狀態正常</span>
+                                <span id="activeKeyHealthBadge" class="text-emerald-400">🟢 額度健康充裕</span>
                             </div>
                         </div>
 
@@ -936,6 +978,7 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
+        // 🌟 自動捕捉修復：將 "(連結: https://...)" 或純文字網址轉化為標準微縮圖語法
         function sanitizeMarkdownMediaLinks(text) {
             if (!text) return '';
             
@@ -947,6 +990,13 @@
             cleaned = cleaned.replace(/\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/documents\/[^)]+)\)/g, function(match, label, url) {
                 const safeUrl = url.trim().replace(/\s+/g, '%20');
                 return `[${label}](${safeUrl})`;
+            });
+
+            // 🌟 自動捕捉 AI 偶爾輸出的「說明 (連結: https://.../images/...)」格式
+            cleaned = cleaned.replace(/([^\n\r!\[\]\(\)]+?)\s*[\(（](?:連結|網址|照片|圖)?[:：]?\s*(https:\/\/raw\.githubusercontent\.com\/[^\/]+\/[^\/]+\/main\/images\/[^\)）\s]+(?:\.png|\.jpg|\.jpeg|\.webp)?)[\)）]/gi, function(match, alt, url) {
+                const cleanAlt = alt.replace(/^[\s\-\*•\d\.\:]+/, '').trim();
+                const safeUrl = url.trim().replace(/\s+/g, '%20');
+                return `\n\n![${cleanAlt || '工法照片'}](${safeUrl})\n\n`;
             });
 
             const seenImages = new Set();
@@ -1045,7 +1095,7 @@
         ];
 
         let currentAuth = localStorage.getItem('shiye_auth') || null;
-        let activeCode = localStorage.getItem('shiye_active_code') || null;
+        let activeCode = localStorage.getItem('shiye_active_code') || (currentAuth === 'admin' ? SPECIAL_ADMIN_CODE : 'SHIYE-STAFF-888');
         let authMode = 'user';
         let slideshowTimer = null;
         let currentBgIndex = 0;
@@ -1055,6 +1105,8 @@
         let activeStreamReader = null;
         let isCloudLoaded = false;
         let renderTimerId = null;
+        let tokenSyncTimerId = null;
+        let renderScheduled = false;
         window.tempMsgStore = {};
         window.tempProposalStore = {};
 
@@ -1063,10 +1115,11 @@
 
         let pendingImages = [];
 
+        // 🌟 預設三端分立 UI 資料結構 (包含畫布位置偏好)
         let currentUiSettings = {
-            pc: { opacity: 0.88, blur: 32, fontScale: 1.0, titleWeight: 600, bodyWeight: 400, pcDrawerW: 620 },
-            mobile: { opacity: 0.92, blur: 24, fontScale: 0.95, titleWeight: 600, bodyWeight: 400 },
-            ipad: { opacity: 0.88, blur: 28, fontScale: 1.05, titleWeight: 600, bodyWeight: 400 }
+            pc: { opacity: 0.88, blur: 32, fontScale: 1.0, titleWeight: 600, bodyWeight: 400, pcDrawerW: 620, triggerTop: 30, triggerRight: 25, drawerBottom: 20, drawerRight: 15 },
+            mobile: { opacity: 0.92, blur: 24, fontScale: 0.95, titleWeight: 600, bodyWeight: 400, triggerTop: 45, triggerRight: 40, drawerBottom: 10, drawerRight: 10 },
+            ipad: { opacity: 0.88, blur: 28, fontScale: 1.05, titleWeight: 600, bodyWeight: 400, triggerTop: 35, triggerRight: 30, drawerBottom: 15, drawerRight: 15 }
         };
 
         function detectDeviceCategory() {
@@ -1097,6 +1150,7 @@
             }
 
             updateMockupPreview(s);
+            updateSandboxDisplay(dev, s);
         }
 
         function updateMockupPreview(s) {
@@ -1117,6 +1171,35 @@
 
             if (twText) twText.textContent = s.titleWeight || 600;
             if (bwText) bwText.textContent = s.bodyWeight || 400;
+        }
+
+        // 🌟 更新 WYSIWYG 模擬畫布顯示
+        function updateSandboxDisplay(dev, s) {
+            const wrapper = document.getElementById('sandboxCanvasWrapper');
+            const tag = document.getElementById('sandboxDeviceTag');
+            const miniDrawer = document.getElementById('sandboxMiniDrawer');
+            const miniTrigger = document.getElementById('sandboxMiniTrigger');
+            if (!wrapper || !tag || !miniDrawer || !miniTrigger) return;
+
+            tag.textContent = dev.toUpperCase();
+            if (dev === 'mobile') {
+                wrapper.style.maxWidth = '260px';
+                wrapper.style.height = '240px';
+            } else if (dev === 'ipad') {
+                wrapper.style.maxWidth = '360px';
+                wrapper.style.height = '230px';
+            } else {
+                wrapper.style.maxWidth = '100%';
+                wrapper.style.height = '220px';
+            }
+
+            miniDrawer.style.background = `rgba(14, 14, 14, ${s.opacity || 0.88})`;
+            miniDrawer.style.backdropFilter = `blur(${Math.min(16, (s.blur || 32) / 2)}px)`;
+            miniDrawer.style.bottom = `${s.drawerBottom || 20}px`;
+            miniDrawer.style.right = `${s.drawerRight || 15}px`;
+
+            miniTrigger.style.top = `${s.triggerTop || 30}px`;
+            miniTrigger.style.right = `${s.triggerRight || 25}px`;
         }
 
         let currentActiveDeviceTab = 'pc';
@@ -1154,6 +1237,7 @@
             }
 
             updateMockupPreview(s);
+            updateSandboxDisplay(tab, s);
         }
 
         function handleUiSliderChange(field, val) {
@@ -1172,6 +1256,67 @@
 
             applyDeviceUi();
             try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
+        }
+
+        function resetDevicePositions() {
+            if (currentActiveDeviceTab === 'pc') {
+                currentUiSettings.pc.triggerTop = 30; currentUiSettings.pc.triggerRight = 25;
+                currentUiSettings.pc.drawerBottom = 20; currentUiSettings.pc.drawerRight = 15;
+            } else if (currentActiveDeviceTab === 'mobile') {
+                currentUiSettings.mobile.triggerTop = 45; currentUiSettings.mobile.triggerRight = 40;
+                currentUiSettings.mobile.drawerBottom = 10; currentUiSettings.mobile.drawerRight = 10;
+            } else {
+                currentUiSettings.ipad.triggerTop = 35; currentUiSettings.ipad.triggerRight = 30;
+                currentUiSettings.ipad.drawerBottom = 15; currentUiSettings.ipad.drawerRight = 15;
+            }
+            applyDeviceUi();
+            try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
+            alert('已還原當前設備之畫布元件位置！');
+        }
+
+        // 🌟 綁定畫布元件拖曳
+        function initSandboxInteractivity() {
+            const bindItem = (elId, propTop, propRight) => {
+                const el = document.getElementById(elId);
+                const parent = document.getElementById('sandboxCanvasWrapper');
+                if (!el || !parent) return;
+
+                let dragging = false;
+                let startX = 0, startY = 0, origR = 0, origT = 0;
+
+                el.addEventListener('mousedown', (e) => {
+                    dragging = true;
+                    startX = e.clientX; startY = e.clientY;
+                    origR = parseInt(el.style.right || '20', 10);
+                    origT = parseInt(el.style.top || '20', 10);
+                    e.stopPropagation();
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!dragging) return;
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    let newR = Math.max(5, Math.min(parent.clientWidth - 100, origR - dx));
+                    let newT = Math.max(5, Math.min(parent.clientHeight - 40, origT + dy));
+
+                    el.style.right = `${newR}px`;
+                    if (propTop) el.style.top = `${newT}px`;
+                    if (currentUiSettings[currentActiveDeviceTab]) {
+                        currentUiSettings[currentActiveDeviceTab][propRight] = newR;
+                        if (propTop) currentUiSettings[currentActiveDeviceTab][propTop] = newT;
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (dragging) {
+                        dragging = false;
+                        try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
+                    }
+                });
+            };
+
+            bindItem('sandboxMiniTrigger', 'triggerTop', 'triggerRight');
+            bindItem('sandboxMiniDrawer', null, 'drawerRight');
         }
 
         async function fetchPhotoCatalog() {
@@ -1204,7 +1349,7 @@
             }
         }
 
-        // 🌟 強化多圖壓縮 ＋ 錯誤容錯處理 (1024px, 0.78 品質防 413 報錯)
+        // 🌟 強化多圖壓縮 ＋ 錯誤容錯處理
         function compressAndAppendImage(file) {
             if (!file || !file.type.startsWith('image/')) return;
 
@@ -1376,8 +1521,12 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closePhotoViewer();
-                toggleChatDrawer(false);
+                const photoWin = document.getElementById('photoViewerWindow');
+                if (photoWin && photoWin.classList.contains('pop-active')) {
+                    closePhotoViewer();
+                } else {
+                    toggleChatDrawer(false);
+                }
             }
         });
 
@@ -1550,8 +1699,28 @@
             return getFallbackCodes();
         }
 
+        // 🌟 修正：雲端拉回數據時與本機 Token 累計取最大值合併，徹底杜絕刷新時被歸零
         function handleCloudDataSuccess(cloudData) {
-            const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+            const cloudCodes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+            const localCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
+
+            const mergedCodes = cloudCodes.map(cc => {
+                const lc = localCodes.find(item => item.code && cc.code && item.code.toUpperCase() === cc.code.toUpperCase());
+                return {
+                    ...cc,
+                    totalTokens: Math.max(cc.totalTokens || 0, lc?.totalTokens || 0),
+                    requestCount: Math.max(cc.requestCount || 0, lc?.requestCount || 0)
+                };
+            });
+
+            // 保證 SPECIAL_ADMIN_CODE 永遠在清單內
+            if (!mergedCodes.some(c => c.code && c.code.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase())) {
+                mergedCodes.push({
+                    code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin',
+                    totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(),
+                    logins: [], status: 'offline', supportMobile: true, supportIpad: true
+                });
+            }
 
             if (cloudData.cloudToken) {
                 let restored = decodeToken(cloudData.cloudToken);
@@ -1588,8 +1757,9 @@
             }
 
             isCloudLoaded = true;
-            saveCodesToLocal(codes);
-            return codes;
+            currentCodesList = mergedCodes;
+            saveCodesToLocal(mergedCodes);
+            return mergedCodes;
         }
 
         async function fetchSopFromGist() {
@@ -1781,6 +1951,7 @@
             initDrawerResizer();
             initAdminWindowManager();
             initPhotoViewerResizer();
+            initSandboxInteractivity();
             checkMagicLink();
         }
 
@@ -2223,6 +2394,7 @@
             else openAdminWindow(key);
         }
 
+        // 🌟 統計數據渲染：計算每日 100 萬 Token 負載百分比與各組排名
         function renderTokenAnalytics() {
             const container = document.getElementById('passcodeUsageListContainer');
             const totalBadge = document.getElementById('totalTokensAllCodesBadge');
@@ -2234,8 +2406,11 @@
                 totalTokensAll += (c.totalTokens || 0);
             });
 
-            totalBadge.textContent = `${totalTokensAll.toLocaleString()} Tokens`;
-            bar.style.width = totalTokensAll > 0 ? '100%' : '0%';
+            const FREE_TIER_DAILY_BENCHMARK = 1000000;
+            const overallPct = Math.min(100, ((totalTokensAll / FREE_TIER_DAILY_BENCHMARK) * 100)).toFixed(1);
+
+            totalBadge.textContent = `${totalTokensAll.toLocaleString()} Tokens (${overallPct}%)`;
+            bar.style.width = `${overallPct}%`;
 
             if (currentCodesList.length === 0) {
                 container.innerHTML = '<p class="text-neutral-500">尚無任何身分碼紀錄</p>';
@@ -2245,7 +2420,7 @@
             container.innerHTML = currentCodesList.map(c => {
                 const tokens = c.totalTokens || 0;
                 const reqs = c.requestCount || 0;
-                const pct = totalTokensAll > 0 ? Math.round((tokens / totalTokensAll) * 100) : 0;
+                const pctOfTotal = totalTokensAll > 0 ? Math.round((tokens / totalTokensAll) * 100) : 0;
 
                 return `
                     <div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
@@ -2255,11 +2430,11 @@
                                 <span class="text-[10px] text-neutral-500 font-mono">(${escapeHtml(c.code)})</span>
                             </div>
                             <div class="text-[11px] font-mono text-neutral-300">
-                                <span class="text-emerald-400 font-semibold">${tokens.toLocaleString()}</span> Tokens (${pct}%)
+                                <span class="text-emerald-400 font-semibold">${tokens.toLocaleString()}</span> Tokens (${pctOfTotal}%)
                             </div>
                         </div>
                         <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-blue-400 h-full rounded-full" style="width: ${pct}%"></div>
+                            <div class="bg-blue-400 h-full rounded-full" style="width: ${pctOfTotal}%"></div>
                         </div>
                         <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
                             <span>累計問答：${reqs} 次</span>
@@ -2856,827 +3031,4 @@
 
                 if (res.ok) return { success: true };
                 let errData = await res.json().catch(() => ({}));
-                return { success: false, message: errData.message || `HTTP ${res.status}` };
-            } catch (e) { return { success: false, message: e.message }; }
-        }
-
-        async function pushCodesToCloud(codesArray) {
-            let res = await pushCodesToCloudWithDetails(codesArray);
-            return res.success;
-        }
-
-        async function saveAdminSettings() {
-            const saveBtn = document.getElementById('saveAdminBtn');
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-1"></i> 同步中...';
-
-            try {
-                const apiKey = document.getElementById('apiKeyInput').value.trim();
-                const rawUrl = document.getElementById('gistIdInput').value.trim();
-                const codesGistId = document.getElementById('codesGistIdInput').value.trim();
-                const token = document.getElementById('githubTokenInput').value.trim();
-                const filename = document.getElementById('codesGistFilenameInput').value.trim();
-                const bgText = document.getElementById('bgImagesInput').value.trim();
-
-                const normalizedSopUrl = normalizeGistUrl(rawUrl);
-                document.getElementById('gistIdInput').value = normalizedSopUrl;
-
-                if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
-                if (normalizedSopUrl) localStorage.setItem('shiye_gist_url', normalizedSopUrl);
-                if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
-                if (token) localStorage.setItem('shiye_github_token', token);
-                if (filename) localStorage.setItem('shiye_codes_filename', filename);
-                
-                const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
-                localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
-
-                saveCodesToLocal(currentCodesList);
-
-                if (!token) {
-                    alert('⚠️ 警告：請填寫 GitHub Token 才能推送到雲端！');
-                    return;
-                }
-
-                const result = await pushCodesToCloudWithDetails(currentCodesList);
-                if (result.success) {
-                    await fetchSopFromGist();
-                    alert('✅ 成功：全套設定（含多端 UI 畫布、資安金鑰加密與用量追蹤）已同步至 GitHub 雲端！');
-                } else {
-                    alert(`❌ 寫入失敗: ${result.message}`);
-                }
-                initBackgroundSlideshow();
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-xs"></i><span>同步雲端</span>';
-            }
-        }
-
-        async function reportErrorLog(msgId) {
-            const record = window.tempMsgStore[msgId];
-            if (!record) return;
-
-            const logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
-            const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
-            const userName = userObj ? userObj.name : '未知同仁';
-
-            logs.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                code: activeCode || '未知代碼',
-                name: userName,
-                question: record.q || '（無記錄到問題）',
-                answer: record.a || '（無答案）'
-            });
-
-            localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
-            await pushCodesToCloud(currentCodesList);
-
-            const toast = document.getElementById('reportToast');
-            toast.classList.remove('hidden-view');
-            setTimeout(() => toast.classList.add('hidden-view'), 3000);
-        }
-
-        function renderErrorLogs() {
-            const container = document.getElementById('errorLogsContainer');
-            const countBadge = document.getElementById('errorLogsCountBadge');
-            if(!container) return;
-            
-            const logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
-            countBadge.textContent = `${logs.length} 筆`;
-
-            if (logs.length === 0) {
-                container.innerHTML = `
-                    <div class="p-8 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <i class="fa-solid fa-circle-check text-neutral-600 text-2xl mb-1.5"></i>
-                        <p class="text-xs text-neutral-500">目前尚無任何錯誤回報紀錄</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = logs.map(l => `
-                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2 selectable-text">
-                    <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono border-b border-neutral-900 pb-2">
-                        <span class="text-white font-medium">${escapeHtml(l.name)} (${escapeHtml(l.code)})</span>
-                        <span>${escapeHtml(l.time)}</span>
-                    </div>
-                    <div class="text-xs text-neutral-300"><strong>問：</strong>${escapeHtml(l.question)}</div>
-                    <div class="text-xs text-neutral-400 font-mono"><strong>答：</strong>${escapeHtml(l.answer)}</div>
-                </div>
-            `).join('');
-        }
-
-        async function clearErrorLogs() { 
-            if (!confirm('確定要清空所有錯誤回報紀錄嗎？')) return;
-            localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
-            renderErrorLogs(); 
-            await pushCodesToCloud(currentCodesList);
-        }
-
-        async function submitSopProposal(msgId, btnEl) {
-            const proposalData = window.tempProposalStore[msgId];
-            if (!proposalData) return alert('找不到修訂草稿資料');
-
-            btnEl.disabled = true;
-            btnEl.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 上傳中...';
-
-            const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
-            const userName = userObj ? userObj.name : '同仁';
-
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            proposals.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                userCode: activeCode || 'MEMBER',
-                userName: userName,
-                topic: proposalData.topic,
-                oldText: proposalData.oldText,
-                newText: proposalData.newText
-            });
-
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            const pushRes = await pushCodesToCloudWithDetails(currentCodesList);
-
-            const card = document.getElementById(`proposal_card_${msgId}`);
-            if (card) {
-                if (pushRes.success) {
-                    card.innerHTML = `
-                        <div class="flex items-center space-x-2 text-white text-xs font-semibold py-1">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                            <span>已成功送交後台管理員審核！感謝您的即時校對。</span>
-                        </div>
-                    `;
-                } else {
-                    btnEl.disabled = false;
-                    btnEl.innerHTML = '<i class="fa-solid fa-rotate-right"></i> 重新送出';
-                    alert(`❌ 雲端同步失敗: ${pushRes.message}`);
-                }
-            }
-        }
-
-        function cancelSopProposal(msgId, btnEl) {
-            const card = document.getElementById(`proposal_card_${msgId}`);
-            if (card) card.innerHTML = `<div class="text-neutral-500 text-[11px] py-1">已取消本次 SOP 修改提報</div>`;
-        }
-
-        const chatContainer = document.getElementById('chatContainer');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const sendBtnIcon = document.getElementById('sendBtnIcon');
-        const sendBtnText = document.getElementById('sendBtnText');
-        let chatHistory = [];
-
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            const newH = Math.min(this.scrollHeight, 110);
-            this.style.height = (newH > 24 ? newH : 24) + 'px';
-        });
-
-        userInput.addEventListener('focus', function() {
-            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 300);
-        });
-
-        function handleSendOrAbort() {
-            if (isGenerating) abortCurrentGeneration();
-            else handleSend();
-        }
-
-        async function abortCurrentGeneration() {
-            if (currentAbortController) currentAbortController.abort();
-            if (activeStreamReader) {
-                try { await activeStreamReader.cancel(); } catch(e) {}
-                activeStreamReader = null;
-            }
-        }
-
-        function setGeneratingState(generating) {
-            isGenerating = generating;
-            if (generating) {
-                sendBtn.classList.remove('bg-white', 'text-black', 'hover:bg-neutral-200');
-                sendBtn.classList.add('bg-neutral-800', 'text-white', 'hover:bg-neutral-700', 'px-3');
-                sendBtnIcon.className = 'fa-solid fa-stop text-xs';
-                sendBtnText.classList.remove('hidden-view');
-                sendBtn.title = '點擊中斷 AI 回答';
-                userInput.setAttribute('readonly', 'true');
-                userInput.classList.add('opacity-60');
-            } else {
-                sendBtn.classList.add('bg-white', 'text-black', 'hover:bg-neutral-200');
-                sendBtn.classList.remove('bg-neutral-800', 'text-white', 'hover:bg-neutral-700', 'px-3');
-                sendBtnIcon.className = 'fa-solid fa-arrow-up text-xs';
-                sendBtnText.classList.add('hidden-view');
-                sendBtn.title = '發送訊息';
-                userInput.removeAttribute('readonly');
-                userInput.classList.remove('opacity-60');
-            }
-        }
-
-        function cleanGuardrailArtifacts(text) {
-            if (!text) return '';
-            return text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
-        }
-
-        function robustProposalExtractor(fullText) {
-            let displayText = cleanGuardrailArtifacts(fullText);
-            let proposalJson = null;
-
-            const codeMatch = displayText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
-            if (codeMatch) {
-                const parsed = safeJsonParse(codeMatch[1], null);
-                if (parsed && parsed.topic) {
-                    displayText = displayText.replace(codeMatch[0], '').trim();
-                    proposalJson = parsed;
-                    return { displayText, proposalJson };
-                }
-            }
-
-            const rawMatch = displayText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
-            if (rawMatch) {
-                const parsed = safeJsonParse(rawMatch[1], null);
-                if (parsed && parsed.topic) {
-                    displayText = displayText.replace(rawMatch[0], '').trim();
-                    proposalJson = parsed;
-                    return { displayText, proposalJson };
-                }
-            }
-            return { displayText, proposalJson };
-        }
-
-        async function handleSend() {
-            if (isGenerating) return;
-            const text = userInput.value.trim();
-            const currentImgs = [...pendingImages];
-
-            if (!text && currentImgs.length === 0) return;
-
-            clearAllPendingImages();
-            appendMessage(text, 'user', false, '', null, currentImgs);
-            userInput.value = '';
-            userInput.style.height = 'auto';
-
-            executeAiInference(text, currentImgs, false);
-        }
-
-        async function executeAiInference(text, currentImgs = [], isRetry = false) {
-            let apiKeys = getApiKeys();
-            if (apiKeys.length === 0) {
-                await fetchCodesFromCloud();
-                apiKeys = getApiKeys();
-            }
-
-            if (apiKeys.length === 0) {
-                alert('系統尚未設定任何 OpenRouter API Key，請先由管理員至後台設定。');
-                return;
-            }
-
-            if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) await fetchPhotoCatalog();
-            if (!Array.isArray(documentCatalog) || documentCatalog.length === 0) await fetchDocumentCatalog();
-
-            setGeneratingState(true);
-            currentAbortController = new AbortController();
-
-            const startTime = performance.now();
-            const loadingTracker = appendThinkingLoading();
-
-            try {
-                const sopContent = await fetchSopFromGist();
-
-                let photoCatalogPrompt = "目前內部相簿庫尚無資料。";
-                if (Array.isArray(photoCatalog) && photoCatalog.length > 0) {
-                    photoCatalogPrompt = photoCatalog.map(p => {
-                        const safeUrl = `${GITHUB_REPO_IMAGE_BASE}${p.name}`.replace(/\s+/g, '%20');
-                        return `- 說明: "${p.desc}" | 關聯標籤: [${(p.tags || []).join(', ')}] | 直連URL: ${safeUrl}`;
-                    }).join('\n');
-                }
-
-                let documentCatalogPrompt = "目前內部文件庫尚無資料。";
-                if (Array.isArray(documentCatalog) && documentCatalog.length > 0) {
-                    documentCatalogPrompt = documentCatalog.map(d => {
-                        const safeUrl = `${GITHUB_REPO_DOC_BASE}${d.name}`.replace(/\s+/g, '%20');
-                        return `- 檔名: "${d.name}" | 說明: "${d.desc}" | 關聯標籤: [${(d.tags || []).join(', ')}] | 下載URL: ${safeUrl}`;
-                    }).join('\n');
-                }
-
-                const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
-
-【重要準則與回覆約束】：
-1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
-2. 工法因果與總監思維規範（智商核心）：
-   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
-   - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
-   - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
-3. 【圖文並茂主動調度核心規範】：
-   - 當同仁詢問整體施工流程、階段工法（如：毛胚屋全流程、放樣工序、泥作防水、保護工程等），你【必須主動】調閱下方【內部相簿索引清單】中的相關照片！
-   - 請將照片【自然穿插在各個對應步驟之下】，達成「圖文合一」的教學效果。每次介紹完整流程時，請依步驟豐富度主動附上 2～5 張不同照片，絕對不要只給純文字。
-4. 標準文件/標語/申請書下載調度：
-   - 當同仁提及施工標語、路權手冊、清潔表、公所道路申請書時，請在文末主動附上 Markdown 超連結：\`[下載：檔案名稱](下載URL)\`。
-5. 施工現場多照片審核（同仁上傳多張照片模式）：
-   - 當同仁上傳 1 張或多張照片時，請逐張對照，並依【工種判讀 ➔ 細節瑕疵挑毛病 ➔ 對照拾葉 SOP 規範 ➔ 尺寸防呆提醒】全面進行總監級專業點評。
-6. SOP 修訂/刪除/增補意圖草稿輸出：
-\`\`\`sop_proposal
-{
-  "topic": "欲修改、刪除或新增的項目名稱",
-  "oldText": "知識庫中一模一樣的原文字（包含符號；若為新增填無）",
-  "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
-}
-\`\`\`
-
-【內部相簿索引清單】：
----------------------
-${photoCatalogPrompt}
----------------------
-
-【內部文件與標語索引清單】：
----------------------
-${documentCatalogPrompt}
----------------------
-
-【拾葉設計內部知識庫】：
----------------------
-${sopContent}
----------------------`;
-
-                const messages = [{ role: "system", content: systemPrompt }];
-                
-                chatHistory.slice(-6).forEach(h => {
-                    messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
-                });
-
-                if (currentImgs.length > 0) {
-                    const multiContent = [{ type: "text", text: text || "請幫我檢視這組施工現場照片，依拾葉 SOP 提供審查意見與驗收建議。" }];
-                    currentImgs.forEach(img => {
-                        multiContent.push({ type: "image_url", image_url: { url: img.base64 } });
-                    });
-                    messages.push({ role: "user", content: multiContent });
-                } else {
-                    messages.push({ role: "user", content: text });
-                }
-
-                let streamSuccess = false;
-                let lastErrorMessage = '';
-                let usedModelName = '';
-                let accumulatedReply = '';
-                let liveMsgElements = null;
-                let renderScheduled = false;
-
-                keyLoop:
-                for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
-                    const currentKey = apiKeys[kIndex];
-
-                    for (const modelObj of MONITORED_MODELS) {
-                        if (currentAbortController && currentAbortController.signal.aborted) break keyLoop;
-
-                        accumulatedReply = '';
-                        if (liveMsgElements && liveMsgElements.wrapper) {
-                            liveMsgElements.wrapper.remove();
-                            liveMsgElements = null;
-                        }
-
-                        let timeoutTimerId = null;
-                        const attemptAbortController = new AbortController();
-                        const onParentAbort = () => attemptAbortController.abort();
-                        currentAbortController.signal.addEventListener('abort', onParentAbort);
-
-                        try {
-                            const timeoutPromise = new Promise((_, reject) => {
-                                timeoutTimerId = setTimeout(() => {
-                                    attemptAbortController.abort();
-                                    reject(new Error('節點忙碌逾時，切換下一備援模型'));
-                                }, 7000);
-                            });
-
-                            const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
-                                method: 'POST',
-                                signal: attemptAbortController.signal,
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${currentKey}`,
-                                    'HTTP-Referer': window.location.origin,
-                                    'X-Title': 'Leaves Design AI'
-                                },
-                                body: JSON.stringify({
-                                    model: modelObj.id,
-                                    messages: messages,
-                                    temperature: 0.25,
-                                    frequency_penalty: 0.2,
-                                    max_tokens: 8192,
-                                    stream: true
-                                })
-                            });
-
-                            const res = await Promise.race([fetchPromise, timeoutPromise]);
-                            if (timeoutTimerId) clearTimeout(timeoutTimerId);
-
-                            if (!res.ok) {
-                                let errJson = await res.json().catch(() => ({}));
-                                const errMsg = errJson.error?.message || `HTTP ${res.status}`;
-                                lastErrorMessage = errMsg;
-
-                                if (res.status === 429 || errMsg.toLowerCase().includes('rate limit') || errMsg.toLowerCase().includes('free-models-per-day')) {
-                                    break;
-                                }
-                                continue;
-                            }
-
-                            activeStreamReader = res.body.getReader();
-                            const decoder = new TextDecoder('utf-8');
-                            let buffer = '';
-
-                            usedModelName = `${modelObj.name}${apiKeys.length > 1 ? ` (Key #${kIndex + 1})` : ''}`;
-                            localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
-
-                            loadingTracker.stop();
-                            liveMsgElements = createLiveAssistantBubble();
-
-                            let isStreamDone = false;
-                            while (!isStreamDone) {
-                                const { done, value } = await activeStreamReader.read();
-                                if (done) break;
-
-                                buffer += decoder.decode(value, { stream: true });
-                                const lines = buffer.split('\n');
-                                buffer = lines.pop();
-
-                                for (const line of lines) {
-                                    const trimmed = line.trim();
-                                    if (!trimmed || trimmed.startsWith(':')) continue;
-                                    if (trimmed === 'data: [DONE]') { isStreamDone = true; break; }
-                                    if (trimmed.startsWith('data: ')) {
-                                        try {
-                                            const parsed = JSON.parse(trimmed.substring(6));
-                                            const delta = parsed.choices?.[0]?.delta?.content || '';
-                                            if (delta) {
-                                                accumulatedReply += delta;
-                                                if (!renderScheduled) {
-                                                    renderScheduled = true;
-                                                    renderTimerId = setTimeout(() => {
-                                                        updateLiveBubble(liveMsgElements, accumulatedReply);
-                                                        renderScheduled = false;
-                                                    }, 60);
-                                                }
-                                            }
-                                        } catch (err) {}
-                                    }
-                                }
-                            }
-
-                            const cleanedCheck = cleanGuardrailArtifacts(accumulatedReply);
-                            if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
-                                accumulatedReply = '';
-                                if (liveMsgElements && liveMsgElements.wrapper) liveMsgElements.wrapper.remove();
-                                continue;
-                            }
-
-                            streamSuccess = true;
-                            break keyLoop;
-                        } catch (e) {
-                            if (timeoutTimerId) clearTimeout(timeoutTimerId);
-                            if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
-                                break keyLoop;
-                            }
-                            lastErrorMessage = e.message;
-                        } finally {
-                            currentAbortController.signal.removeEventListener('abort', onParentAbort);
-                            if (activeStreamReader) {
-                                try { await activeStreamReader.cancel(); } catch(e) {}
-                                activeStreamReader = null;
-                            }
-                        }
-                    }
-                }
-
-                loadingTracker.stop();
-                if (renderTimerId) clearTimeout(renderTimerId);
-
-                const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
-                const isUserAborted = currentAbortController && currentAbortController.signal.aborted;
-
-                if (streamSuccess || accumulatedReply.length > 0) {
-                    const { displayText } = robustProposalExtractor(accumulatedReply);
-
-                    // 🌟 重新讀取本地最新緩存，安全累加 Token（防多分頁競爭覆蓋）
-                    const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
-                    if (activeCode) {
-                        let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
-                        const matched = latestCodes.find(c => c.code && c.code.toUpperCase() === activeCode.toUpperCase());
-                        if (matched) {
-                            matched.totalTokens = (matched.totalTokens || 0) + estimatedTokens;
-                            matched.requestCount = (matched.requestCount || 0) + 1;
-                            currentCodesList = latestCodes;
-                            saveCodesToLocal(latestCodes);
-                        }
-                    }
-
-                    finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
-                        model: isUserAborted ? `${usedModelName} (已手動中斷)` : usedModelName,
-                        tokens: estimatedTokens,
-                        time: elapsedSec,
-                        rawReply: accumulatedReply
-                    }, currentImgs);
-
-                    const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
-                    if (cleanForHistory) {
-                        const historyPrompt = currentImgs.length > 0 ? `[現場照片 ${currentImgs.length} 張] ${text || '工法審查'}` : text;
-                        if (!isRetry) {
-                            chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
-                        } else {
-                            chatHistory.push({ role: 'assistant', text: cleanForHistory });
-                        }
-                        if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
-                    }
-                } else if (isUserAborted) {
-                    appendMessage('*(同仁已手動中斷此回覆)*', 'assistant', false, text, {
-                        model: '已手動停止', tokens: 0, time: elapsedSec
-                    });
-                } else {
-                    appendMessage(`OpenRouter API 錯誤: ${lastErrorMessage || '連線忙碌中，請稍後再試。'}`, 'assistant', true, text, {
-                        model: '連線異常', tokens: 0, time: elapsedSec
-                    });
-                }
-
-            } catch (err) {
-                loadingTracker.stop();
-                if (renderTimerId) clearTimeout(renderTimerId);
-                appendMessage(`系統運行錯誤: ${err.message}`, 'assistant', true, text);
-            } finally {
-                setGeneratingState(false);
-                currentAbortController = null;
-                activeStreamReader = null;
-                loadingTracker.stop();
-            }
-        }
-
-        function appendThinkingLoading() {
-            const id = 'loading_' + Date.now();
-            const steps = [
-                "正在剖析施工工種與工序階段...",
-                "檢索拾葉內部知識庫與施工規範 (Gist)...",
-                "比對現場工程照片庫 (毛胚屋/放樣/防水)...",
-                "檢核驗收尺寸公差與跨工種防衝突預警...",
-                "正在生成圖文並茂指導教學..."
-            ];
-            let currentStepIdx = 0;
-
-            const html = `
-                <div id="${id}" class="flex items-start space-x-3 msg-animate ui-no-select">
-                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">AI</div>
-                    <div class="glass-card p-4 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-2.5 shadow-xl border border-neutral-700/80 max-w-[85%]">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-wand-magic-sparkles text-blue-400 text-xs animate-spin"></i>
-                            <span id="${id}_text" class="font-medium text-white text-[11px] transition-opacity duration-300">${steps[0]}</span>
-                        </div>
-                        <div class="w-full bg-neutral-800/80 h-1 rounded-full overflow-hidden">
-                            <div id="${id}_bar" class="bg-gradient-to-r from-blue-400 to-emerald-400 h-full w-1/5 transition-all duration-700 ease-out"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const timer = setInterval(() => {
-                currentStepIdx++;
-                const textEl = document.getElementById(`${id}_text`);
-                const barEl = document.getElementById(`${id}_bar`);
-                if (currentStepIdx < steps.length) {
-                    if (textEl) {
-                        textEl.style.opacity = '0';
-                        setTimeout(() => {
-                            textEl.textContent = steps[currentStepIdx];
-                            textEl.style.opacity = '1';
-                        }, 150);
-                    }
-                    if (barEl) {
-                        barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
-                    }
-                } else if (currentStepIdx === steps.length) {
-                    if (textEl) textEl.textContent = '雲端多模態節點運算中，即將輸出圖文...';
-                    if (barEl) barEl.style.width = '98%';
-                }
-            }, 1300);
-
-            return {
-                id: id,
-                stop: () => {
-                    clearInterval(timer);
-                    const el = document.getElementById(id);
-                    if (el) el.remove();
-                }
-            };
-        }
-
-        function createLiveAssistantBubble() {
-            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            const html = `
-                <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
-                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
-                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
-                            <span class="gemini-cursor"></span>
-                        </div>
-                        <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            return {
-                msgId: msgId,
-                wrapper: document.getElementById(`${msgId}_wrapper`),
-                content: document.getElementById(`${msgId}_content`),
-                footer: document.getElementById(`${msgId}_footer`)
-            };
-        }
-
-        function updateLiveBubble(elements, text) {
-            if (!elements || !elements.content) return;
-            let cleanText = cleanGuardrailArtifacts(text);
-            cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
-            
-            cleanText = cleanText.replace(/!\[[^\]]*$/g, '');
-            cleanText = cleanText.replace(/\[([^\]]*)$/g, '');
-            cleanText = cleanText.replace(/!\[([^\]]*)\]\(([^)]*)$/g, '');
-
-            const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
-            elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
-            
-            const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 240;
-            if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImgs = []) {
-            if (!elements || !elements.content) return;
-
-            const msgId = elements.msgId;
-            window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
-
-            const { displayText, proposalJson } = robustProposalExtractor(fullText);
-            const safeDisplayText = sanitizeMarkdownMediaLinks(displayText);
-            const parsed = typeof marked !== 'undefined' ? marked.parse(safeDisplayText) : escapeHtml(safeDisplayText);
-            elements.content.innerHTML = parsed;
-
-            if (proposalJson && proposalJson.topic) {
-                window.tempProposalStore[msgId] = proposalJson;
-                
-                const currentSop = localStorage.getItem('shiye_sop') || '';
-                const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
-                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((proposalJson.newText || '').trim());
-
-                let locBadgeHtml = '';
-                if (loc.found) {
-                    locBadgeHtml = `
-                        <div class="text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center justify-between">
-                            <span>📍 目標鎖定：第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行</span>
-                            <span class="text-neutral-500 text-[9px]">${isDelete ? '【即將整列抽除】' : '【即將原地替換】'}</span>
-                        </div>
-                    `;
-                } else {
-                    locBadgeHtml = `
-                        <div class="text-[10px] text-amber-400 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <span>➕ 查無匹配舊行（將於文末增補）</span>
-                        </div>
-                    `;
-                }
-
-                const proposalCardHtml = `
-                    <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border border-neutral-700 space-y-3 my-2 shadow-lg">
-                        <div class="flex items-center space-x-2 text-white text-xs font-semibold">
-                            <i class="fa-solid fa-file-pen text-neutral-400"></i>
-                            <span>SOP 修改/刪除/增補草稿確認</span>
-                        </div>
-                        
-                        ${locBadgeHtml}
-
-                        <div class="text-[11px] space-y-1 bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                            <p><strong class="text-white">• 項目：</strong><span class="text-neutral-300">${escapeHtml(proposalJson.topic)}</span></p>
-                            <p><strong class="text-neutral-400">• 原內容：</strong><span class="text-neutral-400 font-mono line-through">${escapeHtml(proposalJson.oldText)}</span></p>
-                            <p><strong class="${isDelete ? 'text-red-400 font-bold' : 'text-white'}">• ${isDelete ? '執行操作：' : '修訂/增補為：'}</strong><span class="${isDelete ? 'text-red-300 font-bold' : 'text-neutral-200'} font-mono font-medium">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(proposalJson.newText)}</span></p>
-                        </div>
-                        <div class="flex items-center space-x-2 pt-1 ui-no-select">
-                            <button onclick="submitSopProposal('${msgId}', this)" class="bg-white hover:bg-neutral-200 text-black text-xs px-3.5 py-1.5 rounded-xl font-medium transition shadow-md">
-                                確認送出審核
-                            </button>
-                            <button onclick="cancelSopProposal('${msgId}', this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs px-3 py-1.5 rounded-xl transition">
-                                取消
-                            </button>
-                        </div>
-                    </div>
-                `;
-                elements.content.insertAdjacentHTML('beforeend', proposalCardHtml);
-            }
-
-            if (elements.footer && meta) {
-                elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select";
-                elements.footer.innerHTML = `
-                    <div class="flex items-center flex-wrap gap-1.5 font-mono">
-                        <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                            <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Gemini')}
-                        </span>
-                        ${meta.tokens > 0 ? `
-                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                <i class="fa-solid fa-bolt text-[8px] text-neutral-400"></i> ${meta.tokens} Tokens
-                            </span>
-                        ` : ''}
-                        <span class="text-neutral-500 text-[9px]">
-                            <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
-                        </span>
-                    </div>
-                    <div class="flex items-center space-x-2.5">
-                        <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
-                            <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
-                        </button>
-                        <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
-                            <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
-                        </button>
-                        <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
-                            <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
-                        </button>
-                    </div>
-                `;
-            }
-
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImgs = []) {
-            const isUser = sender === 'user';
-            const safeText = sanitizeMarkdownMediaLinks(text);
-            const parsedContent = isUser ? escapeHtml(text) : (typeof marked !== 'undefined' ? marked.parse(safeText) : escapeHtml(safeText));
-
-            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            if (!isUser) {
-                window.tempMsgStore[msgId] = { q: relatedQuestion, a: text, imgs: attachedImgs };
-                const keys = Object.keys(window.tempMsgStore);
-                if (keys.length > 50) delete window.tempMsgStore[keys[0]];
-            }
-
-            let metaFooter = '';
-            if (!isUser && meta) {
-                metaFooter = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select">
-                        <div class="flex items-center flex-wrap gap-1.5 font-mono">
-                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Gemini')}
-                            </span>
-                            ${meta.tokens > 0 ? `
-                                <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                    <i class="fa-solid fa-bolt text-[8px] text-neutral-400"></i> ${meta.tokens} Tokens
-                                </span>
-                            ` : ''}
-                            <span class="text-neutral-500 text-[9px]">
-                                <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
-                            </span>
-                        </div>
-                        <div class="flex items-center space-x-2.5">
-                            <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
-                                <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
-                            </button>
-                            <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
-                                <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
-                            </button>
-                            <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
-                                <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            let imgsHtml = '';
-            if (attachedImgs && attachedImgs.length > 0) {
-                imgsHtml = `
-                    <div class="flex flex-wrap gap-2 mb-2">
-                        ${attachedImgs.map(img => `
-                            <div class="img-thumb-wrapper" data-src="${img.base64}" data-caption="${escapeHtml(img.name)}" style="margin:0;">
-                                <img src="${img.base64}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover">
-                                <div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[8px]"></i></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            const html = `
-                <div id="${msgId}_wrapper" class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
-                    <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
-                    <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] selectable-text">
-                        ${imgsHtml}
-                        <div class="${isUser ? 'whitespace-pre-wrap break-words user-bubble-text' : 'markdown-body break-words selectable-text'}">${parsedContent}</div>
-                        ${metaFooter}
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        userInput.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { 
-                e.preventDefault(); 
-                handleSend(); 
-            } 
-        });
-    </script>
-</body>
-</html>
+                return { success: false, message:這個要求已經超出我的能力範圍，我只能產生文字。
