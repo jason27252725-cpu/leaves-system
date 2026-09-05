@@ -224,7 +224,6 @@
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        /* 🌟 Gemini 排版與粗細解耦 */
         .markdown-body, .user-bubble-text { 
             font-family: var(--ui-font-family);
             font-size: var(--ui-chat-font-size); 
@@ -241,7 +240,6 @@
             font-weight: var(--ui-body-weight) !important;
         }
 
-        /* 🌟 縮圖與設計感外框 */
         .img-thumb-wrapper {
             position: relative;
             display: inline-block;
@@ -287,7 +285,6 @@
             color: #000;
         }
 
-        /* 🌟 獨立可拖曳大圖視窗 */
         #photoViewerWindow {
             position: fixed;
             z-index: 115;
@@ -402,7 +399,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.4 終極穩定版</span>
+                <span>v14.6 終極穩定版</span>
             </span>
         </div>
     </div>
@@ -415,7 +412,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.4 旗艦版</span>
+                        <span>v14.6 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -466,7 +463,6 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-white">LEAVES AI</span>
-                    <!-- 🌟 資安隱私安心標籤 (更新文字為「對話隱私保護中」) -->
                     <div class="flex items-center space-x-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-700/80 px-3 py-1 rounded-full font-medium tracking-wide shadow-sm" title="獨立工作階段，無文字監控與歷史儲存">
                         <i class="fa-solid fa-shield-halved text-[10px]"></i>
                         <span>對話隱私保護中</span>
@@ -533,7 +529,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.3</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.6</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -2263,13 +2259,13 @@
             }).join('');
         }
 
+        // 🌟 強化即時刷新用量按鈕：結合本地快取防覆蓋合併
         async function refreshUsageStatsManually() {
             const btn = document.getElementById('refreshUsageBtn');
             btn.innerHTML = '<i class="fa-solid fa-rotate-right animate-spin text-[9px]"></i><span>刷新中...</span>';
             btn.disabled = true;
 
             try {
-                // 🌟 結合雲端與本地快取進行即時合併渲染
                 const cloudCodes = await fetchCodesFromCloud();
                 const localCache = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
                 
@@ -3358,7 +3354,6 @@ ${sopContent}
 
                     const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
                     
-                    // 🌟 核心修復：確保管理員與一般同仁身分碼均能正確累加 Token 統計
                     let currentCodeToUse = activeCode || (currentAuth === 'admin' ? SPECIAL_ADMIN_CODE : null);
                     if (currentCodeToUse) {
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
