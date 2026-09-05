@@ -350,7 +350,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 (事件隔離防冒泡) -->
+    <!-- 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -399,7 +399,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.6 終極穩定版</span>
+                <span>v14.7 雲端即時同步版</span>
             </span>
         </div>
     </div>
@@ -412,7 +412,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.6 旗艦版</span>
+                        <span>v14.7 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -529,7 +529,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.6</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.7</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -959,21 +959,19 @@
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
-                let actualHref = href, actualTitle = title, actualText = text;
-                if (typeof href === 'object' && href !== null) {
-                    actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
-                }
-                const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
-                
-                if (actualHref && actualHref.includes('/documents/')) {
+                if (href && typeof href === 'string' && href.includes('/documents/')) {
+                    let actualHref = href, actualTitle = title, actualText = text;
+                    if (typeof href === 'object' && href !== null) {
+                        actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
+                    }
+                    const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
                     let icon = 'fa-file-lines';
                     if (actualHref.endsWith('.pdf')) icon = 'fa-file-pdf text-red-400';
                     else if (actualHref.endsWith('.docx') || actualHref.endsWith('.doc')) icon = 'fa-file-word text-blue-400';
                     else if (actualHref.endsWith('.xlsx') || actualHref.endsWith('.xls')) icon = 'fa-file-excel text-emerald-400';
                     return `<a href="${actualHref}" download target="_blank" rel="noopener noreferrer" class="doc-download-btn"${titleAttr}><i class="fa-solid ${icon}"></i><span>${actualText}</span><i class="fa-solid fa-arrow-down text-[10px] ml-1 text-neutral-400"></i></a>`;
                 }
-
-                return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             };
             renderer.image = function(href, title, text) {
                 let actualHref = href, actualTitle = title || '', actualText = text || '';
@@ -1022,6 +1020,7 @@
         }
 
         document.getElementById('chatContainer').addEventListener('click', (e) => {
+            if (e.target.closest('a')) return; // 🌟 隔離超連結下載點擊
             const wrapper = e.target.closest('.img-thumb-wrapper');
             if (wrapper) {
                 const src = wrapper.getAttribute('data-src');
@@ -1892,7 +1891,13 @@
             try {
                 const freshCodes = await fetchCodesFromCloud();
                 const cleanInput = val.toUpperCase();
-                const matched = freshCodes.find(c => c.code && c.code.trim().toUpperCase() === cleanInput);
+                let matched = freshCodes.find(c => c.code && c.code.trim().toUpperCase() === cleanInput);
+
+                // 🌟 自癒防護：若管理員用預設碼登入但雲端尚無此物件，自動補上
+                if (!matched && cleanInput === SPECIAL_ADMIN_CODE.toUpperCase()) {
+                    matched = { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, requestCount: 0, logins: [], status: 'online' };
+                    freshCodes.push(matched);
+                }
 
                 if (!matched) { 
                     alert(`❌ 驗證碼【${val}】錯誤、已被註銷或不存在！`); 
@@ -2220,7 +2225,7 @@
 
             let totalTokensAll = 0;
             currentCodesList.forEach(c => {
-                totalTokensAll += (c.totalTokens || 0);
+                totalTokensAll += Number(c.totalTokens || 0);
             });
 
             totalBadge.textContent = `${totalTokensAll.toLocaleString()} Tokens`;
@@ -2232,8 +2237,8 @@
             }
 
             container.innerHTML = currentCodesList.map(c => {
-                const tokens = c.totalTokens || 0;
-                const reqs = c.requestCount || 0;
+                const tokens = Number(c.totalTokens || 0);
+                const reqs = Number(c.requestCount || 0);
                 const pct = totalTokensAll > 0 ? Math.round((tokens / totalTokensAll) * 100) : 0;
 
                 return `
@@ -2259,7 +2264,6 @@
             }).join('');
         }
 
-        // 🌟 強化即時刷新用量按鈕：結合本地快取防覆蓋合併
         async function refreshUsageStatsManually() {
             const btn = document.getElementById('refreshUsageBtn');
             btn.innerHTML = '<i class="fa-solid fa-rotate-right animate-spin text-[9px]"></i><span>刷新中...</span>';
@@ -2269,10 +2273,20 @@
                 const cloudCodes = await fetchCodesFromCloud();
                 const localCache = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
                 
+                // 🌟 深度防覆蓋合併：永遠取本地與雲端中較大的累計值
                 currentCodesList = cloudCodes.map(cc => {
                     const localMatch = localCache.find(lc => lc.code === cc.code);
-                    if (localMatch && (localMatch.totalTokens || 0) > (cc.totalTokens || 0)) {
-                        return localMatch;
+                    if (localMatch) {
+                        const cloudTokens = Number(cc.totalTokens || 0);
+                        const localTokens = Number(localMatch.totalTokens || 0);
+                        const cloudReqs = Number(cc.requestCount || 0);
+                        const localReqs = Number(localMatch.requestCount || 0);
+                        
+                        return {
+                            ...cc,
+                            totalTokens: Math.max(cloudTokens, localTokens),
+                            requestCount: Math.max(cloudReqs, localReqs)
+                        };
                     }
                     return cc;
                 });
@@ -3357,13 +3371,29 @@ ${sopContent}
                     let currentCodeToUse = activeCode || (currentAuth === 'admin' ? SPECIAL_ADMIN_CODE : null);
                     if (currentCodeToUse) {
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
-                        const matched = latestCodes.find(c => c.code && c.code.toUpperCase() === currentCodeToUse.toUpperCase());
-                        if (matched) {
-                            matched.totalTokens = (matched.totalTokens || 0) + estimatedTokens;
-                            matched.requestCount = (matched.requestCount || 0) + 1;
-                            currentCodesList = latestCodes;
-                            saveCodesToLocal(latestCodes);
+                        let matched = latestCodes.find(c => c.code && c.code.toUpperCase() === currentCodeToUse.toUpperCase());
+                        
+                        // 🌟 自癒防護：若本機快照中找不到該代碼物件，立即動態建立
+                        if (!matched) {
+                            matched = {
+                                code: currentCodeToUse,
+                                name: currentAuth === 'admin' ? '最高管理員專用碼' : '成員',
+                                role: currentAuth,
+                                totalTokens: 0,
+                                requestCount: 0,
+                                logins: [],
+                                status: 'online'
+                            };
+                            latestCodes.push(matched);
                         }
+
+                        matched.totalTokens = Number(matched.totalTokens || 0) + estimatedTokens;
+                        matched.requestCount = Number(matched.requestCount || 0) + 1;
+                        currentCodesList = latestCodes;
+                        saveCodesToLocal(latestCodes);
+
+                        // 🌟 對話結束後自動安靜同步到雲端 Gist，實現後台即時監控
+                        pushCodesToCloud(latestCodes).catch(() => {});
                     }
 
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
