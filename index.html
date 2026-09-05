@@ -20,6 +20,8 @@
             --ui-title-weight: 600;
             --ui-body-weight: 400;
             --ui-pc-drawer-w: 620px;
+            --ui-trigger-right: 2rem;
+            --ui-trigger-top: 50%;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -116,7 +118,7 @@
             #aiFloatingTriggerWrapper.hidden-trigger { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.3); }
         }
         @media (min-width: 1024px) {
-            #aiFloatingTriggerWrapper { right: 2rem; top: 50%; transform: translateY(-50%); }
+            #aiFloatingTriggerWrapper { right: var(--ui-trigger-right); top: var(--ui-trigger-top); transform: translateY(-50%); }
             #aiFloatingTriggerWrapper.hidden-trigger { opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.3); }
         }
 
@@ -179,7 +181,6 @@
             .resize-bl { bottom: 0; left: 0; width: 16px; height: 16px; cursor: nesw-resize; }
             .resize-br { bottom: 0; right: 0; width: 16px; height: 16px; cursor: nwse-resize; }
         }
-        @media (pointer: coarse) { .resize-handle { display: none !important; } }
 
         @media (min-width: 1024px) {
             .admin-window {
@@ -208,12 +209,6 @@
         }
         .ui-no-select { user-select: none; -webkit-user-select: none; }
 
-        @keyframes geminiBlockEnter {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .gemini-enter-anim { animation: geminiBlockEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
         @keyframes geminiGlowPulse {
             0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
             50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
@@ -224,7 +219,6 @@
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
 
-        /* 🌟 Gemini 原生排版與主標題/一般內容字粗細解耦 */
         .markdown-body, .user-bubble-text { 
             font-family: var(--ui-font-family);
             font-size: var(--ui-chat-font-size); 
@@ -241,7 +235,6 @@
             font-weight: var(--ui-body-weight) !important;
         }
 
-        /* 🌟 縮圖與設計感外框 */
         .img-thumb-wrapper {
             position: relative;
             display: inline-block;
@@ -287,7 +280,6 @@
             color: #000;
         }
 
-        /* 🌟 獨立可拖曳大圖視窗 */
         #photoViewerWindow {
             position: fixed;
             z-index: 115;
@@ -330,22 +322,25 @@
             background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.4);
             transform: translateY(-1px);
         }
-        .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
-        .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
-        .markdown-body p { margin-bottom: 0.55rem; }
-        .markdown-body p:last-child { margin-bottom: 0; }
-        .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.7rem; color: #f3f4f6; }
-        .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; max-width: 100%; }
-        .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; max-width: 100%; }
-        .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
-        .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
-        .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
-        @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+        /* 🌟 後台互動式模擬畫布 (WYSIWYG Sandbox) 專屬樣式 */
+        .sandbox-canvas {
+            position: relative;
+            background: #000;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+            user-select: none;
+        }
+        .sandbox-item {
+            position: absolute;
+            cursor: move;
+            touch-action: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+        }
+        .sandbox-item:active {
+            border-color: #60a5fa !important;
+        }
     </style>
 </head>
 <body class="h-full flex flex-col relative bg-black text-white">
@@ -353,7 +348,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 可拖曳自由縮放之工法大圖視窗 (修復點擊冒泡阻斷) -->
+    <!-- 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -399,10 +394,11 @@
             </div>
         </div>
 
+        <!-- 🌟 版本標籤 -->
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.3 終極穩定版</span>
+                <span>v15.0 旗艦畫布版</span>
             </span>
         </div>
     </div>
@@ -415,7 +411,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.3 旗艦版</span>
+                        <span>v15.0 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -486,7 +482,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程，我會直接依據規範列出步驟並附上微縮圖輔助說明；點擊圖片可放大檢視並自由拖曳移動！</p>
                     </div>
                 </div>
             </div>
@@ -532,7 +528,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.3</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -590,104 +586,65 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
                 
-                <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
+                <!-- 🌟 全新「所見即所得」互動式 UI 畫布視窗 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-palette text-xs text-blue-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">多端 UI 介面與排版畫布</span>
+                            <span class="text-xs font-medium text-white tracking-wider">多端 UI 畫布（支援自由拖曳位置與大小）</span>
                         </div>
                         <button onclick="closeAdminWindow('uiCustomizer')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
-                        <div class="flex border-b border-neutral-800 gap-4 text-xs">
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4 flex flex-col">
+                        <div class="flex border-b border-neutral-800 gap-4 text-xs shrink-0">
                             <button onclick="switchUiDeviceTab('pc')" id="tab_ui_pc" class="pb-2 border-b-2 border-white text-white font-medium">💻 電腦版 (Desktop)</button>
                             <button onclick="switchUiDeviceTab('mobile')" id="tab_ui_mobile" class="pb-2 text-neutral-500 hover:text-neutral-300">📱 手機版 (Mobile)</button>
                             <button onclick="switchUiDeviceTab('ipad')" id="tab_ui_ipad" class="pb-2 text-neutral-500 hover:text-neutral-300">📟 iPad / 平板</button>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <div class="space-y-4 text-xs">
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>面板透明度 (Opacity)</span>
-                                        <span id="val_drawer_opacity" class="font-mono text-neutral-400">0.88</span>
-                                    </div>
-                                    <input type="range" min="0.65" max="0.98" step="0.02" id="input_drawer_opacity" oninput="handleUiSliderChange('opacity', this.value)" class="w-full accent-white">
-                                </div>
-
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>毛玻璃模糊強度 (Blur)</span>
-                                        <span id="val_drawer_blur" class="font-mono text-neutral-400">32px</span>
-                                    </div>
-                                    <input type="range" min="12" max="48" step="2" id="input_drawer_blur" oninput="handleUiSliderChange('blur', this.value)" class="w-full accent-white">
-                                </div>
-
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>對話主標題粗細 (Heading)</span>
-                                        <span id="val_title_weight" class="font-mono text-neutral-400">600</span>
-                                    </div>
-                                    <input type="range" min="400" max="700" step="100" id="input_title_weight" oninput="handleUiSliderChange('titleWeight', this.value)" class="w-full accent-white">
-                                </div>
-
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>一般內容字粗細 (Body Text)</span>
-                                        <span id="val_body_weight" class="font-mono text-neutral-400">400</span>
-                                    </div>
-                                    <input type="range" min="300" max="500" step="100" id="input_body_weight" oninput="handleUiSliderChange('bodyWeight', this.value)" class="w-full accent-white">
-                                </div>
-
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>文字大小倍率 (Font Scale)</span>
-                                        <span id="val_font_scale" class="font-mono text-neutral-400">1.0x</span>
-                                    </div>
-                                    <input type="range" min="0.85" max="1.15" step="0.05" id="input_font_scale" oninput="handleUiSliderChange('fontScale', this.value)" class="w-full accent-white">
-                                </div>
-
-                                <div id="pc_width_control" class="space-y-1.5">
-                                    <div class="flex justify-between items-center text-neutral-300">
-                                        <span>電腦端對話框寬度 (Width)</span>
-                                        <span id="val_pc_w" class="font-mono text-neutral-400">620px</span>
-                                    </div>
-                                    <input type="range" min="500" max="780" step="20" id="input_pc_w" oninput="handleUiSliderChange('pcDrawerW', this.value)" class="w-full accent-white">
-                                </div>
+                        <!-- 🌟 實體可拖拉模擬畫框 -->
+                        <div class="flex-1 min-h-[320px] sandbox-canvas relative border border-neutral-800 rounded-2xl flex items-center justify-center p-2 overflow-hidden bg-neutral-950" id="sandboxViewport">
+                            <!-- 模擬水滴按鈕（可直接在框內拖曳位置） -->
+                            <div id="sandboxTriggerBtn" class="sandbox-item glass-mono px-4 py-2 rounded-2xl border border-white/30 text-white flex items-center space-x-2 text-xs" style="right: 2rem; top: 45%;">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
+                                <span>AI 助理 (按住拖曳位置)</span>
                             </div>
-
-                            <!-- 即時模擬對照圖 -->
-                            <div class="space-y-2">
-                                <span class="text-[11px] font-medium text-neutral-400 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-eye text-blue-400"></i>
-                                    <span>即時模擬排版對照圖</span>
-                                </span>
-                                <div id="uiLiveMockupCard" class="glass-mono p-4 rounded-2xl border border-white/20 space-y-2.5 transition-all duration-300">
-                                    <div class="flex items-center space-x-2 border-b border-white/10 pb-2">
-                                        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-                                        <span id="mockupHeading" class="text-white text-sm font-semibold">毛胚屋施作流程規範範例</span>
-                                    </div>
-                                    <p id="mockupBody" class="text-neutral-300 text-xs leading-relaxed">
-                                        放樣前應先於大門門檻完成面標註一米基準線，並確保浴廁降板區轉角已完成彈泥打底，管邊距完成面須預留至少 15mm 磁磚收邊公差。
-                                    </p>
-                                    <div class="flex items-center space-x-2 pt-1 text-[10px] text-neutral-400 font-mono">
-                                        <span class="bg-white/10 px-2 py-0.5 rounded">標題粗細: <strong id="mockupHeadingWeightText">600</strong></span>
-                                        <span class="bg-white/10 px-2 py-0.5 rounded">內文粗細: <strong id="mockupBodyWeightText">400</strong></span>
-                                    </div>
+                            <!-- 模擬對話框本體 -->
+                            <div id="sandboxChatBox" class="sandbox-item glass-card p-4 rounded-3xl border border-white/20 text-neutral-200 space-y-2" style="width: 320px; height: 210px; right: 2rem; bottom: 1.5rem;">
+                                <div class="flex justify-between items-center border-b border-white/10 pb-1.5 text-[11px]">
+                                    <span class="font-medium text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>LEAVES AI</span>
+                                    <span class="text-[9px] text-emerald-400">對話隱私保護中</span>
                                 </div>
+                                <p class="text-[11px] text-neutral-300 leading-relaxed" id="sandboxPreviewText">
+                                    <strong>毛胚屋放樣標準</strong>：管線與牆面預留公差至少 15mm。
+                                </p>
                             </div>
                         </div>
 
-                        <div class="p-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-[11px] text-neutral-400 space-y-1">
-                            <p>💡 系統字型已預設貼齊 Google Gemini 規範（<strong>Plus Jakarta Sans + Noto Sans TC</strong>，字級 15px、行高 1.65）。</p>
-                            <p>調整參數後點選左下角「<strong>同步雲端</strong>」，全公司電腦、手機與 iPad 將自動同步最新排版！</p>
+                        <!-- 輔助滑桿調節 -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1 shrink-0">
+                            <div>
+                                <span class="text-neutral-400 text-[10px] block">面板透明度: <strong id="val_drawer_opacity" class="text-white">0.88</strong></span>
+                                <input type="range" min="0.65" max="0.98" step="0.02" id="input_drawer_opacity" oninput="handleUiSliderChange('opacity', this.value)" class="w-full accent-white">
+                            </div>
+                            <div>
+                                <span class="text-neutral-400 text-[10px] block">標題粗細: <strong id="val_title_weight" class="text-white">600</strong></span>
+                                <input type="range" min="400" max="700" step="100" id="input_title_weight" oninput="handleUiSliderChange('titleWeight', this.value)" class="w-full accent-white">
+                            </div>
+                            <div>
+                                <span class="text-neutral-400 text-[10px] block">內文粗細: <strong id="val_body_weight" class="text-white">400</strong></span>
+                                <input type="range" min="300" max="500" step="100" id="input_body_weight" oninput="handleUiSliderChange('bodyWeight', this.value)" class="w-full accent-white">
+                            </div>
+                            <div>
+                                <span class="text-neutral-400 text-[10px] block">字級倍率: <strong id="val_font_scale" class="text-white">1.0x</strong></span>
+                                <input type="range" min="0.85" max="1.15" step="0.05" id="input_font_scale" oninput="handleUiSliderChange('fontScale', this.value)" class="w-full accent-white">
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 -->
+                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 (含即時刷新) -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -936,10 +893,21 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
+        // 🌟 強制攔截防呆：自動將純文字或損壞格式的 raw 圖片網址轉化為實體縮圖
         function sanitizeMarkdownMediaLinks(text) {
             if (!text) return '';
             
-            let cleaned = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+            // 1. 修復缺少驚嘆號的普通圖片超連結：[說明](...images/xxx.png) ➔ ![說明](...images/xxx.png)
+            let cleaned = text.replace(/(^|[^!])\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/images\/[^)]+)\)/g, '$1![$2]($3)');
+
+            // 2. 修復裸露的純文字 URL（如截圖中的情況）：(連結: https://...images/xxx.png) ➔ 轉化為標準縮圖
+            cleaned = cleaned.replace(/\(?\s*連結\s*[:：]\s*(https:\/\/raw\.githubusercontent\.com\/[^)\s\n]+\/images\/[^)\s\n]+)\s*\)?/g, function(match, url) {
+                const safeUrl = url.trim().replace(/\s+/g, '%20');
+                return `![施工參考圖](${safeUrl})`;
+            });
+
+            // 3. 標準化括號空白
+            cleaned = cleaned.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
                 const safeUrl = url.trim().replace(/\s+/g, '%20');
                 return `![${alt}](${safeUrl})`;
             });
@@ -949,6 +917,7 @@
                 return `[${label}](${safeUrl})`;
             });
 
+            // 4. 去除單次回答中重複圖片
             const seenImages = new Set();
             cleaned = cleaned.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
                 if (seenImages.has(url)) return '';
@@ -959,7 +928,6 @@
             return cleaned;
         }
 
-        // 🌟 縮圖安全渲染：改用 data-* 屬性，徹底杜絕引號語法崩潰
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = function(href, title, text) {
@@ -1000,7 +968,6 @@
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
         }
 
-        // 🌟 獨立可拖曳大圖視窗控制
         function openPhotoViewer(src, caption) {
             const win = document.getElementById('photoViewerWindow');
             const img = document.getElementById('photoViewerImg');
@@ -1026,7 +993,6 @@
             if (win) win.classList.remove('pop-active');
         }
 
-        // 🌟 事件委派監聽點擊縮圖
         document.getElementById('chatContainer').addEventListener('click', (e) => {
             const wrapper = e.target.closest('.img-thumb-wrapper');
             if (wrapper) {
@@ -1060,11 +1026,11 @@
 
         let photoCatalog = [];
         let documentCatalog = [];
-
         let pendingImages = [];
 
+        // 🌟 預設三端分立 UI 資料結構
         let currentUiSettings = {
-            pc: { opacity: 0.88, blur: 32, fontScale: 1.0, titleWeight: 600, bodyWeight: 400, pcDrawerW: 620 },
+            pc: { opacity: 0.88, blur: 32, fontScale: 1.0, titleWeight: 600, bodyWeight: 400, pcDrawerW: 620, triggerRight: '2rem', triggerTop: '50%' },
             mobile: { opacity: 0.92, blur: 24, fontScale: 0.95, titleWeight: 600, bodyWeight: 400 },
             ipad: { opacity: 0.88, blur: 28, fontScale: 1.05, titleWeight: 600, bodyWeight: 400 }
         };
@@ -1092,31 +1058,24 @@
             root.style.setProperty('--ui-title-weight', s.titleWeight || 600);
             root.style.setProperty('--ui-body-weight', s.bodyWeight || 400);
 
-            if (dev === 'pc' && s.pcDrawerW) {
-                root.style.setProperty('--ui-pc-drawer-w', `${s.pcDrawerW}px`);
+            if (dev === 'pc') {
+                if (s.pcDrawerW) root.style.setProperty('--ui-pc-drawer-w', `${s.pcDrawerW}px`);
+                if (s.triggerRight) root.style.setProperty('--ui-trigger-right', s.triggerRight);
+                if (s.triggerTop) root.style.setProperty('--ui-trigger-top', s.triggerTop);
             }
 
-            updateMockupPreview(s);
+            updateSandboxElements(s);
         }
 
-        function updateMockupPreview(s) {
-            const card = document.getElementById('uiLiveMockupCard');
-            const h = document.getElementById('mockupHeading');
-            const b = document.getElementById('mockupBody');
-            const twText = document.getElementById('mockupHeadingWeightText');
-            const bwText = document.getElementById('mockupBodyWeightText');
-
-            if (!card || !h || !b) return;
-
-            card.style.background = `rgba(12, 12, 12, ${s.opacity || 0.88})`;
-            card.style.backdropFilter = `blur(${s.blur || 32}px)`;
-
-            h.style.fontWeight = s.titleWeight || 600;
-            b.style.fontWeight = s.bodyWeight || 400;
-            b.style.fontSize = `${13 * (s.fontScale || 1.0)}px`;
-
-            if (twText) twText.textContent = s.titleWeight || 600;
-            if (bwText) bwText.textContent = s.bodyWeight || 400;
+        function updateSandboxElements(s) {
+            const btn = document.getElementById('sandboxTriggerBtn');
+            const box = document.getElementById('sandboxChatBox');
+            if (btn && s.triggerRight) btn.style.right = s.triggerRight;
+            if (btn && s.triggerTop) btn.style.top = s.triggerTop;
+            if (box) {
+                box.style.background = `rgba(12, 12, 12, ${s.opacity || 0.88})`;
+                box.style.backdropFilter = `blur(${s.blur || 32}px)`;
+            }
         }
 
         let currentActiveDeviceTab = 'pc';
@@ -1129,49 +1088,77 @@
                 }
             });
 
-            const pcWidthCtrl = document.getElementById('pc_width_control');
-            if (pcWidthCtrl) pcWidthCtrl.style.display = (tab === 'pc') ? 'block' : 'none';
-
             const s = currentUiSettings[tab] || currentUiSettings.pc;
             document.getElementById('input_drawer_opacity').value = s.opacity;
             document.getElementById('val_drawer_opacity').textContent = s.opacity;
-
-            document.getElementById('input_drawer_blur').value = s.blur;
-            document.getElementById('val_drawer_blur').textContent = `${s.blur}px`;
-
             document.getElementById('input_title_weight').value = s.titleWeight || 600;
             document.getElementById('val_title_weight').textContent = s.titleWeight || 600;
-
             document.getElementById('input_body_weight').value = s.bodyWeight || 400;
             document.getElementById('val_body_weight').textContent = s.bodyWeight || 400;
-
             document.getElementById('input_font_scale').value = s.fontScale;
             document.getElementById('val_font_scale').textContent = `${s.fontScale}x`;
 
-            if (tab === 'pc' && s.pcDrawerW) {
-                document.getElementById('input_pc_w').value = s.pcDrawerW;
-                document.getElementById('val_pc_w').textContent = `${s.pcDrawerW}px`;
-            }
-
-            updateMockupPreview(s);
+            updateSandboxElements(s);
         }
 
         function handleUiSliderChange(field, val) {
             const num = parseFloat(val);
-            if (!currentUiSettings[currentActiveDeviceTab]) {
-                currentUiSettings[currentActiveDeviceTab] = {};
-            }
+            if (!currentUiSettings[currentActiveDeviceTab]) currentUiSettings[currentActiveDeviceTab] = {};
             currentUiSettings[currentActiveDeviceTab][field] = num;
 
             if (field === 'opacity') document.getElementById('val_drawer_opacity').textContent = val;
-            if (field === 'blur') document.getElementById('val_drawer_blur').textContent = `${val}px`;
             if (field === 'titleWeight') document.getElementById('val_title_weight').textContent = val;
             if (field === 'bodyWeight') document.getElementById('val_body_weight').textContent = val;
             if (field === 'fontScale') document.getElementById('val_font_scale').textContent = `${val}x`;
-            if (field === 'pcDrawerW') document.getElementById('val_pc_w').textContent = `${val}px`;
 
             applyDeviceUi();
             try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
+        }
+
+        // 🌟 後台互動畫布元件拖曳綁定
+        function initSandboxInteractions() {
+            const trigger = document.getElementById('sandboxTriggerBtn');
+            const viewport = document.getElementById('sandboxViewport');
+            if (!trigger || !viewport) return;
+
+            let isDragging = false;
+            let startX, startY;
+
+            trigger.addEventListener('pointerdown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                trigger.setPointerCapture(e.pointerId);
+            });
+
+            trigger.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const rect = viewport.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const rightPct = `${Math.max(2, Math.min(85, Math.round(((rect.width - x) / rect.width) * 100)))}%`;
+                const topPct = `${Math.max(5, Math.min(90, Math.round((y / rect.height) * 100)))}%`;
+
+                trigger.style.right = rightPct;
+                trigger.style.top = topPct;
+
+                if (currentActiveDeviceTab === 'pc') {
+                    currentUiSettings.pc.triggerRight = rightPct;
+                    currentUiSettings.pc.triggerTop = topPct;
+                    applyDeviceUi();
+                }
+            });
+
+            const onEnd = (e) => {
+                if (isDragging) {
+                    isDragging = false;
+                    try { trigger.releasePointerCapture(e.pointerId); } catch(err) {}
+                    try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
+                }
+            };
+            trigger.addEventListener('pointerup', onEnd);
+            trigger.addEventListener('pointercancel', onEnd);
         }
 
         async function fetchPhotoCatalog() {
@@ -1204,19 +1191,14 @@
             }
         }
 
-        // 🌟 強化多圖壓縮 ＋ 錯誤容錯處理 (1024px, 0.78 品質防 413 報錯)
         function compressAndAppendImage(file) {
             if (!file || !file.type.startsWith('image/')) return;
 
             const reader = new FileReader();
-            reader.onerror = function() {
-                alert(`讀取圖片 ${file.name} 失敗，請重試`);
-            };
+            reader.onerror = () => alert(`讀取圖片 ${file.name} 失敗`);
             reader.onload = function(event) {
                 const img = new Image();
-                img.onerror = function() {
-                    alert(`解析圖片 ${file.name} 失敗，可能格式已損毀`);
-                };
+                img.onerror = () => alert(`解析圖片 ${file.name} 失敗`);
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const maxDim = 1024;
@@ -1781,6 +1763,7 @@
             initDrawerResizer();
             initAdminWindowManager();
             initPhotoViewerResizer();
+            initSandboxInteractions();
             checkMagicLink();
         }
 
@@ -2074,9 +2057,9 @@
                 const rect = winEl.getBoundingClientRect();
 
                 startX = clientX; startY = clientY;
+                startW = rect.width; startH = rect.height;
                 startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
                 startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
-                startW = rect.width; startH = rect.height;
 
                 winEl.classList.add('custom-resized');
                 winEl.style.left = startL + 'px'; winEl.style.top = startT + 'px';
@@ -2147,7 +2130,7 @@
         }
 
         const ADMIN_WIN_CONFIG = {
-            uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
+            uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 540, defaultX: 15, defaultY: 15 },
             tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 640, defaultH: 520, defaultX: 30, defaultY: 25 },
             proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
@@ -2270,13 +2253,28 @@
             }).join('');
         }
 
+        // 🌟 即時刷新用量並同步遠端 Gist
         async function refreshUsageStatsManually() {
             const btn = document.getElementById('refreshUsageBtn');
-            btn.innerHTML = '<i class="fa-solid fa-rotate-right animate-spin text-[9px]"></i><span>刷新中...</span>';
+            btn.innerHTML = '<i class="fa-solid fa-rotate-right animate-spin text-[9px]"></i><span>同步中...</span>';
             btn.disabled = true;
 
             try {
-                currentCodesList = await fetchCodesFromCloud();
+                let freshCodes = await fetchCodesFromCloud();
+                
+                // 將本機最新累加之 Token 同步整併至最新雲端資料
+                let localCache = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
+                freshCodes.forEach(c => {
+                    const localMatch = localCache.find(l => l.code === c.code);
+                    if (localMatch && (localMatch.totalTokens || 0) > (c.totalTokens || 0)) {
+                        c.totalTokens = localMatch.totalTokens;
+                        c.requestCount = localMatch.requestCount;
+                    }
+                });
+
+                currentCodesList = freshCodes;
+                saveCodesToLocal(freshCodes);
+                await pushCodesToCloud(freshCodes);
                 renderTokenAnalytics();
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-rotate-right text-[9px]"></i><span>即時刷新用量</span>';
@@ -3156,22 +3154,23 @@
                     }).join('\n');
                 }
 
+                // 🌟 修正後的緊湊提示詞：禁止放大話、杜絕虛浮開場白、嚴格約束圖片語法
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
-2. 工法因果與總監思維規範（智商核心）：
-   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
-   - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
+2. 【工務實戰直答主義（杜絕放大話與偏題）】：
+   - 【禁止任何虛浮客套開場白】：嚴禁輸出「歡迎來到拾葉設計！作為資深工務...我為您詳細說明...」等官腔廢話，請直接第一句開門見山回答核心重點與工法步驟！
+   - 【緊扣拾葉內部 SOP】：嚴格根據下方知識庫內容回答，切勿發散講述通用裝修大道理或過度擴大討論範圍。
+   - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝）。
    - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
-3. 【圖文並茂主動調度核心規範】：
-   - 當同仁詢問整體施工流程、階段工法（如：毛胚屋全流程、放樣工序、泥作防水、保護工程等），你【必須主動】調閱下方【內部相簿索引清單】中的相關照片！
-   - 請將照片【自然穿插在各個對應步驟之下】，達成「圖文合一」的教學效果。每次介紹完整流程時，請依步驟豐富度主動附上 2～5 張不同照片，絕對不要只給純文字。
+3. 【施工照片調度規範（嚴禁輸出純文字超連結）】：
+   - 當介紹施工流程或關鍵工法時，請主動調閱下方【內部相簿索引清單】中的照片。
+   - 【絕對禁止輸出普通超連結】：嚴格禁止寫出「(連結: https://...)」或「[說明](https://...)」！所有照片【必須且只能】使用 Markdown 圖片語法：\`![圖片說明](圖片URL)\`。
+   - 每次介紹流程時，在相應步驟下自然穿插 1～4 張不同照片，保持版面緊湊俐落。
 4. 標準文件/標語/申請書下載調度：
-   - 當同仁提及施工標語、路權手冊、清潔表、公所道路申請書時，請在文末主動附上 Markdown 超連結：\`[下載：檔案名稱](下載URL)\`。
-5. 施工現場多照片審核（同仁上傳多張照片模式）：
-   - 當同仁上傳 1 張或多張照片時，請逐張對照，並依【工種判讀 ➔ 細節瑕疵挑毛病 ➔ 對照拾葉 SOP 規範 ➔ 尺寸防呆提醒】全面進行總監級專業點評。
-6. SOP 修訂/刪除/增補意圖草稿輸出：
+   - 當同仁提及施工標語、路權手冊、清潔表、公所道路申請書時，在文末附上 Markdown 下載連結：\`[下載：檔案名稱](下載URL)\`。
+5. SOP 修訂/刪除/增補意圖草稿輸出：
 \`\`\`sop_proposal
 {
   "topic": "欲修改、刪除或新增的項目名稱",
@@ -3216,7 +3215,7 @@ ${sopContent}
                 let usedModelName = '';
                 let accumulatedReply = '';
                 let liveMsgElements = null;
-                let renderScheduled = false;
+                let isFirstChunkArrived = false;
 
                 keyLoop:
                 for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
@@ -3241,7 +3240,7 @@ ${sopContent}
                                 timeoutTimerId = setTimeout(() => {
                                     attemptAbortController.abort();
                                     reject(new Error('節點忙碌逾時，切換下一備援模型'));
-                                }, 7000);
+                                }, 7500);
                             });
 
                             const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
@@ -3256,8 +3255,8 @@ ${sopContent}
                                 body: JSON.stringify({
                                     model: modelObj.id,
                                     messages: messages,
-                                    temperature: 0.25,
-                                    frequency_penalty: 0.2,
+                                    temperature: 0.15,
+                                    frequency_penalty: 0.3,
                                     max_tokens: 8192,
                                     stream: true
                                 })
@@ -3284,9 +3283,6 @@ ${sopContent}
                             usedModelName = `${modelObj.name}${apiKeys.length > 1 ? ` (Key #${kIndex + 1})` : ''}`;
                             localStorage.setItem('shiye_last_used_model', `${modelObj.name} (${modelObj.id})`);
 
-                            loadingTracker.stop();
-                            liveMsgElements = createLiveAssistantBubble();
-
                             let isStreamDone = false;
                             while (!isStreamDone) {
                                 const { done, value } = await activeStreamReader.read();
@@ -3305,13 +3301,19 @@ ${sopContent}
                                             const parsed = JSON.parse(trimmed.substring(6));
                                             const delta = parsed.choices?.[0]?.delta?.content || '';
                                             if (delta) {
+                                                // 🌟 收到第一個字元時，才真正停止思考進度條並建立回答氣泡
+                                                if (!isFirstChunkArrived) {
+                                                    isFirstChunkArrived = true;
+                                                    loadingTracker.stop();
+                                                    liveMsgElements = createLiveAssistantBubble();
+                                                }
+
                                                 accumulatedReply += delta;
-                                                if (!renderScheduled) {
-                                                    renderScheduled = true;
+                                                if (!renderTimerId) {
                                                     renderTimerId = setTimeout(() => {
                                                         updateLiveBubble(liveMsgElements, accumulatedReply);
-                                                        renderScheduled = false;
-                                                    }, 60);
+                                                        renderTimerId = null;
+                                                    }, 50);
                                                 }
                                             }
                                         } catch (err) {}
@@ -3345,7 +3347,7 @@ ${sopContent}
                 }
 
                 loadingTracker.stop();
-                if (renderTimerId) clearTimeout(renderTimerId);
+                if (renderTimerId) { clearTimeout(renderTimerId); renderTimerId = null; }
 
                 const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
                 const isUserAborted = currentAbortController && currentAbortController.signal.aborted;
@@ -3353,7 +3355,7 @@ ${sopContent}
                 if (streamSuccess || accumulatedReply.length > 0) {
                     const { displayText } = robustProposalExtractor(accumulatedReply);
 
-                    // 🌟 重新讀取本地最新緩存，安全累加 Token（防多分頁競爭覆蓋）
+                    // 🌟 統計當前身分碼消耗的 Tokens 並安全保存
                     const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
                     if (activeCode) {
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
@@ -3395,7 +3397,7 @@ ${sopContent}
 
             } catch (err) {
                 loadingTracker.stop();
-                if (renderTimerId) clearTimeout(renderTimerId);
+                if (renderTimerId) { clearTimeout(renderTimerId); renderTimerId = null; }
                 appendMessage(`系統運行錯誤: ${err.message}`, 'assistant', true, text);
             } finally {
                 setGeneratingState(false);
@@ -3405,12 +3407,13 @@ ${sopContent}
             }
         }
 
+        // 🌟 真實串流連動思考載入器（絕不提早消失）
         function appendThinkingLoading() {
             const id = 'loading_' + Date.now();
             const steps = [
                 "正在剖析施工工種與工序階段...",
                 "檢索拾葉內部知識庫與施工規範 (Gist)...",
-                "比對現場工程照片庫 (毛胚屋/放樣/防水)...",
+                "比對現場工程照片庫與標準文件...",
                 "檢核驗收尺寸公差與跨工種防衝突預警...",
                 "正在生成圖文並茂指導教學..."
             ];
@@ -3445,14 +3448,12 @@ ${sopContent}
                             textEl.style.opacity = '1';
                         }, 150);
                     }
-                    if (barEl) {
-                        barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
-                    }
-                } else if (currentStepIdx === steps.length) {
+                    if (barEl) barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
+                } else {
                     if (textEl) textEl.textContent = '雲端多模態節點運算中，即將輸出圖文...';
                     if (barEl) barEl.style.width = '98%';
                 }
-            }, 1300);
+            }, 1400);
 
             return {
                 id: id,
@@ -3496,6 +3497,7 @@ ${sopContent}
             cleanText = cleanText.replace(/!\[[^\]]*$/g, '');
             cleanText = cleanText.replace(/\[([^\]]*)$/g, '');
             cleanText = cleanText.replace(/!\[([^\]]*)\]\(([^)]*)$/g, '');
+            cleanText = sanitizeMarkdownMediaLinks(cleanText);
 
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
             elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
