@@ -375,7 +375,7 @@
         </div>
     </div>
 
-    <!-- 登入介面 (版本標籤獨立懸浮於紅框位置) -->
+    <!-- 登入介面 -->
     <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-7 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
@@ -399,7 +399,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v14.7 雲端即時同步版</span>
+                <span>v15.0 智能加固版</span>
             </span>
         </div>
     </div>
@@ -412,7 +412,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v14.7 旗艦版</span>
+                        <span>v15.0 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -483,7 +483,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！需要施工標語、路權申請書也能一鍵下載。</p>
                     </div>
                 </div>
             </div>
@@ -529,7 +529,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v14.7</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -933,24 +933,96 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
+        let photoCatalog = [];
+        let documentCatalog = [];
+
+        function getVerifiedImageUrl(rawUrl) {
+            if (!rawUrl) return null;
+            let cleanUrl = rawUrl.trim().replace(/\s+/g, '%20');
+            if (!Array.isArray(photoCatalog) || photoCatalog.length === 0) return cleanUrl;
+
+            const parts = cleanUrl.split('/images/');
+            if (parts.length < 2) return cleanUrl;
+            let targetFileName = parts[1].trim();
+            try { targetFileName = decodeURIComponent(targetFileName); } catch(e) {}
+
+            const exact = photoCatalog.find(p => p.name === targetFileName || encodeURIComponent(p.name) === parts[1].trim());
+            if (exact) return `${GITHUB_REPO_IMAGE_BASE}${encodeURIComponent(exact.name).replace(/%2F/g, '/')}`;
+
+            const fuzzy = photoCatalog.find(p => {
+                const pName = p.name.replace(/\.[^/.]+$/, "").toLowerCase();
+                const tName = targetFileName.replace(/\.[^/.]+$/, "").toLowerCase();
+                return pName.includes(tName) || tName.includes(pName) || (p.tags && p.tags.some(t => tName.includes(t.toLowerCase())));
+            });
+            if (fuzzy) return `${GITHUB_REPO_IMAGE_BASE}${encodeURIComponent(fuzzy.name).replace(/%2F/g, '/')}`;
+
+            return null;
+        }
+
+        function getVerifiedDocUrl(rawUrl) {
+            if (!rawUrl) return null;
+            let cleanUrl = rawUrl.trim().replace(/\s+/g, '%20');
+            if (!Array.isArray(documentCatalog) || documentCatalog.length === 0) return cleanUrl;
+
+            const parts = cleanUrl.split('/documents/');
+            if (parts.length < 2) return cleanUrl;
+            let targetDocName = parts[1].trim();
+            try { targetDocName = decodeURIComponent(targetDocName); } catch(e) {}
+
+            const exact = documentCatalog.find(d => d.name === targetDocName || encodeURIComponent(d.name) === parts[1].trim());
+            if (exact) return { url: `${GITHUB_REPO_DOC_BASE}${encodeURIComponent(exact.name).replace(/%2F/g, '/')}`, name: exact.name };
+
+            const fuzzy = documentCatalog.find(d => {
+                const dName = d.name.replace(/\.[^/.]+$/, "").toLowerCase();
+                const tName = targetDocName.replace(/\.[^/.]+$/, "").toLowerCase();
+                return dName.includes(tName) || tName.includes(dName) || (d.tags && d.tags.some(t => tName.includes(t.toLowerCase())));
+            });
+            if (fuzzy) return { url: `${GITHUB_REPO_DOC_BASE}${encodeURIComponent(fuzzy.name).replace(/%2F/g, '/')}`, name: fuzzy.name };
+
+            return null;
+        }
+
         function sanitizeMarkdownMediaLinks(text) {
             if (!text) return '';
-            
-            let cleaned = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
-                const safeUrl = url.trim().replace(/\s+/g, '%20');
-                return `![${alt}](${safeUrl})`;
-            });
-
-            cleaned = cleaned.replace(/\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/documents\/[^)]+)\)/g, function(match, label, url) {
-                const safeUrl = url.trim().replace(/\s+/g, '%20');
-                return `[${label}](${safeUrl})`;
-            });
-
+            let cleaned = text;
             const seenImages = new Set();
+
             cleaned = cleaned.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
-                if (seenImages.has(url)) return '';
-                seenImages.add(url);
-                return match;
+                const verified = getVerifiedImageUrl(url);
+                if (!verified || seenImages.has(verified)) return '';
+                seenImages.add(verified);
+                return `![${alt || '工法照片'}](${verified})`;
+            });
+
+            cleaned = cleaned.replace(/\[([^\]]*)\]\((https:\/\/raw\.githubusercontent\.com\/[^\s\)]+?\/documents\/[^)]+)\)/g, function(match, label, url) {
+                const verifiedDoc = getVerifiedDocUrl(url);
+                if (!verifiedDoc) return '';
+                return `[${label}](${verifiedDoc.url})`;
+            });
+
+            cleaned = cleaned.replace(/(?:[\(（]\s*(?:連結|下載連結|網址)?[：:]?\s*)?(https:\/\/raw\.githubusercontent\.com\/[^\s\)\>\"\']+?\/images\/[^\s\)\>\"\']+?)(?:\s*[\)）])?/gi, function(match, rawUrl, offset, fullStr) {
+                const preceding = fullStr.slice(Math.max(0, offset - 4), offset);
+                if (preceding.includes('](') || preceding.includes('="') || preceding.includes("='")) {
+                    return match;
+                }
+                const verified = getVerifiedImageUrl(rawUrl);
+                if (verified && !seenImages.has(verified)) {
+                    seenImages.add(verified);
+                    return `\n\n![工法照片](${verified})\n\n`;
+                }
+                return '';
+            });
+
+            cleaned = cleaned.replace(/(?:[\(（]\s*(?:連結|下載連結|網址)?[：:]?\s*)?(https:\/\/raw\.githubusercontent\.com\/[^\s\)\>\"\']+?\/documents\/[^\s\)\>\"\']+?)(?:\s*[\)）])?/gi, function(match, rawUrl, offset, fullStr) {
+                const preceding = fullStr.slice(Math.max(0, offset - 4), offset);
+                if (preceding.includes('](') || preceding.includes('="') || preceding.includes("='")) {
+                    return match;
+                }
+                const verifiedDoc = getVerifiedDocUrl(rawUrl);
+                if (verifiedDoc) {
+                    return `\n\n[下載：${verifiedDoc.name}](${verifiedDoc.url})\n\n`;
+                }
+                return '';
             });
 
             return cleaned;
@@ -983,7 +1055,7 @@
                 
                 return `
                     <div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視">
-                        <img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                        <img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();">
                         <div class="img-thumb-badge">
                             <i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i>
                             <span>檢視大圖</span>
@@ -1020,7 +1092,7 @@
         }
 
         document.getElementById('chatContainer').addEventListener('click', (e) => {
-            if (e.target.closest('a')) return; // 🌟 隔離超連結下載點擊
+            if (e.target.closest('a')) return;
             const wrapper = e.target.closest('.img-thumb-wrapper');
             if (wrapper) {
                 const src = wrapper.getAttribute('data-src');
@@ -1050,9 +1122,6 @@
         let renderTimerId = null;
         window.tempMsgStore = {};
         window.tempProposalStore = {};
-
-        let photoCatalog = [];
-        let documentCatalog = [];
 
         let pendingImages = [];
 
@@ -1893,7 +1962,6 @@
                 const cleanInput = val.toUpperCase();
                 let matched = freshCodes.find(c => c.code && c.code.trim().toUpperCase() === cleanInput);
 
-                // 🌟 自癒防護：若管理員用預設碼登入但雲端尚無此物件，自動補上
                 if (!matched && cleanInput === SPECIAL_ADMIN_CODE.toUpperCase()) {
                     matched = { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, requestCount: 0, logins: [], status: 'online' };
                     freshCodes.push(matched);
@@ -2273,7 +2341,6 @@
                 const cloudCodes = await fetchCodesFromCloud();
                 const localCache = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
                 
-                // 🌟 深度防覆蓋合併：永遠取本地與雲端中較大的累計值
                 currentCodesList = cloudCodes.map(cc => {
                     const localMatch = localCache.find(lc => lc.code === cc.code);
                     if (localMatch) {
@@ -3171,6 +3238,11 @@
 
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
+【工務資料庫調度規範】：
+- 僅引用下方清單既有的照片與文件，100% 複製其直連 URL。若清單中無相應檔案，請專注以專業工法文字詳述，切勿編造不存在的網址。
+- 圖片必須使用標準 Markdown 語法：\`![圖片說明](圖片URL)\`。
+- 文件下載必須使用標準 Markdown 語法：\`[下載：檔案名稱](下載URL)\`。
+
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
 2. 工法因果與總監思維規範（智商核心）：
@@ -3373,7 +3445,6 @@ ${sopContent}
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
                         let matched = latestCodes.find(c => c.code && c.code.toUpperCase() === currentCodeToUse.toUpperCase());
                         
-                        // 🌟 自癒防護：若本機快照中找不到該代碼物件，立即動態建立
                         if (!matched) {
                             matched = {
                                 code: currentCodeToUse,
@@ -3392,7 +3463,6 @@ ${sopContent}
                         currentCodesList = latestCodes;
                         saveCodesToLocal(latestCodes);
 
-                        // 🌟 對話結束後自動安靜同步到雲端 Gist，實現後台即時監控
                         pushCodesToCloud(latestCodes).catch(() => {});
                     }
 
@@ -3526,6 +3596,8 @@ ${sopContent}
             cleanText = cleanText.replace(/!\[[^\]]*$/g, '');
             cleanText = cleanText.replace(/\[([^\]]*)$/g, '');
             cleanText = cleanText.replace(/!\[([^\]]*)\]\(([^)]*)$/g, '');
+
+            cleanText = sanitizeMarkdownMediaLinks(cleanText);
 
             const parsed = typeof marked !== 'undefined' ? marked.parse(cleanText) : escapeHtml(cleanText);
             elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
