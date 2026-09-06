@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <script src="[https://cdn.jsdelivr.net/npm/marked/marked.min.js](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
         :root {
             --ui-drawer-opacity: 0.88;
@@ -224,7 +224,6 @@
             line-height: var(--ui-chat-line-height); 
             word-break: break-word; 
             overflow-wrap: anywhere; 
-            contain: paint; /* 避免串流時排版連鎖重排抖動 */
         }
         .markdown-body { color: #e5e5e5; }
         .markdown-body strong, .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
@@ -246,6 +245,7 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
+            vertical-align: middle;
         }
         .img-thumb-wrapper:hover {
             transform: translateY(-2px);
@@ -326,10 +326,10 @@
         .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
         .markdown-body p { margin-bottom: 0.55rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
-        .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.7rem; color: #f3f4f6; }
+        .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.75rem; color: #f3f4f6; }
         .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; max-width: 100%; }
-        .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.7rem; display: block; overflow-x: auto; max-width: 100%; }
+        .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.75rem; line-height: 1.5; }
+        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.75rem; display: table; }
         .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
         .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
         .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
@@ -394,7 +394,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v15.5 串流防閃爍穩定版</span>
+                <span>v15.6 結構修復穩定版</span>
             </span>
         </div>
     </div>
@@ -407,7 +407,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v15.5 旗艦版</span>
+                        <span>v15.6 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -524,7 +524,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.5</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.6</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -878,7 +878,7 @@
 
                         <div class="space-y-1.5">
                             <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址</label>
-                            <input type="text" id="gistIdInput" placeholder="[https://gist.githubusercontent.com/.../shiye-sop.txt](https://gist.githubusercontent.com/.../shiye-sop.txt)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                            <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                         </div>
 
                         <div class="space-y-2.5 border-t border-neutral-800 pt-3">
@@ -895,7 +895,7 @@
 
                         <div class="space-y-1.5 border-t border-neutral-800 pt-3">
                             <label class="text-[11px] text-neutral-300 font-medium">背景輪播圖片網址 (每行一張)</label>
-                            <textarea id="bgImagesInput" rows="2" placeholder="[https://image1.jpg](https://image1.jpg)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
+                            <textarea id="bgImagesInput" rows="2" placeholder="https://image1.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
                         </div>
                     </div>
                 </div>
@@ -925,46 +925,32 @@
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
-        const GITHUB_REPO_IMAGE_BASE = '[https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/](https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/)';
-        const GITHUB_REPO_DOC_BASE = '[https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/](https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/)';
+        const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
+        const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
         let photoCatalog = [];
         let documentCatalog = [];
 
-        /**
-         * 🌟 串流 Markdown 未閉合語法防閃爍處理器
-         * 解決 AI 串流輸出過程中未完成的圖片標籤、代碼塊、加粗標籤造成 marked.js 反覆破損閃爍重排
-         */
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
             let text = rawText;
-
-            // 1. 隱藏串流尾端尚未輸出完整的圖片標籤（例如: ![說明 或 ![說明]( 或 ![說明](http...）
             text = text.replace(/!\[[^\]]*\]?\([^\)]*$/, '');
             text = text.replace(/!\[[^\]]*$/, '');
-
-            // 2. 隱藏串流尾端尚未輸出完整的超連結標籤（例如: [說明 或 [說明](...）
             text = text.replace(/(?<!\!)\[[^\]]*\]?\([^\)]*$/, '');
             text = text.replace(/(?<!\!)\[[^\]]*$/, '');
 
-            // 3. 自動平衡修補未閉合的三反引號代碼區塊 (```)
             const codeBlockMatches = text.match(/```/g);
             if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) {
                 text += '\n```';
             }
-
-            // 4. 自動平衡行內粗體 (**)
             const boldMatches = text.match(/\*\*/g);
             if (boldMatches && boldMatches.length % 2 !== 0) {
                 text += '**';
             }
-
-            // 5. 自動平衡單反引號行內代碼 (`)
             const inlineCodeMatches = text.match(/(?<!`)`(?!`)/g);
             if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) {
                 text += '`';
             }
-
             return text;
         }
 
@@ -977,6 +963,7 @@
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
+            // 🌟 嚴格保持單行乾淨輸出，避免 breaks: true 插入多餘的 <br> 撐壞 layout
             renderer.link = function(href, title, text) {
                 let actualHref = href, actualTitle = title || '', actualText = text || '';
                 if (typeof href === 'object' && href !== null) {
@@ -1002,15 +989,7 @@
                 let cleanUrl = String(actualHref).trim();
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
 
-                return `
-                    <div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視">
-                        <img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();">
-                        <div class="img-thumb-badge">
-                            <i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i>
-                            <span>檢視大圖</span>
-                        </div>
-                    </div>
-                `;
+                return `<div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
             };
 
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
@@ -3337,7 +3316,6 @@ ${sopContent}
                                                 accumulatedReply += delta;
                                                 if (!renderScheduled) {
                                                     renderScheduled = true;
-                                                    // 🌟 採用 requestAnimationFrame + 時間間隔，大幅提升滾動跟隨平滑度
                                                     renderTimerId = setTimeout(() => {
                                                         requestAnimationFrame(() => {
                                                             updateLiveBubble(liveMsgElements, accumulatedReply);
@@ -3535,22 +3513,17 @@ ${sopContent}
             };
         }
 
-        /**
-         * 🌟 平滑即時渲染 + 防破圖與滾動鎖定
-         */
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
 
             let cleanText = cleanGuardrailArtifacts(text);
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
 
-            // 預先過濾未閉合的 Markdown 標籤，防止標籤被腰斬時 marked.js 出錯破圖
             const safeText = sanitizeIncompleteMarkdown(cleanText);
             const parsed = renderMarkdownPure(safeText);
 
             elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
 
-            // 🌟 Scroll Anchoring 智慧滾動跟隨：若同仁往上翻閱檢視，不強迫跳回底部
             const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
             if (distanceFromBottom < 180) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
