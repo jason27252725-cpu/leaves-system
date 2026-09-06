@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="[https://cdn.jsdelivr.net/npm/marked/marked.min.js](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        
+        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap)');
+
         :root {
             --ui-drawer-opacity: 0.88;
             --ui-drawer-blur: 32px;
@@ -36,14 +36,14 @@
         }
 
         .hidden-view { display: none !important; }
-        
+
         .glass-mono {
             background: rgba(12, 12, 12, var(--ui-drawer-opacity));
             backdrop-filter: blur(var(--ui-drawer-blur));
             -webkit-backdrop-filter: blur(var(--ui-drawer-blur));
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
-        
+
         .glass-card {
             background: rgba(20, 20, 20, 0.65);
             backdrop-filter: blur(14px);
@@ -208,12 +208,6 @@
         }
         .ui-no-select { user-select: none; -webkit-user-select: none; }
 
-        @keyframes geminiBlockEnter {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .gemini-enter-anim { animation: geminiBlockEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
         @keyframes geminiGlowPulse {
             0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
             50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
@@ -230,6 +224,7 @@
             line-height: var(--ui-chat-line-height); 
             word-break: break-word; 
             overflow-wrap: anywhere; 
+            contain: paint; /* 避免串流時排版連鎖重排抖動 */
         }
         .markdown-body { color: #e5e5e5; }
         .markdown-body strong, .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
@@ -399,7 +394,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v15.4 錯誤容錯防死鎖版</span>
+                <span>v15.5 串流防閃爍穩定版</span>
             </span>
         </div>
     </div>
@@ -412,12 +407,12 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v15.4 旗艦版</span>
+                        <span>v15.5 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
-            
+
             <div class="flex items-center space-x-4 md:space-x-6 text-xs tracking-widest">
                 <span id="roleBadge" class="text-[9px] bg-white/10 text-neutral-300 border border-white/20 px-3 py-1 rounded-full font-light tracking-wider">MEMBER</span>
                 <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden-view text-[11px]">ADMIN</a>
@@ -509,7 +504,7 @@
                     </button>
 
                     <textarea id="userInput" rows="1" placeholder="詢問毛胚屋流程、工法、標語或貼上多張照片 (Ctrl+V)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
-                    
+
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
                         <span id="sendBtnText" class="hidden-view ml-1 font-sans text-[11px]">中斷</span>
@@ -529,7 +524,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.4</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.5</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -586,7 +581,7 @@
             </aside>
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
-                
+
                 <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
@@ -883,7 +878,7 @@
 
                         <div class="space-y-1.5">
                             <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址</label>
-                            <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                            <input type="text" id="gistIdInput" placeholder="[https://gist.githubusercontent.com/.../shiye-sop.txt](https://gist.githubusercontent.com/.../shiye-sop.txt)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                         </div>
 
                         <div class="space-y-2.5 border-t border-neutral-800 pt-3">
@@ -900,7 +895,7 @@
 
                         <div class="space-y-1.5 border-t border-neutral-800 pt-3">
                             <label class="text-[11px] text-neutral-300 font-medium">背景輪播圖片網址 (每行一張)</label>
-                            <textarea id="bgImagesInput" rows="2" placeholder="https://image1.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
+                            <textarea id="bgImagesInput" rows="2" placeholder="[https://image1.jpg](https://image1.jpg)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
                         </div>
                     </div>
                 </div>
@@ -930,11 +925,48 @@
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
-        const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
-        const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
+        const GITHUB_REPO_IMAGE_BASE = '[https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/](https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/)';
+        const GITHUB_REPO_DOC_BASE = '[https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/](https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/)';
 
         let photoCatalog = [];
         let documentCatalog = [];
+
+        /**
+         * 🌟 串流 Markdown 未閉合語法防閃爍處理器
+         * 解決 AI 串流輸出過程中未完成的圖片標籤、代碼塊、加粗標籤造成 marked.js 反覆破損閃爍重排
+         */
+        function sanitizeIncompleteMarkdown(rawText) {
+            if (!rawText) return '';
+            let text = rawText;
+
+            // 1. 隱藏串流尾端尚未輸出完整的圖片標籤（例如: ![說明 或 ![說明]( 或 ![說明](http...）
+            text = text.replace(/!\[[^\]]*\]?\([^\)]*$/, '');
+            text = text.replace(/!\[[^\]]*$/, '');
+
+            // 2. 隱藏串流尾端尚未輸出完整的超連結標籤（例如: [說明 或 [說明](...）
+            text = text.replace(/(?<!\!)\[[^\]]*\]?\([^\)]*$/, '');
+            text = text.replace(/(?<!\!)\[[^\]]*$/, '');
+
+            // 3. 自動平衡修補未閉合的三反引號代碼區塊 (```)
+            const codeBlockMatches = text.match(/```/g);
+            if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) {
+                text += '\n```';
+            }
+
+            // 4. 自動平衡行內粗體 (**)
+            const boldMatches = text.match(/\*\*/g);
+            if (boldMatches && boldMatches.length % 2 !== 0) {
+                text += '**';
+            }
+
+            // 5. 自動平衡單反引號行內代碼 (`)
+            const inlineCodeMatches = text.match(/(?<!`)`(?!`)/g);
+            if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) {
+                text += '`';
+            }
+
+            return text;
+        }
 
         function renderMarkdownPure(text) {
             if (!text) return '';
@@ -944,14 +976,14 @@
 
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
-            
+
             renderer.link = function(href, title, text) {
                 let actualHref = href, actualTitle = title || '', actualText = text || '';
                 if (typeof href === 'object' && href !== null) {
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
                 const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
-                
+
                 if (actualHref && actualHref.includes('/documents/')) {
                     let icon = 'fa-file-lines';
                     if (actualHref.endsWith('.pdf')) icon = 'fa-file-pdf text-red-400';
@@ -969,7 +1001,7 @@
                 }
                 let cleanUrl = String(actualHref).trim();
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
-                
+
                 return `
                     <div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視">
                         <img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();">
@@ -1203,7 +1235,7 @@
                     canvas.width = w; canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
-                    
+
                     const base64 = canvas.toDataURL('image/jpeg', 0.78);
                     pendingImages.push({
                         id: Date.now() + Math.random().toString(36).substring(2, 6),
@@ -1271,7 +1303,7 @@
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             const remaining = 5 - pendingImages.length;
             if (remaining <= 0) return;
-            
+
             for (let item of items) {
                 if (item.type.indexOf('image') !== -1) {
                     const file = item.getAsFile();
@@ -1750,7 +1782,7 @@
             if (!localStorage.getItem('shiye_pending_proposals')) localStorage.setItem('shiye_pending_proposals', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_update_logs')) localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
-            
+
             await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
@@ -1792,7 +1824,7 @@
             const container = document.getElementById('bgSlideshow');
             const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
             if (!Array.isArray(bgList) || bgList.length === 0) return;
-            
+
             container.innerHTML = '';
             bgList.forEach((url, i) => {
                 const div = document.createElement('div');
@@ -2260,7 +2292,7 @@
             try {
                 const cloudCodes = await fetchCodesFromCloud();
                 const localCache = safeJsonParse(localStorage.getItem('shiye_codes_cache'), []);
-                
+
                 currentCodesList = cloudCodes.map(cc => {
                     const localMatch = localCache.find(lc => lc.code === cc.code);
                     if (localMatch) {
@@ -2268,7 +2300,7 @@
                         const localTokens = Number(localMatch.totalTokens || 0);
                         const cloudReqs = Number(cc.requestCount || 0);
                         const localReqs = Number(localMatch.requestCount || 0);
-                        
+
                         return {
                             ...cc,
                             totalTokens: Math.max(cloudTokens, localTokens),
@@ -2287,7 +2319,7 @@
         async function loadAdminForm() {
             const rawKeys = localStorage.getItem('shiye_apikey') || '';
             document.getElementById('apiKeyInput').value = rawKeys;
-            
+
             const keyCount = getApiKeys().length;
             const badge = document.getElementById('keyCountBadge');
             if (badge) badge.textContent = `${keyCount} 組金鑰`;
@@ -2296,7 +2328,7 @@
             document.getElementById('codesGistIdInput').value = getCodesGistId();
             document.getElementById('githubTokenInput').value = getGithubToken();
             document.getElementById('codesGistFilenameInput').value = getCodesFilename();
-            
+
             const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
             document.getElementById('bgImagesInput').value = Array.isArray(bgList) ? bgList.join('\n') : '';
 
@@ -2704,7 +2736,7 @@
             if (res.success) {
                 localStorage.setItem('shiye_sop', target.content);
                 localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
-                
+
                 broadcastSopUpdate(target.content);
                 await pushCodesToCloud(currentCodesList);
                 renderSnapshots();
@@ -2718,7 +2750,7 @@
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
-            
+
             let token = getGithubToken();
             if (!token) {
                 alert('⚠️ 請先在設定中填寫 GitHub Token 才能將新身分碼發布至雲端！');
@@ -2772,7 +2804,7 @@
 
             let freshCodes = await fetchCodesFromCloud();
             freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
-            
+
             let result = await pushCodesToCloudWithDetails(freshCodes);
             if (result.success) {
                 currentCodesList = freshCodes;
@@ -2886,7 +2918,7 @@
                 if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
                 if (token) localStorage.setItem('shiye_github_token', token);
                 if (filename) localStorage.setItem('shiye_codes_filename', filename);
-                
+
                 const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
                 localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
 
@@ -2940,7 +2972,7 @@
             const container = document.getElementById('errorLogsContainer');
             const countBadge = document.getElementById('errorLogsCountBadge');
             if(!container) return;
-            
+
             const logs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
             countBadge.textContent = `${logs.length} 筆`;
 
@@ -3193,7 +3225,7 @@ ${sopContent}
 ---------------------`;
 
                 const messages = [{ role: "system", content: systemPrompt }];
-                
+
                 chatHistory.slice(-6).forEach(h => {
                     messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
                 });
@@ -3305,10 +3337,13 @@ ${sopContent}
                                                 accumulatedReply += delta;
                                                 if (!renderScheduled) {
                                                     renderScheduled = true;
+                                                    // 🌟 採用 requestAnimationFrame + 時間間隔，大幅提升滾動跟隨平滑度
                                                     renderTimerId = setTimeout(() => {
-                                                        updateLiveBubble(liveMsgElements, accumulatedReply);
-                                                        renderScheduled = false;
-                                                    }, 60);
+                                                        requestAnimationFrame(() => {
+                                                            updateLiveBubble(liveMsgElements, accumulatedReply);
+                                                            renderScheduled = false;
+                                                        });
+                                                    }, 50);
                                                 }
                                             }
                                         } catch (err) {}
@@ -3351,12 +3386,12 @@ ${sopContent}
                     const { displayText } = robustProposalExtractor(accumulatedReply);
 
                     const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
-                    
+
                     let currentCodeToUse = activeCode || (currentAuth === 'admin' ? SPECIAL_ADMIN_CODE : null);
                     if (currentCodeToUse) {
                         let latestCodes = safeJsonParse(localStorage.getItem('shiye_codes_cache'), currentCodesList);
                         let matched = latestCodes.find(c => c.code && c.code.toUpperCase() === currentCodeToUse.toUpperCase());
-                        
+
                         if (!matched) {
                             matched = {
                                 code: currentCodeToUse,
@@ -3400,7 +3435,6 @@ ${sopContent}
                         model: '已手動停止', tokens: 0, time: elapsedSec
                     });
                 } else {
-                    // 🌟 錯誤降級熔斷：當所有模型耗盡或逾時，友善顯示錯誤並提供一鍵「重新回答」
                     appendMessage(`⚠️ AI 回應連線中斷或模型繁忙 (${lastErrorMessage || '請檢查 API Key 或網路狀態'})。請點擊下方按鈕重新發送。`, 'assistant', true, text, {
                         model: '連線逾時或額度已滿', tokens: 0, time: elapsedSec
                     });
@@ -3501,16 +3535,26 @@ ${sopContent}
             };
         }
 
+        /**
+         * 🌟 平滑即時渲染 + 防破圖與滾動鎖定
+         */
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
+
             let cleanText = cleanGuardrailArtifacts(text);
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
 
-            const parsed = renderMarkdownPure(cleanText);
+            // 預先過濾未閉合的 Markdown 標籤，防止標籤被腰斬時 marked.js 出錯破圖
+            const safeText = sanitizeIncompleteMarkdown(cleanText);
+            const parsed = renderMarkdownPure(safeText);
+
             elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
-            
-            const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 240;
-            if (isNearBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // 🌟 Scroll Anchoring 智慧滾動跟隨：若同仁往上翻閱檢視，不強迫跳回底部
+            const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
+            if (distanceFromBottom < 180) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
         }
 
         function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImgs = []) {
@@ -3525,7 +3569,7 @@ ${sopContent}
 
             if (proposalJson && proposalJson.topic) {
                 window.tempProposalStore[msgId] = proposalJson;
-                
+
                 const currentSop = localStorage.getItem('shiye_sop') || '';
                 const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
                 const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((proposalJson.newText || '').trim());
@@ -3553,7 +3597,7 @@ ${sopContent}
                             <i class="fa-solid fa-file-pen text-neutral-400"></i>
                             <span>SOP 修改/刪除/增補草稿確認</span>
                         </div>
-                        
+
                         ${locBadgeHtml}
 
                         <div class="text-[11px] space-y-1 bg-neutral-950 p-3 rounded-xl border border-neutral-800">
