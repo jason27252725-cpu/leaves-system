@@ -591,7 +591,7 @@
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-tower-broadcast text-xs text-indigo-400"></i><span class="tracking-wide text-white">熱更新推送中心</span></div>
                         <span id="nav_badge_releaseManager" class="w-2 h-2 rounded-full bg-indigo-400 hidden-view ml-2"></span>
                     </button>
-                    <!-- 🌟 新增：版本歷史日誌視窗入口 -->
+                    <!-- 🌟 版本歷史日誌視窗入口 -->
                     <button onclick="toggleAdminWindow('versionChangelog')" id="nav_btn_versionChangelog" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-branch text-xs text-sky-400"></i><span class="tracking-wide text-white">版本歷史日誌</span></div>
                         <span id="nav_badge_versionChangelog" class="w-2 h-2 rounded-full bg-sky-400 hidden-view ml-2"></span>
@@ -650,7 +650,7 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
 
-                <!-- 🌟 模式 B：熱更新與灰度發布中心視窗 -->
+                <!-- 熱更新與灰度發布中心視窗 -->
                 <div id="win_releaseManager" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -711,7 +711,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 新增：版本歷史日誌視窗 (Changelog & Diff Viewer) -->
+                <!-- 版本歷史日誌視窗 (Changelog & Diff Viewer) -->
                 <div id="win_versionChangelog" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -722,14 +722,8 @@
                         <button onclick="closeAdminWindow('versionChangelog')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
                     <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-                        <!-- 左側：版本切換列表 -->
-                        <div class="w-full md:w-56 border-b md:border-b-0 md:border-r border-neutral-800 bg-neutral-950/60 p-3 overflow-y-auto space-y-1.5" id="changelogVersionList">
-                            <!-- 動態生成版本選單 -->
-                        </div>
-                        <!-- 右側：版本詳細內容與架構對比 -->
-                        <div class="flex-1 p-5 overflow-y-auto space-y-4" id="changelogDetailPanel">
-                            <!-- 動態渲染詳細紀錄 -->
-                        </div>
+                        <div class="w-full md:w-56 border-b md:border-b-0 md:border-r border-neutral-800 bg-neutral-950/60 p-3 overflow-y-auto space-y-1.5" id="changelogVersionList"></div>
+                        <div class="flex-1 p-5 overflow-y-auto space-y-4" id="changelogDetailPanel"></div>
                     </div>
                 </div>
 
@@ -825,7 +819,7 @@
 
                         <div class="p-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-[11px] text-neutral-400 space-y-1">
                             <p>💡 系統字型已預設貼齊 Google Gemini 規範（<strong>Plus Jakarta Sans + Noto Sans TC</strong>，字級 15px、行高 1.65）。</p>
-                            <p>調整參數後點選左下角「<strong>同步雲端</strong>」，全公司電腦、手機與 iPad 將自動同步最新排版！</p>
+                            <p>調整參數後點選左下角<strong>「同步雲端」</strong>，全公司電腦、手機與 iPad 將自動同步最新排版！</p>
                         </div>
                     </div>
                 </div>
@@ -2510,7 +2504,6 @@
             }
         }
 
-        /* 🌟 防死鎖版本比對：僅當雲端版號大於本地版號時才觸發 */
         function compareSemver(cloudVer, localVer) {
             const parse = v => String(v).replace(/[^0-9.]/g, '').split('.').map(Number);
             const cParts = parse(cloudVer);
@@ -2518,8 +2511,8 @@
             for (let i = 0; i < Math.max(cParts.length, lParts.length); i++) {
                 const c = cParts[i] || 0;
                 const l = lParts[i] || 0;
-                if (c > l) return 1;  // 雲端比較新
-                if (c < l) return -1; // 本地比較新
+                if (c > l) return 1;
+                if (c < l) return -1;
             }
             return 0;
         }
@@ -2545,7 +2538,6 @@
 
                     if (currentAuth !== 'admin' && cloudData.broadcastVersion) {
                         const targetVer = cloudData.broadcastVersion;
-                        // 🌟 嚴格使用版本大於判斷，徹底避免降級重整死迴圈
                         if (compareSemver(targetVer, CURRENT_APP_VERSION) > 0) {
                             pendingBroadcastVersion = targetVer;
                             const chip = document.getElementById('pendingUpdateNoticeChip');
@@ -3640,7 +3632,6 @@
         async function handleSend() {
             if (isGenerating) return;
 
-            // 🌟 攔截防線：若目前全系統處於維護中且非管理員，直接阻擋發送
             const maintenanceObj = safeJsonParse(localStorage.getItem('shiye_maintenance_state'), { enabled: false });
             if (maintenanceObj.enabled && currentAuth !== 'admin') {
                 alert('⚠️ 系統目前維護中，暫時無法送出查詢。');
@@ -3946,7 +3937,7 @@ ${sopContent}
                         model: '已手動停止', tokens: 0, time: elapsedSec
                     });
                 } else {
-                    appendMessage(`⚠️ AI 回應連線中斷或模型繁忙 (${lastErrorMessage || '請檢查 API Key或網路狀態'})。請點擊下方按鈕重新發送。`, 'assistant', true, text, {
+                    appendMessage(`⚠️ AI 回應連線中斷或模型繁忙 (${lastErrorMessage || '請檢查 API Key 或網路狀態'})。請點擊下方按鈕重新發送。`, 'assistant', true, text, {
                         model: '連線逾時或額度已滿', tokens: 0, time: elapsedSec
                     });
                 }
