@@ -394,7 +394,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v16.0 雲端並發加固版</span>
+                <span>v16.1 圖文容錯增強版</span>
             </span>
         </div>
     </div>
@@ -407,7 +407,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v16.0 旗艦版</span>
+                        <span>v16.1 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -524,7 +524,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.1</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -931,37 +931,27 @@
         let photoCatalog = [];
         let documentCatalog = [];
 
-        // 🌟 強化版 Markdown 串流修復：防止破損標籤截斷與表格破圖
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
             let text = rawText;
 
-            // 1. 僅針對尾端未閉合的圖片語法修整
             text = text.replace(/!\[([^\]]*)\]\([^\)]*$/, '');
             text = text.replace(/!\[[^\]]*$/, '');
-
-            // 2. 僅針對尾端真正未完成的 markdown link 處理
             text = text.replace(/(?<!\!)\[([^\]]+)\]\([^\)]*$/, '');
 
-            // 3. 補齊未閉合的程式碼區塊
             const codeBlockMatches = text.match(/```/g);
             if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) {
                 text += '\n```';
             }
-
-            // 4. 補齊行內加粗語法
             const boldMatches = text.match(/\*\*/g);
             if (boldMatches && boldMatches.length % 2 !== 0) {
                 text += '**';
             }
-
-            // 5. 補齊單反引號
             const inlineCodeMatches = text.match(/(?<!`)`(?!`)/g);
             if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) {
                 text += '`';
             }
 
-            // 6. 表格即時保護：如果最後一行是表格列且結尾未閉合，自動補上管線符號避免排版崩解
             const lastLine = text.substring(text.lastIndexOf('\n') + 1);
             if (lastLine.trim().startsWith('|') && !lastLine.trim().endsWith('|')) {
                 text += ' |';
@@ -970,9 +960,20 @@
             return text;
         }
 
+        // 🌟 核心升級：圖片語法容錯正規化處理器
         function renderMarkdownPure(text) {
             if (!text) return '';
             let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
+
+            // 1. 自動修正角括號或多餘空格：![desc](<url>) 或 ![desc]( url ) -> ![desc](url)
+            clean = clean.replace(/!\[([^\]]*)\]\(\s*<?(https?:\/\/[^\s>]+)>?\s*\)/gi, '![$1]($2)');
+
+            // 2. 自動容錯補齊：如果 AI 漏打驚嘆號輸出 [desc](url)，且網址為圖檔格式，自動補齊 !
+            clean = clean.replace(/(?<!\!)\[([^\]]+)\]\((https?:\/\/[^\s\)]+?\.(?:png|jpg|jpeg|webp|gif|svg))\)/gi, '![$1]($2)');
+
+            // 3. 確保圖片語法獨立成行，避免與段落文字緊黏被 marked.js 判定為純文字
+            clean = clean.replace(/([^\n])(!\[[^\]]*\]\([^\)]+\))/g, '$1\n\n$2\n\n');
+
             return typeof marked !== 'undefined' ? marked.parse(clean) : escapeHtml(clean);
         }
 
@@ -996,12 +997,23 @@
                 return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
             };
 
+            // 🌟 核心升級：雙模相容圖片渲染器，剝除殘餘符號，避免破圖或回退為網址
             renderer.image = function(href, title, text) {
-                let actualHref = href, actualTitle = title || '', actualText = text || '';
+                let actualHref = href;
+                let actualTitle = title || '';
+                let actualText = text || '';
+
                 if (typeof href === 'object' && href !== null) {
-                    actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
+                    actualHref = href.href || '';
+                    actualTitle = href.title || '';
+                    actualText = href.text || '';
                 }
-                let cleanUrl = String(actualHref).trim();
+
+                let cleanUrl = String(actualHref || '').trim();
+                cleanUrl = cleanUrl.replace(/^<|>$/g, '').trim();
+
+                if (!cleanUrl) return '';
+
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
                 return `<div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
             };
@@ -1179,7 +1191,6 @@
             try { localStorage.setItem('shiye_ui_settings', JSON.stringify(currentUiSettings)); } catch(e) {}
         }
 
-        // 🌟 自動根據當前路徑解析 GitHub Pages 子目錄，防止 404
         function resolveBasePath(relativePath) {
             const path = window.location.pathname;
             const basePath = path.substring(0, path.lastIndexOf('/') + 1);
@@ -1328,7 +1339,6 @@
             });
         }
 
-        // 🌟 閒置事件防抖/節流，避免頻繁呼叫
         let lastUserActivity = Date.now();
         const IDLE_LIMIT = 20 * 60 * 1000;
         let idleThrottleTimeout = null;
@@ -1829,7 +1839,6 @@
             }
         }
 
-        // 🌟 嚴格銷毀舊計時器，防範重複計時記憶體洩漏
         function initBackgroundSlideshow() {
             if (slideshowTimer) { 
                 clearInterval(slideshowTimer); 
@@ -2864,7 +2873,6 @@
             });
         }
 
-        // 🌟 雲端並發防衝突合併機制（Merge instead of Blind Overwrite）
         async function pushCodesToCloudWithDetails(codesArray) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
@@ -2883,7 +2891,6 @@
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
 
             try {
-                // 1. 先抓取目前雲端真實狀態進行合併，防範並發覆蓋
                 const checkRes = await fetch(`https://api.github.com/gists/${gistId}?_t=${Date.now()}`, {
                     headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
                     cache: 'no-store'
@@ -2894,7 +2901,6 @@
                     if (latestGist.files && latestGist.files[filename] && latestGist.files[filename].content) {
                         const remoteData = safeJsonParse(latestGist.files[filename].content, {});
 
-                        // 合併通行碼：保留最新登入狀態與較大的 token 用量
                         if (Array.isArray(remoteData.codes)) {
                             targetCodes = targetCodes.map(localC => {
                                 const remoteC = remoteData.codes.find(rc => rc.code === localC.code);
@@ -2909,7 +2915,6 @@
                             });
                         }
 
-                        // 合併草稿與修訂日誌（依 ID 去重）
                         if (Array.isArray(remoteData.pendingProposals)) {
                             const map = new Map();
                             [...pendingProposals, ...remoteData.pendingProposals].forEach(item => { if (item.id) map.set(item.id, item); });
@@ -3386,10 +3391,9 @@ ${sopContent}
                                 const { done, value } = await activeStreamReader.read();
                                 if (done) break;
 
-                                // 🌟 強化 SSE 緩衝區切分防護：防止斷裂封包導致 JSON.parse 拋出 SyntaxError
                                 buffer += decoder.decode(value, { stream: true });
                                 const lines = buffer.split('\n');
-                                buffer = lines.pop(); // 保留尚未結尾的殘缺行
+                                buffer = lines.pop();
 
                                 for (const line of lines) {
                                     const trimmed = line.trim();
@@ -3413,7 +3417,6 @@ ${sopContent}
                                                 }
                                             }
                                         } catch (err) {
-                                            // 若單行非標準 JSON，嘗試塞回 buffer 容錯
                                             buffer = line + '\n' + buffer;
                                         }
                                     }
