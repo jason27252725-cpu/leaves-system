@@ -345,6 +345,60 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
+    <!-- 🌟 同仁端輕量更新公告提示卡 (What's New) -->
+    <div id="whatsNewModal" class="hidden-view fixed inset-0 z-[180] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 ui-no-select">
+        <div class="glass-mono p-6 sm:p-7 rounded-3xl max-w-sm w-full space-y-4 border border-blue-400/40 shadow-2xl relative">
+            <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
+                <h3 class="text-sm font-semibold tracking-wider text-white">🎉 LEAVES AI 已更新至 <span id="whatsNewVerTitle">v15.7</span></h3>
+            </div>
+            <p class="text-xs text-neutral-400">總部已完成核心優化，為您帶來更穩定流暢的現場查詢體驗：</p>
+            <div id="whatsNewItemsContainer" class="p-3.5 bg-neutral-950/80 border border-neutral-800 rounded-2xl space-y-2 text-xs text-neutral-200 font-sans">
+                <!-- 動態注入精簡摘要 -->
+            </div>
+            <button onclick="dismissWhatsNewModal()" class="w-full bg-white hover:bg-neutral-200 text-black font-semibold py-2.5 rounded-xl transition text-xs tracking-wider shadow-lg">
+                我知道了，開始使用
+            </button>
+        </div>
+    </div>
+
+    <!-- 🌟 遊戲風格熱更新進度條遮罩 -->
+    <div id="gameUpdateModal" class="hidden-view fixed inset-0 z-[200] bg-black/85 backdrop-blur-2xl flex flex-col items-center justify-center p-6 ui-no-select">
+        <div class="glass-mono p-7 rounded-3xl max-w-sm w-full space-y-4 text-center border border-blue-500/40 shadow-[0_0_50px_rgba(59,130,246,0.3)]">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400 text-blue-400 flex items-center justify-center mx-auto shadow-inner">
+                <i class="fa-solid fa-arrows-rotate text-xl animate-spin"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold tracking-[0.2em] uppercase text-white">SYSTEM HOT-RELOAD</h3>
+                <p id="gameUpdateVersionTag" class="text-[10px] text-blue-400 font-mono mt-0.5">TARGET: v15.7 (LIVE SYNC)</p>
+            </div>
+            <p id="gameUpdateNoticeText" class="text-xs text-neutral-300 font-mono leading-relaxed min-h-[36px] flex items-center justify-center">
+                總部已正式發布最新核心版本，正在重構腳本...
+            </p>
+            <div class="w-full bg-neutral-900 h-2.5 rounded-full overflow-hidden border border-neutral-800 p-0.5 shadow-inner">
+                <div id="gameUpdateProgressBar" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400 h-full w-0 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(96,165,250,0.8)]"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-mono text-neutral-500 pt-1">
+                <span>VERIFYING SCRIPTS</span>
+                <span id="gameUpdatePercentText" class="text-white font-semibold">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 全系統維護中阻擋公告遮罩 -->
+    <div id="maintenanceModal" class="hidden-view fixed inset-0 z-[190] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center p-6 ui-no-select text-center">
+        <div class="glass-mono p-8 rounded-3xl max-w-md w-full space-y-4 border border-amber-500/40 shadow-2xl">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-400 flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-screwdriver-wrench text-xl"></i>
+            </div>
+            <h3 class="text-sm font-semibold tracking-widest uppercase text-white">拾葉設計 • 系統維護公告</h3>
+            <p id="maintenanceModalNotice" class="text-xs text-neutral-300 leading-relaxed font-mono">
+                系統目前正在由工程總部進行例行性維護與規範校對，暫時停止問答調用。
+            </p>
+            <p class="text-[10px] text-neutral-500 font-mono">維護完成後將自動解除遮罩，敬請稍候。</p>
+        </div>
+    </div>
+
     <!-- 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
@@ -394,7 +448,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v15.6 結構修復穩定版</span>
+                <span id="loginVersionBadge">v15.7 雙向日誌旗艦版</span>
             </span>
         </div>
     </div>
@@ -407,8 +461,13 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v15.6 旗艦版</span>
+                        <span id="headerVersionBadge">v15.7 旗艦版</span>
                     </span>
+                    <!-- 待套用更新提示小燈 -->
+                    <button id="pendingUpdateNoticeChip" onclick="executeSafeHotReloadNow()" class="hidden-view text-[9px] bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-700/80 px-2.5 py-0.5 rounded-full font-mono flex items-center gap-1 shadow-sm transition animate-bounce" title="點擊立即手動套用最新版本">
+                        <i class="fa-solid fa-sparkles text-blue-400 text-[8px]"></i>
+                        <span>新版本待套用</span>
+                    </button>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
@@ -524,10 +583,19 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.6</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v15.7</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
+                    <button onclick="toggleAdminWindow('releaseManager')" id="nav_btn_releaseManager" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-tower-broadcast text-xs text-indigo-400"></i><span class="tracking-wide text-white">熱更新推送中心</span></div>
+                        <span id="nav_badge_releaseManager" class="w-2 h-2 rounded-full bg-indigo-400 hidden-view ml-2"></span>
+                    </button>
+                    <!-- 🌟 新增：版本歷史日誌視窗入口 -->
+                    <button onclick="toggleAdminWindow('versionChangelog')" id="nav_btn_versionChangelog" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-branch text-xs text-sky-400"></i><span class="tracking-wide text-white">版本歷史日誌</span></div>
+                        <span id="nav_badge_versionChangelog" class="w-2 h-2 rounded-full bg-sky-400 hidden-view ml-2"></span>
+                    </button>
                     <button onclick="toggleAdminWindow('uiCustomizer')" id="nav_btn_uiCustomizer" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-palette text-xs text-blue-400"></i><span class="tracking-wide text-white">多端 UI 畫布</span></div>
                         <span id="nav_badge_uiCustomizer" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
@@ -541,7 +609,7 @@
                         <span id="nav_badge_proposals" class="w-2 h-2 rounded-full bg-amber-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('diffLogs')" id="nav_btn_diffLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i><span class="tracking-wide">修訂日誌 (Diff)</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i><span class="tracking-wide">SOP 修訂日誌</span></div>
                         <span id="nav_badge_diffLogs" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('snapshots')" id="nav_btn_snapshots" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
@@ -581,6 +649,89 @@
             </aside>
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
+
+                <!-- 🌟 模式 B：熱更新與灰度發布中心視窗 -->
+                <div id="win_releaseManager" class="admin-window hidden-view">
+                    <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
+                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
+                        <div class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-tower-broadcast text-xs text-indigo-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">熱更新推送中心 (灰度發布管控)</span>
+                        </div>
+                        <button onclick="closeAdminWindow('releaseManager')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2">
+                                <span class="text-[10px] text-neutral-500 uppercase tracking-widest font-mono">本機執行之最新版本</span>
+                                <div class="text-lg font-semibold text-white font-mono flex items-center gap-2">
+                                    <span id="currentLocalVersionText">v15.7</span>
+                                    <span class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded font-sans">管理員測試中</span>
+                                </div>
+                                <p class="text-[11px] text-neutral-400">這是您目前在 GitHub 上剛貼上執行的最新代碼。</p>
+                            </div>
+                            <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2">
+                                <span class="text-[10px] text-neutral-500 uppercase tracking-widest font-mono">雲端已廣播給全體同仁之版號</span>
+                                <div class="text-lg font-semibold text-emerald-400 font-mono flex items-center gap-2">
+                                    <span id="currentCloudBroadcastVersionText">v15.6</span>
+                                    <span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-sans">全體使用中</span>
+                                </div>
+                                <p class="text-[11px] text-neutral-400">全公司非管理員同仁設備將維持此版本，直到您點擊下方推送。</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-5 rounded-2xl border border-indigo-500/30 space-y-3">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-bullhorn text-indigo-400 text-xs"></i>
+                                <span class="text-xs font-semibold text-white">推送此版本至全體同仁設備</span>
+                            </div>
+                            <p class="text-xs text-neutral-300 leading-relaxed">
+                                當您確認本次更新測試無誤後，點擊下方按鈕，系統將自動把最新版號寫入雲端 Gist。所有正在線上的同仁裝置將在 60 秒內陸續跳出<strong>黑客科技風熱更新進度條</strong>，並自動平滑無縫切換到新版本！
+                            </p>
+                            <button onclick="broadcastCurrentVersionToAllStaff()" id="broadcastVersionBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>📢 確認無誤，立即全體推送熱更新</span>
+                            </button>
+                        </div>
+
+                        <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                                    <span>全系統維護公告開關</span>
+                                </span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="maintenanceModeToggle" onchange="toggleMaintenanceMode(this.checked)" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                                </label>
+                            </div>
+                            <p class="text-[11px] text-neutral-400">開啟後，所有同仁的畫面將立即被維護遮罩阻擋，防止同仁在您大幅重整資料時送出詢問。</p>
+                            <input type="text" id="maintenanceNoticeInput" placeholder="輸入維護提示文字..." value="工程總部正在校對施工圖資與規範，預計 10 分鐘後恢復正常。" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🌟 新增：版本歷史日誌視窗 (Changelog & Diff Viewer) -->
+                <div id="win_versionChangelog" class="admin-window hidden-view">
+                    <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
+                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
+                        <div class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-code-branch text-xs text-sky-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">系統版本修訂與歷史變更對比日誌</span>
+                        </div>
+                        <button onclick="closeAdminWindow('versionChangelog')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                        <!-- 左側：版本切換列表 -->
+                        <div class="w-full md:w-56 border-b md:border-b-0 md:border-r border-neutral-800 bg-neutral-950/60 p-3 overflow-y-auto space-y-1.5" id="changelogVersionList">
+                            <!-- 動態生成版本選單 -->
+                        </div>
+                        <!-- 右側：版本詳細內容與架構對比 -->
+                        <div class="flex-1 p-5 overflow-y-auto space-y-4" id="changelogDetailPanel">
+                            <!-- 動態渲染詳細紀錄 -->
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
@@ -923,13 +1074,81 @@
     </div>
 
     <script>
+        const CURRENT_APP_VERSION = 'v15.7';
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
         const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
+        const SYSTEM_CHANGELOG = [
+            {
+                version: "v15.7",
+                date: "2026-09-07",
+                tag: "熱更新與版本雙向日誌旗艦版",
+                summary: [
+                    "新增系統版本歷史日誌中心，提供新舊版本架構改動對照。",
+                    "強化串流防閃爍過濾器，自動修正未閉合標籤與代碼塊。",
+                    "新增同仁端專屬輕量更新提示卡 (What's New)。"
+                ],
+                details: {
+                    added: [
+                        "後台獨立「版本修訂日誌」視窗，支援完整歷史翻閱與詳細工程對比。",
+                        "同仁端輕量更新公告彈窗與本機已讀防干擾標記機制。",
+                        "模式 B 灰度熱更新中心：管理員優先驗收，手動全體廣播推播。"
+                    ],
+                    fixed: [
+                        "修復 CSS `contain: paint` 導致圖片縮圖高度裁切崩潰的問題。",
+                        "修復 marked.js 自定義 renderer 中換行字元產生多餘空行 `<br>` 的破版瑕疵。",
+                        "修復串流中途因未閉合粗體、代碼塊造成的文字反覆閃爍與 DOM 劇烈跳動。"
+                    ],
+                    comparison: "【v15.6 及舊版】：代碼推送需直接刷新頁面；串流時殘缺標籤會引發排版破圖，缺少清晰的版本演進紀錄。\n【v15.7 最新版】：實裝金絲雀灰度發布流程；導入標籤自動閉合平衡器（Auto-balancer）；後台完整記錄歷史差異，同仁端具備無痛通知。"
+                }
+            },
+            {
+                version: "v15.6",
+                date: "2026-08-20",
+                tag: "串流解析與視覺縮圖重構",
+                summary: [
+                    "升級多圖預覽與微縮圖燈箱支援。",
+                    "改善施工公差標註因果防呆規則。"
+                ],
+                details: {
+                    added: [
+                        "相簿 photos.json 索引對齊與 Markdown 自動轉換縮圖機制。",
+                        "單次發送多張施工照片（最多 5 張）壓縮上傳。"
+                    ],
+                    fixed: [
+                        "修正超連結帶有文件路徑時無法觸發自訂下載樣式問題。",
+                        "改善多模態 API 呼叫時圖片 Base64 格式容錯。"
+                    ],
+                    comparison: "舊版本僅支援純文字回覆與零星單圖；v15.6 起全面建立相簿索引庫與多圖並發分析能力。"
+                }
+            },
+            {
+                version: "v15.5",
+                date: "2026-07-15",
+                tag: "防死鎖與多模態模型池",
+                summary: [
+                    "加入 OpenRouter 免費模型池自動輪替降級機制。",
+                    "提升多端（手機/iPad/電腦）毛玻璃排版適配。"
+                ],
+                details: {
+                    added: [
+                        "模型健康度與響應測速（Ping）面板。",
+                        "SOP Gist 行級精準比對與一鍵寫入雲端功能。"
+                    ],
+                    fixed: [
+                        "修復連線逾時導致發送按鈕永久鎖死（防死鎖機制）。"
+                    ],
+                    comparison: "擺脫單一模型依賴，全面建置具備容錯降級的自動模型路由池。"
+                }
+            }
+        ];
+
         let photoCatalog = [];
         let documentCatalog = [];
+        let isUpdateExecuting = false;
+        let pendingBroadcastVersion = null;
 
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
@@ -963,7 +1182,6 @@
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
-            // 🌟 嚴格保持單行乾淨輸出，避免 breaks: true 插入多餘的 <br> 撐壞 layout
             renderer.link = function(href, title, text) {
                 let actualHref = href, actualTitle = title || '', actualText = text || '';
                 if (typeof href === 'object' && href !== null) {
@@ -1573,9 +1791,38 @@
                 applyDeviceUi();
             }
 
+            if (cloudData.broadcastVersion) {
+                localStorage.setItem('shiye_cloud_broadcast_version', cloudData.broadcastVersion);
+                const cloudVerEl = document.getElementById('currentCloudBroadcastVersionText');
+                if (cloudVerEl) cloudVerEl.textContent = cloudData.broadcastVersion;
+            }
+
+            if (cloudData.maintenance) {
+                localStorage.setItem('shiye_maintenance_state', JSON.stringify(cloudData.maintenance));
+                handleMaintenanceModeClientCheck(cloudData.maintenance);
+            }
+
             isCloudLoaded = true;
             saveCodesToLocal(codes);
             return codes;
+        }
+
+        function handleMaintenanceModeClientCheck(maintenanceObj) {
+            const modal = document.getElementById('maintenanceModal');
+            const noticeEl = document.getElementById('maintenanceModalNotice');
+            if (!modal) return;
+
+            if (currentAuth === 'admin') {
+                modal.classList.add('hidden-view');
+                return;
+            }
+
+            if (maintenanceObj && maintenanceObj.enabled) {
+                if (noticeEl && maintenanceObj.notice) noticeEl.textContent = maintenanceObj.notice;
+                modal.classList.remove('hidden-view');
+            } else {
+                modal.classList.add('hidden-view');
+            }
         }
 
         async function fetchSopFromGist() {
@@ -1770,6 +2017,9 @@
             initAdminWindowManager();
             initPhotoViewerResizer();
             checkMagicLink();
+
+            startBackgroundVersionWatchdog();
+            checkAndShowWhatsNewModal();
         }
 
         function initPhotoViewerResizer() {
@@ -2140,11 +2390,13 @@
         }
 
         const ADMIN_WIN_CONFIG = {
-            uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
-            tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 640, defaultH: 520, defaultX: 30, defaultY: 25 },
-            proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
-            diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
-            snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 80, defaultY: 80 },
+            releaseManager: { id: 'win_releaseManager', defaultW: 680, defaultH: 480, defaultX: 20, defaultY: 20 },
+            versionChangelog: { id: 'win_versionChangelog', defaultW: 780, defaultH: 520, defaultX: 30, defaultY: 25 },
+            uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 45, defaultY: 35 },
+            tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 640, defaultH: 520, defaultX: 55, defaultY: 45 },
+            proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 65, defaultY: 50 },
+            diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 80, defaultY: 60 },
+            snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 95, defaultY: 70 },
             sopViewer: { id: 'win_sopViewer', defaultW: 660, defaultH: 520, defaultX: 110, defaultY: 30 },
             passcodes: { id: 'win_passcodes', defaultW: 760, defaultH: 520, defaultX: 40, defaultY: 40 },
             aiMonitor: { id: 'win_aiMonitor', defaultW: 700, defaultH: 460, defaultX: 70, defaultY: 60 },
@@ -2193,6 +2445,10 @@
             if (navBtn) navBtn.classList.add('bg-neutral-900', 'text-white');
             const badge = document.getElementById(`nav_badge_${key}`);
             if (badge) badge.classList.remove('hidden-view');
+
+            if (key === 'versionChangelog') {
+                renderVersionChangelogWindow();
+            }
         }
 
         function closeAdminWindow(key) {
@@ -2214,6 +2470,258 @@
             const winEl = document.getElementById(conf.id);
             if (winEl && !winEl.classList.contains('hidden-view')) closeAdminWindow(key);
             else openAdminWindow(key);
+        }
+
+        async function broadcastCurrentVersionToAllStaff() {
+            const btn = document.getElementById('broadcastVersionBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 正在發布並廣播雲端...';
+
+            try {
+                localStorage.setItem('shiye_cloud_broadcast_version', CURRENT_APP_VERSION);
+                const result = await pushCodesToCloudWithDetails(currentCodesList);
+                if (result.success) {
+                    const cloudVerEl = document.getElementById('currentCloudBroadcastVersionText');
+                    if (cloudVerEl) cloudVerEl.textContent = CURRENT_APP_VERSION;
+                    alert(`🚀 成功！已將版號【${CURRENT_APP_VERSION}】廣播至全體同仁設備！\n所有正在線上的同仁裝置將在 60 秒內陸續跳出熱更新讀條並切換至新版。`);
+                } else {
+                    alert(`❌ 廣播失敗: ${result.message}`);
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span>📢 確認無誤，立即全體推送熱更新</span>';
+            }
+        }
+
+        async function toggleMaintenanceMode(isEnabled) {
+            const noticeInput = document.getElementById('maintenanceNoticeInput');
+            const noticeText = noticeInput ? noticeInput.value.trim() : '系統維護中...';
+
+            const maintenanceObj = {
+                enabled: isEnabled,
+                notice: noticeText
+            };
+            localStorage.setItem('shiye_maintenance_state', JSON.stringify(maintenanceObj));
+            const res = await pushCodesToCloudWithDetails(currentCodesList);
+            if (res.success) {
+                alert(`✅ 全系統維護狀態已更新為：【${isEnabled ? '開啟中（阻擋同仁）' : '已關閉（開放使用）'}】`);
+            } else {
+                alert(`❌ 同步維護狀態失敗: ${res.message}`);
+            }
+        }
+
+        /* 🌟 防死鎖版本比對：僅當雲端版號大於本地版號時才觸發 */
+        function compareSemver(cloudVer, localVer) {
+            const parse = v => String(v).replace(/[^0-9.]/g, '').split('.').map(Number);
+            const cParts = parse(cloudVer);
+            const lParts = parse(localVer);
+            for (let i = 0; i < Math.max(cParts.length, lParts.length); i++) {
+                const c = cParts[i] || 0;
+                const l = lParts[i] || 0;
+                if (c > l) return 1;  // 雲端比較新
+                if (c < l) return -1; // 本地比較新
+            }
+            return 0;
+        }
+
+        function startBackgroundVersionWatchdog() {
+            setInterval(async () => {
+                if (isUpdateExecuting) return;
+
+                try {
+                    let gistId = getCodesGistId();
+                    let filename = getCodesFilename();
+                    if (!gistId) return;
+
+                    const randomBuster = `_r=${Date.now()}`;
+                    const res = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?${randomBuster}`, { cache: 'no-store' });
+                    if (!res.ok) return;
+
+                    const cloudData = await res.json();
+                    
+                    if (cloudData.maintenance) {
+                        handleMaintenanceModeClientCheck(cloudData.maintenance);
+                    }
+
+                    if (currentAuth !== 'admin' && cloudData.broadcastVersion) {
+                        const targetVer = cloudData.broadcastVersion;
+                        // 🌟 嚴格使用版本大於判斷，徹底避免降級重整死迴圈
+                        if (compareSemver(targetVer, CURRENT_APP_VERSION) > 0) {
+                            pendingBroadcastVersion = targetVer;
+                            const chip = document.getElementById('pendingUpdateNoticeChip');
+
+                            const isTyping = userInput && userInput.value.trim().length > 0;
+                            const hasPendingImgs = pendingImages && pendingImages.length > 0;
+
+                            if (isGenerating || isTyping || hasPendingImgs) {
+                                if (chip) chip.classList.remove('hidden-view');
+                            } else {
+                                if (chip) chip.classList.add('hidden-view');
+                                triggerGameUpdateAnimation(targetVer);
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }, 60000);
+        }
+
+        function executeSafeHotReloadNow() {
+            if (pendingBroadcastVersion) {
+                triggerGameUpdateAnimation(pendingBroadcastVersion);
+            } else {
+                triggerGameUpdateAnimation(CURRENT_APP_VERSION);
+            }
+        }
+
+        function triggerGameUpdateAnimation(targetVersion) {
+            if (isUpdateExecuting) return;
+            isUpdateExecuting = true;
+
+            const modal = document.getElementById('gameUpdateModal');
+            const bar = document.getElementById('gameUpdateProgressBar');
+            const percent = document.getElementById('gameUpdatePercentText');
+            const notice = document.getElementById('gameUpdateNoticeText');
+            const tag = document.getElementById('gameUpdateVersionTag');
+
+            if (tag) tag.textContent = `TARGET: ${targetVersion} (HOT-RELOAD)`;
+            if (modal) modal.classList.remove('hidden-view');
+
+            let currentP = 0;
+            const steps = [
+                "連線工程總部雲端節點...",
+                "正在熱重載最新工法相簿索引 (photos.json)...",
+                "同步拾葉最新施工公差與防閃爍解析核心...",
+                "更新完成，正在平滑接軌系統..."
+            ];
+
+            const timer = setInterval(() => {
+                currentP += Math.floor(Math.random() * 12) + 8;
+                if (currentP > 100) currentP = 100;
+
+                if (bar) bar.style.width = `${currentP}%`;
+                if (percent) percent.textContent = `${currentP}%`;
+                if (notice) notice.textContent = steps[Math.min(Math.floor(currentP / 28), steps.length - 1)];
+
+                if (currentP >= 100) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        window.location.href = window.location.pathname + '?_t=' + Date.now();
+                    }, 500);
+                }
+            }, 180);
+        }
+
+        function checkAndShowWhatsNewModal() {
+            const lastSeen = localStorage.getItem('shiye_last_seen_version');
+            if (lastSeen === CURRENT_APP_VERSION) return;
+
+            const latestLog = SYSTEM_CHANGELOG.find(c => c.version === CURRENT_APP_VERSION) || SYSTEM_CHANGELOG[0];
+            if (!latestLog) return;
+
+            const modal = document.getElementById('whatsNewModal');
+            const titleVer = document.getElementById('whatsNewVerTitle');
+            const itemsContainer = document.getElementById('whatsNewItemsContainer');
+
+            if (titleVer) titleVer.textContent = latestLog.version;
+            if (itemsContainer) {
+                itemsContainer.innerHTML = (latestLog.summary || []).map(s => `
+                    <div class="flex items-start space-x-2">
+                        <span class="text-blue-400 font-bold mt-0.5">•</span>
+                        <span class="leading-relaxed">${escapeHtml(s)}</span>
+                    </div>
+                `).join('');
+            }
+
+            if (modal) modal.classList.remove('hidden-view');
+        }
+
+        function dismissWhatsNewModal() {
+            const modal = document.getElementById('whatsNewModal');
+            if (modal) modal.classList.add('hidden-view');
+            localStorage.setItem('shiye_last_seen_version', CURRENT_APP_VERSION);
+        }
+
+        let selectedChangelogIdx = 0;
+        function renderVersionChangelogWindow() {
+            const listEl = document.getElementById('changelogVersionList');
+            if (!listEl) return;
+
+            listEl.innerHTML = SYSTEM_CHANGELOG.map((log, idx) => {
+                const isSelected = (idx === selectedChangelogIdx);
+                const isCurrent = (log.version === CURRENT_APP_VERSION);
+                return `
+                    <button onclick="selectChangelogVersion(${idx})" class="w-full text-left p-2.5 rounded-xl transition ${isSelected ? 'bg-neutral-800 text-white font-semibold' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs">${escapeHtml(log.version)}</span>
+                            ${isCurrent ? '<span class="text-[8px] bg-blue-950 text-blue-300 border border-blue-800 px-1.5 py-0.2 rounded">當前版</span>' : ''}
+                        </div>
+                        <div class="text-[10px] text-neutral-500 font-mono mt-0.5">${escapeHtml(log.date)}</div>
+                    </button>
+                `;
+            }).join('');
+
+            renderChangelogDetail(selectedChangelogIdx);
+        }
+
+        function selectChangelogVersion(idx) {
+            selectedChangelogIdx = idx;
+            renderVersionChangelogWindow();
+        }
+
+        function renderChangelogDetail(idx) {
+            const panel = document.getElementById('changelogDetailPanel');
+            const log = SYSTEM_CHANGELOG[idx];
+            if (!panel || !log) return;
+
+            panel.innerHTML = `
+                <div class="border-b border-neutral-800 pb-3 space-y-1">
+                    <div class="flex items-center space-x-3">
+                        <h3 class="text-base font-semibold text-white font-mono">${escapeHtml(log.version)}</h3>
+                        <span class="text-[10px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">${escapeHtml(log.date)}</span>
+                        <span class="text-[10px] text-sky-400 font-sans font-medium">${escapeHtml(log.tag || '')}</span>
+                    </div>
+                    <p class="text-xs text-neutral-400">以下為本版本底層架構改動清單與舊版對比說明：</p>
+                </div>
+
+                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2">
+                    <div class="flex items-center space-x-2 text-xs font-semibold text-white">
+                        <i class="fa-solid fa-code-compare text-sky-400"></i>
+                        <span>新舊版本工程架構對比 (Comparison)</span>
+                    </div>
+                    <div class="text-xs font-mono text-neutral-300 leading-relaxed bg-neutral-900/60 p-3 rounded-xl border border-neutral-800/80 whitespace-pre-line">${escapeHtml(log.details.comparison)}</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+                    <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2.5">
+                        <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>新增／強化功能 (Added)</span>
+                        </span>
+                        <ul class="space-y-1.5 text-neutral-300">
+                            ${(log.details.added || []).map(a => `<li class="flex items-start gap-1.5"><span class="text-emerald-500 font-bold">•</span><span class="leading-relaxed">${escapeHtml(a)}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2.5">
+                        <span class="text-xs font-semibold text-rose-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-wrench"></i>
+                            <span>問題修復／防呆防破 (Fixed)</span>
+                        </span>
+                        <ul class="space-y-1.5 text-neutral-300">
+                            ${(log.details.fixed || []).map(f => `<li class="flex items-start gap-1.5"><span class="text-rose-500 font-bold">•</span><span class="leading-relaxed">${escapeHtml(f)}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-2 text-xs">
+                    <span class="text-[11px] font-semibold text-neutral-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-blue-400"></i>
+                        <span>同仁端彈窗精簡敘述預覽 (What's New View)</span>
+                    </span>
+                    <div class="p-3 bg-neutral-900/40 border border-neutral-800/60 rounded-xl space-y-1 text-neutral-300 font-sans">
+                        ${(log.summary || []).map(s => `<p class="leading-relaxed text-[11px]">• ${escapeHtml(s)}</p>`).join('')}
+                    </div>
+                </div>
+            `;
         }
 
         function renderTokenAnalytics() {
@@ -2323,8 +2831,20 @@
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
 
+            const localVerEl = document.getElementById('currentLocalVersionText');
+            if (localVerEl) localVerEl.textContent = CURRENT_APP_VERSION;
+            const cloudVer = localStorage.getItem('shiye_cloud_broadcast_version') || 'v15.6';
+            const cloudVerEl = document.getElementById('currentCloudBroadcastVersionText');
+            if (cloudVerEl) cloudVerEl.textContent = cloudVer;
+
+            const maintenanceObj = safeJsonParse(localStorage.getItem('shiye_maintenance_state'), { enabled: false });
+            const maintToggle = document.getElementById('maintenanceModeToggle');
+            if (maintToggle) maintToggle.checked = !!maintenanceObj.enabled;
+            const maintInput = document.getElementById('maintenanceNoticeInput');
+            if (maintInput && maintenanceObj.notice) maintInput.value = maintenanceObj.notice;
+
             switchUiDeviceTab('pc');
-            openAdminWindow('uiCustomizer');
+            openAdminWindow('releaseManager');
         }
 
         async function refreshCloudData() {
@@ -2846,6 +3366,9 @@
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
 
+            let broadcastVersion = localStorage.getItem('shiye_cloud_broadcast_version') || 'v15.6';
+            let maintenanceState = safeJsonParse(localStorage.getItem('shiye_maintenance_state'), { enabled: false, notice: '' });
+
             try {
                 const payloadData = {
                     apiKey: encodeToken(apiKey),
@@ -2857,7 +3380,9 @@
                     pendingProposals: pendingProposals,
                     updateLogs: updateLogs,
                     snapshots: snapshots,
-                    codes: targetCodes
+                    codes: targetCodes,
+                    broadcastVersion: broadcastVersion,
+                    maintenance: maintenanceState
                 };
                 const res = await fetch(`https://api.github.com/gists/${gistId}`, {
                     method: 'PATCH',
@@ -3114,6 +3639,14 @@
 
         async function handleSend() {
             if (isGenerating) return;
+
+            // 🌟 攔截防線：若目前全系統處於維護中且非管理員，直接阻擋發送
+            const maintenanceObj = safeJsonParse(localStorage.getItem('shiye_maintenance_state'), { enabled: false });
+            if (maintenanceObj.enabled && currentAuth !== 'admin') {
+                alert('⚠️ 系統目前維護中，暫時無法送出查詢。');
+                return;
+            }
+
             const text = userInput.value.trim();
             const currentImgs = [...pendingImages];
 
@@ -3413,7 +3946,7 @@ ${sopContent}
                         model: '已手動停止', tokens: 0, time: elapsedSec
                     });
                 } else {
-                    appendMessage(`⚠️ AI 回應連線中斷或模型繁忙 (${lastErrorMessage || '請檢查 API Key 或網路狀態'})。請點擊下方按鈕重新發送。`, 'assistant', true, text, {
+                    appendMessage(`⚠️ AI 回應連線中斷或模型繁忙 (${lastErrorMessage || '請檢查 API Key或網路狀態'})。請點擊下方按鈕重新發送。`, 'assistant', true, text, {
                         model: '連線逾時或額度已滿', tokens: 0, time: elapsedSec
                     });
                 }
