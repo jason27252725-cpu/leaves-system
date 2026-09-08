@@ -394,7 +394,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v16.1 圖文容錯增強版</span>
+                <span>v16.3 壓力加固旗艦版</span>
             </span>
         </div>
     </div>
@@ -407,7 +407,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v16.1 旗艦版</span>
+                        <span>v16.3 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -524,7 +524,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.1</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.3</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -960,18 +960,12 @@
             return text;
         }
 
-        // 🌟 核心升級：圖片語法容錯正規化處理器
         function renderMarkdownPure(text) {
             if (!text) return '';
             let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
 
-            // 1. 自動修正角括號或多餘空格：![desc](<url>) 或 ![desc]( url ) -> ![desc](url)
             clean = clean.replace(/!\[([^\]]*)\]\(\s*<?(https?:\/\/[^\s>]+)>?\s*\)/gi, '![$1]($2)');
-
-            // 2. 自動容錯補齊：如果 AI 漏打驚嘆號輸出 [desc](url)，且網址為圖檔格式，自動補齊 !
             clean = clean.replace(/(?<!\!)\[([^\]]+)\]\((https?:\/\/[^\s\)]+?\.(?:png|jpg|jpeg|webp|gif|svg))\)/gi, '![$1]($2)');
-
-            // 3. 確保圖片語法獨立成行，避免與段落文字緊黏被 marked.js 判定為純文字
             clean = clean.replace(/([^\n])(!\[[^\]]*\]\([^\)]+\))/g, '$1\n\n$2\n\n');
 
             return typeof marked !== 'undefined' ? marked.parse(clean) : escapeHtml(clean);
@@ -997,7 +991,6 @@
                 return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
             };
 
-            // 🌟 核心升級：雙模相容圖片渲染器，剝除殘餘符號，避免破圖或回退為網址
             renderer.image = function(href, title, text) {
                 let actualHref = href;
                 let actualTitle = title || '';
@@ -1963,7 +1956,7 @@
                 localStorage.setItem('shiye_active_code', activeCode);
 
                 saveCodesToLocal(freshCodes);
-                pushCodesToCloud(freshCodes).catch(console.error);
+                pushCodesToCloud(freshCodes, 0).catch(console.error);
 
                 const authModal = document.getElementById('authModal');
                 const authCard = document.getElementById('authCard');
@@ -1998,7 +1991,7 @@
                 if (matched) {
                     matched.status = 'offline';
                     saveCodesToLocal(codes);
-                    await pushCodesToCloud(codes);
+                    await pushCodesToCloud(codes, 0);
                 }
             }
 
@@ -2641,7 +2634,7 @@
             localStorage.setItem('shiye_sop_update_logs', JSON.stringify(updateLogs));
 
             broadcastSopUpdate(newSopText);
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
 
             renderPendingProposals();
             renderUpdateLogs();
@@ -2655,7 +2648,7 @@
             proposals = proposals.filter(p => p.id !== proposalId);
             localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
             renderPendingProposals();
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
         }
 
         function renderUpdateLogs() {
@@ -2694,7 +2687,7 @@
             if (!confirm('確定要清空所有 SOP 修訂日誌紀錄嗎？此動作將同步更新至雲端資料庫。')) return;
             localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             renderUpdateLogs();
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
             alert('✅ 已成功清空所有修訂日誌紀錄！');
         }
 
@@ -2735,7 +2728,7 @@
             if (!confirm('確定要清空所有歷史備份快照嗎？清空後將無法一鍵回滾舊版本。')) return;
             localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             renderSnapshots();
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
             alert('✅ 已成功清空歷史快照紀錄！');
         }
 
@@ -2761,7 +2754,7 @@
                 localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
 
                 broadcastSopUpdate(target.content);
-                await pushCodesToCloud(currentCodesList);
+                await pushCodesToCloud(currentCodesList, 0);
                 renderSnapshots();
                 renderPendingProposals();
                 alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
@@ -2804,7 +2797,7 @@
                     supportIpad: true 
                 });
 
-                let result = await pushCodesToCloudWithDetails(freshCodes);
+                let result = await pushCodesToCloudWithDetails(freshCodes, 0);
                 if (result.success) {
                     currentCodesList = freshCodes;
                     saveCodesToLocal(currentCodesList);
@@ -2828,7 +2821,7 @@
             let freshCodes = await fetchCodesFromCloud();
             freshCodes = freshCodes.filter(c => c.code && c.code.toUpperCase() !== codeStr.toUpperCase());
 
-            let result = await pushCodesToCloudWithDetails(freshCodes);
+            let result = await pushCodesToCloudWithDetails(freshCodes, 0);
             if (result.success) {
                 currentCodesList = freshCodes;
                 saveCodesToLocal(currentCodesList);
@@ -2873,7 +2866,8 @@
             });
         }
 
-        async function pushCodesToCloudWithDetails(codesArray) {
+        // 🌟 雲端並發防衝突合併機制（支援 Token 差額原子累加 Delta Merge）
+        async function pushCodesToCloudWithDetails(codesArray, tokenDelta = 0) {
             let gistId = getCodesGistId();
             let token = getGithubToken();
             let filename = getCodesFilename();
@@ -2905,11 +2899,15 @@
                             targetCodes = targetCodes.map(localC => {
                                 const remoteC = remoteData.codes.find(rc => rc.code === localC.code);
                                 if (!remoteC) return localC;
+
+                                const isCurrentActive = activeCode && localC.code.toUpperCase() === activeCode.toUpperCase();
+                                const baseTokens = Math.max(Number(localC.totalTokens || 0), Number(remoteC.totalTokens || 0));
+
                                 return {
                                     ...remoteC,
                                     ...localC,
-                                    totalTokens: Math.max(Number(localC.totalTokens || 0), Number(remoteC.totalTokens || 0)),
-                                    requestCount: Math.max(Number(localC.requestCount || 0), Number(remoteC.requestCount || 0)),
+                                    totalTokens: isCurrentActive && tokenDelta > 0 ? Number(remoteC.totalTokens || 0) + tokenDelta : baseTokens,
+                                    requestCount: isCurrentActive && tokenDelta > 0 ? Number(remoteC.requestCount || 0) + 1 : Math.max(Number(localC.requestCount || 0), Number(remoteC.requestCount || 0)),
                                     logins: Array.from(new Set([...(localC.logins || []), ...(remoteC.logins || [])]))
                                 };
                             });
@@ -2962,8 +2960,8 @@
             } catch (e) { return { success: false, message: e.message }; }
         }
 
-        async function pushCodesToCloud(codesArray) {
-            let res = await pushCodesToCloudWithDetails(codesArray);
+        async function pushCodesToCloud(codesArray, tokenDelta = 0) {
+            let res = await pushCodesToCloudWithDetails(codesArray, tokenDelta);
             return res.success;
         }
 
@@ -2999,7 +2997,7 @@
                     return;
                 }
 
-                const result = await pushCodesToCloudWithDetails(currentCodesList);
+                const result = await pushCodesToCloudWithDetails(currentCodesList, 0);
                 if (result.success) {
                     await fetchSopFromGist();
                     alert('✅ 成功：全套設定（含多端 UI 畫布、資安金鑰加密與用量追蹤）已同步至 GitHub 雲端！');
@@ -3031,7 +3029,7 @@
             });
 
             localStorage.setItem('shiye_error_logs', JSON.stringify(logs));
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
 
             const toast = document.getElementById('reportToast');
             toast.classList.remove('hidden-view');
@@ -3072,7 +3070,7 @@
             if (!confirm('確定要清空所有錯誤回報紀錄嗎？')) return;
             localStorage.setItem('shiye_error_logs', JSON.stringify([])); 
             renderErrorLogs(); 
-            await pushCodesToCloud(currentCodesList);
+            await pushCodesToCloud(currentCodesList, 0);
         }
 
         async function submitSopProposal(msgId, btnEl) {
@@ -3097,7 +3095,7 @@
             });
 
             localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            const pushRes = await pushCodesToCloudWithDetails(currentCodesList);
+            const pushRes = await pushCodesToCloudWithDetails(currentCodesList, 0);
 
             const card = document.getElementById(`proposal_card_${msgId}`);
             if (card) {
@@ -3296,19 +3294,26 @@ ${sopContent}
 
                 const messages = [{ role: "system", content: systemPrompt }];
 
+                // 🌟 多輪問答保留圖片多模態結構
                 chatHistory.slice(-6).forEach(h => {
-                    messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
+                    if (h.rawContent) {
+                        messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.rawContent });
+                    } else {
+                        messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
+                    }
                 });
 
+                let currentMessagePayload = null;
                 if (currentImgs.length > 0) {
                     const multiContent = [{ type: "text", text: text || "請幫我檢視這組施工現場照片，依拾葉 SOP 提供審查意見與驗收建議。" }];
                     currentImgs.forEach(img => {
                         multiContent.push({ type: "image_url", image_url: { url: img.base64 } });
                     });
-                    messages.push({ role: "user", content: multiContent });
+                    currentMessagePayload = multiContent;
                 } else {
-                    messages.push({ role: "user", content: text });
+                    currentMessagePayload = text;
                 }
+                messages.push({ role: "user", content: currentMessagePayload });
 
                 let streamSuccess = false;
                 let lastErrorMessage = '';
@@ -3325,22 +3330,35 @@ ${sopContent}
                         if (currentAbortController && currentAbortController.signal.aborted) break keyLoop;
 
                         accumulatedReply = '';
+                        
+                        // 🌟 切換模型時，徹底清理定時器與 DOM，杜絕幽靈雙重泡泡殘留
+                        if (renderTimerId) { clearTimeout(renderTimerId); renderTimerId = null; }
+                        renderScheduled = false;
                         if (liveMsgElements && liveMsgElements.wrapper) {
                             liveMsgElements.wrapper.remove();
                             liveMsgElements = null;
                         }
 
                         let timeoutTimerId = null;
+                        let stallWatchdogTimer = null;
                         const attemptAbortController = new AbortController();
                         const onParentAbort = () => attemptAbortController.abort();
                         currentAbortController.signal.addEventListener('abort', onParentAbort);
+
+                        // 🌟 串流傳輸停頓看門狗（4.5 秒內若無任何 chunk，判定為假死連線並重試）
+                        const resetStallTimer = () => {
+                            if (stallWatchdogTimer) clearTimeout(stallWatchdogTimer);
+                            stallWatchdogTimer = setTimeout(() => {
+                                attemptAbortController.abort();
+                            }, 4500);
+                        };
 
                         try {
                             const timeoutPromise = new Promise((_, reject) => {
                                 timeoutTimerId = setTimeout(() => {
                                     attemptAbortController.abort();
-                                    reject(new Error('節點忙碌逾時，切換下一備援模型'));
-                                }, 7000);
+                                    reject(new Error('節點首字等待逾時，自動轉入下一節點'));
+                                }, 5000);
                             });
 
                             const fetchPromise = fetch(`https://openrouter.ai/api/v1/chat/completions`, {
@@ -3386,14 +3404,18 @@ ${sopContent}
                             loadingTracker.stop();
                             liveMsgElements = createLiveAssistantBubble();
 
+                            resetStallTimer();
+
                             let isStreamDone = false;
                             while (!isStreamDone) {
                                 const { done, value } = await activeStreamReader.read();
                                 if (done) break;
 
+                                resetStallTimer(); // 收到有效數據即刻重置看門狗
+
                                 buffer += decoder.decode(value, { stream: true });
                                 const lines = buffer.split('\n');
-                                buffer = lines.pop();
+                                buffer = lines.pop(); // 僅保留未完成的尾部切片
 
                                 for (const line of lines) {
                                     const trimmed = line.trim();
@@ -3417,11 +3439,13 @@ ${sopContent}
                                                 }
                                             }
                                         } catch (err) {
-                                            buffer = line + '\n' + buffer;
+                                            // 🌟 解析失敗時直接略過無效行，防止緩衝區倒灌死結
                                         }
                                     }
                                 }
                             }
+
+                            if (stallWatchdogTimer) clearTimeout(stallWatchdogTimer);
 
                             const cleanedCheck = cleanGuardrailArtifacts(accumulatedReply);
                             if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
@@ -3434,12 +3458,15 @@ ${sopContent}
                             break keyLoop;
                         } catch (e) {
                             if (timeoutTimerId) clearTimeout(timeoutTimerId);
-                            if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
+                            if (stallWatchdogTimer) clearTimeout(stallWatchdogTimer);
+
+                            if (currentAbortController && currentAbortController.signal.aborted) {
                                 break keyLoop;
                             }
-                            lastErrorMessage = e.message;
+                            lastErrorMessage = e.message || '連線停頓逾時';
                         } finally {
                             currentAbortController.signal.removeEventListener('abort', onParentAbort);
+                            if (stallWatchdogTimer) clearTimeout(stallWatchdogTimer);
                             if (activeStreamReader) {
                                 try { await activeStreamReader.cancel(); } catch(e) {}
                                 activeStreamReader = null;
@@ -3482,7 +3509,8 @@ ${sopContent}
                         currentCodesList = latestCodes;
                         saveCodesToLocal(latestCodes);
 
-                        pushCodesToCloud(latestCodes).catch(() => {});
+                        // 🌟 採用 Token 差額原子累加推上雲端
+                        pushCodesToCloud(latestCodes, estimatedTokens).catch(() => {});
                     }
 
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
@@ -3496,9 +3524,12 @@ ${sopContent}
                     if (cleanForHistory) {
                         const historyPrompt = currentImgs.length > 0 ? `[現場照片 ${currentImgs.length} 張] ${text || '工法審查'}` : text;
                         if (!isRetry) {
-                            chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
+                            chatHistory.push(
+                                { role: 'user', text: historyPrompt, rawContent: currentMessagePayload },
+                                { role: 'assistant', text: cleanForHistory, rawContent: cleanForHistory }
+                            );
                         } else {
-                            chatHistory.push({ role: 'assistant', text: cleanForHistory });
+                            chatHistory.push({ role: 'assistant', text: cleanForHistory, rawContent: cleanForHistory });
                         }
                         if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
