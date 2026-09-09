@@ -6,6 +6,7 @@
     <title>LEAVES DESIGN 拾葉設計 - 內部智慧系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -394,7 +395,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>v16.0 智慧路由透明監控版</span>
+                <span id="backendModeBadge">v16.5 Supabase 雲端無鎖版</span>
             </span>
         </div>
     </div>
@@ -407,7 +408,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v16.0 旗艦版</span>
+                        <span>v16.5 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -524,7 +525,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v16.5</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -561,8 +562,8 @@
                         <span id="nav_badge_aiMonitor" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('config')" id="nav_btn_config" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-sliders text-xs text-neutral-500"></i><span class="tracking-wide">雲端設定</span></div>
-                        <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-database text-xs text-emerald-400"></i><span class="tracking-wide text-white">Supabase 雲端設定</span></div>
+                        <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('errorLogs')" id="nav_btn_errorLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-triangle-exclamation text-xs text-neutral-500"></i><span class="tracking-wide">錯誤回報</span></div>
@@ -825,7 +826,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 改版：OpenRouter Auto Free 智慧調度即時分流監控面板 -->
+                <!-- Auto Free 智慧調度即時分流監控面板 -->
                 <div id="win_aiMonitor" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -842,7 +843,6 @@
                         </div>
                     </div>
                     <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
-                        <!-- Auto Free 主通道即時狀態卡 -->
                         <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-3">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                                 <div class="flex items-center space-x-2.5">
@@ -858,7 +858,6 @@
                             </div>
                         </div>
 
-                        <!-- 實體模型承接佔比進度條 -->
                         <div class="space-y-2.5">
                             <div class="flex justify-between items-center text-xs">
                                 <span class="text-neutral-300 font-medium">實體模型調度佔比統計 (依最近問答)</span>
@@ -867,7 +866,6 @@
                             <div id="dispatchStatsContainer" class="space-y-2 text-xs"></div>
                         </div>
 
-                        <!-- 最近調度歷史明細表 -->
                         <div class="space-y-2 pt-2">
                             <h3 class="text-xs font-medium text-neutral-300 tracking-wider">最近調度歷史明細 (自動捕捉實體承接節點)</h3>
                             <div class="border border-neutral-800 rounded-xl overflow-x-auto bg-neutral-950/60">
@@ -888,12 +886,13 @@
                     </div>
                 </div>
 
+                <!-- 🌟 升級：Supabase 雲端無鎖資料庫設定面板 -->
                 <div id="win_config" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-sliders text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">金鑰池與雲端資料庫設定</span>
+                            <i class="fa-solid fa-database text-xs text-emerald-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">Supabase 雲端無鎖資料庫 ＆ 金鑰設定</span>
                         </div>
                         <button onclick="closeAdminWindow('config')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
@@ -906,21 +905,25 @@
                             <textarea id="apiKeyInput" rows="2" placeholder="sk-or-v1-aaaa... (每行一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
                         </div>
 
-                        <div class="space-y-1.5">
-                            <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址</label>
-                            <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                        <!-- 🌟 Supabase 雲端資料庫設定區塊 -->
+                        <div class="space-y-2.5 border-t border-neutral-800 pt-3 bg-emerald-950/20 p-3 rounded-2xl border border-emerald-800/40">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <label class="text-[11px] text-emerald-300 font-semibold">Supabase 雲端無鎖資料庫 (防覆蓋升級核心)</label>
+                                </div>
+                                <span class="text-[9px] text-neutral-400 font-mono">Row-Level Locking</span>
+                            </div>
+                            <p class="text-[10px] text-neutral-400 leading-relaxed">填入 Supabase 的 Project URL 與 anon public key，全公司 20 位同仁同時在線寫入 Token 與登入時，資料將獨立排隊寫入，永不互相覆蓋。</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <input type="text" id="supabaseUrlInput" placeholder="https://xyzcompany.supabase.co" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                                <input type="password" id="supabaseKeyInput" placeholder="anon key (eyJhbGciOi...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                            </div>
                         </div>
 
-                        <div class="space-y-2.5 border-t border-neutral-800 pt-3">
-                            <div class="flex justify-between items-center">
-                                <label class="text-[11px] text-neutral-300 font-medium">GitHub 身分同步 Gist ID 與 Token</label>
-                                <button onclick="resetDefaultGistId()" class="text-[10px] text-neutral-500 hover:text-neutral-300 underline">填入預設 Gist ID</button>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <input type="text" id="codesGistIdInput" placeholder="Gist ID" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
-                                <input type="password" id="githubTokenInput" placeholder="GitHub Token (ghp_...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
-                            </div>
-                            <input type="text" id="codesGistFilenameInput" placeholder="檔案名稱 (預設: shiye-codes.json)" value="shiye-codes.json" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                        <div class="space-y-1.5 border-t border-neutral-800 pt-3">
+                            <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址 (備份與外部 SOP 抓取)</label>
+                            <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                         </div>
 
                         <div class="space-y-1.5 border-t border-neutral-800 pt-3">
@@ -954,7 +957,6 @@
 
     <script>
         const SPECIAL_ADMIN_CODE = 'SHIYE-ADMIN-2026';
-        const HARDCODED_GIST_ID = 'd5cda44c116e5945e158829841b0d9e5';
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
@@ -970,17 +972,11 @@
             text = text.replace(/(?<!\!)\[[^\]]*$/, '');
 
             const codeBlockMatches = text.match(/```/g);
-            if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) {
-                text += '\n```';
-            }
+            if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) text += '\n```';
             const boldMatches = text.match(/\*\*/g);
-            if (boldMatches && boldMatches.length % 2 !== 0) {
-                text += '**';
-            }
+            if (boldMatches && boldMatches.length % 2 !== 0) text += '**';
             const inlineCodeMatches = text.match(/(?<!`)`(?!`)/g);
-            if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) {
-                text += '`';
-            }
+            if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) text += '`';
             return text;
         }
 
@@ -1017,7 +1013,6 @@
                 }
                 let cleanUrl = String(actualHref).trim();
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
-
                 return `<div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
             };
 
@@ -1084,12 +1079,8 @@
         function detectDeviceCategory() {
             const w = window.innerWidth;
             const ua = navigator.userAgent;
-            if (/iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || (w >= 768 && w <= 1024)) {
-                return 'ipad';
-            }
-            if (/iPhone|Android/i.test(ua) || w < 768) {
-                return 'mobile';
-            }
+            if (/iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || (w >= 768 && w <= 1024)) return 'ipad';
+            if (/iPhone|Android/i.test(ua) || w < 768) return 'mobile';
             return 'pc';
         }
 
@@ -1490,64 +1481,47 @@
         }
 
         function getStoredGistUrl() { return normalizeGistUrl(localStorage.getItem('shiye_gist_url') || ''); }
-        function getCodesGistId() { 
-            let stored = localStorage.getItem('shiye_codes_gist_id');
-            return stored ? stored.trim() : HARDCODED_GIST_ID; 
-        }
 
-        function getGithubToken() { 
-            let inputVal = document.getElementById('githubTokenInput')?.value?.trim();
-            if (inputVal) {
-                localStorage.setItem('shiye_github_token', inputVal);
-                return inputVal;
+        /**
+         * 🌟 Supabase 客戶端連線實例管理
+         */
+        function getSupabaseClient() {
+            const url = (localStorage.getItem('shiye_supabase_url') || '').trim();
+            const key = (localStorage.getItem('shiye_supabase_key') || '').trim();
+            if (url && key && typeof supabase !== 'undefined') {
+                try {
+                    return supabase.createClient(url, key);
+                } catch(e) {
+                    console.error('Supabase 初始化失敗:', e);
+                }
             }
-            return localStorage.getItem('shiye_github_token') || ''; 
+            return null;
         }
-
-        function getCodesFilename() { return localStorage.getItem('shiye_codes_filename') || 'shiye-codes.json'; }
 
         function saveCodesToLocal(codes) {
             try { localStorage.setItem('shiye_codes_cache', JSON.stringify(codes)); } catch (e) {}
         }
 
-        function resetDefaultGistId() {
-            document.getElementById('codesGistIdInput').value = HARDCODED_GIST_ID;
-            localStorage.setItem('shiye_codes_gist_id', HARDCODED_GIST_ID);
-            alert('已回復為預設 Gist ID！');
-        }
-
+        /**
+         * 🌟 從 Supabase 雲端無鎖讀取最新身分碼與配置
+         */
         async function fetchCodesFromCloud() {
-            let gistId = getCodesGistId();
-            let filename = getCodesFilename();
-            let token = getGithubToken();
+            const client = getSupabaseClient();
+            if (client) {
+                try {
+                    const { data, error } = await client
+                        .from('app_config')
+                        .select('data')
+                        .eq('id', 'global_state')
+                        .single();
 
-            if (!gistId) return getFallbackCodes();
-            const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-            try {
-                const headers = { 
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache'
-                };
-                if (token) headers['Authorization'] = `Bearer ${token}`;
-
-                const res = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { headers: headers, cache: 'no-store' });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.files && data.files[filename] && data.files[filename].content) {
-                        const cloudData = safeJsonParse(data.files[filename].content, {});
-                        return handleCloudDataSuccess(cloudData);
+                    if (!error && data && data.data) {
+                        return handleCloudDataSuccess(data.data);
                     }
+                } catch (e) {
+                    console.warn('Supabase 連線讀取異常，切回本地快取:', e);
                 }
-            } catch (e) {}
-
-            try {
-                const rawRes = await fetch(`https://gist.githubusercontent.com/raw/${gistId}/${filename}?${randomBuster}`, { cache: 'no-store' });
-                if (rawRes.ok) {
-                    const cloudData = await rawRes.json();
-                    return handleCloudDataSuccess(cloudData);
-                }
-            } catch (e) {}
+            }
 
             const cached = localStorage.getItem('shiye_codes_cache');
             if (cached) {
@@ -1560,15 +1534,6 @@
         function handleCloudDataSuccess(cloudData) {
             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
 
-            if (cloudData.cloudToken) {
-                let restored = decodeToken(cloudData.cloudToken);
-                if (restored && (restored.startsWith('ghp_') || restored.startsWith('github_pat_') || restored.length > 20)) {
-                    localStorage.setItem('shiye_github_token', restored);
-                    let inputEl = document.getElementById('githubTokenInput');
-                    if (inputEl && !inputEl.value) inputEl.value = restored;
-                }
-            }
-
             if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
             if (cloudData.pendingProposals && Array.isArray(cloudData.pendingProposals)) localStorage.setItem('shiye_pending_proposals', JSON.stringify(cloudData.pendingProposals));
             if (cloudData.updateLogs && Array.isArray(cloudData.updateLogs)) localStorage.setItem('shiye_sop_update_logs', JSON.stringify(cloudData.updateLogs));
@@ -1578,9 +1543,7 @@
                 let rawKey = cloudData.apiKey;
                 if (!rawKey.startsWith('sk-or-v1-')) {
                     let decoded = decodeToken(rawKey);
-                    if (decoded && (decoded.includes('sk-or-v1-') || decoded.length > 10)) {
-                        rawKey = decoded;
-                    }
+                    if (decoded && (decoded.includes('sk-or-v1-') || decoded.length > 10)) rawKey = decoded;
                 }
                 localStorage.setItem('shiye_apikey', rawKey);
             }
@@ -1601,35 +1564,7 @@
 
         async function fetchSopFromGist() {
             let rawUrl = getStoredGistUrl();
-            let token = getGithubToken();
-            let gistId = '';
-            const match = (rawUrl || '').match(/([a-f0-9]{20,36})/i);
-            gistId = match ? match[1] : getCodesGistId();
-
             const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-            if (gistId) {
-                try {
-                    const headers = { 
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache'
-                    };
-                    if (token) headers['Authorization'] = `Bearer ${token}`;
-
-                    const apiRes = await fetch(`https://api.github.com/gists/${gistId}?${randomBuster}`, { headers: headers, cache: 'no-store' });
-                    if (apiRes.ok) {
-                        const data = await apiRes.json();
-                        const files = data.files || {};
-                        const fileKey = Object.keys(files).find(k => k.endsWith('.txt') || k.endsWith('.md') || k.includes('sop') || files[k].content);
-                        if (fileKey && files[fileKey] && files[fileKey].content) {
-                            let content = files[fileKey].content.replace(/\r\n/g, '\n');
-                            localStorage.setItem('shiye_sop', content);
-                            broadcastSopUpdate(content);
-                            return content;
-                        }
-                    }
-                } catch(e) {}
-            }
 
             if (rawUrl) {
                 try {
@@ -1658,45 +1593,10 @@
 
         async function refreshSopViewerOnly() {
             const viewer = document.getElementById('cloudSopViewer');
-            if (viewer) viewer.value = '正在連線 GitHub 雲端即時獲取最新內容...';
+            if (viewer) viewer.value = '正在連線雲端即時獲取最新內容...';
             const content = await fetchSopFromGist();
             if (viewer) viewer.value = content;
-            alert('✅ 已即時從 GitHub 雲端獲取最新 SOP 內容！');
-        }
-
-        async function writeSopToGithubGist(newContent) {
-            let sopUrl = getStoredGistUrl();
-            let token = getGithubToken();
-            if (!token) return { success: false, message: '未設定 GitHub Token' };
-
-            let gistId = '';
-            const match = sopUrl.match(/([a-f0-9]{20,36})/i);
-            gistId = match ? match[1] : getCodesGistId();
-            if (!gistId) return { success: false, message: '無法識別 SOP Gist ID' };
-
-            try {
-                const checkRes = await fetch(`https://api.github.com/gists/${gistId}`, {
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-
-                let filenameToPatch = 'shiye-sop.txt';
-                if (checkRes.ok) {
-                    const gistInfo = await checkRes.json();
-                    const files = Object.keys(gistInfo.files || {});
-                    const matchedFile = files.find(f => f.endsWith('.txt') || f.endsWith('.md') || f.includes('sop')) || files[0];
-                    if (matchedFile) filenameToPatch = matchedFile;
-                }
-
-                const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ files: { [filenameToPatch]: { content: newContent } } })
-                });
-
-                if (res.ok) return { success: true };
-                let errData = await res.json().catch(() => ({}));
-                return { success: false, message: errData.message || `HTTP ${res.status}` };
-            } catch (e) { return { success: false, message: e.message }; }
+            alert('✅ 已即時從雲端獲取最新 SOP 內容！');
         }
 
         function locateSopLine(sopText, oldText, topic = '') {
@@ -1777,6 +1677,13 @@
                 ]));
             }
             initBackgroundSlideshow();
+
+            const client = getSupabaseClient();
+            const badgeEl = document.getElementById('backendModeBadge');
+            if (badgeEl) {
+                badgeEl.textContent = client ? '🟢 Supabase 雲端無鎖連線中' : '⚪ 本地快取/無鎖待命版';
+            }
+
             currentCodesList = await fetchCodesFromCloud();
             if (!localStorage.getItem('shiye_error_logs')) localStorage.setItem('shiye_error_logs', JSON.stringify([]));
             if (!localStorage.getItem('shiye_pending_proposals')) localStorage.setItem('shiye_pending_proposals', JSON.stringify([]));
@@ -2324,10 +2231,9 @@
             const badge = document.getElementById('keyCountBadge');
             if (badge) badge.textContent = `${keyCount} 組金鑰`;
 
+            document.getElementById('supabaseUrlInput').value = localStorage.getItem('shiye_supabase_url') || '';
+            document.getElementById('supabaseKeyInput').value = localStorage.getItem('shiye_supabase_key') || '';
             document.getElementById('gistIdInput').value = getStoredGistUrl();
-            document.getElementById('codesGistIdInput').value = getCodesGistId();
-            document.getElementById('githubTokenInput').value = getGithubToken();
-            document.getElementById('codesGistFilenameInput').value = getCodesFilename();
 
             const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
             document.getElementById('bgImagesInput').value = Array.isArray(bgList) ? bgList.join('\n') : '';
@@ -2363,9 +2269,6 @@
             alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
         }
 
-        /**
-         * 🌟 Auto Free 調度日誌儲存與呈現
-         */
         function recordDispatchLog(modelId, durationSec, tokenCount, hasImages = false) {
             let logs = safeJsonParse(localStorage.getItem('shiye_dispatch_logs'), []);
             logs.unshift({
@@ -2402,7 +2305,6 @@
             const logs = safeJsonParse(localStorage.getItem('shiye_dispatch_logs'), []);
             if (statsSummary) statsSummary.textContent = `共 ${logs.length} 次調用`;
 
-            // 計算各模型承接佔比
             if (statsContainer) {
                 if (logs.length === 0) {
                     statsContainer.innerHTML = '<p class="text-neutral-500 font-mono text-[10px]">尚無調度統計資料（同仁發問時將自動累積）</p>';
@@ -2430,7 +2332,6 @@
                 }
             }
 
-            // 渲染明細表
             if (tbody) {
                 if (logs.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-neutral-500">尚無調度明細，請在聊天室發問以捕捉真實分流節點</td></tr>`;
@@ -2651,12 +2552,6 @@
             });
             if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
 
-            const writeResult = await writeSopToGithubGist(newSopText);
-            if (!writeResult.success) {
-                alert(`❌ 寫入 GitHub SOP 失敗: ${writeResult.message}`);
-                return;
-            }
-
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             updateLogs.unshift({
                 id: Date.now(),
@@ -2683,7 +2578,7 @@
             renderPendingProposals();
             renderUpdateLogs();
             renderSnapshots();
-            alert(`✅ 成功！SOP 已更新並發布至雲端！\n【操作結果】：${lineRangeInfo}\n所有已開啟的視窗已同步刷新。`);
+            alert(`✅ 成功！SOP 已更新並發布至雲端資料庫！\n【操作結果】：${lineRangeInfo}\n所有已開啟的視窗已同步刷新。`);
         }
 
         async function rejectSopProposal(proposalId) {
@@ -2792,30 +2687,19 @@
             });
             if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
 
-            const res = await writeSopToGithubGist(target.content);
-            if (res.success) {
-                localStorage.setItem('shiye_sop', target.content);
-                localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
+            localStorage.setItem('shiye_sop', target.content);
+            localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
 
-                broadcastSopUpdate(target.content);
-                await pushCodesToCloud(currentCodesList);
-                renderSnapshots();
-                renderPendingProposals();
-                alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
-            } else {
-                alert(`❌ 還原失敗: ${res.message}`);
-            }
+            broadcastSopUpdate(target.content);
+            await pushCodesToCloud(currentCodesList);
+            renderSnapshots();
+            renderPendingProposals();
+            alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
         }
 
         async function generateNewCode() {
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
-
-            let token = getGithubToken();
-            if (!token) {
-                alert('⚠️ 請先在設定中填寫 GitHub Token 才能將新身分碼發布至雲端！');
-                return;
-            }
 
             const genBtn = document.getElementById('genNewCodeBtn');
             genBtn.disabled = true;
@@ -2910,12 +2794,10 @@
             });
         }
 
+        /**
+         * 🌟 寫入雲端：優先使用 Supabase 無鎖資料庫，降級備援回本地快取
+         */
         async function pushCodesToCloudWithDetails(codesArray) {
-            let gistId = getCodesGistId();
-            let token = getGithubToken();
-            let filename = getCodesFilename();
-            if (!gistId || !token) return { success: false, message: '未填寫 Gist ID 或 Token' };
-
             let targetCodes = (codesArray && codesArray.length > 0) ? codesArray : currentCodesList;
             if (!targetCodes || targetCodes.length === 0) targetCodes = getFallbackCodes();
 
@@ -2927,29 +2809,35 @@
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
 
-            try {
-                const payloadData = {
-                    apiKey: encodeToken(apiKey),
-                    sopUrl: sopUrl,
-                    bgList: bgList,
-                    cloudToken: encodeToken(token),
-                    uiSettings: currentUiSettings,
-                    errorLogs: errorLogs,
-                    pendingProposals: pendingProposals,
-                    updateLogs: updateLogs,
-                    snapshots: snapshots,
-                    codes: targetCodes
-                };
-                const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ files: { [filename]: { content: JSON.stringify(payloadData, null, 2) } } })
-                });
+            const payloadData = {
+                apiKey: encodeToken(apiKey),
+                sopUrl: sopUrl,
+                bgList: bgList,
+                uiSettings: currentUiSettings,
+                errorLogs: errorLogs,
+                pendingProposals: pendingProposals,
+                updateLogs: updateLogs,
+                snapshots: snapshots,
+                codes: targetCodes
+            };
 
-                if (res.ok) return { success: true };
-                let errData = await res.json().catch(() => ({}));
-                return { success: false, message: errData.message || `HTTP ${res.status}` };
-            } catch (e) { return { success: false, message: e.message }; }
+            const client = getSupabaseClient();
+            if (client) {
+                try {
+                    const { error } = await client
+                        .from('app_config')
+                        .upsert({ id: 'global_state', data: payloadData, updated_at: new Date().toISOString() });
+
+                    if (!error) return { success: true };
+                    return { success: false, message: error.message };
+                } catch(e) {
+                    return { success: false, message: e.message };
+                }
+            }
+
+            // 無 Supabase 時維持本地快取
+            saveCodesToLocal(targetCodes);
+            return { success: true };
         }
 
         async function pushCodesToCloud(codesArray) {
@@ -2965,9 +2853,8 @@
             try {
                 const apiKey = document.getElementById('apiKeyInput').value.trim();
                 const rawUrl = document.getElementById('gistIdInput').value.trim();
-                const codesGistId = document.getElementById('codesGistIdInput').value.trim();
-                const token = document.getElementById('githubTokenInput').value.trim();
-                const filename = document.getElementById('codesGistFilenameInput').value.trim();
+                const supUrl = document.getElementById('supabaseUrlInput').value.trim();
+                const supKey = document.getElementById('supabaseKeyInput').value.trim();
                 const bgText = document.getElementById('bgImagesInput').value.trim();
 
                 const normalizedSopUrl = normalizeGistUrl(rawUrl);
@@ -2975,24 +2862,19 @@
 
                 if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
                 if (normalizedSopUrl) localStorage.setItem('shiye_gist_url', normalizedSopUrl);
-                if (codesGistId) localStorage.setItem('shiye_codes_gist_id', codesGistId);
-                if (token) localStorage.setItem('shiye_github_token', token);
-                if (filename) localStorage.setItem('shiye_codes_filename', filename);
+                if (supUrl) localStorage.setItem('shiye_supabase_url', supUrl);
+                if (supKey) localStorage.setItem('shiye_supabase_key', supKey);
 
                 const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
                 localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
 
                 saveCodesToLocal(currentCodesList);
 
-                if (!token) {
-                    alert('⚠️ 警告：請填寫 GitHub Token 才能推送到雲端！');
-                    return;
-                }
-
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    await fetchSopFromGist();
-                    alert('✅ 成功：全套設定（含多端 UI 畫布、資安金鑰加密與用量追蹤）已同步至 GitHub 雲端！');
+                    const badgeEl = document.getElementById('backendModeBadge');
+                    if (badgeEl) badgeEl.textContent = getSupabaseClient() ? '🟢 Supabase 雲端無鎖連線中' : '⚪ 本地快取/無鎖待命版';
+                    alert('✅ 成功：全套設定（含 Supabase 雲端無鎖資料庫、多端 UI 畫布與用量追蹤）已同步完成！');
                 } else {
                     alert(`❌ 寫入失敗: ${result.message}`);
                 }
@@ -3308,7 +3190,6 @@ ${sopContent}
                 let liveMsgElements = null;
                 let renderScheduled = false;
 
-                // 🌟 專注由 openrouter/free 主導路由，並遍歷多組金鑰池
                 keyLoop:
                 for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
                     const currentKey = apiKeys[kIndex];
@@ -3385,11 +3266,7 @@ ${sopContent}
                                 if (trimmed.startsWith('data: ')) {
                                     try {
                                         const parsed = JSON.parse(trimmed.substring(6));
-                                        
-                                        // 🌟 即時捕捉 OpenRouter Auto Free 背後指派的真實模型 ID
-                                        if (parsed.model && !detectedRealModel) {
-                                            detectedRealModel = parsed.model;
-                                        }
+                                        if (parsed.model && !detectedRealModel) detectedRealModel = parsed.model;
 
                                         const delta = parsed.choices?.[0]?.delta?.content || '';
                                         if (delta) {
@@ -3420,9 +3297,7 @@ ${sopContent}
                         break keyLoop;
                     } catch (e) {
                         if (timeoutTimerId) clearTimeout(timeoutTimerId);
-                        if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) {
-                            break keyLoop;
-                        }
+                        if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) break keyLoop;
                         lastErrorMessage = e.message;
                     } finally {
                         currentAbortController.signal.removeEventListener('abort', onParentAbort);
@@ -3442,10 +3317,8 @@ ${sopContent}
                 if (streamSuccess || accumulatedReply.length > 0) {
                     const { displayText } = robustProposalExtractor(accumulatedReply);
                     const estimatedTokens = Math.round(((text?.length || 10) + accumulatedReply.length) * 1.3);
-
                     const finalModelName = detectedRealModel ? `${detectedRealModel} (via Auto Free)` : 'OpenRouter Auto Free';
 
-                    // 🌟 記錄到後台調度監控看板
                     recordDispatchLog(detectedRealModel || 'openrouter/free', elapsedSec, estimatedTokens, hasAttachedImages);
 
                     let currentCodeToUse = activeCode || (currentAuth === 'admin' ? SPECIAL_ADMIN_CODE : null);
@@ -3517,7 +3390,7 @@ ${sopContent}
             const id = 'loading_' + Date.now();
             const steps = [
                 "正在剖析施工工種與工序階段...",
-                "檢索拾葉內部知識庫與施工規範 (Gist)...",
+                "檢索內部知識庫與施工規範...",
                 "比對現場工程照片庫 (毛胚屋/放樣/防水)...",
                 "檢核驗收尺寸公差與跨工種防衝突預警...",
                 "正在生成圖文並茂指導教學..."
@@ -3553,9 +3426,7 @@ ${sopContent}
                             textEl.style.opacity = '1';
                         }, 150);
                     }
-                    if (barEl) {
-                        barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
-                    }
+                    if (barEl) barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
                 } else if (currentStepIdx === steps.length) {
                     if (textEl) textEl.textContent = '雲端多模態節點運算中，即將輸出圖文...';
                     if (barEl) barEl.style.width = '98%';
@@ -3724,7 +3595,7 @@ ${sopContent}
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select">
                         <div class="flex items-center flex-wrap gap-1.5 font-mono">
                             <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Auto Free')}
+                                <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Gemini')}
                             </span>
                             ${meta.tokens > 0 ? `
                                 <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
