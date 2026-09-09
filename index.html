@@ -395,7 +395,7 @@
         <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="backendModeBadge">🟢 Supabase 雲端動態發派連線中</span>
+                <span id="backendModeBadge">🟢 Supabase 雲端動態同步中</span>
             </span>
         </div>
     </div>
@@ -408,7 +408,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v18.0 旗艦版</span>
+                        <span>v19.0 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -525,7 +525,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v18.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v19.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -562,8 +562,8 @@
                         <span id="nav_badge_aiMonitor" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('config')" id="nav_btn_config" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-sliders text-xs text-neutral-500"></i><span class="tracking-wide">雲端設定</span></div>
-                        <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid  fa-database text-xs text-emerald-400"></i><span class="tracking-wide text-white">Supabase 雲端設定</span></div>
+                        <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('errorLogs')" id="nav_btn_errorLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-triangle-exclamation text-xs text-neutral-500"></i><span class="tracking-wide">錯誤回報</span></div>
@@ -886,12 +886,13 @@
                     </div>
                 </div>
 
+                <!-- 🌟 恢復完整後台：Supabase 動態設定輸入框 -->
                 <div id="win_config" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-sliders text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">金鑰池與雲端資料庫設定</span>
+                            <i class="fa-solid fa-database text-xs text-emerald-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">Supabase 雲端無鎖資料庫 ＆ 金鑰設定</span>
                         </div>
                         <button onclick="closeAdminWindow('config')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
@@ -904,7 +905,23 @@
                             <textarea id="apiKeyInput" rows="2" placeholder="sk-or-v1-aaaa... (每行一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
                         </div>
 
-                        <div class="space-y-1.5">
+                        <!-- 🌟 Supabase 雲端設定輸入框 -->
+                        <div class="space-y-2.5 border-t border-neutral-800 pt-3 bg-emerald-950/20 p-3 rounded-2xl border border-emerald-800/40">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <label class="text-[11px] text-emerald-300 font-semibold">Supabase 雲端無鎖資料庫設定</label>
+                                </div>
+                                <span class="text-[9px] text-neutral-400 font-mono">Dynamic Cloud Config</span>
+                            </div>
+                            <p class="text-[10px] text-neutral-400 leading-relaxed">在此修改網址或 Key 並點擊「同步雲端」，設定會自動存入 Gist。所有同仁開啟網頁時會自動抓取此設定，無需重新發布程式碼！</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <input type="text" id="supabaseUrlInput" placeholder="https://dadlmrmzupmmzthlvrmo.supabase.co" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                                <input type="password" id="supabaseKeyInput" placeholder="anon key (eyJhbGciOi...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 border-t border-neutral-800 pt-3">
                             <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址 (備份與外部 SOP 抓取)</label>
                             <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                         </div>
@@ -943,9 +960,9 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
-        // 🌟 內建寫死 Supabase 雲端無鎖資料庫（保證全體設備一開網頁自動對齊同一個雲端資料庫）
-        const HARDCODED_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
-        const HARDCODED_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
+        // 預設安全網備援（您提供的 Supabase 預設值）
+        const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
+        const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
         let photoCatalog = [];
         let documentCatalog = [];
@@ -1470,12 +1487,15 @@
         function getStoredGistUrl() { return normalizeGistUrl(localStorage.getItem('shiye_gist_url') || ''); }
 
         /**
-         * 🌟 取得寫死的 Supabase 客戶端連線實例
+         * 🌟 動態抓取 Supabase 設定：優先讀取後台設定，若無則自動帶入預設安全網
          */
         function getSupabaseClient() {
-            if (typeof supabase !== 'undefined' && HARDCODED_SUPABASE_URL && HARDCODED_SUPABASE_KEY) {
+            const url = (localStorage.getItem('shiye_supabase_url') || '').trim() || DEFAULT_SUPABASE_URL;
+            const key = (localStorage.getItem('shiye_supabase_key') || '').trim() || DEFAULT_SUPABASE_KEY;
+
+            if (url && key && typeof supabase !== 'undefined') {
                 try {
-                    return supabase.createClient(HARDCODED_SUPABASE_URL, HARDCODED_SUPABASE_KEY);
+                    return supabase.createClient(url, key);
                 } catch(e) {
                     console.error('Supabase 初始化失敗:', e);
                 }
@@ -1518,6 +1538,9 @@
 
         function handleCloudDataSuccess(cloudData) {
             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
+
+            if (cloudData.supabaseUrl) localStorage.setItem('shiye_supabase_url', cloudData.supabaseUrl);
+            if (cloudData.supabaseKey) localStorage.setItem('shiye_supabase_key', cloudData.supabaseKey);
 
             if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
             if (cloudData.pendingProposals && Array.isArray(cloudData.pendingProposals)) localStorage.setItem('shiye_pending_proposals', JSON.stringify(cloudData.pendingProposals));
@@ -1602,7 +1625,7 @@
                 return { found: true, startLine: startLine, endLine: startLine + count - 1, isAppend: false, method: 'exact' };
             }
 
-            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\、\。\(\)\（\）]/g, '').toLowerCase();
+            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\\。\(\)\（\）]/g, '').toLowerCase();
             const normTargetFirst = normalize(oldLines[0]);
 
             if (normTargetFirst.length >= 2) {
@@ -2210,6 +2233,8 @@
             const badge = document.getElementById('keyCountBadge');
             if (badge) badge.textContent = `${keyCount} 組金鑰`;
 
+            document.getElementById('supabaseUrlInput').value = localStorage.getItem('shiye_supabase_url') || DEFAULT_SUPABASE_URL;
+            document.getElementById('supabaseKeyInput').value = localStorage.getItem('shiye_supabase_key') || DEFAULT_SUPABASE_KEY;
             document.getElementById('gistIdInput').value = getStoredGistUrl();
 
             const bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
@@ -2426,7 +2451,7 @@
                 if (loc.found) {
                     locationBadgeHtml = `
                         <div class="flex items-center space-x-2">
-                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
+                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
                                 📍 鎖定第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行
                             </span>
                             <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">
@@ -2777,6 +2802,8 @@
 
             let apiKey = localStorage.getItem('shiye_apikey') || '';
             let sopUrl = localStorage.getItem('shiye_gist_url') || '';
+            let supUrl = localStorage.getItem('shiye_supabase_url') || DEFAULT_SUPABASE_URL;
+            let supKey = localStorage.getItem('shiye_supabase_key') || DEFAULT_SUPABASE_KEY;
             let bgList = safeJsonParse(localStorage.getItem('shiye_bg_list'), []);
             let errorLogs = safeJsonParse(localStorage.getItem('shiye_error_logs'), []);
             let pendingProposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
@@ -2786,6 +2813,8 @@
             const payloadData = {
                 apiKey: encodeToken(apiKey),
                 sopUrl: sopUrl,
+                supabaseUrl: supUrl,
+                supabaseKey: supKey,
                 bgList: bgList,
                 uiSettings: currentUiSettings,
                 errorLogs: errorLogs,
@@ -2826,6 +2855,8 @@
             try {
                 const apiKey = document.getElementById('apiKeyInput').value.trim();
                 const rawUrl = document.getElementById('gistIdInput').value.trim();
+                const supUrl = document.getElementById('supabaseUrlInput').value.trim();
+                const supKey = document.getElementById('supabaseKeyInput').value.trim();
                 const bgText = document.getElementById('bgImagesInput').value.trim();
 
                 const normalizedSopUrl = normalizeGistUrl(rawUrl);
@@ -2833,6 +2864,8 @@
 
                 if (apiKey) localStorage.setItem('shiye_apikey', apiKey);
                 if (normalizedSopUrl) localStorage.setItem('shiye_gist_url', normalizedSopUrl);
+                if (supUrl) localStorage.setItem('shiye_supabase_url', supUrl);
+                if (supKey) localStorage.setItem('shiye_supabase_key', supKey);
 
                 const parsedBgList = bgText.split('\n').map(u => u.trim()).filter(u => u.length > 0);
                 localStorage.setItem('shiye_bg_list', JSON.stringify(parsedBgList));
@@ -2841,7 +2874,7 @@
 
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    alert('✅ 成功：全套設定與雲端無鎖資料庫已同步完成！');
+                    alert('✅ 成功：全套設定（含 Supabase 雲端設定與資料庫）已同步完成！');
                 } else {
                     alert(`❌ 寫入失敗: ${result.message}`);
                 }
