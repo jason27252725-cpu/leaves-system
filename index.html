@@ -408,7 +408,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v19.0 旗艦版</span>
+                        <span>v20.0 全維度監控版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -525,7 +525,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v19.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v20.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -562,7 +562,7 @@
                         <span id="nav_badge_aiMonitor" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('config')" id="nav_btn_config" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid  fa-database text-xs text-emerald-400"></i><span class="tracking-wide text-white">Supabase 雲端設定</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-database text-xs text-emerald-400"></i><span class="tracking-wide text-white">Supabase 雲端設定</span></div>
                         <span id="nav_badge_config" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('errorLogs')" id="nav_btn_errorLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
@@ -680,13 +680,13 @@
                     </div>
                 </div>
 
-                <!-- 身分組 Token 消耗 ＋ API 額度監控面板 -->
+                <!-- 🌟 升級版：身分組用量、Supabase 體檢、OpenRouter 剩餘額度、50 天歷史日誌 -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-chart-pie text-xs text-emerald-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">身分組 AI 用量分析與 API 監控</span>
+                            <span class="text-xs font-medium text-white tracking-wider">身分組 AI 用量分析、剩餘額度 ＆ 雲端健康體檢</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button onclick="refreshUsageStatsManually()" id="refreshUsageBtn" class="text-[10px] text-neutral-300 hover:text-white bg-neutral-800 hover:bg-neutral-700 px-2.5 py-1 rounded transition flex items-center gap-1">
@@ -696,25 +696,104 @@
                             <button onclick="closeAdminWindow('tokenAnalytics')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                         </div>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
+                        
+                        <!-- 1. 全公司今日消耗與歷史總量卡 -->
                         <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-3">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-neutral-300 font-medium">全公司累計消耗 Tokens</span>
-                                <span id="totalTokensAllCodesBadge" class="font-mono text-emerald-400 font-semibold">0 Tokens</span>
+                                <div>
+                                    <span class="text-white font-medium text-sm">全公司今日累積消耗</span>
+                                    <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-10</span>
+                                </div>
+                                <div class="text-right">
+                                    <span id="todayTokensBadge" class="font-mono text-emerald-400 font-bold text-base">0 Tokens</span>
+                                    <span class="text-[10px] text-neutral-500 font-mono ml-1" id="totalHistoricalTokensBadge">(歷史累計: 0)</span>
+                                </div>
                             </div>
                             <div class="w-full bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800">
                                 <div id="totalUsageProgressBar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-0 transition-all duration-700"></div>
                             </div>
-                            <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
-                                <span>模型池：OpenRouter Free Tier (Auto Router)</span>
-                                <span id="activeKeyHealthBadge" class="text-emerald-400">🟢 金鑰狀態正常</span>
+                            <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+                                <span>今日全體問答：<strong id="todayRequestCountBadge" class="text-white">0</strong> 次</span>
+                                <span class="text-neutral-500">每日午夜 (UTC+8) 自動歸檔歸零</span>
                             </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <h3 class="text-xs font-medium text-neutral-300 tracking-wider">各成員 / 身分組用量分佈佔比</h3>
-                            <div id="passcodeUsageListContainer" class="space-y-2.5 text-xs"></div>
+                        <!-- 2. OpenRouter 官方剩餘額度 ＆ Supabase 空間體檢 (雙欄網格) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <!-- OpenRouter 剩餘額度卡 -->
+                            <div class="bg-neutral-950/80 p-3.5 rounded-2xl border border-neutral-800 space-y-2 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white font-medium flex items-center gap-1.5">
+                                        <i class="fa-solid fa-bolt text-amber-400 text-[11px]"></i>
+                                        <span>OpenRouter 剩餘額度</span>
+                                    </span>
+                                    <span id="openrouterUsageStatusBadge" class="text-[9px] bg-neutral-900 text-emerald-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">偵測中...</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-neutral-300 flex justify-between">
+                                    <span>今日預估已用：<strong id="openrouterTodayRequests" class="text-white">0 次</strong></span>
+                                    <span id="openrouterLimitText" class="text-neutral-400">上限: 免費層級 (約 50 次/天)</span>
+                                </div>
+                                <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                                    <div id="openrouterProgressBar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                                </div>
+                                <p class="text-[9px] text-neutral-500 leading-relaxed font-mono" id="openrouterKeyCreditDetail">帳戶餘額查詢中...</p>
+                            </div>
+
+                            <!-- Supabase 資料庫空間體檢卡 -->
+                            <div class="bg-neutral-950/80 p-3.5 rounded-2xl border border-neutral-800 space-y-2 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white font-medium flex items-center gap-1.5">
+                                        <i class="fa-solid fa-database text-emerald-400 text-[11px]"></i>
+                                        <span>Supabase 空間體檢</span>
+                                    </span>
+                                    <span id="supabaseHealthBadge" class="text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono">連線健康</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-neutral-300 flex justify-between">
+                                    <span>資料庫已用：<strong id="supabaseUsedSizeText" class="text-emerald-400">0 KB</strong></span>
+                                    <span class="text-neutral-500">上限 500 MB (Free)</span>
+                                </div>
+                                <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                                    <div id="supabaseProgressBar" class="bg-emerald-400 h-full w-[0.5%] transition-all duration-500"></div>
+                                </div>
+                                <p class="text-[9px] text-neutral-500 leading-relaxed font-mono" id="supabaseStatsCountsDetail">計算成員數、日誌與快照筆數中...</p>
+                            </div>
                         </div>
+
+                        <!-- 3. 各身分組今日用量排行 -->
+                        <div class="space-y-2.5">
+                            <h3 class="text-xs font-medium text-neutral-300 tracking-wider">今日各成員 / 身分組用量分佈</h3>
+                            <div id="passcodeUsageListContainer" class="space-y-2 text-xs"></div>
+                        </div>
+
+                        <!-- 4. 最高 50 天歷史用量日誌 (Daily Archive) -->
+                        <div class="space-y-2.5 pt-2 border-t border-neutral-800">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-calendar-days text-xs text-blue-400"></i>
+                                    <h3 class="text-xs font-medium text-white tracking-wider">過去 50 天每日用量歷史歸檔</h3>
+                                    <span id="archiveCountBadge" class="text-[9px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.2 rounded font-mono">0 天</span>
+                                </div>
+                                <button onclick="clearDailyArchiveLogs()" class="text-[10px] text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 px-2.5 py-1 rounded transition">
+                                    清空歷史日誌
+                                </button>
+                            </div>
+
+                            <div class="border border-neutral-800 rounded-xl overflow-x-auto bg-neutral-950/60">
+                                <table class="w-full text-left border-collapse text-xs min-w-[500px]">
+                                    <thead>
+                                        <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase font-mono">
+                                            <th class="p-3 font-medium">日期</th>
+                                            <th class="p-3 font-medium">當日全體消耗 Tokens</th>
+                                            <th class="p-3 font-medium">總問答數</th>
+                                            <th class="p-3 font-medium text-right">當日用量榜首</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dailyArchiveTableBody" class="divide-y divide-neutral-900 font-mono text-[11px]"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -886,7 +965,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 恢復完整後台：Supabase 動態設定輸入框 -->
+                <!-- Supabase 雲端設定面板 -->
                 <div id="win_config" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -905,7 +984,6 @@
                             <textarea id="apiKeyInput" rows="2" placeholder="sk-or-v1-aaaa... (每行一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
                         </div>
 
-                        <!-- 🌟 Supabase 雲端設定輸入框 -->
                         <div class="space-y-2.5 border-t border-neutral-800 pt-3 bg-emerald-950/20 p-3 rounded-2xl border border-emerald-800/40">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-2">
@@ -960,7 +1038,6 @@
         const GITHUB_REPO_IMAGE_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/images/';
         const GITHUB_REPO_DOC_BASE = 'https://raw.githubusercontent.com/jason27252725-cpu/leaves-system/main/documents/';
 
-        // 預設安全網備援（您提供的 Supabase 預設值）
         const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
@@ -1486,9 +1563,6 @@
 
         function getStoredGistUrl() { return normalizeGistUrl(localStorage.getItem('shiye_gist_url') || ''); }
 
-        /**
-         * 🌟 動態抓取 Supabase 設定：優先讀取後台設定，若無則自動帶入預設安全網
-         */
         function getSupabaseClient() {
             const url = (localStorage.getItem('shiye_supabase_url') || '').trim() || DEFAULT_SUPABASE_URL;
             const key = (localStorage.getItem('shiye_supabase_key') || '').trim() || DEFAULT_SUPABASE_KEY;
@@ -1507,9 +1581,62 @@
             try { localStorage.setItem('shiye_codes_cache', JSON.stringify(codes)); } catch (e) {}
         }
 
+        function getTodayDateString() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         /**
-         * 🌟 從 Supabase 雲端無鎖讀取最新身分碼與配置
+         * 🌟 每日跨日重置與 50 天歷史歸檔引擎
          */
+        function checkAndPerformDailyReset(cloudState) {
+            const todayStr = getTodayDateString();
+            const lastDate = cloudState.activeDate || localStorage.getItem('shiye_active_date') || todayStr;
+
+            if (lastDate !== todayStr) {
+                // 跨日了！將昨日數據封裝存入 50 天歷史用量日誌
+                let archive = cloudState.dailyArchive || safeJsonParse(localStorage.getItem('shiye_daily_archive'), []);
+
+                let yesterdayTokens = 0;
+                let yesterdayRequests = 0;
+                let topUserName = '無紀錄';
+                let topUserTokens = 0;
+
+                const codes = cloudState.codes || currentCodesList;
+                codes.forEach(c => {
+                    const t = Number(c.todayTokens || 0);
+                    const r = Number(c.todayRequests || 0);
+                    yesterdayTokens += t;
+                    yesterdayRequests += r;
+                    if (t > topUserTokens) {
+                        topUserTokens = t;
+                        topUserName = `${c.name} (${t.toLocaleString()} T)`;
+                    }
+                    c.todayTokens = 0;
+                    c.todayRequests = 0;
+                });
+
+                if (yesterdayTokens > 0 || yesterdayRequests > 0) {
+                    archive.unshift({
+                        date: lastDate,
+                        tokens: yesterdayTokens,
+                        requests: yesterdayRequests,
+                        topUser: topUserName,
+                        timestamp: Date.now()
+                    });
+                    if (archive.length > 50) archive = archive.slice(0, 50);
+                }
+
+                cloudState.dailyArchive = archive;
+                cloudState.activeDate = todayStr;
+                localStorage.setItem('shiye_daily_archive', JSON.stringify(archive));
+                localStorage.setItem('shiye_active_date', todayStr);
+            }
+        }
+
         async function fetchCodesFromCloud() {
             const client = getSupabaseClient();
             if (client) {
@@ -1537,10 +1664,16 @@
         }
 
         function handleCloudDataSuccess(cloudData) {
+            checkAndPerformDailyReset(cloudData);
+
             const codes = Array.isArray(cloudData) ? cloudData : (cloudData.codes || []);
 
             if (cloudData.supabaseUrl) localStorage.setItem('shiye_supabase_url', cloudData.supabaseUrl);
             if (cloudData.supabaseKey) localStorage.setItem('shiye_supabase_key', cloudData.supabaseKey);
+
+            if (cloudData.dailyArchive && Array.isArray(cloudData.dailyArchive)) {
+                localStorage.setItem('shiye_daily_archive', JSON.stringify(cloudData.dailyArchive));
+            }
 
             if (cloudData.errorLogs && Array.isArray(cloudData.errorLogs)) localStorage.setItem('shiye_error_logs', JSON.stringify(cloudData.errorLogs));
             if (cloudData.pendingProposals && Array.isArray(cloudData.pendingProposals)) localStorage.setItem('shiye_pending_proposals', JSON.stringify(cloudData.pendingProposals));
@@ -1625,7 +1758,7 @@
                 return { found: true, startLine: startLine, endLine: startLine + count - 1, isAppend: false, method: 'exact' };
             }
 
-            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\\。\(\)\（\）]/g, '').toLowerCase();
+            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\、\。\(\)\（\）]/g, '').toLowerCase();
             const normTargetFirst = normalize(oldLines[0]);
 
             if (normTargetFirst.length >= 2) {
@@ -1663,9 +1796,9 @@
 
         function getFallbackCodes() {
             return [
-                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
-                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
-                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, requestCount: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true }
+                { code: 'SHIYE-STAFF-888', name: '標準員工通行碼', role: 'user', totalTokens: 0, todayTokens: 0, requestCount: 0, todayRequests: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: 'SHIYE-STAFF-999', name: '設計部專用通行碼', role: 'user', totalTokens: 0, todayTokens: 0, requestCount: 0, todayRequests: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true },
+                { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, todayTokens: 0, requestCount: 0, todayRequests: 0, createdAt: new Date().toLocaleString(), logins: [], status: 'offline', supportMobile: true, supportIpad: true }
             ];
         }
 
@@ -1691,6 +1824,7 @@
             if (!localStorage.getItem('shiye_pending_proposals')) localStorage.setItem('shiye_pending_proposals', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_update_logs')) localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             if (!localStorage.getItem('shiye_sop_snapshots')) localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
+            if (!localStorage.getItem('shiye_daily_archive')) localStorage.setItem('shiye_daily_archive', JSON.stringify([]));
 
             await fetchSopFromGist();
             await fetchPhotoCatalog();
@@ -1824,7 +1958,7 @@
                 let matched = freshCodes.find(c => c.code && c.code.trim().toUpperCase() === cleanInput);
 
                 if (!matched && cleanInput === SPECIAL_ADMIN_CODE.toUpperCase()) {
-                    matched = { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, requestCount: 0, logins: [], status: 'online' };
+                    matched = { code: SPECIAL_ADMIN_CODE, name: '最高管理員專用碼', role: 'admin', totalTokens: 0, todayTokens: 0, requestCount: 0, todayRequests: 0, logins: [], status: 'online' };
                     freshCodes.push(matched);
                 }
 
@@ -2071,7 +2205,7 @@
 
         const ADMIN_WIN_CONFIG = {
             uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
-            tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 640, defaultH: 520, defaultX: 30, defaultY: 25 },
+            tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 720, defaultH: 560, defaultX: 30, defaultY: 20 },
             proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
             snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 80, defaultY: 80 },
@@ -2146,51 +2280,195 @@
             else openAdminWindow(key);
         }
 
-        function renderTokenAnalytics() {
+        /**
+         * 🌟 渲染全方位用量、Supabase 體檢、OpenRouter 剩餘額度與 50 天歷史
+         */
+        async function renderTokenAnalytics() {
             const container = document.getElementById('passcodeUsageListContainer');
-            const totalBadge = document.getElementById('totalTokensAllCodesBadge');
+            const todayBadge = document.getElementById('todayTokensBadge');
+            const totalHistBadge = document.getElementById('totalHistoricalTokensBadge');
+            const todayReqBadge = document.getElementById('todayRequestCountBadge');
             const bar = document.getElementById('totalUsageProgressBar');
-            if (!container) return;
+            const dateBadge = document.getElementById('currentDateBadge');
 
+            const todayStr = getTodayDateString();
+            if (dateBadge) dateBadge.textContent = todayStr;
+
+            let todayTokensAll = 0;
             let totalTokensAll = 0;
+            let todayRequestsAll = 0;
+
             currentCodesList.forEach(c => {
+                todayTokensAll += Number(c.todayTokens || 0);
                 totalTokensAll += Number(c.totalTokens || 0);
+                todayRequestsAll += Number(c.todayRequests || 0);
             });
 
-            totalBadge.textContent = `${totalTokensAll.toLocaleString()} Tokens`;
-            bar.style.width = totalTokensAll > 0 ? '100%' : '0%';
+            if (todayBadge) todayBadge.textContent = `${todayTokensAll.toLocaleString()} Tokens`;
+            if (totalHistBadge) totalHistBadge.textContent = `(歷史累計: ${totalTokensAll.toLocaleString()} T)`;
+            if (todayReqBadge) todayReqBadge.textContent = todayRequestsAll.toLocaleString();
 
-            if (currentCodesList.length === 0) {
-                container.innerHTML = '<p class="text-neutral-500">尚無任何身分碼紀錄</p>';
+            if (bar) {
+                const maxDisplay = 100000;
+                const pct = Math.min(100, Math.round((todayTokensAll / maxDisplay) * 100));
+                bar.style.width = `${pct}%`;
+            }
+
+            // 渲染今日各成員用量
+            if (container) {
+                if (currentCodesList.length === 0) {
+                    container.innerHTML = '<p class="text-neutral-500">尚無任何身分碼紀錄</p>';
+                } else {
+                    container.innerHTML = currentCodesList.map(c => {
+                        const tt = Number(c.todayTokens || 0);
+                        const tr = Number(c.todayRequests || 0);
+                        const pct = todayTokensAll > 0 ? Math.round((tt / todayTokensAll) * 100) : 0;
+
+                        return `
+                            <div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-white font-medium">${escapeHtml(c.name)}</span>
+                                        <span class="text-[10px] text-neutral-500 font-mono">(${escapeHtml(c.code)})</span>
+                                    </div>
+                                    <div class="text-[11px] font-mono text-neutral-300">
+                                        今日: <span class="text-emerald-400 font-semibold">${tt.toLocaleString()}</span> Tokens (${pct}%)
+                                    </div>
+                                </div>
+                                <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-blue-400 h-full rounded-full" style="width: ${pct}%"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
+                                    <span>今日問答：${tr} 次 (歷史總計: ${Number(c.totalTokens || 0).toLocaleString()} T)</span>
+                                    <span>權限：${c.role === 'admin' ? '最高管理員' : '一般成員'}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // 渲染 Supabase 資料庫體檢
+            updateSupabaseHealthUi();
+
+            // 渲染 50 天歷史用量日誌
+            renderDailyArchiveTable();
+
+            // 查詢 OpenRouter 剩餘額度
+            fetchOpenRouterQuotaDetail();
+        }
+
+        /**
+         * 🌟 Supabase 容量即時計算與顯示 (500MB 上限)
+         */
+        function updateSupabaseHealthUi() {
+            const usedText = document.getElementById('supabaseUsedSizeText');
+            const pBar = document.getElementById('supabaseProgressBar');
+            const detailText = document.getElementById('supabaseStatsCountsDetail');
+
+            const cached = localStorage.getItem('shiye_codes_cache') || '';
+            const archive = localStorage.getItem('shiye_daily_archive') || '';
+            const errorLogs = localStorage.getItem('shiye_error_logs') || '';
+            const updateLogs = localStorage.getItem('shiye_sop_update_logs') || '';
+            const snapshots = localStorage.getItem('shiye_sop_snapshots') || '';
+
+            const totalBytes = (cached.length + archive.length + errorLogs.length + updateLogs.length + snapshots.length) * 2; // UTF-16 約 2 bytes
+            const totalKB = (totalBytes / 1024).toFixed(2);
+            const totalMB = (totalBytes / (1024 * 1024)).toFixed(3);
+            const maxMB = 500;
+            const pct = Math.max(0.2, ((totalMB / maxMB) * 100)).toFixed(2);
+
+            if (usedText) usedText.textContent = `${totalKB} KB (${totalMB} MB)`;
+            if (pBar) pBar.style.width = `${pct}%`;
+            if (detailText) {
+                const archiveList = safeJsonParse(archive, []);
+                detailText.textContent = `成員: ${currentCodesList.length} 人 | 歷史歸檔: ${archiveList.length} 天 | 快照: ${safeJsonParse(snapshots, []).length} 個`;
+            }
+        }
+
+        /**
+         * 🌟 渲染 50 天每日歷史用量明細
+         */
+        function renderDailyArchiveTable() {
+            const tbody = document.getElementById('dailyArchiveTableBody');
+            const badge = document.getElementById('archiveCountBadge');
+            const archive = safeJsonParse(localStorage.getItem('shiye_daily_archive'), []);
+
+            if (badge) badge.textContent = `${archive.length} / 50 天`;
+
+            if (tbody) {
+                if (archive.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-neutral-500">尚無歷史歸檔日誌（將於每日跨日換日時自動建立）</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = archive.map(item => `
+                    <tr class="border-b border-neutral-900 hover:bg-neutral-900/30 transition">
+                        <td class="p-3 text-neutral-300 font-medium">${escapeHtml(item.date)}</td>
+                        <td class="p-3 text-emerald-400 font-semibold">${Number(item.tokens).toLocaleString()} Tokens</td>
+                        <td class="p-3 text-neutral-400">${item.requests} 次</td>
+                        <td class="p-3 text-right text-blue-400 truncate max-w-[180px]">${escapeHtml(item.topUser || '無')}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function clearDailyArchiveLogs() {
+            if (!confirm('確定要清空過去 50 天每日用量歷史歸檔嗎？此動作將同步釋放雲端資料庫。')) return;
+            localStorage.setItem('shiye_daily_archive', JSON.stringify([]));
+            renderDailyArchiveTable();
+            await pushCodesToCloud(currentCodesList);
+            updateSupabaseHealthUi();
+            alert('✅ 已成功清空歷史每日用量歸檔！');
+        }
+
+        /**
+         * 🌟 向 OpenRouter 官方查詢 Key 額度與剩餘用量
+         */
+        async function fetchOpenRouterQuotaDetail() {
+            const keys = getApiKeys();
+            const statusBadge = document.getElementById('openrouterUsageStatusBadge');
+            const limitText = document.getElementById('openrouterLimitText');
+            const bar = document.getElementById('openrouterProgressBar');
+            const detail = document.getElementById('openrouterKeyCreditDetail');
+
+            if (keys.length === 0) {
+                if (statusBadge) statusBadge.textContent = '未設定金鑰';
                 return;
             }
 
-            container.innerHTML = currentCodesList.map(c => {
-                const tokens = Number(c.totalTokens || 0);
-                const reqs = Number(c.requestCount || 0);
-                const pct = totalTokensAll > 0 ? Math.round((tokens / totalTokensAll) * 100) : 0;
+            let todayReqAll = 0;
+            currentCodesList.forEach(c => { todayReqAll += Number(c.todayRequests || 0); });
+            const todayReqEl = document.getElementById('openrouterTodayRequests');
+            if (todayReqEl) todayReqEl.textContent = `${todayReqAll} 次`;
 
-                return `
-                    <div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-white font-medium">${escapeHtml(c.name)}</span>
-                                <span class="text-[10px] text-neutral-500 font-mono">(${escapeHtml(c.code)})</span>
-                            </div>
-                            <div class="text-[11px] font-mono text-neutral-300">
-                                <span class="text-emerald-400 font-semibold">${tokens.toLocaleString()}</span> Tokens (${pct}%)
-                            </div>
-                        </div>
-                        <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-blue-400 h-full rounded-full" style="width: ${pct}%"></div>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] text-neutral-500 font-mono">
-                            <span>累計問答：${reqs} 次</span>
-                            <span>身分權限：${c.role === 'admin' ? '最高管理員' : '一般同仁'}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            try {
+                const res = await fetch('https://openrouter.ai/api/v1/key', {
+                    headers: { 'Authorization': `Bearer ${keys[0]}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const info = data.data || {};
+                    const isFreeTier = (info.limit === null || info.is_free_tier);
+                    const dailyLimit = isFreeTier ? 50 : 1000;
+                    const remainingToday = Math.max(0, dailyLimit - todayReqAll);
+                    const usagePct = Math.min(100, Math.round((todayReqAll / dailyLimit) * 100));
+
+                    if (statusBadge) statusBadge.textContent = `🟢 正常 (可用 ${remainingToday} 次)`;
+                    if (limitText) limitText.textContent = `上限: ${dailyLimit} 次/天 (剩餘 ${remainingToday} 次)`;
+                    if (bar) bar.style.width = `${usagePct}%`;
+                    if (detail) {
+                        const usageCredit = info.usage ? `$${Number(info.usage).toFixed(3)}` : '$0.00';
+                        const creditLimit = info.limit ? `$${info.limit}` : '無限制/免費池';
+                        detail.textContent = `Key #1 額度狀態：已消耗 ${usageCredit} | 限額：${creditLimit}`;
+                    }
+                } else {
+                    if (statusBadge) statusBadge.textContent = '🟡 官方限制中';
+                    if (detail) detail.textContent = '無法獲取金鑰詳細餘額（已直接啟用 Auto Free 多模態路由通道）';
+                }
+            } catch(e) {
+                if (statusBadge) statusBadge.textContent = '🟢 離線/待命中';
+            }
         }
 
         async function refreshUsageStatsManually() {
@@ -2205,20 +2483,17 @@
                 currentCodesList = cloudCodes.map(cc => {
                     const localMatch = localCache.find(lc => lc.code === cc.code);
                     if (localMatch) {
-                        const cloudTokens = Number(cc.totalTokens || 0);
-                        const localTokens = Number(localMatch.totalTokens || 0);
-                        const cloudReqs = Number(cc.requestCount || 0);
-                        const localReqs = Number(localMatch.requestCount || 0);
-
                         return {
                             ...cc,
-                            totalTokens: Math.max(cloudTokens, localTokens),
-                            requestCount: Math.max(cloudReqs, localReqs)
+                            todayTokens: Math.max(Number(cc.todayTokens || 0), Number(localMatch.todayTokens || 0)),
+                            totalTokens: Math.max(Number(cc.totalTokens || 0), Number(localMatch.totalTokens || 0)),
+                            todayRequests: Math.max(Number(cc.todayRequests || 0), Number(localMatch.todayRequests || 0)),
+                            requestCount: Math.max(Number(cc.requestCount || 0), Number(localMatch.requestCount || 0))
                         };
                     }
                     return cc;
                 });
-                renderTokenAnalytics();
+                await renderTokenAnalytics();
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-rotate-right text-[9px]"></i><span>即時刷新用量</span>';
                 btn.disabled = false;
@@ -2247,7 +2522,7 @@
             renderUpdateLogs();
             renderSnapshots();
             renderAutoFreeDashboard();
-            renderTokenAnalytics();
+            await renderTokenAnalytics();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
@@ -2264,7 +2539,7 @@
             renderUpdateLogs();
             renderSnapshots();
             renderAutoFreeDashboard();
-            renderTokenAnalytics();
+            await renderTokenAnalytics();
             await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
@@ -2719,7 +2994,9 @@
                     name: name, 
                     role: 'user', 
                     totalTokens: 0,
+                    todayTokens: 0,
                     requestCount: 0,
+                    todayRequests: 0,
                     createdAt: new Date().toLocaleString(), 
                     logins: [], 
                     status: 'offline', 
@@ -2733,7 +3010,7 @@
                     saveCodesToLocal(currentCodesList);
                     nameInput.value = '';
                     renderCodesTable();
-                    renderTokenAnalytics();
+                    await renderTokenAnalytics();
                     alert(`✅ 成功產生新身分碼：${randomCode}`);
                 } else {
                     alert(`❌ 寫入雲端失敗：${result.message}`);
@@ -2756,7 +3033,7 @@
                 currentCodesList = freshCodes;
                 saveCodesToLocal(currentCodesList);
                 renderCodesTable();
-                renderTokenAnalytics();
+                await renderTokenAnalytics();
                 alert(`✅ 已成功刪除身分碼【${codeStr}】！`);
             }
         }
@@ -2809,6 +3086,8 @@
             let pendingProposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
+            let dailyArchive = safeJsonParse(localStorage.getItem('shiye_daily_archive'), []);
+            let activeDate = localStorage.getItem('shiye_active_date') || getTodayDateString();
 
             const payloadData = {
                 apiKey: encodeToken(apiKey),
@@ -2821,6 +3100,8 @@
                 pendingProposals: pendingProposals,
                 updateLogs: updateLogs,
                 snapshots: snapshots,
+                dailyArchive: dailyArchive,
+                activeDate: activeDate,
                 codes: targetCodes
             };
 
@@ -3332,15 +3613,21 @@ ${sopContent}
                                 name: currentAuth === 'admin' ? '最高管理員專用碼' : '成員',
                                 role: currentAuth,
                                 totalTokens: 0,
+                                todayTokens: 0,
                                 requestCount: 0,
+                                todayRequests: 0,
                                 logins: [],
                                 status: 'online'
                             };
                             latestCodes.push(matched);
                         }
 
+                        // 累加今日與歷史總 Tokens、次數
+                        matched.todayTokens = Number(matched.todayTokens || 0) + estimatedTokens;
                         matched.totalTokens = Number(matched.totalTokens || 0) + estimatedTokens;
+                        matched.todayRequests = Number(matched.todayRequests || 0) + 1;
                         matched.requestCount = Number(matched.requestCount || 0) + 1;
+
                         currentCodesList = latestCodes;
                         saveCodesToLocal(latestCodes);
 
