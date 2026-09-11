@@ -110,29 +110,28 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 Lovable 風格：微位移 + 柔焦解焦 + 漸層淡入動畫 */
-        @keyframes tokenFadeIn {
+        /* 🌟 Lovable 實體柔焦波浪動畫 (Token Wave Animation) */
+        @keyframes lovableWave {
             0% {
                 opacity: 0;
-                transform: translateY(5px);
-                filter: blur(3px);
+                filter: blur(5px);
+                transform: translateY(6px);
+            }
+            60% {
+                opacity: 0.8;
+                filter: blur(1.5px);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0);
                 filter: blur(0);
+                transform: translateY(0);
             }
         }
 
-        .stream-word-glow {
+        .lovable-wave-token {
             display: inline-block;
-            animation: tokenFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: lovableWave 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity, filter;
-        }
-
-        .streaming-active-container {
-            mask-image: linear-gradient(to bottom, black 82%, rgba(0,0,0,0.4) 94%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 82%, rgba(0,0,0,0.4) 94%, transparent 100%);
         }
 
         #aiFloatingTriggerWrapper {
@@ -372,7 +371,6 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 自由拉伸與拖曳之更新日誌浮動視窗 -->
     <div id="versionSummaryModal" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -386,7 +384,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v23.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v24.0)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -395,7 +393,6 @@
         <div id="quickModalContent" class="flex-1 p-5 overflow-y-auto space-y-4 text-xs text-neutral-300"></div>
     </div>
 
-    <!-- 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -420,7 +417,6 @@
         </div>
     </div>
 
-    <!-- 登入介面 -->
     <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative transition-all duration-500">
             <div class="text-center space-y-3">
@@ -444,7 +440,6 @@
             </div>
         </div>
 
-        <!-- 登入變身進度條容器 -->
         <div id="authLoginProgressWrapper" class="hidden-view w-full max-w-xs space-y-3 text-center">
             <div class="text-xs text-neutral-300 font-mono tracking-widest uppercase animate-pulse" id="loginProgressText">正在建立安全連線與彙整雲端資料...</div>
             <div class="w-full bg-neutral-900 border border-neutral-700 h-2.5 rounded-full overflow-hidden shadow-2xl p-0.5">
@@ -460,7 +455,6 @@
         </div>
     </div>
 
-    <!-- 主系統介面 -->
     <div id="appContainer" class="h-full flex flex-col relative z-10 hidden-view">
         <header class="px-6 md:px-8 py-5 flex justify-between items-center shrink-0 z-20 ui-no-select">
             <div class="space-y-1">
@@ -468,7 +462,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v23.0 絲滑柔焦版</span>
+                        <span>v24.0 Lovable 流光版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -494,7 +488,6 @@
             </div>
         </main>
 
-        <!-- 水滴呼吸按鈕 -->
         <div id="aiFloatingTriggerWrapper" class="ui-no-select">
             <button onclick="toggleChatDrawer(true)" class="liquid-breathe-inner glass-mono bg-black/50 hover:bg-black/70 border border-white/30 text-white px-7 py-5 sm:px-9 sm:py-6 lg:px-6 lg:py-5 rounded-3xl flex items-center space-x-3.5 backdrop-blur-xl group shadow-2xl cursor-pointer">
                 <div class="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)] animate-pulse"></div>
@@ -508,7 +501,6 @@
             </button>
         </div>
 
-        <!-- 水滴展開懸浮對話框 -->
         <div id="chatDrawer">
             <div class="resize-handle resize-t" data-handle="t"></div>
             <div class="resize-handle resize-b" data-handle="b"></div>
@@ -555,7 +547,6 @@
                 <i class="fa-solid fa-clipboard-check mr-1 text-blue-400"></i> 已複製選取內容至剪貼簿！
             </div>
 
-            <!-- 多照片預覽條 -->
             <div class="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0">
                 <div id="multiImagePreviewBar" class="hidden-view mb-2.5 flex items-center gap-2.5 overflow-x-auto bg-neutral-900/90 border border-neutral-700/80 p-2.5 rounded-2xl">
                     <div id="thumbnailsContainer" class="flex items-center gap-2"></div>
@@ -565,12 +556,10 @@
                 <div class="flex items-center glass-mono rounded-2xl px-3 py-2 shadow-xl border border-white/15 focus-within:border-white transition">
                     <input type="file" id="imageFileInput" accept="image/*" multiple class="hidden" onchange="handleMultiImagesSelected(event)">
                     
-                    <!-- 照片上傳按鈕 -->
                     <button type="button" onclick="document.getElementById('imageFileInput').click()" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0" title="拍照或多選上傳照片 (最多5張，支援截圖貼上)">
                         <i class="fa-solid fa-images"></i>
                     </button>
 
-                    <!-- 語音轉文字按鈕 -->
                     <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0" title="點擊開啟語音轉文字輸入 (台灣繁體中文)">
                         <i id="micBtnIcon" class="fa-solid fa-microphone"></i>
                     </button>
@@ -585,7 +574,6 @@
             </div>
         </div>
 
-        <!-- 後台管理介面 -->
         <main id="viewAdmin" class="fixed inset-0 z-40 bg-[#09090b] flex flex-col lg:flex-row overflow-hidden hidden-view ui-no-select">
             <aside class="w-full lg:w-72 bg-neutral-950 border-b lg:border-b-0 lg:border-r border-neutral-800/80 flex flex-col justify-between shrink-0 z-50">
                 <div class="p-4 lg:p-5 border-b border-neutral-800/80 flex lg:block justify-between items-center">
@@ -596,7 +584,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v23.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v24.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -658,7 +646,6 @@
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
 
-                <!-- 多端 UI 視覺微調器 ＋ 即時對照模擬畫布 -->
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -726,7 +713,6 @@
                                 </div>
                             </div>
 
-                            <!-- 即時模擬對照圖 -->
                             <div class="space-y-2">
                                 <span class="text-[11px] font-medium text-neutral-400 flex items-center gap-1.5">
                                     <i class="fa-solid fa-eye text-blue-400"></i>
@@ -755,7 +741,6 @@
                     </div>
                 </div>
 
-                <!-- 系統更新紀錄視窗 -->
                 <div id="win_systemUpdates" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -777,7 +762,6 @@
                     </div>
                 </div>
 
-                <!-- 身分組用量、Supabase 體檢、OpenRouter 剩餘額度、50 天歷史日誌 -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -994,7 +978,6 @@
                     </div>
                 </div>
 
-                <!-- Auto Free 智慧調度即時分流監控面板 -->
                 <div id="win_aiMonitor" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -1054,7 +1037,6 @@
                     </div>
                 </div>
 
-                <!-- Supabase 雲端設定面板 -->
                 <div id="win_config" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -1132,29 +1114,17 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v23.0",
+                version: "v24.0",
                 date: "2026-09-11",
-                title: "Lovable 風格漸層柔焦打字動態 ＆ 語音輸入辨識",
+                title: "Lovable 原生柔焦波浪打字引擎 ＆ 語音辨識",
                 summaryItems: [
-                    { type: "feat", text: "導入微位移、柔焦解焦與漸層遮罩的逐字絲滑吐字動效" },
-                    { type: "feat", text: "支援台灣繁體中文現場語音轉文字輸入" },
-                    { type: "fix", text: "修復圖片網址換行斷裂與空格問題，自動平滑縫合" }
+                    { type: "feat", text: "實作雙軌串流分割引擎，前端波浪持續柔焦浮現，後端穩定 Markdown 不打架" },
+                    { type: "feat", text: "支援現場連續語音轉台灣繁體中文 (Web Speech API)" },
+                    { type: "fix", text: "修復圖片網址換行斷裂問題，徹底杜絕裸露原始連結" },
+                    { type: "fix", text: "登入進度條完成後徹底釋放指針遮罩，杜絕穿透凍結" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "Lovable 漸層柔焦打字", oldVal: "純文字生硬瞬間彈出", newVal: "微位移 + 柔焦解焦 + 垂直漸層遮罩動態湧現" },
-                    { type: "add", title: "現場語音即時辨識", oldVal: "只能鍵盤輸入", newVal: "串接 Web Speech API，按住直接語音輸入" }
-                ]
-            },
-            {
-                version: "v22.0",
-                date: "2026-09-11",
-                title: "核心安全防護 ＆ 登入遮罩優化",
-                summaryItems: [
-                    { type: "fix", text: "修復登入遮罩可能發生的點擊穿透問題" },
-                    { type: "fix", text: "每日用量歸檔加入去重防護鎖" }
-                ],
-                diffDetails: [
-                    { type: "fix", title: "遮罩釋放保護", oldVal: "進度條跑完遮罩仍攔截滑鼠事件", newVal: "指派 pointer-events: none" }
+                    { type: "add", title: "Lovable 雙軌生長前沿渲染", oldVal: "innerHTML 整段暴力替換，摧毀動畫", newVal: "穩態字元與動態波浪字元分離，最新字元攜帶 translateY(6px) + blur(5px) 浮現" }
                 ]
             }
         ];
@@ -3881,7 +3851,7 @@ ${sopContent}
                                                         updateLiveBubble(liveMsgElements, accumulatedReply);
                                                         renderScheduled = false;
                                                     });
-                                                }, 45);
+                                                }, 35);
                                             }
                                         }
                                     } catch (err) {}
@@ -4057,8 +4027,8 @@ ${sopContent}
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text streaming-active-container">
-                            <span class="gemini-cursor"></span>
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
+                            <span id="${msgId}_stable"></span><span id="${msgId}_wave" class="lovable-wave-token"></span><span class="gemini-cursor"></span>
                         </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
@@ -4071,34 +4041,41 @@ ${sopContent}
                 msgId: msgId,
                 wrapper: document.getElementById(`${msgId}_wrapper`),
                 content: document.getElementById(`${msgId}_content`),
-                footer: document.getElementById(`${msgId}_footer`)
+                stableSpan: document.getElementById(`${msgId}_stable`),
+                waveSpan: document.getElementById(`${msgId}_wave`),
+                footer: document.getElementById(`${msgId}_footer`),
+                renderedLength: 0
             };
         }
 
-        // 🌟 核心升級：Lovable 微位移、柔焦解焦與漸層遮罩吐字動效
+        /**
+         * 🌟 核心升級：真正的 Lovable 雙軌柔焦前沿波浪渲染
+         */
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
 
             let cleanText = cleanGuardrailArtifacts(text);
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
 
-            const safeText = sanitizeIncompleteMarkdown(cleanText);
-            let parsed = renderMarkdownPure(safeText);
-
-            // 將最後一個段落或文字套用微位移柔焦解焦 class
-            const lastClosingTag = parsed.lastIndexOf('</');
-            if (lastClosingTag !== -1) {
-                const before = parsed.substring(0, lastClosingTag);
-                const after = parsed.substring(lastClosingTag);
-                parsed = `${before} <span class="stream-word-glow"><span class="gemini-cursor"></span></span>${after}`;
+            const waveLength = 10;
+            if (cleanText.length <= waveLength) {
+                if (elements.stableSpan) elements.stableSpan.innerHTML = '';
+                if (elements.waveSpan) elements.waveSpan.textContent = cleanText;
             } else {
-                parsed += '<span class="stream-word-glow"><span class="gemini-cursor"></span></span>';
+                const stableText = cleanText.substring(0, cleanText.length - waveLength);
+                const waveText = cleanText.substring(cleanText.length - waveLength);
+
+                const safeStable = sanitizeIncompleteMarkdown(stableText);
+                if (elements.stableSpan) {
+                    elements.stableSpan.innerHTML = renderMarkdownPure(safeStable);
+                }
+                if (elements.waveSpan) {
+                    elements.waveSpan.textContent = waveText;
+                }
             }
 
-            elements.content.innerHTML = parsed;
-
             const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
-            if (distanceFromBottom < 200) {
+            if (distanceFromBottom < 220) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
@@ -4108,9 +4085,6 @@ ${sopContent}
 
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
-
-            // 串流結束，移除漸層遮罩 class，還原最乾淨的靜態 HTML
-            elements.content.classList.remove('streaming-active-container');
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = renderMarkdownPure(displayText);
