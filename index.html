@@ -77,23 +77,26 @@
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes cardShrinkVanish {
+        /* 🌟 水滴回彈物理動畫 (Spring & Elastic) */
+        @keyframes liquidCardTransform {
             0% { transform: scale(1); opacity: 1; }
-            40% { transform: scale(1.02); opacity: 0.95; }
-            100% { transform: scale(0.65); opacity: 0; }
+            30% { transform: scale(1.04); opacity: 0.98; }
+            65% { transform: scale(0.35) translateY(20px); opacity: 0.6; }
+            100% { transform: scale(0.15) translateY(40px); opacity: 0; }
         }
-        @keyframes authModalFadeOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; pointer-events: none; }
+        @keyframes liquidBarMorph {
+            0% { transform: scaleX(0.1); opacity: 0; }
+            50% { transform: scaleX(1); opacity: 1; }
+            100% { transform: scaleX(1); opacity: 1; }
         }
-        @keyframes appInterfaceEnter {
-            0% { opacity: 0; transform: scale(0.97); }
-            100% { opacity: 1; transform: scale(1); }
+        @keyframes appInterfaceElasticEnter {
+            0% { opacity: 0; transform: scale(0.90) translateY(12px); }
+            60% { opacity: 1; transform: scale(1.01) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .auth-shrink-out { animation: cardShrinkVanish 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .auth-modal-fade { animation: authModalFadeOut 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .app-enter-anim { animation: appInterfaceEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .auth-liquid-morph { animation: liquidCardTransform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .app-elastic-enter { animation: appInterfaceElasticEnter 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
         @keyframes liquidBreatheScale {
             0%, 100% {
@@ -110,7 +113,7 @@
         #aiFloatingTriggerWrapper {
             position: fixed;
             z-index: 30;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @media (max-width: 1023px) {
             #aiFloatingTriggerWrapper { left: 50%; top: 50%; transform: translate(-50%, -50%); }
@@ -137,7 +140,7 @@
             pointer-events: none;
             visibility: hidden;
             will-change: transform, opacity, width, height, left, top;
-            transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1), transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @media (max-width: 767px) {
@@ -244,7 +247,7 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             background: rgba(255, 255, 255, 0.04);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
             vertical-align: middle;
         }
@@ -281,6 +284,7 @@
             color: #000;
         }
 
+        /* 🌟 自由拉伸浮動視窗 (支援更新日誌與大圖燈箱) */
         #photoViewerWindow, #versionSummaryModal {
             position: fixed;
             z-index: 120;
@@ -298,7 +302,7 @@
             transition: opacity 0.25s ease, transform 0.25s ease;
         }
         #photoViewerWindow { width: 580px; height: 480px; max-width: 94vw; max-height: 90vh; background: rgba(16, 16, 16, 0.95); }
-        #versionSummaryModal { width: 440px; max-width: 92vw; max-height: 82vh; background: rgba(18, 18, 18, 0.96); z-index: 130; }
+        #versionSummaryModal { width: 480px; height: 420px; max-width: 94vw; max-height: 85vh; background: rgba(18, 18, 18, 0.96); z-index: 140; }
 
         #photoViewerWindow.pop-active, #versionSummaryModal.pop-active {
             opacity: 1;
@@ -344,18 +348,27 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 前端精簡版更新摘要小彈窗 (共用元件) -->
-    <div id="versionSummaryModal" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ui-no-select" onclick="event.stopPropagation()">
-        <div class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90">
+    <!-- 🌟 可自由拉伸與拖曳之更新日誌浮動視窗 -->
+    <div id="versionSummaryModal" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
+        <div class="resize-handle resize-t" data-handle="t"></div>
+        <div class="resize-handle resize-b" data-handle="b"></div>
+        <div class="resize-handle resize-l" data-handle="l"></div>
+        <div class="resize-handle resize-r" data-handle="r"></div>
+        <div class="resize-handle resize-tl" data-handle="tl"></div>
+        <div class="resize-handle resize-tr" data-handle="tr"></div>
+        <div class="resize-handle resize-bl" data-handle="bl"></div>
+        <div class="resize-handle resize-br" data-handle="br"></div>
+
+        <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v20.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v21.0)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
             </button>
         </div>
-        <div class="p-5 overflow-y-auto space-y-4 text-xs text-neutral-300" id="quickModalContent">
+        <div id="quickModalContent" class="flex-1 p-5 overflow-y-auto space-y-4 text-xs text-neutral-300">
             <!-- 動態插入摘要項目 -->
         </div>
     </div>
@@ -387,7 +400,7 @@
 
     <!-- 登入介面 -->
     <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
-        <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
+        <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative transition-all duration-500">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
                     <i class="fa-solid fa-cube text-xl"></i>
@@ -403,14 +416,21 @@
             </div>
             <div class="flex items-center justify-between pt-1">
                 <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-400 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
-                <!-- 🌟 登入處微型更新日誌按鈕 -->
                 <button type="button" onclick="openQuickUpdateModal()" class="text-[10px] text-blue-400 hover:text-blue-300 transition flex items-center gap-1">
                     <i class="fa-solid fa-bullhorn text-[9px]"></i><span>更新日誌</span>
                 </button>
             </div>
         </div>
 
-        <div class="mt-4 flex items-center justify-center gap-2">
+        <!-- 🌟 登入變身進度條容器 (預設隱藏) -->
+        <div id="authLoginProgressWrapper" class="hidden-view w-full max-w-xs space-y-3 text-center">
+            <div class="text-xs text-neutral-300 font-mono tracking-widest uppercase animate-pulse" id="loginProgressText">正在建立安全連線與彙整雲端資料...</div>
+            <div class="w-full bg-neutral-900 border border-neutral-700 h-2.5 rounded-full overflow-hidden shadow-2xl p-0.5">
+                <div id="authLoginProgressBar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-0 rounded-full transition-all duration-300 ease-out"></div>
+            </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-center">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="backendModeBadge">🟢 Supabase 雲端動態同步中</span>
@@ -426,14 +446,13 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v20.0 旗艦版</span>
+                        <span>v21.0 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
 
             <div class="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-xs tracking-widest">
-                <!-- 🌟 右上角微型更新日誌按鈕 -->
                 <button onclick="openQuickUpdateModal()" class="text-[10px] bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition shadow-sm" title="查看最新版本更新與修復項目">
                     <i class="fa-solid fa-sparkles text-amber-400 text-[9px]"></i>
                     <span>更新亮點</span>
@@ -548,7 +567,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v20.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v21.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -707,7 +726,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 全新視窗：後台詳細系統版本更新紀錄與版本對比 (Diff) -->
+                <!-- 系統更新紀錄視窗 -->
                 <div id="win_systemUpdates" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -725,8 +744,6 @@
                             </div>
                             <select id="versionSelect" onchange="renderSystemUpdateDetails(this.value)" class="bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-white font-mono"></select>
                         </div>
-
-                        <!-- 版本概況與對比卡片 -->
                         <div id="versionDetailContainer" class="space-y-4"></div>
                     </div>
                 </div>
@@ -1084,10 +1101,22 @@
         const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
-        /**
-         * 🌟 系統版本演進紀錄數據庫 (含前台簡述與後台詳細 Diff 對比)
-         */
         const SYSTEM_VERSION_HISTORY = [
+            {
+                version: "v21.0",
+                date: "2026-09-11",
+                title: "極致絲滑水滴彈性 ＆ 登入變身進度條 ＆ 自由拉伸更新視窗",
+                summaryItems: [
+                    { type: "feat", text: "升級水滴物理回彈動效 (Spring & Elastic UI)" },
+                    { type: "feat", text: "登入身分碼驗證後，卡片平滑縮小變身為沉浸式流光進度條" },
+                    { type: "feat", text: "更新日誌彈窗升級為可任意拉伸大小與拖曳的浮動視窗" }
+                ],
+                diffDetails: [
+                    { type: "add", title: "物理回彈水滴動效", oldVal: "一般線性淡入淡出 (Linear Fade)", newVal: "導入貝茲曲線彈簧回彈效果 (Cubic-Bezier 0.34, 1.56)" },
+                    { type: "add", title: "登入變身進度條動畫", oldVal: "點擊後立刻切換畫面", newVal: "卡片平滑縮小聚合成進度條，跑滿後漸隱並彈入主畫面" },
+                    { type: "perf", title: "自由拉伸更新視窗", oldVal: "固定大小的簡易快顯框", newVal: "具備隱形縮放手柄與拖曳標題列，可隨意調整大小" }
+                ]
+            },
             {
                 version: "v20.0",
                 date: "2026-09-11",
@@ -1095,57 +1124,11 @@
                 summaryItems: [
                     { type: "feat", text: "新增 Supabase 空間使用率體檢 (500MB 剩餘監控)" },
                     { type: "feat", text: "串接 OpenRouter 官方端點即時查詢金鑰額度與每日剩餘次數" },
-                    { type: "feat", text: "支援每日午夜自動跨日歸檔，新增最高 50 天歷史用量日誌" },
-                    { type: "fix", text: "優化 Markdown 串流正則，修補標籤截斷導致的破版問題" }
+                    { type: "feat", text: "支援每日午夜自動跨日歸檔，新增最高 50 天歷史用量日誌" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "Supabase 空間體檢模組", oldVal: "無任何資料庫使用量與容量顯示", newVal: "精確換算 JSON Byte 數對比 500MB，並顯示成員與快照筆數" },
-                    { type: "add", title: "OpenRouter 官方剩餘額度檢測", oldVal: "僅能顯示金鑰字串，無法得知官方帳戶限制", newVal: "呼叫 /api/v1/key 查詢真實已用金額與今日剩餘次數 (50/1000 次)" },
-                    { type: "add", title: "每日自動換日歸檔 (50 天)", oldVal: "Token 無限累加，無法分辨當日消耗", newVal: "午夜自動封裝昨日數據至 50 天歸檔日誌，今日消耗自動歸零" },
-                    { type: "perf", title: "後台演進紀錄窗口 (Diff)", oldVal: "僅有版本號文字標籤", newVal: "具備版本選擇器與新舊版本行級對比清單，前後台均可彈窗瀏覽" },
-                    { type: "fix", title: "Markdown 串流防閃爍修補", oldVal: "遇到未閉合圖片或粗體語法時偶發排版跳動", newVal: "新增 sanitizeIncompleteMarkdown 智慧平滑防護" }
-                ]
-            },
-            {
-                version: "v19.0",
-                date: "2026-09-10",
-                title: "Supabase 雲端無鎖資料庫 ＆ 動態派發架構",
-                summaryItems: [
-                    { type: "feat", text: "全面遷移至 Supabase PostgreSQL 資料庫，支援行級鎖定 (RLS)" },
-                    { type: "feat", text: "解決多同仁同時在線時 Gist 覆蓋衝突 (Race Condition)" },
-                    { type: "perf", text: "所有設備免手動設定，後台一鍵發布即全體自動對齊雲端" }
-                ],
-                diffDetails: [
-                    { type: "add", title: "PostgreSQL Row-Level Locking", oldVal: "GitHub Gist 單一 JSON 整本覆寫機制", newVal: "Supabase app_config 表格，20人同時寫入自動排隊不打架" },
-                    { type: "change", title: "後台雲端設定欄位", oldVal: "GitHub Token 與 Gist ID 輸入框", newVal: "Supabase Project URL 與 Anon Public Key 輸入框" }
-                ]
-            },
-            {
-                version: "v16.0",
-                date: "2026-09-09",
-                title: "OpenRouter Auto Free 智慧調度透明分流監控",
-                summaryItems: [
-                    { type: "feat", text: "專門監控 Auto Free 實際指派的實體模型 (Gemma, Llama, Qwen 等)" },
-                    { type: "feat", text: "新增各實體模型調度佔比統計進度條" },
-                    { type: "fix", text: "移除無效的個別免費模型測試紅燈，專注主通道測速" }
-                ],
-                diffDetails: [
-                    { type: "change", title: "模型監控面板邏輯", oldVal: "靜態 Ping 個別免費模型列表 (容易頻繁 429 紅燈)", newVal: "動態捕捉串流 Payload 中的真實 model 欄位" },
-                    { type: "add", title: "分流歷史明細表", oldVal: "無歷史調度紀錄", newVal: "紀錄調用時間、實體模型、文字/視覺類型與耗時秒數" }
-                ]
-            },
-            {
-                version: "v15.0",
-                date: "2026-09-05",
-                title: "毛玻璃介面、可拖曳大圖燈箱與 SOP 行級 Diff 審核",
-                summaryItems: [
-                    { type: "feat", text: "水滴展開對話框與全自由拖曳縮放燈箱視窗" },
-                    { type: "feat", text: "同仁提報修改 SOP 自動生成 Diff 提案供管理員採納" },
-                    { type: "feat", text: "多圖上傳與剪貼簿貼圖自動壓縮支援" }
-                ],
-                diffDetails: [
-                    { type: "add", title: "多圖上傳與現場審查", oldVal: "僅支援純文字問答", newVal: "支援單次最多 5 張施工照片，前端自動壓至 1024px" },
-                    { type: "add", title: "SOP 行級精準鎖定", oldVal: "只能人工手動編輯 SOP 文字檔", newVal: "正則比對自動鎖定指定行數並產生一鍵採納/抽除" }
+                    { type: "add", title: "Supabase 空間體檢模組", oldVal: "無任何資料庫容量顯示", newVal: "精確換算 JSON Byte 數對比 500MB" },
+                    { type: "add", title: "每日自動換日歸檔 (50 天)", oldVal: "Token 無限累加", newVal: "午夜自動封裝昨日數據至 50 天歸檔日誌" }
                 ]
             }
         ];
@@ -1235,7 +1218,7 @@
         }
 
         /**
-         * 🌟 前台精簡版更新日誌小視窗控制
+         * 🌟 前台精簡版更新日誌浮動視窗控制與初始化
          */
         function openQuickUpdateModal() {
             const modal = document.getElementById('versionSummaryModal');
@@ -1243,7 +1226,7 @@
             const contentEl = document.getElementById('quickModalContent');
             const latest = SYSTEM_VERSION_HISTORY[0];
 
-            if (titleEl) titleEl.textContent = `最新版本更新摘要 (${latest.version})`;
+            if (titleEl) titleEl.textContent = `版本更新摘要 (${latest.version})`;
             if (contentEl) {
                 contentEl.innerHTML = `
                     <div class="space-y-3">
@@ -1266,6 +1249,13 @@
                     </div>
                 `;
             }
+
+            const w = Math.min(480, window.innerWidth * 0.92);
+            const h = Math.min(420, window.innerHeight * 0.82);
+            modal.style.width = `${w}px`;
+            modal.style.height = `${h}px`;
+            modal.style.left = `${(window.innerWidth - w) / 2}px`;
+            modal.style.top = `${(window.innerHeight - h) / 2}px`;
 
             modal.classList.add('pop-active');
             globalZIndex++;
@@ -1958,9 +1948,6 @@
             ];
         }
 
-        /**
-         * 🌟 後台版本對比視窗 (Changelog Diff) 渲染邏輯
-         */
         function initSystemUpdateHistory() {
             const select = document.getElementById('versionSelect');
             if (!select) return;
@@ -2043,6 +2030,7 @@
             initDrawerResizer();
             initAdminWindowManager();
             initPhotoViewerResizer();
+            initVersionSummaryResizer();
             initSystemUpdateHistory();
             checkMagicLink();
         }
@@ -2050,9 +2038,13 @@
         function initPhotoViewerResizer() {
             const win = document.getElementById('photoViewerWindow');
             const header = document.getElementById('photoViewerHeader');
-            if (win) {
-                bindWindowDragAndResize(win, header, 300, 240, true);
-            }
+            if (win) bindWindowDragAndResize(win, header, 300, 240, true);
+        }
+
+        function initVersionSummaryResizer() {
+            const win = document.getElementById('versionSummaryModal');
+            const header = document.getElementById('versionSummaryHeader');
+            if (win) bindWindowDragAndResize(win, header, 300, 240, true);
         }
 
         window.addEventListener('resize', () => {
@@ -2107,7 +2099,9 @@
 
             if (!currentAuth) {
                 authModal.classList.remove('hidden-view', 'auth-modal-fade');
-                authCard.classList.remove('auth-shrink-out');
+                authCard.classList.remove('auth-liquid-morph');
+                authCard.style.display = 'block';
+                document.getElementById('authLoginProgressWrapper').classList.add('hidden-view');
                 appContainer.classList.add('hidden-view');
                 viewAdmin.classList.add('hidden-view');
                 return;
@@ -2155,6 +2149,9 @@
             }
         }
 
+        /**
+         * 🌟 登入卡片變身進度條 ＋ 絲滑水滴彈性進入主畫面
+         */
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -2175,11 +2172,15 @@
 
                 if (!matched) { 
                     alert(`❌ 驗證碼【${val}】錯誤、已被註銷或不存在！`); 
+                    enterBtn.disabled = false;
+                    enterBtn.textContent = 'ENTER SYSTEM';
                     return; 
                 }
 
                 if (authMode === 'admin' && matched.role !== 'admin') { 
                     alert('此代碼非管理員權限'); 
+                    enterBtn.disabled = false;
+                    enterBtn.textContent = 'ENTER SYSTEM';
                     return; 
                 }
 
@@ -2196,28 +2197,51 @@
                 saveCodesToLocal(freshCodes);
                 pushCodesToCloud(freshCodes).catch(console.error);
 
-                const authModal = document.getElementById('authModal');
+                // 🌟 觸發卡片水滴縮小變身進度條動畫
                 const authCard = document.getElementById('authCard');
-                const appContainer = document.getElementById('appContainer');
+                const progressWrapper = document.getElementById('authLoginProgressWrapper');
+                const progressBar = document.getElementById('authLoginProgressBar');
+                const progressText = document.getElementById('loginProgressText');
 
-                authCard.classList.add('auth-shrink-out');
-                authModal.classList.add('auth-modal-fade');
+                authCard.classList.add('auth-liquid-morph');
 
                 setTimeout(() => {
-                    authModal.classList.add('hidden-view');
-                    authModal.classList.remove('auth-modal-fade');
-                    authCard.classList.remove('auth-shrink-out');
+                    authCard.style.display = 'none';
+                    progressWrapper.classList.remove('hidden-view');
 
-                    appContainer.classList.remove('hidden-view');
-                    appContainer.classList.add('app-enter-anim');
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.floor(Math.random() * 25) + 15;
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                            progressBar.style.width = '100%';
+                            progressText.textContent = '驗證成功！正在引導進入系統...';
 
-                    window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
-                    checkAuthAndRoute();
-                }, 520);
+                            setTimeout(() => {
+                                const authModal = document.getElementById('authModal');
+                                const appContainer = document.getElementById('appContainer');
 
-            } finally {
+                                authModal.classList.add('hidden-view');
+                                progressWrapper.classList.add('hidden-view');
+                                authCard.classList.remove('auth-liquid-morph');
+                                authCard.style.display = 'block';
+
+                                appContainer.classList.remove('hidden-view');
+                                appContainer.classList.add('app-elastic-enter');
+
+                                window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
+                                checkAuthAndRoute();
+                            }, 350);
+                        }
+                        progressBar.style.width = `${progress}%`;
+                    }, 110);
+                }, 450);
+
+            } catch (e) {
                 enterBtn.disabled = false;
                 enterBtn.textContent = 'ENTER SYSTEM';
+                alert(`登入連線發生錯誤: ${e.message}`);
             }
         }
 
