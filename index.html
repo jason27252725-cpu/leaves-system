@@ -92,28 +92,28 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 真正的 Lovable 墨水蔓延柔焦動態（CSS Token Blur-in） */
-        @keyframes lovableTokenAppear {
+        /* 🌟 Gemini 原生風格：行級平滑漸層湧現動效 (Line Fade & Shimmer) */
+        @keyframes geminiLineFlow {
             0% {
                 opacity: 0;
-                filter: blur(4px);
-                transform: translateY(4px);
-            }
-            60% {
-                opacity: 0.85;
-                filter: blur(1px);
+                transform: translateY(6px);
+                filter: blur(2px);
             }
             100% {
                 opacity: 1;
-                filter: blur(0);
                 transform: translateY(0);
+                filter: blur(0);
             }
         }
 
-        .lovable-token {
-            display: inline;
-            animation: lovableTokenAppear 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .markdown-body.streaming-live > *:last-child {
+            animation: geminiLineFlow 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity, filter;
+        }
+
+        .markdown-body.streaming-live {
+            mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
         }
 
         #aiFloatingTriggerWrapper { position: fixed; z-index: 30; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -200,7 +200,7 @@
             50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
         }
         .gemini-cursor {
-            display: inline-block; width: 5px; height: 14px; margin-left: 4px;
+            display: inline-block; width: 6px; height: 15px; margin-left: 5px;
             background: linear-gradient(180deg, #60a5fa 0%, #c084fc 100%);
             border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
         }
@@ -291,7 +291,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v25.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v26.0)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -369,7 +369,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v25.0 60FPS 柔焦絲滑版</span>
+                        <span>v26.0 Gemini 排版湧現版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -442,7 +442,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！現在已搭載**60FPS 垂直同步柔焦水滴動態**，回答極致絲滑。</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！現在已升級為**即時 Markdown 結構化排版 ＋ 行級漸層湧現**，吐字極致絲滑。</p>
                     </div>
                 </div>
             </div>
@@ -491,7 +491,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v25.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v26.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -552,7 +552,6 @@
             </aside>
 
             <section id="adminDesktop" class="flex-1 relative overflow-hidden bg-[#09090b] p-2 sm:p-4">
-
                 <div id="win_uiCustomizer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -568,7 +567,6 @@
                             <button onclick="switchUiDeviceTab('mobile')" id="tab_ui_mobile" class="pb-2 text-neutral-500 hover:text-neutral-300">📱 手機版 (Mobile)</button>
                             <button onclick="switchUiDeviceTab('ipad')" id="tab_ui_ipad" class="pb-2 text-neutral-500 hover:text-neutral-300">📟 iPad / 平板</button>
                         </div>
-
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             <div class="space-y-4 text-xs">
                                 <div class="space-y-1.5">
@@ -578,7 +576,6 @@
                                     </div>
                                     <input type="range" min="0.65" max="0.98" step="0.02" id="input_drawer_opacity" oninput="handleUiSliderChange('opacity', this.value)" class="w-full accent-white">
                                 </div>
-
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
                                         <span>毛玻璃模糊強度 (Blur)</span>
@@ -586,7 +583,6 @@
                                     </div>
                                     <input type="range" min="12" max="48" step="2" id="input_drawer_blur" oninput="handleUiSliderChange('blur', this.value)" class="w-full accent-white">
                                 </div>
-
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
                                         <span>對話主標題粗細 (Heading)</span>
@@ -594,7 +590,6 @@
                                     </div>
                                     <input type="range" min="400" max="700" step="100" id="input_title_weight" oninput="handleUiSliderChange('titleWeight', this.value)" class="w-full accent-white">
                                 </div>
-
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
                                         <span>一般內容字粗細 (Body Text)</span>
@@ -602,7 +597,6 @@
                                     </div>
                                     <input type="range" min="300" max="500" step="100" id="input_body_weight" oninput="handleUiSliderChange('bodyWeight', this.value)" class="w-full accent-white">
                                 </div>
-
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
                                         <span>文字大小倍率 (Font Scale)</span>
@@ -610,7 +604,6 @@
                                     </div>
                                     <input type="range" min="0.85" max="1.15" step="0.05" id="input_font_scale" oninput="handleUiSliderChange('fontScale', this.value)" class="w-full accent-white">
                                 </div>
-
                                 <div id="pc_width_control" class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
                                         <span>電腦端對話框寬度 (Width)</span>
@@ -619,7 +612,6 @@
                                     <input type="range" min="500" max="780" step="20" id="input_pc_w" oninput="handleUiSliderChange('pcDrawerW', this.value)" class="w-full accent-white">
                                 </div>
                             </div>
-
                             <div class="space-y-2">
                                 <span class="text-[11px] font-medium text-neutral-400 flex items-center gap-1.5">
                                     <i class="fa-solid fa-eye text-blue-400"></i>
@@ -639,11 +631,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="p-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-[11px] text-neutral-400 space-y-1">
-                            <p>💡 系統字型已預設貼齊 Google Gemini 規範（<strong>Plus Jakarta Sans + Noto Sans TC</strong>，字級 15px、行高 1.65）。</p>
-                            <p>調整參數後點選左下角「<strong>同步雲端</strong>」，全公司電腦、手機與 iPad 將自動同步最新排版！</p>
                         </div>
                     </div>
                 </div>
@@ -1021,18 +1008,17 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v25.0",
-                date: "2026-09-11",
-                title: "60FPS 水庫緩衝逐幀釋放 ＆ 墨水柔焦絲滑引擎",
+                version: "v26.0",
+                date: "2026-09-12",
+                title: "Gemini 即時 Markdown 排版 ＆ 行級漸層湧現",
                 summaryItems: [
-                    { type: "feat", text: "導入 requestAnimationFrame (60FPS) 水庫隊列，消除網路封包跳躍卡頓" },
-                    { type: "feat", text: "實現原生 DOM 節點逐字追加與柔焦解焦動態 (Blur-in Token)" },
-                    { type: "feat", text: "支援現場語音連續辨識 (Web Speech API)" },
-                    { type: "fix", text: "徹底消除 Markdown 換行斷裂引起的網址裸露問題" }
+                    { type: "feat", text: "解決串流時整坨無排版、結束才跳動的痛點，吐字即時轉化 Markdown" },
+                    { type: "feat", text: "每一行生成時具備 Gemini 原生位移、淡入與柔焦漸層湧現質感" },
+                    { type: "fix", text: "全面修復圖片語法換行斷裂與空格問題" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "60FPS 動態平滑水庫", oldVal: "API 吐字直接 innerHTML 暴力重繪造成畫面閃爍", newVal: "字元進入隊列以 60FPS 垂直同步平滑勻速釋放" },
-                    { type: "add", title: "原生 DOM 柔焦節點追加", oldVal: "全段文字被打碎重新解析", newVal: "新字元封裝為獨立 span.lovable-token 平滑解焦" }
+                    { type: "fix", title: "消除串流無排版一坨字", oldVal: "串流期間使用純文字顯示，結束才解析 Markdown", newVal: "使用即時增量 Markdown 解析器，邊吐字邊保有精美標題與條列" },
+                    { type: "add", title: "行級平滑漸層湧現", oldVal: "生硬逐字跳出", newVal: "逐行帶有 translateY(6px) + 柔焦漸層過渡" }
                 ]
             }
         ];
@@ -2934,7 +2920,7 @@
                     `;
                 } else {
                     locationBadgeHtml = `
-                        <span class="text-[10px] bg-neutral-800 text-amber-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
+                        <span class="text-[10px] bg-neutral-800 text-amber-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
                             ➕ 文末安全增補
                         </span>
                     `;
@@ -3676,7 +3662,6 @@ ${sopContent}
 
                     accumulatedReply = '';
                     if (liveMsgElements && liveMsgElements.wrapper) {
-                        liveMsgElements.stopStream();
                         liveMsgElements.wrapper.remove();
                         liveMsgElements = null;
                     }
@@ -3751,8 +3736,8 @@ ${sopContent}
                                         const delta = parsed.choices?.[0]?.delta?.content || '';
                                         if (delta) {
                                             accumulatedReply += delta;
-                                            // 🌟 將收到的字元注入平滑水庫隊列
-                                            liveMsgElements.pushStreamChunk(delta);
+                                            // 🌟 即時驅動 Gemini 行級漸層 Markdown 渲染
+                                            liveMsgElements.updateProgress(accumulatedReply);
                                         }
                                     } catch (err) {}
                                 }
@@ -3763,7 +3748,6 @@ ${sopContent}
                         if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
                             accumulatedReply = '';
                             if (liveMsgElements && liveMsgElements.wrapper) {
-                                liveMsgElements.stopStream();
                                 liveMsgElements.wrapper.remove();
                             }
                             continue;
@@ -3826,15 +3810,12 @@ ${sopContent}
                         pushCodesToCloud(latestCodes).catch(() => {});
                     }
 
-                    // 🌟 等候平滑隊列自然放完後進行收尾
-                    setTimeout(() => {
-                        finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
-                            model: isUserAborted ? `${finalModelName} (已手動中斷)` : finalModelName,
-                            tokens: estimatedTokens,
-                            time: elapsedSec,
-                            rawReply: accumulatedReply
-                        }, currentImgs);
-                    }, 120);
+                    finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
+                        model: isUserAborted ? `${finalModelName} (已手動中斷)` : finalModelName,
+                        tokens: estimatedTokens,
+                        time: elapsedSec,
+                        rawReply: accumulatedReply
+                    }, currentImgs);
 
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
@@ -3925,7 +3906,7 @@ ${sopContent}
         }
 
         /**
-         * 🌟 核心引擎：60FPS 垂直同步平滑文字釋放水庫
+         * 🌟 核心升級：Gemini 即時 Markdown 排版 ＋ 行級漸層湧現動效
          */
         function createLiveAssistantBubble() {
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
@@ -3933,8 +3914,8 @@ ${sopContent}
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
-                            <span id="${msgId}_stream_body"></span><span class="gemini-cursor"></span>
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text streaming-live">
+                            <span class="gemini-cursor"></span>
                         </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
@@ -3943,49 +3924,30 @@ ${sopContent}
             chatContainer.insertAdjacentHTML('beforeend', html);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            const bodyEl = document.getElementById(`${msgId}_stream_body`);
-            let charQueue = [];
-            let isLoopRunning = false;
-
-            function processQueue() {
-                if (charQueue.length === 0) {
-                    isLoopRunning = false;
-                    return;
-                }
-                isLoopRunning = true;
-
-                // 依水庫積存量動態調節每幀吐字速度 (1~4字)，確保順滑且不滯後
-                const takeCount = Math.max(1, Math.min(4, Math.ceil(charQueue.length / 8)));
-                const chunk = charQueue.splice(0, takeCount).join('');
-
-                const span = document.createElement('span');
-                span.className = 'lovable-token';
-                span.textContent = chunk;
-                bodyEl.appendChild(span);
-
-                const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
-                if (distanceFromBottom < 240) {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-
-                requestAnimationFrame(processQueue);
-            }
+            const contentEl = document.getElementById(`${msgId}_content`);
+            let lastRenderedText = '';
 
             return {
                 msgId: msgId,
                 wrapper: document.getElementById(`${msgId}_wrapper`),
-                content: document.getElementById(`${msgId}_content`),
-                bodyEl: bodyEl,
+                content: contentEl,
                 footer: document.getElementById(`${msgId}_footer`),
-                pushStreamChunk: (text) => {
-                    charQueue.push(...text.split(''));
-                    if (!isLoopRunning) {
-                        requestAnimationFrame(processQueue);
+                updateProgress: (rawText) => {
+                    if (!contentEl) return;
+                    let cleanText = cleanGuardrailArtifacts(rawText);
+                    cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
+
+                    if (cleanText === lastRenderedText) return;
+                    lastRenderedText = cleanText;
+
+                    const safeText = sanitizeIncompleteMarkdown(cleanText);
+                    // 🌟 核心修復：吐字時即時使用 marked 解析為帶有標題與結構的 HTML，並在末端銜接游標
+                    contentEl.innerHTML = renderMarkdownPure(safeText) + '<span class="gemini-cursor"></span>';
+
+                    const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
+                    if (distanceFromBottom < 260) {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
                     }
-                },
-                stopStream: () => {
-                    charQueue = [];
-                    isLoopRunning = false;
                 }
             };
         }
@@ -3993,9 +3955,11 @@ ${sopContent}
         function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImgs = []) {
             if (!elements || !elements.content) return;
 
-            elements.stopStream();
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
+
+            // 串流結束，移除串流遮罩，回歸穩定狀態
+            elements.content.classList.remove('streaming-live');
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = renderMarkdownPure(displayText);
