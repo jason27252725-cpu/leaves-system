@@ -1144,16 +1144,12 @@
             return text;
         }
 
-        /**
-         * 🌟 強化版 Markdown 渲染器：徹底解決 Markdown 圖片換行斷裂與空格露出的問題
-         */
         function renderMarkdownPure(text) {
             if (!text) return '';
             let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
 
-            // 1. 強制縫合被 AI 換行切開的圖片語法：將 ![] \n (url) 黏合為 ![](url)
+            // 1. 強制縫合被 AI 換行切開的圖片語法
             clean = clean.replace(/!\[([^\]]*)\]\s*\(\s*([^\)]+)\s*\)/g, function(match, alt, url) {
-                // 2. 將網址中未編碼的空格自動轉化為 %20，確保百分之百正確載入
                 let cleanUrl = url.trim().replace(/\s+/g, '%20');
                 return `![${alt.trim()}](${cleanUrl})`;
             });
@@ -1738,6 +1734,7 @@
             return `${year}-${month}-${day}`;
         }
 
+        // 🌟 修正 1：防止跨設備重複歸檔 (帶去重防護)
         function checkAndPerformDailyReset(cloudState) {
             const todayStr = getTodayDateString();
             const lastDate = cloudState.activeDate || localStorage.getItem('shiye_active_date') || todayStr;
@@ -1765,13 +1762,20 @@
                 });
 
                 if (yesterdayTokens > 0 || yesterdayRequests > 0) {
-                    archive.unshift({
+                    const existingIdx = archive.findIndex(item => item.date === lastDate);
+                    const entry = {
                         date: lastDate,
                         tokens: yesterdayTokens,
                         requests: yesterdayRequests,
                         topUser: topUserName,
                         timestamp: Date.now()
-                    });
+                    };
+
+                    if (existingIdx >= 0) {
+                        archive[existingIdx] = entry;
+                    } else {
+                        archive.unshift(entry);
+                    }
                     if (archive.length > 50) archive = archive.slice(0, 50);
                 }
 
@@ -2098,6 +2102,7 @@
 
             if (!currentAuth) {
                 authModal.classList.remove('hidden-view', 'auth-modal-fade');
+                authModal.style.pointerEvents = 'auto';
                 authCard.classList.remove('auth-liquid-morph');
                 authCard.style.display = 'block';
                 document.getElementById('authLoginProgressWrapper').classList.add('hidden-view');
@@ -2107,6 +2112,7 @@
             }
 
             authModal.classList.add('hidden-view');
+            authModal.style.pointerEvents = 'none';
             appContainer.classList.remove('hidden-view');
 
             const roleBadge = document.getElementById('roleBadge');
@@ -2146,6 +2152,26 @@
                 subtitle.textContent = '請輸入身分生成碼以進入系統';
                 switchBtn.textContent = '切換為管理員登入通道';
             }
+        }
+
+        // 🌟 修正 2：登入進度條完成後徹底釋放遮罩
+        function finalizeLoginTransition(matched) {
+            const authModal = document.getElementById('authModal');
+            const authCard = document.getElementById('authCard');
+            const progressWrapper = document.getElementById('authLoginProgressWrapper');
+            const appContainer = document.getElementById('appContainer');
+
+            authModal.classList.add('hidden-view');
+            authModal.style.pointerEvents = 'none';
+            progressWrapper.classList.add('hidden-view');
+            authCard.classList.remove('auth-liquid-morph');
+            authCard.style.display = 'block';
+
+            appContainer.classList.remove('hidden-view');
+            appContainer.classList.add('app-elastic-enter');
+
+            window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
+            checkAuthAndRoute();
         }
 
         async function verifyPasscode() {
@@ -2214,19 +2240,7 @@
                             progressText.textContent = '驗證成功！正在引導進入系統...';
 
                             setTimeout(() => {
-                                const authModal = document.getElementById('authModal');
-                                const appContainer = document.getElementById('appContainer');
-
-                                authModal.classList.add('hidden-view');
-                                progressWrapper.classList.add('hidden-view');
-                                authCard.classList.remove('auth-liquid-morph');
-                                authCard.style.display = 'block';
-
-                                appContainer.classList.remove('hidden-view');
-                                appContainer.classList.add('app-elastic-enter');
-
-                                window.location.hash = matched.role === 'admin' && authMode === 'admin' ? '#admin' : '';
-                                checkAuthAndRoute();
+                                finalizeLoginTransition(matched);
                             }, 350);
                         }
                         progressBar.style.width = `${progress}%`;
@@ -2940,7 +2954,7 @@
                 if (loc.found) {
                     locationBadgeHtml = `
                         <div class="flex items-center space-x-2">
-                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
+                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
                                 📍 鎖定第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行
                             </span>
                             <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">
