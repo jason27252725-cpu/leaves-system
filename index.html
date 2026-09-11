@@ -104,6 +104,37 @@
         }
         .liquid-breathe-inner { animation: liquidBreatheScale 3.5s infinite ease-in-out; }
 
+        @keyframes micPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            50% { transform: scale(1.15); box-shadow: 0 0 14px 4px rgba(239, 68, 68, 0.8); }
+        }
+        .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
+
+        /* 🌟 Lovable 風格：微位移 + 柔焦解焦 + 漸層淡入動畫 */
+        @keyframes tokenFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(5px);
+                filter: blur(3px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .stream-word-glow {
+            display: inline-block;
+            animation: tokenFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity, filter;
+        }
+
+        .streaming-active-container {
+            mask-image: linear-gradient(to bottom, black 82%, rgba(0,0,0,0.4) 94%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 82%, rgba(0,0,0,0.4) 94%, transparent 100%);
+        }
+
         #aiFloatingTriggerWrapper {
             position: fixed;
             z-index: 30;
@@ -355,7 +386,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v21.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v23.0)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -437,7 +468,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v21.0 旗艦版</span>
+                        <span>v23.0 絲滑柔焦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -512,7 +543,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！需要施工標語、路權申請書也能一鍵下載。</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！現在也支援**語音輸入**與**漸層柔焦打字動態**。</p>
                     </div>
                 </div>
             </div>
@@ -533,11 +564,18 @@
 
                 <div class="flex items-center glass-mono rounded-2xl px-3 py-2 shadow-xl border border-white/15 focus-within:border-white transition">
                     <input type="file" id="imageFileInput" accept="image/*" multiple class="hidden" onchange="handleMultiImagesSelected(event)">
+                    
+                    <!-- 照片上傳按鈕 -->
                     <button type="button" onclick="document.getElementById('imageFileInput').click()" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0" title="拍照或多選上傳照片 (最多5張，支援截圖貼上)">
                         <i class="fa-solid fa-images"></i>
                     </button>
 
-                    <textarea id="userInput" rows="1" placeholder="詢問毛胚屋流程、工法、標語或貼上多張照片 (Ctrl+V)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
+                    <!-- 語音轉文字按鈕 -->
+                    <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0" title="點擊開啟語音轉文字輸入 (台灣繁體中文)">
+                        <i id="micBtnIcon" class="fa-solid fa-microphone"></i>
+                    </button>
+
+                    <textarea id="userInput" rows="1" placeholder="詢問工法規範，或點擊麥克風語音輸入 (Ctrl+V貼圖)..." class="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none resize-none py-1 text-xs tracking-wider max-h-28 leading-relaxed selectable-text"></textarea>
 
                     <button id="sendBtn" onclick="handleSendOrAbort()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-2 rounded-xl font-medium transition flex items-center justify-center ml-2 text-xs shrink-0 shadow-md ui-no-select" title="發送訊息">
                         <i id="sendBtnIcon" class="fa-solid fa-arrow-up"></i>
@@ -558,7 +596,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v21.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v23.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -1094,38 +1132,94 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v21.0",
+                version: "v23.0",
                 date: "2026-09-11",
-                title: "極致絲滑水滴彈性 ＆ 登入變身進度條 ＆ 自由拉伸更新視窗",
+                title: "Lovable 風格漸層柔焦打字動態 ＆ 語音輸入辨識",
                 summaryItems: [
-                    { type: "feat", text: "升級水滴物理回彈動效 (Spring & Elastic UI)" },
-                    { type: "feat", text: "登入身分碼驗證後，卡片平滑縮小變身為沉浸式流光進度條" },
-                    { type: "feat", text: "更新日誌彈窗升級為可任意拉伸大小與拖曳的浮動視窗" }
+                    { type: "feat", text: "導入微位移、柔焦解焦與漸層遮罩的逐字絲滑吐字動效" },
+                    { type: "feat", text: "支援台灣繁體中文現場語音轉文字輸入" },
+                    { type: "fix", text: "修復圖片網址換行斷裂與空格問題，自動平滑縫合" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "物理回彈水滴動效", oldVal: "一般線性淡入淡出 (Linear Fade)", newVal: "導入貝茲曲線彈簧回彈效果 (Cubic-Bezier 0.34, 1.56)" },
-                    { type: "add", title: "登入變身進度條動畫", oldVal: "點擊後立刻切換畫面", newVal: "卡片平滑縮小聚合成進度條，跑滿後漸隱並彈入主畫面" },
-                    { type: "perf", title: "自由拉伸更新視窗", oldVal: "固定大小的簡易快顯框", newVal: "具備隱形縮放手柄與拖曳標題列，可隨意調整大小" }
+                    { type: "add", title: "Lovable 漸層柔焦打字", oldVal: "純文字生硬瞬間彈出", newVal: "微位移 + 柔焦解焦 + 垂直漸層遮罩動態湧現" },
+                    { type: "add", title: "現場語音即時辨識", oldVal: "只能鍵盤輸入", newVal: "串接 Web Speech API，按住直接語音輸入" }
                 ]
             },
             {
-                version: "v20.0",
+                version: "v22.0",
                 date: "2026-09-11",
-                title: "全維度用量體檢 ＆ 演進對比日誌更新",
+                title: "核心安全防護 ＆ 登入遮罩優化",
                 summaryItems: [
-                    { type: "feat", text: "新增 Supabase 空間使用率體檢 (500MB 剩餘監控)" },
-                    { type: "feat", text: "串接 OpenRouter 官方端點即時查詢金鑰額度與每日剩餘次數" },
-                    { type: "feat", text: "支援每日午夜自動跨日歸檔，新增最高 50 天歷史用量日誌" }
+                    { type: "fix", text: "修復登入遮罩可能發生的點擊穿透問題" },
+                    { type: "fix", text: "每日用量歸檔加入去重防護鎖" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "Supabase 空間體檢模組", oldVal: "無任何資料庫容量顯示", newVal: "精確換算 JSON Byte 數對比 500MB" },
-                    { type: "add", title: "每日自動換日歸檔 (50 天)", oldVal: "Token 無限累加", newVal: "午夜自動封裝昨日數據至 50 天歸檔日誌" }
+                    { type: "fix", title: "遮罩釋放保護", oldVal: "進度條跑完遮罩仍攔截滑鼠事件", newVal: "指派 pointer-events: none" }
                 ]
             }
         ];
 
         let photoCatalog = [];
         let documentCatalog = [];
+        let speechRecognitionInstance = null;
+        let isRecordingVoice = false;
+
+        function initSpeechRecognition() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) return null;
+
+            const rec = new SpeechRec();
+            rec.lang = 'zh-TW';
+            rec.continuous = false;
+            rec.interimResults = true;
+
+            rec.onstart = function() {
+                isRecordingVoice = true;
+                const micBtn = document.getElementById('micBtn');
+                const micIcon = document.getElementById('micBtnIcon');
+                if (micBtn) micBtn.classList.add('mic-active');
+                if (micIcon) micIcon.className = 'fa-solid fa-microphone-lines text-xs';
+            };
+
+            rec.onresult = function(event) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    transcript += event.results[i][0].transcript;
+                }
+                const input = document.getElementById('userInput');
+                if (input && transcript) {
+                    const prev = input.value.trim();
+                    input.value = prev ? `${prev} ${transcript}` : transcript;
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+                }
+            };
+
+            rec.onerror = function() { stopVoiceInput(); };
+            rec.onend = function() { stopVoiceInput(); };
+            return rec;
+        }
+
+        function toggleVoiceInput() {
+            if (!speechRecognitionInstance) speechRecognitionInstance = initSpeechRecognition();
+            if (!speechRecognitionInstance) {
+                alert('您的瀏覽器不支援直接語音轉文字（建議使用 Chrome, Edge 或 Safari 行動版，並請確認已允許麥克風權限）。');
+                return;
+            }
+            if (isRecordingVoice) speechRecognitionInstance.stop();
+            else {
+                try { speechRecognitionInstance.start(); }
+                catch(e) { speechRecognitionInstance.stop(); }
+            }
+        }
+
+        function stopVoiceInput() {
+            isRecordingVoice = false;
+            const micBtn = document.getElementById('micBtn');
+            const micIcon = document.getElementById('micBtnIcon');
+            if (micBtn) micBtn.classList.remove('mic-active');
+            if (micIcon) micIcon.className = 'fa-solid fa-microphone';
+        }
 
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
@@ -1148,7 +1242,6 @@
             if (!text) return '';
             let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
 
-            // 1. 強制縫合被 AI 換行切開的圖片語法
             clean = clean.replace(/!\[([^\]]*)\]\s*\(\s*([^\)]+)\s*\)/g, function(match, alt, url) {
                 let cleanUrl = url.trim().replace(/\s+/g, '%20');
                 return `![${alt.trim()}](${cleanUrl})`;
@@ -1734,7 +1827,6 @@
             return `${year}-${month}-${day}`;
         }
 
-        // 🌟 修正 1：防止跨設備重複歸檔 (帶去重防護)
         function checkAndPerformDailyReset(cloudState) {
             const todayStr = getTodayDateString();
             const lastDate = cloudState.activeDate || localStorage.getItem('shiye_active_date') || todayStr;
@@ -2035,6 +2127,7 @@
             initPhotoViewerResizer();
             initVersionSummaryResizer();
             initSystemUpdateHistory();
+            initSpeechRecognition();
             checkMagicLink();
         }
 
@@ -2154,7 +2247,6 @@
             }
         }
 
-        // 🌟 修正 2：登入進度條完成後徹底釋放遮罩
         function finalizeLoginTransition(matched) {
             const authModal = document.getElementById('authModal');
             const authCard = document.getElementById('authCard');
@@ -2286,8 +2378,8 @@
         });
 
         document.getElementById('passcodeinput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
-                e.preventDefault();
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { 
+                e.preventDefault(); 
                 verifyPasscode();
             }
         });
@@ -2303,6 +2395,7 @@
             } else {
                 drawer.classList.remove('open');
                 if (triggerWrapper) triggerWrapper.classList.remove('hidden-trigger');
+                stopVoiceInput();
             }
         }
 
@@ -3591,6 +3684,7 @@
 
             if (!text && currentImgs.length === 0) return;
 
+            stopVoiceInput();
             clearAllPendingImages();
             appendMessage(text, 'user', false, '', null, currentImgs);
             userInput.value = '';
@@ -3787,7 +3881,7 @@ ${sopContent}
                                                         updateLiveBubble(liveMsgElements, accumulatedReply);
                                                         renderScheduled = false;
                                                     });
-                                                }, 50);
+                                                }, 45);
                                             }
                                         }
                                     } catch (err) {}
@@ -3963,7 +4057,7 @@ ${sopContent}
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text streaming-active-container">
                             <span class="gemini-cursor"></span>
                         </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
@@ -3981,6 +4075,7 @@ ${sopContent}
             };
         }
 
+        // 🌟 核心升級：Lovable 微位移、柔焦解焦與漸層遮罩吐字動效
         function updateLiveBubble(elements, text) {
             if (!elements || !elements.content) return;
 
@@ -3988,12 +4083,22 @@ ${sopContent}
             cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
 
             const safeText = sanitizeIncompleteMarkdown(cleanText);
-            const parsed = renderMarkdownPure(safeText);
+            let parsed = renderMarkdownPure(safeText);
 
-            elements.content.innerHTML = parsed + '<span class="gemini-cursor"></span>';
+            // 將最後一個段落或文字套用微位移柔焦解焦 class
+            const lastClosingTag = parsed.lastIndexOf('</');
+            if (lastClosingTag !== -1) {
+                const before = parsed.substring(0, lastClosingTag);
+                const after = parsed.substring(lastClosingTag);
+                parsed = `${before} <span class="stream-word-glow"><span class="gemini-cursor"></span></span>${after}`;
+            } else {
+                parsed += '<span class="stream-word-glow"><span class="gemini-cursor"></span></span>';
+            }
+
+            elements.content.innerHTML = parsed;
 
             const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
-            if (distanceFromBottom < 180) {
+            if (distanceFromBottom < 200) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
@@ -4003,6 +4108,9 @@ ${sopContent}
 
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
+
+            // 串流結束，移除漸層遮罩 class，還原最乾淨的靜態 HTML
+            elements.content.classList.remove('streaming-active-container');
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = renderMarkdownPure(displayText);
