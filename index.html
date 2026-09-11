@@ -77,17 +77,11 @@
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 🌟 水滴回彈物理動畫 (Spring & Elastic) */
         @keyframes liquidCardTransform {
             0% { transform: scale(1); opacity: 1; }
             30% { transform: scale(1.04); opacity: 0.98; }
             65% { transform: scale(0.35) translateY(20px); opacity: 0.6; }
             100% { transform: scale(0.15) translateY(40px); opacity: 0; }
-        }
-        @keyframes liquidBarMorph {
-            0% { transform: scaleX(0.1); opacity: 0; }
-            50% { transform: scaleX(1); opacity: 1; }
-            100% { transform: scaleX(1); opacity: 1; }
         }
         @keyframes appInterfaceElasticEnter {
             0% { opacity: 0; transform: scale(0.90) translateY(12px); }
@@ -284,7 +278,6 @@
             color: #000;
         }
 
-        /* 🌟 自由拉伸浮動視窗 (支援更新日誌與大圖燈箱) */
         #photoViewerWindow, #versionSummaryModal {
             position: fixed;
             z-index: 120;
@@ -348,7 +341,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <!-- 🌟 可自由拉伸與拖曳之更新日誌浮動視窗 -->
+    <!-- 自由拉伸與拖曳之更新日誌浮動視窗 -->
     <div id="versionSummaryModal" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
         <div class="resize-handle resize-b" data-handle="b"></div>
@@ -368,9 +361,7 @@
                 <i class="fa-solid fa-xmark text-xs"></i>
             </button>
         </div>
-        <div id="quickModalContent" class="flex-1 p-5 overflow-y-auto space-y-4 text-xs text-neutral-300">
-            <!-- 動態插入摘要項目 -->
-        </div>
+        <div id="quickModalContent" class="flex-1 p-5 overflow-y-auto space-y-4 text-xs text-neutral-300"></div>
     </div>
 
     <!-- 可拖曳自由縮放之工法大圖視窗 -->
@@ -422,7 +413,7 @@
             </div>
         </div>
 
-        <!-- 🌟 登入變身進度條容器 (預設隱藏) -->
+        <!-- 登入變身進度條容器 -->
         <div id="authLoginProgressWrapper" class="hidden-view w-full max-w-xs space-y-3 text-center">
             <div class="text-xs text-neutral-300 font-mono tracking-widest uppercase animate-pulse" id="loginProgressText">正在建立安全連線與彙整雲端資料...</div>
             <div class="w-full bg-neutral-900 border border-neutral-700 h-2.5 rounded-full overflow-hidden shadow-2xl p-0.5">
@@ -1153,9 +1144,20 @@
             return text;
         }
 
+        /**
+         * 🌟 強化版 Markdown 渲染器：徹底解決 Markdown 圖片換行斷裂與空格露出的問題
+         */
         function renderMarkdownPure(text) {
             if (!text) return '';
             let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
+
+            // 1. 強制縫合被 AI 換行切開的圖片語法：將 ![] \n (url) 黏合為 ![](url)
+            clean = clean.replace(/!\[([^\]]*)\]\s*\(\s*([^\)]+)\s*\)/g, function(match, alt, url) {
+                // 2. 將網址中未編碼的空格自動轉化為 %20，確保百分之百正確載入
+                let cleanUrl = url.trim().replace(/\s+/g, '%20');
+                return `![${alt.trim()}](${cleanUrl})`;
+            });
+
             return typeof marked !== 'undefined' ? marked.parse(clean) : escapeHtml(clean);
         }
 
@@ -1184,7 +1186,7 @@
                 if (typeof href === 'object' && href !== null) {
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
-                let cleanUrl = String(actualHref).trim();
+                let cleanUrl = String(actualHref).trim().replace(/\s+/g, '%20');
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
                 return `<div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
             };
@@ -1217,9 +1219,6 @@
             if (win) win.classList.remove('pop-active');
         }
 
-        /**
-         * 🌟 前台精簡版更新日誌浮動視窗控制與初始化
-         */
         function openQuickUpdateModal() {
             const modal = document.getElementById('versionSummaryModal');
             const titleEl = document.getElementById('quickModalTitle');
@@ -2149,9 +2148,6 @@
             }
         }
 
-        /**
-         * 🌟 登入卡片變身進度條 ＋ 絲滑水滴彈性進入主畫面
-         */
         async function verifyPasscode() {
             const val = document.getElementById('passcodeinput').value.trim();
             if (!val) { alert('請輸入通行碼'); return; }
@@ -2197,7 +2193,6 @@
                 saveCodesToLocal(freshCodes);
                 pushCodesToCloud(freshCodes).catch(console.error);
 
-                // 🌟 觸發卡片水滴縮小變身進度條動畫
                 const authCard = document.getElementById('authCard');
                 const progressWrapper = document.getElementById('authLoginProgressWrapper');
                 const progressBar = document.getElementById('authLoginProgressBar');
@@ -2945,7 +2940,7 @@
                 if (loc.found) {
                     locationBadgeHtml = `
                         <div class="flex items-center space-x-2">
-                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
+                            <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
                                 📍 鎖定第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行
                             </span>
                             <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">
@@ -3617,7 +3612,7 @@
                 let photoCatalogPrompt = "目前內部相簿庫尚無資料。";
                 if (Array.isArray(photoCatalog) && photoCatalog.length > 0) {
                     photoCatalogPrompt = photoCatalog.map(p => {
-                        const safeUrl = `${GITHUB_REPO_IMAGE_BASE}${p.name}`;
+                        const safeUrl = `${GITHUB_REPO_IMAGE_BASE}${encodeURIComponent(p.name)}`;
                         return `- 工法照片: "${p.desc}" | 語法: ![${p.desc}](${safeUrl})`;
                     }).join('\n');
                 }
@@ -3625,7 +3620,7 @@
                 let documentCatalogPrompt = "目前內部文件庫尚無資料。";
                 if (Array.isArray(documentCatalog) && documentCatalog.length > 0) {
                     documentCatalogPrompt = documentCatalog.map(d => {
-                        const safeUrl = `${GITHUB_REPO_DOC_BASE}${d.name}`;
+                        const safeUrl = `${GITHUB_REPO_DOC_BASE}${encodeURIComponent(d.name)}`;
                         return `- 內部文件: "${d.desc}" | 語法: [下載：${d.name}](${safeUrl})`;
                     }).join('\n');
                 }
