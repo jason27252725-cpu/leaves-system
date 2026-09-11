@@ -281,14 +281,9 @@
             color: #000;
         }
 
-        #photoViewerWindow {
+        #photoViewerWindow, #versionSummaryModal {
             position: fixed;
-            z-index: 115;
-            width: 580px;
-            height: 480px;
-            max-width: 94vw;
-            max-height: 90vh;
-            background: rgba(16, 16, 16, 0.95);
+            z-index: 120;
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid rgba(255, 255, 255, 0.25);
@@ -302,7 +297,10 @@
             transform: scale(0.94);
             transition: opacity 0.25s ease, transform 0.25s ease;
         }
-        #photoViewerWindow.pop-active {
+        #photoViewerWindow { width: 580px; height: 480px; max-width: 94vw; max-height: 90vh; background: rgba(16, 16, 16, 0.95); }
+        #versionSummaryModal { width: 440px; max-width: 92vw; max-height: 82vh; background: rgba(18, 18, 18, 0.96); z-index: 130; }
+
+        #photoViewerWindow.pop-active, #versionSummaryModal.pop-active {
             opacity: 1;
             pointer-events: auto;
             transform: scale(1);
@@ -346,6 +344,22 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
+    <!-- 🌟 前端精簡版更新摘要小彈窗 (共用元件) -->
+    <div id="versionSummaryModal" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ui-no-select" onclick="event.stopPropagation()">
+        <div class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90">
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v20.0)</span>
+            </div>
+            <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+        <div class="p-5 overflow-y-auto space-y-4 text-xs text-neutral-300" id="quickModalContent">
+            <!-- 動態插入摘要項目 -->
+        </div>
+    </div>
+
     <!-- 可拖曳自由縮放之工法大圖視窗 -->
     <div id="photoViewerWindow" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
@@ -373,7 +387,7 @@
 
     <!-- 登入介面 -->
     <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
-        <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-7 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
+        <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <div class="text-center space-y-3">
                 <div class="inline-flex bg-white text-black p-3.5 rounded-2xl font-bold mb-1 shadow-lg">
                     <i class="fa-solid fa-cube text-xl"></i>
@@ -387,12 +401,16 @@
                     ENTER SYSTEM
                 </button>
             </div>
-            <div class="text-center">
+            <div class="flex items-center justify-between pt-1">
                 <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-400 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
+                <!-- 🌟 登入處微型更新日誌按鈕 -->
+                <button type="button" onclick="openQuickUpdateModal()" class="text-[10px] text-blue-400 hover:text-blue-300 transition flex items-center gap-1">
+                    <i class="fa-solid fa-bullhorn text-[9px]"></i><span>更新日誌</span>
+                </button>
             </div>
         </div>
 
-        <div class="mt-4 flex items-center justify-center">
+        <div class="mt-4 flex items-center justify-center gap-2">
             <span class="text-[10px] bg-neutral-950/85 text-neutral-300 border border-neutral-800 px-3.5 py-1 rounded-full font-mono flex items-center gap-2 shadow-xl backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="backendModeBadge">🟢 Supabase 雲端動態同步中</span>
@@ -408,13 +426,18 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v20.0 全維度監控版</span>
+                        <span>v20.0 旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
 
-            <div class="flex items-center space-x-4 md:space-x-6 text-xs tracking-widest">
+            <div class="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-xs tracking-widest">
+                <!-- 🌟 右上角微型更新日誌按鈕 -->
+                <button onclick="openQuickUpdateModal()" class="text-[10px] bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition shadow-sm" title="查看最新版本更新與修復項目">
+                    <i class="fa-solid fa-sparkles text-amber-400 text-[9px]"></i>
+                    <span>更新亮點</span>
+                </button>
                 <span id="roleBadge" class="text-[9px] bg-white/10 text-neutral-300 border border-white/20 px-3 py-1 rounded-full font-light tracking-wider">MEMBER</span>
                 <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden-view text-[11px]">ADMIN</a>
                 <button onclick="logout()" class="text-neutral-400 hover:text-white transition p-1" title="登出">
@@ -537,12 +560,16 @@
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-chart-pie text-xs text-emerald-400"></i><span class="tracking-wide text-white">用量與身分統計</span></div>
                         <span id="nav_badge_tokenAnalytics" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
                     </button>
+                    <button onclick="toggleAdminWindow('systemUpdates')" id="nav_btn_systemUpdates" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-compare text-xs text-purple-400"></i><span class="tracking-wide text-white">系統更新紀錄 (Diff)</span></div>
+                        <span id="nav_badge_systemUpdates" class="w-2 h-2 rounded-full bg-purple-400 hidden-view ml-2"></span>
+                    </button>
                     <button onclick="toggleAdminWindow('proposals')" id="nav_btn_proposals" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-file-pen text-xs text-neutral-500"></i><span class="tracking-wide">SOP 修訂草稿</span></div>
                         <span id="nav_badge_proposals" class="w-2 h-2 rounded-full bg-amber-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('diffLogs')" id="nav_btn_diffLogs" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i><span class="tracking-wide">修訂日誌 (Diff)</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i><span class="tracking-wide">SOP 修訂日誌</span></div>
                         <span id="nav_badge_diffLogs" class="w-2 h-2 rounded-full bg-white/40 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('snapshots')" id="nav_btn_snapshots" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
@@ -680,7 +707,31 @@
                     </div>
                 </div>
 
-                <!-- 🌟 升級版：身分組用量、Supabase 體檢、OpenRouter 剩餘額度、50 天歷史日誌 -->
+                <!-- 🌟 全新視窗：後台詳細系統版本更新紀錄與版本對比 (Diff) -->
+                <div id="win_systemUpdates" class="admin-window hidden-view">
+                    <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
+                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
+                        <div class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-code-compare text-xs text-purple-400"></i>
+                            <span class="text-xs font-medium text-white tracking-wider">系統版本演進紀錄 ＆ 新舊版本對比 (Changelog Diff)</span>
+                        </div>
+                        <button onclick="closeAdminWindow('systemUpdates')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-950 p-3.5 rounded-2xl border border-neutral-800">
+                            <div>
+                                <h3 class="text-xs font-semibold text-white">版本對照查詢</h3>
+                                <p class="text-[10px] text-neutral-400">選擇想深入查看的系統演進版本紀錄</p>
+                            </div>
+                            <select id="versionSelect" onchange="renderSystemUpdateDetails(this.value)" class="bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-white font-mono"></select>
+                        </div>
+
+                        <!-- 版本概況與對比卡片 -->
+                        <div id="versionDetailContainer" class="space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- 身分組用量、Supabase 體檢、OpenRouter 剩餘額度、50 天歷史日誌 -->
                 <div id="win_tokenAnalytics" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
@@ -697,13 +748,11 @@
                         </div>
                     </div>
                     <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
-                        
-                        <!-- 1. 全公司今日消耗與歷史總量卡 -->
                         <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-3">
                             <div class="flex justify-between items-center text-xs">
                                 <div>
                                     <span class="text-white font-medium text-sm">全公司今日累積消耗</span>
-                                    <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-10</span>
+                                    <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-11</span>
                                 </div>
                                 <div class="text-right">
                                     <span id="todayTokensBadge" class="font-mono text-emerald-400 font-bold text-base">0 Tokens</span>
@@ -719,9 +768,7 @@
                             </div>
                         </div>
 
-                        <!-- 2. OpenRouter 官方剩餘額度 ＆ Supabase 空間體檢 (雙欄網格) -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                            <!-- OpenRouter 剩餘額度卡 -->
                             <div class="bg-neutral-950/80 p-3.5 rounded-2xl border border-neutral-800 space-y-2 text-xs">
                                 <div class="flex justify-between items-center">
                                     <span class="text-white font-medium flex items-center gap-1.5">
@@ -740,7 +787,6 @@
                                 <p class="text-[9px] text-neutral-500 leading-relaxed font-mono" id="openrouterKeyCreditDetail">帳戶餘額查詢中...</p>
                             </div>
 
-                            <!-- Supabase 資料庫空間體檢卡 -->
                             <div class="bg-neutral-950/80 p-3.5 rounded-2xl border border-neutral-800 space-y-2 text-xs">
                                 <div class="flex justify-between items-center">
                                     <span class="text-white font-medium flex items-center gap-1.5">
@@ -760,13 +806,11 @@
                             </div>
                         </div>
 
-                        <!-- 3. 各身分組今日用量排行 -->
                         <div class="space-y-2.5">
                             <h3 class="text-xs font-medium text-neutral-300 tracking-wider">今日各成員 / 身分組用量分佈</h3>
                             <div id="passcodeUsageListContainer" class="space-y-2 text-xs"></div>
                         </div>
 
-                        <!-- 4. 最高 50 天歷史用量日誌 (Daily Archive) -->
                         <div class="space-y-2.5 pt-2 border-t border-neutral-800">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-2">
@@ -793,7 +837,6 @@
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -1041,6 +1084,72 @@
         const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
+        /**
+         * 🌟 系統版本演進紀錄數據庫 (含前台簡述與後台詳細 Diff 對比)
+         */
+        const SYSTEM_VERSION_HISTORY = [
+            {
+                version: "v20.0",
+                date: "2026-09-11",
+                title: "全維度用量體檢 ＆ 演進對比日誌更新",
+                summaryItems: [
+                    { type: "feat", text: "新增 Supabase 空間使用率體檢 (500MB 剩餘監控)" },
+                    { type: "feat", text: "串接 OpenRouter 官方端點即時查詢金鑰額度與每日剩餘次數" },
+                    { type: "feat", text: "支援每日午夜自動跨日歸檔，新增最高 50 天歷史用量日誌" },
+                    { type: "fix", text: "優化 Markdown 串流正則，修補標籤截斷導致的破版問題" }
+                ],
+                diffDetails: [
+                    { type: "add", title: "Supabase 空間體檢模組", oldVal: "無任何資料庫使用量與容量顯示", newVal: "精確換算 JSON Byte 數對比 500MB，並顯示成員與快照筆數" },
+                    { type: "add", title: "OpenRouter 官方剩餘額度檢測", oldVal: "僅能顯示金鑰字串，無法得知官方帳戶限制", newVal: "呼叫 /api/v1/key 查詢真實已用金額與今日剩餘次數 (50/1000 次)" },
+                    { type: "add", title: "每日自動換日歸檔 (50 天)", oldVal: "Token 無限累加，無法分辨當日消耗", newVal: "午夜自動封裝昨日數據至 50 天歸檔日誌，今日消耗自動歸零" },
+                    { type: "perf", title: "後台演進紀錄窗口 (Diff)", oldVal: "僅有版本號文字標籤", newVal: "具備版本選擇器與新舊版本行級對比清單，前後台均可彈窗瀏覽" },
+                    { type: "fix", title: "Markdown 串流防閃爍修補", oldVal: "遇到未閉合圖片或粗體語法時偶發排版跳動", newVal: "新增 sanitizeIncompleteMarkdown 智慧平滑防護" }
+                ]
+            },
+            {
+                version: "v19.0",
+                date: "2026-09-10",
+                title: "Supabase 雲端無鎖資料庫 ＆ 動態派發架構",
+                summaryItems: [
+                    { type: "feat", text: "全面遷移至 Supabase PostgreSQL 資料庫，支援行級鎖定 (RLS)" },
+                    { type: "feat", text: "解決多同仁同時在線時 Gist 覆蓋衝突 (Race Condition)" },
+                    { type: "perf", text: "所有設備免手動設定，後台一鍵發布即全體自動對齊雲端" }
+                ],
+                diffDetails: [
+                    { type: "add", title: "PostgreSQL Row-Level Locking", oldVal: "GitHub Gist 單一 JSON 整本覆寫機制", newVal: "Supabase app_config 表格，20人同時寫入自動排隊不打架" },
+                    { type: "change", title: "後台雲端設定欄位", oldVal: "GitHub Token 與 Gist ID 輸入框", newVal: "Supabase Project URL 與 Anon Public Key 輸入框" }
+                ]
+            },
+            {
+                version: "v16.0",
+                date: "2026-09-09",
+                title: "OpenRouter Auto Free 智慧調度透明分流監控",
+                summaryItems: [
+                    { type: "feat", text: "專門監控 Auto Free 實際指派的實體模型 (Gemma, Llama, Qwen 等)" },
+                    { type: "feat", text: "新增各實體模型調度佔比統計進度條" },
+                    { type: "fix", text: "移除無效的個別免費模型測試紅燈，專注主通道測速" }
+                ],
+                diffDetails: [
+                    { type: "change", title: "模型監控面板邏輯", oldVal: "靜態 Ping 個別免費模型列表 (容易頻繁 429 紅燈)", newVal: "動態捕捉串流 Payload 中的真實 model 欄位" },
+                    { type: "add", title: "分流歷史明細表", oldVal: "無歷史調度紀錄", newVal: "紀錄調用時間、實體模型、文字/視覺類型與耗時秒數" }
+                ]
+            },
+            {
+                version: "v15.0",
+                date: "2026-09-05",
+                title: "毛玻璃介面、可拖曳大圖燈箱與 SOP 行級 Diff 審核",
+                summaryItems: [
+                    { type: "feat", text: "水滴展開對話框與全自由拖曳縮放燈箱視窗" },
+                    { type: "feat", text: "同仁提報修改 SOP 自動生成 Diff 提案供管理員採納" },
+                    { type: "feat", text: "多圖上傳與剪貼簿貼圖自動壓縮支援" }
+                ],
+                diffDetails: [
+                    { type: "add", title: "多圖上傳與現場審查", oldVal: "僅支援純文字問答", newVal: "支援單次最多 5 張施工照片，前端自動壓至 1024px" },
+                    { type: "add", title: "SOP 行級精準鎖定", oldVal: "只能人工手動編輯 SOP 文字檔", newVal: "正則比對自動鎖定指定行數並產生一鍵採納/抽除" }
+                ]
+            }
+        ];
+
         let photoCatalog = [];
         let documentCatalog = [];
 
@@ -1123,6 +1232,49 @@
         function closePhotoViewer() {
             const win = document.getElementById('photoViewerWindow');
             if (win) win.classList.remove('pop-active');
+        }
+
+        /**
+         * 🌟 前台精簡版更新日誌小視窗控制
+         */
+        function openQuickUpdateModal() {
+            const modal = document.getElementById('versionSummaryModal');
+            const titleEl = document.getElementById('quickModalTitle');
+            const contentEl = document.getElementById('quickModalContent');
+            const latest = SYSTEM_VERSION_HISTORY[0];
+
+            if (titleEl) titleEl.textContent = `最新版本更新摘要 (${latest.version})`;
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="border-b border-white/10 pb-2">
+                            <h4 class="text-white font-medium text-xs">${latest.title}</h4>
+                            <span class="text-[10px] text-neutral-500 font-mono">發布日期：${latest.date}</span>
+                        </div>
+                        <div class="space-y-2">
+                            ${latest.summaryItems.map(item => {
+                                let badgeClass = item.type === 'feat' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : (item.type === 'fix' ? 'bg-amber-950/80 text-amber-400 border-amber-800' : 'bg-blue-950/80 text-blue-400 border-blue-800');
+                                let label = item.type === 'feat' ? '新增' : (item.type === 'fix' ? '修復' : '優化');
+                                return `
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[9px] px-1.5 py-0.2 rounded border font-mono shrink-0 ${badgeClass}">${label}</span>
+                                        <span class="text-neutral-300 leading-relaxed">${escapeHtml(item.text)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            modal.classList.add('pop-active');
+            globalZIndex++;
+            modal.style.zIndex = globalZIndex;
+        }
+
+        function closeQuickUpdateModal() {
+            const modal = document.getElementById('versionSummaryModal');
+            if (modal) modal.classList.remove('pop-active');
         }
 
         document.getElementById('chatContainer').addEventListener('click', (e) => {
@@ -1456,6 +1608,7 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closePhotoViewer();
+                closeQuickUpdateModal();
                 toggleChatDrawer(false);
             }
         });
@@ -1464,9 +1617,16 @@
             const drawer = document.getElementById('chatDrawer');
             const triggerWrapper = document.getElementById('aiFloatingTriggerWrapper');
             const photoWin = document.getElementById('photoViewerWindow');
+            const quickModal = document.getElementById('versionSummaryModal');
+
             if (drawer && drawer.classList.contains('open')) {
-                if (!drawer.contains(e.target) && !triggerWrapper.contains(e.target) && (!photoWin || !photoWin.contains(e.target))) {
+                if (!drawer.contains(e.target) && !triggerWrapper.contains(e.target) && (!photoWin || !photoWin.contains(e.target)) && (!quickModal || !quickModal.contains(e.target))) {
                     toggleChatDrawer(false);
+                }
+            }
+            if (quickModal && quickModal.classList.contains('pop-active')) {
+                if (!quickModal.contains(e.target)) {
+                    closeQuickUpdateModal();
                 }
             }
         });
@@ -1589,15 +1749,11 @@
             return `${year}-${month}-${day}`;
         }
 
-        /**
-         * 🌟 每日跨日重置與 50 天歷史歸檔引擎
-         */
         function checkAndPerformDailyReset(cloudState) {
             const todayStr = getTodayDateString();
             const lastDate = cloudState.activeDate || localStorage.getItem('shiye_active_date') || todayStr;
 
             if (lastDate !== todayStr) {
-                // 跨日了！將昨日數據封裝存入 50 天歷史用量日誌
                 let archive = cloudState.dailyArchive || safeJsonParse(localStorage.getItem('shiye_daily_archive'), []);
 
                 let yesterdayTokens = 0;
@@ -1802,6 +1958,60 @@
             ];
         }
 
+        /**
+         * 🌟 後台版本對比視窗 (Changelog Diff) 渲染邏輯
+         */
+        function initSystemUpdateHistory() {
+            const select = document.getElementById('versionSelect');
+            if (!select) return;
+
+            select.innerHTML = SYSTEM_VERSION_HISTORY.map(v => `
+                <option value="${v.version}">${v.version} - ${v.title} (${v.date})</option>
+            `).join('');
+
+            renderSystemUpdateDetails(SYSTEM_VERSION_HISTORY[0].version);
+        }
+
+        function renderSystemUpdateDetails(ver) {
+            const container = document.getElementById('versionDetailContainer');
+            if (!container) return;
+
+            const target = SYSTEM_VERSION_HISTORY.find(v => v.version === ver) || SYSTEM_VERSION_HISTORY[0];
+
+            container.innerHTML = `
+                <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold font-mono text-purple-400 bg-purple-950/80 border border-purple-800 px-2 py-0.5 rounded">${target.version}</span>
+                            <span class="text-white font-medium">${escapeHtml(target.title)}</span>
+                        </div>
+                        <span class="text-[10px] text-neutral-500 font-mono">${target.date}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-medium text-neutral-300 tracking-wider">新舊版本詳細行級對比清單 (Diff Details)</h4>
+                    <div class="space-y-2 text-xs">
+                        ${target.diffDetails.map(diff => {
+                            let icon = diff.type === 'add' ? 'fa-circle-plus text-emerald-400' : (diff.type === 'perf' ? 'fa-bolt text-amber-400' : 'fa-wrench text-blue-400');
+                            return `
+                                <div class="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 space-y-1.5">
+                                    <div class="flex items-center space-x-2 text-white font-medium text-[11px]">
+                                        <i class="fa-solid ${icon} text-[10px]"></i>
+                                        <span>${escapeHtml(diff.title)}</span>
+                                    </div>
+                                    <div class="bg-neutral-900/50 p-2.5 rounded-lg font-mono text-[10px] space-y-1">
+                                        <div class="text-neutral-500 line-through">- 舊版: ${escapeHtml(diff.oldVal)}</div>
+                                        <div class="text-emerald-400 font-medium">+ 新版: ${escapeHtml(diff.newVal)}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         async function initData() {
             const cachedUi = localStorage.getItem('shiye_ui_settings');
             if (cachedUi) {
@@ -1833,6 +2043,7 @@
             initDrawerResizer();
             initAdminWindowManager();
             initPhotoViewerResizer();
+            initSystemUpdateHistory();
             checkMagicLink();
         }
 
@@ -2206,6 +2417,7 @@
         const ADMIN_WIN_CONFIG = {
             uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
             tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 720, defaultH: 560, defaultX: 30, defaultY: 20 },
+            systemUpdates: { id: 'win_systemUpdates', defaultW: 740, defaultH: 540, defaultX: 45, defaultY: 25 },
             proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
             snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 80, defaultY: 80 },
@@ -2280,9 +2492,6 @@
             else openAdminWindow(key);
         }
 
-        /**
-         * 🌟 渲染全方位用量、Supabase 體檢、OpenRouter 剩餘額度與 50 天歷史
-         */
         async function renderTokenAnalytics() {
             const container = document.getElementById('passcodeUsageListContainer');
             const todayBadge = document.getElementById('todayTokensBadge');
@@ -2314,7 +2523,6 @@
                 bar.style.width = `${pct}%`;
             }
 
-            // 渲染今日各成員用量
             if (container) {
                 if (currentCodesList.length === 0) {
                     container.innerHTML = '<p class="text-neutral-500">尚無任何身分碼紀錄</p>';
@@ -2348,19 +2556,11 @@
                 }
             }
 
-            // 渲染 Supabase 資料庫體檢
             updateSupabaseHealthUi();
-
-            // 渲染 50 天歷史用量日誌
             renderDailyArchiveTable();
-
-            // 查詢 OpenRouter 剩餘額度
             fetchOpenRouterQuotaDetail();
         }
 
-        /**
-         * 🌟 Supabase 容量即時計算與顯示 (500MB 上限)
-         */
         function updateSupabaseHealthUi() {
             const usedText = document.getElementById('supabaseUsedSizeText');
             const pBar = document.getElementById('supabaseProgressBar');
@@ -2372,7 +2572,7 @@
             const updateLogs = localStorage.getItem('shiye_sop_update_logs') || '';
             const snapshots = localStorage.getItem('shiye_sop_snapshots') || '';
 
-            const totalBytes = (cached.length + archive.length + errorLogs.length + updateLogs.length + snapshots.length) * 2; // UTF-16 約 2 bytes
+            const totalBytes = (cached.length + archive.length + errorLogs.length + updateLogs.length + snapshots.length) * 2;
             const totalKB = (totalBytes / 1024).toFixed(2);
             const totalMB = (totalBytes / (1024 * 1024)).toFixed(3);
             const maxMB = 500;
@@ -2386,9 +2586,6 @@
             }
         }
 
-        /**
-         * 🌟 渲染 50 天每日歷史用量明細
-         */
         function renderDailyArchiveTable() {
             const tbody = document.getElementById('dailyArchiveTableBody');
             const badge = document.getElementById('archiveCountBadge');
@@ -2421,9 +2618,6 @@
             alert('✅ 已成功清空歷史每日用量歸檔！');
         }
 
-        /**
-         * 🌟 向 OpenRouter 官方查詢 Key 額度與剩餘用量
-         */
         async function fetchOpenRouterQuotaDetail() {
             const keys = getApiKeys();
             const statusBadge = document.getElementById('openrouterUsageStatusBadge');
@@ -2527,6 +2721,7 @@
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
 
+            initSystemUpdateHistory();
             switchUiDeviceTab('pc');
             openAdminWindow('uiCustomizer');
         }
@@ -2993,10 +3188,10 @@
                     code: randomCode, 
                     name: name, 
                     role: 'user', 
-                    totalTokens: 0,
-                    todayTokens: 0,
-                    requestCount: 0,
-                    todayRequests: 0,
+                    totalTokens: 0, 
+                    todayTokens: 0, 
+                    requestCount: 0, 
+                    todayRequests: 0, 
                     createdAt: new Date().toLocaleString(), 
                     logins: [], 
                     status: 'offline', 
@@ -3622,7 +3817,6 @@ ${sopContent}
                             latestCodes.push(matched);
                         }
 
-                        // 累加今日與歷史總 Tokens、次數
                         matched.todayTokens = Number(matched.todayTokens || 0) + estimatedTokens;
                         matched.totalTokens = Number(matched.totalTokens || 0) + estimatedTokens;
                         matched.todayRequests = Number(matched.todayRequests || 0) + 1;
