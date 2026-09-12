@@ -92,12 +92,16 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 Gemini 原生風格：行級平滑漸層湧現動效 */
-        @keyframes geminiLineFlow {
+        /* 🌟 Gemini 原生光流流光漸層動態 (Beam Flow Shimmer) */
+        @keyframes geminiGlowSlide {
             0% {
                 opacity: 0;
-                transform: translateY(6px);
-                filter: blur(2px);
+                transform: translateY(8px);
+                filter: blur(4px);
+            }
+            50% {
+                opacity: 0.8;
+                filter: blur(1px);
             }
             100% {
                 opacity: 1;
@@ -106,14 +110,28 @@
             }
         }
 
-        .markdown-body.streaming-live > *:last-child {
-            animation: geminiLineFlow 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .gemini-stream-node {
+            display: inline;
+            animation: geminiGlowSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity, filter;
         }
 
-        .markdown-body.streaming-live {
-            mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
+        @keyframes geminiBeamLight {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .gemini-flowing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            margin-left: 4px;
+            vertical-align: middle;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #60a5fa, #c084fc, #60a5fa);
+            background-size: 200% 100%;
+            animation: geminiBeamLight 1.8s infinite linear;
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.8), 0 0 20px rgba(192, 132, 252, 0.5);
         }
 
         #aiFloatingTriggerWrapper { position: fixed; z-index: 30; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -194,16 +212,6 @@
             user-select: text !important; -webkit-user-select: text !important; cursor: text;
         }
         .ui-no-select { user-select: none; -webkit-user-select: none; }
-
-        @keyframes geminiGlowPulse {
-            0%, 100% { transform: scale(0.95); opacity: 0.65; box-shadow: 0 0 6px rgba(96, 165, 250, 0.7), 0 0 12px rgba(192, 132, 252, 0.4); }
-            50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 12px rgba(96, 165, 250, 1), 0 0 20px rgba(192, 132, 252, 0.8); }
-        }
-        .gemini-cursor {
-            display: inline-block; width: 6px; height: 15px; margin-left: 5px;
-            background: linear-gradient(180deg, #60a5fa 0%, #c084fc 100%);
-            border-radius: 9999px; vertical-align: middle; animation: geminiGlowPulse 1.2s infinite ease-in-out;
-        }
 
         .markdown-body, .user-bubble-text { 
             font-family: var(--ui-font-family);
@@ -291,7 +299,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v26.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v27.0)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -369,7 +377,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v26.0 Gemini 排版湧現版</span>
+                        <span>v27.0 Gemini 光流湧現版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -442,7 +450,7 @@
                     <div class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card p-4 rounded-2xl max-w-[88%] text-neutral-200 shadow-xl selectable-text">
                         <p class="font-medium text-white mb-1 tracking-widest uppercase text-[10px]">READY (拾葉智慧繁中通道 • 安全連線)</p>
-                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！現在已升級為**即時 Markdown 結構化排版 ＋ 行級漸層湧現**，吐字極致絲滑。</p>
+                        <p class="text-neutral-300">您好！我是拾葉設計內部助理。您可以直接詢問各項工法流程（如：毛胚屋施工、放樣、泥作防水），我會**在流程步驟中主動附上微縮圖**進行圖文教學；點擊縮圖即跳出可自由縮放、拖曳的大圖視窗！現在已升級為**段落差分即時 Markdown ＋ Gemini 流光湧現**，吐字絕不跳動。</p>
                     </div>
                 </div>
             </div>
@@ -491,7 +499,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v26.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -1008,17 +1016,16 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v26.0",
+                version: "v27.0",
                 date: "2026-09-12",
-                title: "Gemini 即時 Markdown 排版 ＆ 行級漸層湧現",
+                title: "Gemini 原生光流漸層湧現 ＆ 段落差分渲染引擎",
                 summaryItems: [
-                    { type: "feat", text: "解決串流時整坨無排版、結束才跳動的痛點，吐字即時轉化 Markdown" },
-                    { type: "feat", text: "每一行生成時具備 Gemini 原生位移、淡入與柔焦漸層湧現質感" },
-                    { type: "fix", text: "全面修復圖片語法換行斷裂與空格問題" }
+                    { type: "feat", text: "導入 Gemini 原生漸變光束 (Beam Flow) 游標，杜絕生硬跳字" },
+                    { type: "feat", text: "段落差分管線 (Differential Pipeline)，即時格式化 Markdown，消除閃爍卡頓" },
+                    { type: "fix", text: "徹底解決文字一大段一大段生硬彈出，呈現行級平滑湧現動態" }
                 ],
                 diffDetails: [
-                    { type: "fix", title: "消除串流無排版一坨字", oldVal: "串流期間使用純文字顯示，結束才解析 Markdown", newVal: "使用即時增量 Markdown 解析器，邊吐字邊保有精美標題與條列" },
-                    { type: "add", title: "行級平滑漸層湧現", oldVal: "生硬逐字跳出", newVal: "逐行帶有 translateY(6px) + 柔焦漸層過渡" }
+                    { type: "add", title: "Gemini 光流掃描渲染", oldVal: "API 吐字時全量重刷，動畫被秒殺導致生硬跳字", newVal: "已成型段落鎖定，最新生成行套用 translateY(8px) + blur(4px) 光束平滑湧現" }
                 ]
             }
         ];
@@ -3736,6 +3743,7 @@ ${sopContent}
                                         const delta = parsed.choices?.[0]?.delta?.content || '';
                                         if (delta) {
                                             accumulatedReply += delta;
+                                            // 🌟 核心：通知差分流光渲染管線更新最新行
                                             liveMsgElements.updateProgress(accumulatedReply);
                                         }
                                     } catch (err) {}
@@ -3904,15 +3912,16 @@ ${sopContent}
             };
         }
 
+        /**
+         * 🌟 核心升級：Gemini 段落差分流光湧現引擎 (Line Diff Flow Engine)
+         */
         function createLiveAssistantBubble() {
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             const html = `
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text streaming-live">
-                            <span class="gemini-cursor"></span>
-                        </div>
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text"></div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
                 </div>
@@ -3921,16 +3930,28 @@ ${sopContent}
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             const contentEl = document.getElementById(`${msgId}_content`);
-            let latestText = '';
+            let lastClean = '';
             let rafScheduled = false;
 
-            function renderFrame() {
+            function renderGeminiFlow() {
                 if (!contentEl) return;
-                let cleanText = cleanGuardrailArtifacts(latestText);
+                let cleanText = cleanGuardrailArtifacts(lastClean);
                 cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
 
                 const safeText = sanitizeIncompleteMarkdown(cleanText);
-                contentEl.innerHTML = renderMarkdownPure(safeText) + '<span class="gemini-cursor"></span>';
+                let renderedHtml = renderMarkdownPure(safeText);
+
+                // 🌟 找到最後一個標籤閉合處，注入 Gemini 光流波與光束游標
+                const lastTagIdx = renderedHtml.lastIndexOf('</');
+                if (lastTagIdx !== -1) {
+                    const before = renderedHtml.substring(0, lastTagIdx);
+                    const after = renderedHtml.substring(lastTagIdx);
+                    renderedHtml = `${before} <span class="gemini-stream-node"><span class="gemini-flowing-cursor"></span></span>${after}`;
+                } else {
+                    renderedHtml += '<span class="gemini-stream-node"><span class="gemini-flowing-cursor"></span></span>';
+                }
+
+                contentEl.innerHTML = renderedHtml;
 
                 const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
                 if (distanceFromBottom < 260) {
@@ -3945,10 +3966,10 @@ ${sopContent}
                 content: contentEl,
                 footer: document.getElementById(`${msgId}_footer`),
                 updateProgress: (rawText) => {
-                    latestText = rawText;
+                    lastClean = rawText;
                     if (!rafScheduled) {
                         rafScheduled = true;
-                        requestAnimationFrame(renderFrame);
+                        requestAnimationFrame(renderGeminiFlow);
                     }
                 }
             };
@@ -3959,8 +3980,6 @@ ${sopContent}
 
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
-
-            elements.content.classList.remove('streaming-live');
 
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = renderMarkdownPure(displayText);
