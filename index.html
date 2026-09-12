@@ -1023,6 +1023,36 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
+                version: "v27.3",
+                date: "2026-09-12",
+                title: "登出／閒置鎖定登入按鈕狀態修復",
+                summaryItems: [
+                    { type: "fix", text: "修正手動登出後登入按鈕仍停留在 VERIFYING... 且無法再次點擊的問題" },
+                    { type: "fix", text: "修正閒置 20 分鐘自動鎖定後登入介面沒有完整恢復初始狀態的問題" },
+                    { type: "fix", text: "登入畫面重新顯示時統一重設按鈕 disabled、進度條、液態動畫與驗證輸入狀態" },
+                    { type: "perf", text: "保留 v27.2 Gemini 流光串流與既有功能，不變更 Supabase、OpenRouter、SOP 與後台架構" }
+                ],
+                diffDetails: [
+                    { type: "fix", title: "登入按鈕重置", oldVal: "verifyPasscode() 成功後按鈕會被設為 disabled + VERIFYING...，登出／自動鎖定時未恢復", newVal: "新增 resetAuthLoginUI()，每次回到驗證頁都強制恢復 ENTER SYSTEM 與可點擊狀態" },
+                    { type: "fix", title: "驗證進度 UI 重置", oldVal: "authCard 雖重新顯示，但 progress bar / progress text / liquid morph 狀態可能殘留", newVal: "統一恢復 authCard、隱藏進度區、進度歸零並清除液態 morph class" },
+                    { type: "fix", title: "閒置鎖定提示", oldVal: "閒置鎖定只改 subtitle，其他登入元件沿用上一次狀態", newVal: "先完整重置登入 UI，再顯示 20 分鐘閒置鎖定提示" }
+                ]
+            },
+            {
+                version: "v27.2",
+                date: "2026-09-12",
+                title: "Gemini 流光串流渲染優化",
+                summaryItems: [
+                    { type: "perf", text: "改為文字 buffer queue + requestAnimationFrame 漸進輸出，避免 SSE chunk 爆量跳字" },
+                    { type: "fix", text: "避免串流期間每個封包重建整個 Markdown DOM，降低閃爍與動畫重置" },
+                    { type: "fix", text: "串流結束與重試前停止舊 RAF，避免舊畫面覆寫最終內容" }
+                ],
+                diffDetails: [
+                    { type: "perf", title: "穩定串流 DOM", oldVal: "每次 SSE 更新整個 innerHTML", newVal: "固定 static/live/cursor 節點，逐幀消費文字 buffer" },
+                    { type: "fix", title: "未完成 Markdown", oldVal: "未閉合語法可能在串流中破壞版面", newVal: "只渲染穩定 Markdown 區塊，活動尾端暫以純文字顯示" }
+                ]
+            },
+            {
                 version: "v27.1",
                 date: "2026-09-12",
                 title: "Markdown 圖片穩定修正 ＆ 串流尾端資料防遺失",
@@ -1601,11 +1631,16 @@
 
         function lockSessionForIdle() {
             currentAuth = null;
+            activeCode = null;
             localStorage.removeItem('shiye_auth');
+            localStorage.removeItem('shiye_active_code');
             toggleChatDrawer(false);
+
+            resetAuthLoginUI({ clearInput: true, resetMode: true });
+            checkAuthAndRoute();
+
             const authSubtitle = document.getElementById('authSubtitle');
             if (authSubtitle) authSubtitle.textContent = '系統閒置已達 20 分鐘，請重新輸入代碼解鎖';
-            checkAuthAndRoute();
         }
 
         function getDeviceTag() {
@@ -2149,6 +2184,47 @@
             }
         }
 
+        function resetAuthLoginUI({ clearInput = false, resetMode = false } = {}) {
+            const authModal = document.getElementById('authModal');
+            const authCard = document.getElementById('authCard');
+            const progressWrapper = document.getElementById('authLoginProgressWrapper');
+            const progressBar = document.getElementById('authLoginProgressBar');
+            const progressText = document.getElementById('loginProgressText');
+            const enterBtn = document.getElementById('enterSystemBtn');
+            const passcodeInput = document.getElementById('passcodeinput');
+            const subtitle = document.getElementById('authSubtitle');
+            const switchBtn = document.getElementById('authSwitchBtn');
+
+            // 關鍵修復：verifyPasscode() 成功時會把按鈕鎖成 disabled / VERIFYING...。
+            // 任何回到登入頁的路徑（手動登出、20 分鐘閒置、初次載入）都必須完整恢復。
+            if (enterBtn) {
+                enterBtn.disabled = false;
+                enterBtn.textContent = 'ENTER SYSTEM';
+                enterBtn.removeAttribute('aria-busy');
+            }
+
+            if (authCard) {
+                authCard.classList.remove('auth-liquid-morph');
+                authCard.style.display = 'block';
+            }
+
+            if (progressWrapper) progressWrapper.classList.add('hidden-view');
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressText) progressText.textContent = '正在建立安全連線與彙整雲端資料...';
+            if (clearInput && passcodeInput) passcodeInput.value = '';
+
+            if (resetMode) {
+                authMode = 'user';
+                if (subtitle) subtitle.textContent = '請輸入身分生成碼以進入系統';
+                if (switchBtn) switchBtn.textContent = '切換為管理員登入通道';
+            }
+
+            if (authModal) {
+                authModal.classList.remove('auth-modal-fade');
+                authModal.style.pointerEvents = 'auto';
+            }
+        }
+
         async function checkAuthAndRoute() {
             const authModal = document.getElementById('authModal');
             const authCard = document.getElementById('authCard');
@@ -2156,11 +2232,10 @@
             const viewAdmin = document.getElementById('viewAdmin');
 
             if (!currentAuth) {
+                // 不論是手動登出、閒置鎖定或重新整理，只要回到驗證頁就恢復成可登入狀態。
+                resetAuthLoginUI({ clearInput: false, resetMode: false });
                 authModal.classList.remove('hidden-view', 'auth-modal-fade');
                 authModal.style.pointerEvents = 'auto';
-                authCard.classList.remove('auth-liquid-morph');
-                authCard.style.display = 'block';
-                document.getElementById('authLoginProgressWrapper').classList.add('hidden-view');
                 appContainer.classList.add('hidden-view');
                 viewAdmin.classList.add('hidden-view');
                 return;
@@ -2235,6 +2310,7 @@
             const enterBtn = document.getElementById('enterSystemBtn');
             enterBtn.disabled = true;
             enterBtn.textContent = 'VERIFYING...';
+            enterBtn.setAttribute('aria-busy', 'true');
 
             try {
                 const freshCodes = await fetchCodesFromCloud();
@@ -2248,15 +2324,13 @@
 
                 if (!matched) { 
                     alert(`❌ 驗證碼【${val}】錯誤、已被註銷或不存在！`); 
-                    enterBtn.disabled = false;
-                    enterBtn.textContent = 'ENTER SYSTEM';
+                    resetAuthLoginUI();
                     return; 
                 }
 
                 if (authMode === 'admin' && matched.role !== 'admin') { 
                     alert('此代碼非管理員權限'); 
-                    enterBtn.disabled = false;
-                    enterBtn.textContent = 'ENTER SYSTEM';
+                    resetAuthLoginUI();
                     return; 
                 }
 
@@ -2302,8 +2376,7 @@
                 }, 450);
 
             } catch (e) {
-                enterBtn.disabled = false;
-                enterBtn.textContent = 'ENTER SYSTEM';
+                resetAuthLoginUI();
                 alert(`登入連線發生錯誤: ${e.message}`);
             }
         }
@@ -2324,6 +2397,9 @@
             activeCode = null;
             localStorage.removeItem('shiye_auth');
             localStorage.removeItem('shiye_active_code');
+
+            // 關鍵修復：離開系統時立即把登入介面恢復為第二張圖的初始狀態。
+            resetAuthLoginUI({ clearInput: true, resetMode: true });
             window.location.hash = '';
             checkAuthAndRoute();
         }
