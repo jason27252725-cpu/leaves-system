@@ -92,46 +92,53 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 Gemini 原生光流流光漸層動態 (Beam Flow Shimmer) */
-        @keyframes geminiGlowSlide {
-            0% {
-                opacity: 0;
-                transform: translateY(8px);
-                filter: blur(4px);
-            }
-            50% {
-                opacity: 0.8;
-                filter: blur(1px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-                filter: blur(0);
-            }
+        /* 🌟 Gemini 流光湧現引擎：穩定 DOM + 尾端光束 */
+        @keyframes geminiLineReveal {
+            0% { opacity: 0; transform: translateY(4px); filter: blur(2px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .gemini-stream-node {
-            display: inline;
-            animation: geminiGlowSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            will-change: transform, opacity, filter;
+        .gemini-flow-static {
+            display: block;
         }
 
-        @keyframes geminiBeamLight {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+        .gemini-flow-block {
+            animation: geminiLineReveal 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .gemini-flow-live {
+            display: block;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            min-height: 1.2em;
+            background: linear-gradient(100deg, rgba(255,255,255,.72) 0%, rgba(96,165,250,.95) 35%, rgba(192,132,252,.95) 55%, rgba(255,255,255,.72) 75%, rgba(255,255,255,.72) 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: geminiTextBeam 1.9s linear infinite;
+        }
+
+        @keyframes geminiTextBeam {
+            0% { background-position: 120% 0; }
+            100% { background-position: -120% 0; }
         }
 
         .gemini-flowing-cursor {
             display: inline-block;
-            width: 8px;
-            height: 16px;
-            margin-left: 4px;
-            vertical-align: middle;
+            width: 7px;
+            height: 1.05em;
+            margin-left: 3px;
+            vertical-align: -0.16em;
             border-radius: 9999px;
             background: linear-gradient(90deg, #60a5fa, #c084fc, #60a5fa);
             background-size: 200% 100%;
-            animation: geminiBeamLight 1.8s infinite linear;
-            box-shadow: 0 0 12px rgba(96, 165, 250, 0.8), 0 0 20px rgba(192, 132, 252, 0.5);
+            animation: geminiBeamLight 1.4s infinite linear;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.8), 0 0 18px rgba(192, 132, 252, 0.45);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gemini-flow-block, .gemini-flow-live, .gemini-flowing-cursor { animation: none !important; }
         }
 
         #aiFloatingTriggerWrapper { position: fixed; z-index: 30; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -299,7 +306,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v27.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v27.1)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -377,7 +384,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v27.0 Gemini 光流湧現版</span>
+                        <span>v27.1 Markdown 穩定修正版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -499,7 +506,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.1</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -1016,16 +1023,21 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v27.0",
+                version: "v27.1",
                 date: "2026-09-12",
-                title: "Gemini 原生光流漸層湧現 ＆ 段落差分渲染引擎",
+                title: "Markdown 圖片穩定修正 ＆ 串流尾端資料防遺失",
                 summaryItems: [
-                    { type: "feat", text: "導入 Gemini 原生漸變光束 (Beam Flow) 游標，杜絕生硬跳字" },
-                    { type: "feat", text: "段落差分管線 (Differential Pipeline)，即時格式化 Markdown，消除閃爍卡頓" },
-                    { type: "fix", text: "徹底解決文字一大段一大段生硬彈出，呈現行級平滑湧現動態" }
+                    { type: "fix", text: "移除會重寫完整圖片 Markdown 的 regex，改回 marked 原生解析，避免圖片網址被錯誤截斷" },
+                    { type: "fix", text: "補強串流 SSE 最後一個未換行 chunk，避免回答最後一段文字靜默遺失" },
+                    { type: "fix", text: "修正重新回答後聊天上下文缺少原問題的問題" },
+                    { type: "security", text: "補強 AI Markdown 產生的連結、圖片 URL 與 raw HTML 安全過濾" },
+                    { type: "perf", text: "保留既有段落差分流光渲染架構，不改動圖片 viewer 與整體 UI 行為" }
                 ],
                 diffDetails: [
-                    { type: "add", title: "Gemini 光流掃描渲染", oldVal: "API 吐字時全量重刷，動畫被秒殺導致生硬跳字", newVal: "已成型段落鎖定，最新生成行套用 translateY(8px) + blur(4px) 光束平滑湧現" }
+                    { type: "fix", title: "圖片 Markdown 原生解析", oldVal: "先用 regex 重寫 ![alt](url)，遇到特殊網址格式可能造成解析不穩定", newVal: "完整 Markdown 直接交給 marked.parse；只在串流未完成時隱藏未閉合尾端" },
+                    { type: "fix", title: "SSE 最後 chunk", oldVal: "response stream 結束時未處理 buffer 尾端", newVal: "decoder tail + buffer 會在 done 時再次解析，避免最後一個 delta 遺失" },
+                    { type: "fix", title: "重試上下文", oldVal: "retry 後只寫回 assistant，下一輪上下文缺少原 user 問題", newVal: "retry 完成後固定寫回 user → assistant 配對" },
+                    { type: "security", title: "Markdown URL / HTML 防護", oldVal: "自訂 renderer 直接輸出 href/src，可能放行危險 URL 或事件屬性", newVal: "加入 URL protocol allowlist 與 DOMParser 輸出清洗" }
                 ]
             }
         ];
@@ -1094,31 +1106,98 @@
 
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
-            let text = rawText;
-            text = text.replace(/!\[[^\]]*\]?\([^\)]*$/, '');
-            text = text.replace(/!\[[^\]]*$/, '');
-            text = text.replace(/(?<!\!)\[[^\]]*\]?\([^\)]*$/, '');
-            text = text.replace(/(?<!\!)\[[^\]]*$/, '');
+            let text = String(rawText);
+
+            // 串流期間如果圖片/連結尚未閉合，先隱藏「尚未完成的尾端」，
+            // 避免 marked 把後續文字一起吞掉。完整 Markdown 不會被改寫。
+            text = text.replace(/!\[[^\]]*\]\([^\)]*$/s, '');
+            text = text.replace(/!\[[^\]]*$/s, '');
+            text = text.replace(/(?<!\!)\[[^\]]*\]\([^\)]*$/s, '');
+            text = text.replace(/(?<!\!)\[[^\]]*$/s, '');
 
             const codeBlockMatches = text.match(/```/g);
             if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) text += '\n```';
+
             const boldMatches = text.match(/\*\*/g);
             if (boldMatches && boldMatches.length % 2 !== 0) text += '**';
+
             const inlineCodeMatches = text.match(/(?<!`)`(?!`)/g);
             if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) text += '`';
+
             return text;
+        }
+
+        function sanitizeMarkdownUrl(rawUrl, allowDataImage = false) {
+            if (!rawUrl) return '';
+            let value = String(rawUrl).trim();
+
+            // Markdown URL 可含空白；HTML src/href 不行，因此只在這裡編碼空白。
+            value = value.replace(/\s+/g, '%20');
+
+            try {
+                const parsed = new URL(value, window.location.href);
+                const protocol = parsed.protocol.toLowerCase();
+
+                if (protocol === 'http:' || protocol === 'https:') return parsed.href;
+                if (protocol === 'blob:') return parsed.href;
+                if (allowDataImage && /^data:image\/(png|jpe?g|gif|webp|avif);/i.test(value)) return value;
+            } catch (e) {}
+
+            return '';
+        }
+
+        function sanitizeRenderedHtml(html) {
+            if (!html || typeof DOMParser === 'undefined') return html || '';
+
+            try {
+                const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
+                const root = doc.body.firstElementChild;
+                if (!root) return '';
+
+                root.querySelectorAll('script,style,iframe,object,embed,form,base,meta,link').forEach(el => el.remove());
+
+                root.querySelectorAll('*').forEach(el => {
+                    [...el.attributes].forEach(attr => {
+                        const name = attr.name.toLowerCase();
+
+                        // AI 產出的 raw HTML 不允許事件處理器或危險 CSS。
+                        if (name.startsWith('on') || name === 'style' || name === 'srcset') {
+                            el.removeAttribute(attr.name);
+                            return;
+                        }
+
+                        if (name === 'href') {
+                            const safe = sanitizeMarkdownUrl(attr.value);
+                            if (!safe) el.removeAttribute(attr.name);
+                            else el.setAttribute('href', safe);
+                        }
+
+                        if (name === 'src') {
+                            const safe = sanitizeMarkdownUrl(attr.value, true);
+                            if (!safe) el.removeAttribute(attr.name);
+                            else el.setAttribute('src', safe);
+                        }
+                    });
+                });
+
+                return root.innerHTML;
+            } catch (e) {
+                return html;
+            }
         }
 
         function renderMarkdownPure(text) {
             if (!text) return '';
-            let clean = text.replace(/User Safety:\s*safe/gi, '').replace(/Response Safety:\s*safe/gi, '').trim();
+            const clean = String(text)
+                .replace(/User Safety:\s*safe/gi, '')
+                .replace(/Response Safety:\s*safe/gi, '')
+                .trim();
 
-            clean = clean.replace(/!\[([^\]]*)\]\s*\(\s*([^\)]+)\s*\)/g, function(match, alt, url) {
-                let cleanUrl = url.trim().replace(/\s+/g, '%20');
-                return `![${alt.trim()}](${cleanUrl})`;
-            });
+            if (typeof marked === 'undefined') return escapeHtml(clean);
 
-            return typeof marked !== 'undefined' ? marked.parse(clean) : escapeHtml(clean);
+            // 不再用 regex 重寫完整圖片 Markdown。
+            // 直接交給 marked 原生 parser，避免 URL 含括號、查詢參數等情況被截斷。
+            return sanitizeRenderedHtml(marked.parse(clean));
         }
 
         if (typeof marked !== 'undefined') {
@@ -1129,16 +1208,24 @@
                 if (typeof href === 'object' && href !== null) {
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
-                const titleAttr = actualTitle ? ` title="${actualTitle}"` : '';
 
-                if (actualHref && actualHref.includes('/documents/')) {
+                const cleanHref = sanitizeMarkdownUrl(actualHref);
+                if (!cleanHref) return actualText || '';
+
+                const safeTitle = escapeHtml(actualTitle);
+                const titleAttr = safeTitle ? ` title="${safeTitle}"` : '';
+
+                if (cleanHref.includes('/documents/')) {
                     let icon = 'fa-file-lines';
-                    if (actualHref.endsWith('.pdf')) icon = 'fa-file-pdf text-red-400';
-                    else if (actualHref.endsWith('.docx') || actualHref.endsWith('.doc')) icon = 'fa-file-word text-blue-400';
-                    else if (actualHref.endsWith('.xlsx') || actualHref.endsWith('.xls')) icon = 'fa-file-excel text-emerald-400';
-                    return `<a href="${actualHref}" download target="_blank" rel="noopener noreferrer" class="doc-download-btn"${titleAttr}><i class="fa-solid ${icon}"></i><span>${actualText}</span><i class="fa-solid fa-arrow-down text-[10px] ml-1 text-neutral-400"></i></a>`;
+                    const lowerHref = cleanHref.toLowerCase();
+                    if (lowerHref.endsWith('.pdf')) icon = 'fa-file-pdf text-red-400';
+                    else if (lowerHref.endsWith('.docx') || lowerHref.endsWith('.doc')) icon = 'fa-file-word text-blue-400';
+                    else if (lowerHref.endsWith('.xlsx') || lowerHref.endsWith('.xls')) icon = 'fa-file-excel text-emerald-400';
+
+                    return `<a href="${escapeHtml(cleanHref)}" download target="_blank" rel="noopener noreferrer" class="doc-download-btn"${titleAttr}><i class="fa-solid ${icon}"></i><span>${actualText}</span><i class="fa-solid fa-arrow-down text-[10px] ml-1 text-neutral-400"></i></a>`;
                 }
-                return `<a href="${actualHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
+
+                return `<a href="${escapeHtml(cleanHref)}" target="_blank" rel="noopener noreferrer"${titleAttr}>${actualText}</a>`;
             };
 
             renderer.image = function(href, title, text) {
@@ -1146,9 +1233,14 @@
                 if (typeof href === 'object' && href !== null) {
                     actualHref = href.href || ''; actualTitle = href.title || ''; actualText = href.text || '';
                 }
-                let cleanUrl = String(actualHref).trim().replace(/\s+/g, '%20');
+
+                const cleanUrl = sanitizeMarkdownUrl(actualHref);
+                if (!cleanUrl) return '';
+
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
-                return `<div class="img-thumb-wrapper" data-src="${cleanUrl}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${cleanUrl}" alt="${safeTitle}" loading="lazy" onerror="this.closest('.img-thumb-wrapper')?.remove();"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
+                const safeSrc = escapeHtml(cleanUrl);
+
+                return `<div class="img-thumb-wrapper" data-src="${safeSrc}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${safeSrc}" alt="${safeTitle}" loading="lazy"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
             };
 
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
@@ -1945,7 +2037,7 @@
                     <h4 class="text-xs font-medium text-neutral-300 tracking-wider">新舊版本詳細行級對比清單 (Diff Details)</h4>
                     <div class="space-y-2 text-xs">
                         ${target.diffDetails.map(diff => {
-                            let icon = diff.type === 'add' ? 'fa-circle-plus text-emerald-400' : (diff.type === 'perf' ? 'fa-bolt text-amber-400' : 'fa-wrench text-blue-400');
+                            let icon = diff.type === 'add' ? 'fa-circle-plus text-emerald-400' : (diff.type === 'perf' ? 'fa-bolt text-amber-400' : (diff.type === 'security' ? 'fa-shield-halved text-red-400' : 'fa-wrench text-blue-400'));
                             return `
                                 <div class="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 space-y-1.5">
                                     <div class="flex items-center space-x-2 text-white font-medium text-[11px]">
@@ -3669,6 +3761,7 @@ ${sopContent}
 
                     accumulatedReply = '';
                     if (liveMsgElements && liveMsgElements.wrapper) {
+                        if (typeof liveMsgElements.stop === 'function') liveMsgElements.stop();
                         liveMsgElements.wrapper.remove();
                         liveMsgElements = null;
                     }
@@ -3723,31 +3816,55 @@ ${sopContent}
                         liveMsgElements = createLiveAssistantBubble();
 
                         let isStreamDone = false;
+
+                        const processSseLine = (line) => {
+                            const trimmed = line.trim();
+                            if (!trimmed || trimmed.startsWith(':')) return;
+
+                            if (trimmed === 'data: [DONE]') {
+                                isStreamDone = true;
+                                return;
+                            }
+
+                            if (!trimmed.startsWith('data: ')) return;
+
+                            try {
+                                const parsed = JSON.parse(trimmed.substring(6));
+                                if (parsed.model && !detectedRealModel) detectedRealModel = parsed.model;
+
+                                const delta = parsed.choices?.[0]?.delta?.content || '';
+                                if (typeof delta === 'string' && delta) {
+                                    accumulatedReply += delta;
+                                    // 🌟 核心：通知差分流光渲染管線更新最新行
+                                    liveMsgElements.updateProgress(accumulatedReply);
+                                }
+                            } catch (err) {
+                                // 單一 SSE chunk 不完整時不要讓整個串流失敗；
+                                // 下一個 chunk 會繼續補齊 buffer。
+                            }
+                        };
+
                         while (!isStreamDone) {
                             const { done, value } = await activeStreamReader.read();
-                            if (done) break;
+
+                            if (done) {
+                                // SSE 最後一行可能沒有換行，必須把 decoder 尾端與 buffer 一起處理，
+                                // 否則最後一個 delta 會靜默遺失。
+                                buffer += decoder.decode();
+                                if (buffer.trim()) {
+                                    buffer.split(/\r?\n/).forEach(processSseLine);
+                                }
+                                buffer = '';
+                                break;
+                            }
 
                             buffer += decoder.decode(value, { stream: true });
-                            const lines = buffer.split('\n');
-                            buffer = lines.pop();
+                            const lines = buffer.split(/\r?\n/);
+                            buffer = lines.pop() || '';
 
                             for (const line of lines) {
-                                const trimmed = line.trim();
-                                if (!trimmed || trimmed.startsWith(':')) continue;
-                                if (trimmed === 'data: [DONE]') { isStreamDone = true; break; }
-                                if (trimmed.startsWith('data: ')) {
-                                    try {
-                                        const parsed = JSON.parse(trimmed.substring(6));
-                                        if (parsed.model && !detectedRealModel) detectedRealModel = parsed.model;
-
-                                        const delta = parsed.choices?.[0]?.delta?.content || '';
-                                        if (delta) {
-                                            accumulatedReply += delta;
-                                            // 🌟 核心：通知差分流光渲染管線更新最新行
-                                            liveMsgElements.updateProgress(accumulatedReply);
-                                        }
-                                    } catch (err) {}
-                                }
+                                processSseLine(line);
+                                if (isStreamDone) break;
                             }
                         }
 
@@ -3827,11 +3944,12 @@ ${sopContent}
                     const cleanForHistory = cleanGuardrailArtifacts(displayText).trim();
                     if (cleanForHistory) {
                         const historyPrompt = currentImgs.length > 0 ? `[現場照片 ${currentImgs.length} 張] ${text || '工法審查'}` : text;
-                        if (!isRetry) {
-                            chatHistory.push({ role: 'user', text: historyPrompt }, { role: 'assistant', text: cleanForHistory });
-                        } else {
-                            chatHistory.push({ role: 'assistant', text: cleanForHistory });
-                        }
+                        // 重試時原本的 user/assistant 已先移除，因此這次仍要完整寫回
+                        // user → assistant，否則下一輪對話的上下文會缺少這個問題。
+                        chatHistory.push(
+                            { role: 'user', text: historyPrompt },
+                            { role: 'assistant', text: cleanForHistory }
+                        );
                         if (chatHistory.length > 30) chatHistory = chatHistory.slice(-20);
                     }
                 } else if (isUserAborted) {
@@ -3913,7 +4031,9 @@ ${sopContent}
         }
 
         /**
-         * 🌟 核心升級：Gemini 段落差分流光湧現引擎 (Line Diff Flow Engine)
+         * 🌟 Gemini 流光湧現引擎 v2
+         * 核心原則：SSE 只進佇列；畫面以 requestAnimationFrame 穩定消費。
+         * 串流期間只更新「已完成 Markdown 區塊」與「純文字尾端」，絕不反覆 innerHTML 整個訊息。
          */
         function createLiveAssistantBubble() {
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
@@ -3921,7 +4041,11 @@ ${sopContent}
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
                     <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text"></div>
+                        <div id="${msgId}_content" class="markdown-body break-words selectable-text">
+                            <div class="gemini-flow-static"></div>
+                            <div class="gemini-flow-live"></div>
+                            <span class="gemini-flowing-cursor" aria-hidden="true"></span>
+                        </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
                 </div>
@@ -3930,34 +4054,102 @@ ${sopContent}
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             const contentEl = document.getElementById(`${msgId}_content`);
-            let lastClean = '';
-            let rafScheduled = false;
+            const staticEl = contentEl?.querySelector('.gemini-flow-static');
+            const liveEl = contentEl?.querySelector('.gemini-flow-live');
+            const cursorEl = contentEl?.querySelector('.gemini-flowing-cursor');
 
-            function renderGeminiFlow() {
-                if (!contentEl) return;
-                let cleanText = cleanGuardrailArtifacts(lastClean);
-                cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
+            let targetText = '';
+            let visibleText = '';
+            let rafId = 0;
+            let stopped = false;
 
-                const safeText = sanitizeIncompleteMarkdown(cleanText);
-                let renderedHtml = renderMarkdownPure(safeText);
+            function prepareStreamText(rawText) {
+                let text = cleanGuardrailArtifacts(rawText || '');
+                // Proposal JSON 在串流期間不應直接污染畫面；完整答案交給 finalizeLiveBubble 處理。
+                text = text
+                    .replace(/```(?:sop_proposal|json)?[\s\S]*$/i, '')
+                    .replace(/\{[\s\S]*?"topic"[\s\S]*$/i, '')
+                    .trimStart();
+                return text;
+            }
 
-                // 🌟 找到最後一個標籤閉合處，注入 Gemini 光流波與光束游標
-                const lastTagIdx = renderedHtml.lastIndexOf('</');
-                if (lastTagIdx !== -1) {
-                    const before = renderedHtml.substring(0, lastTagIdx);
-                    const after = renderedHtml.substring(lastTagIdx);
-                    renderedHtml = `${before} <span class="gemini-stream-node"><span class="gemini-flowing-cursor"></span></span>${after}`;
-                } else {
-                    renderedHtml += '<span class="gemini-stream-node"><span class="gemini-flowing-cursor"></span></span>';
+            function findStableBoundary(text) {
+                if (!text) return 0;
+                // 只把已完成的段落/清單/標題送進 marked；最後一段留給純文字尾端。
+                // 這樣 **、`、```、表格等未完成語法不會把整個訊息 DOM 弄亂。
+                const lines = text.split('\n');
+                if (lines.length <= 1) return 0;
+
+                let boundary = 0;
+                let fenceOpen = false;
+                for (let i = 0; i < lines.length - 1; i++) {
+                    const line = lines[i];
+                    if (/^\s*```/.test(line)) fenceOpen = !fenceOpen;
+                    if (!fenceOpen && (line.trim() === '' || /^\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|>\s)/.test(line))) {
+                        boundary = text.split('\n').slice(0, i + 1).join('\n').length + 1;
+                    }
                 }
 
-                contentEl.innerHTML = renderedHtml;
+                // 一般長段落也在換行後逐步交給 Markdown。
+                if (!fenceOpen) {
+                    const lastNewline = text.lastIndexOf('\n');
+                    if (lastNewline > boundary && text.slice(lastNewline + 1).trim() !== '') boundary = lastNewline + 1;
+                }
+                return Math.max(0, Math.min(boundary, text.length));
+            }
 
+            function renderStablePart() {
+                if (!staticEl) return;
+                const boundary = findStableBoundary(visibleText);
+                const stableText = visibleText.slice(0, boundary);
+                const tail = visibleText.slice(boundary);
+
+                if (stableText) {
+                    const html = renderMarkdownPure(stableText);
+                    if (staticEl.dataset.source !== stableText) {
+                        staticEl.innerHTML = html;
+                        staticEl.dataset.source = stableText;
+                        staticEl.querySelectorAll(':scope > *').forEach(el => el.classList.add('gemini-flow-block'));
+                    }
+                } else if (staticEl.dataset.source) {
+                    staticEl.innerHTML = '';
+                    staticEl.dataset.source = '';
+                }
+
+                if (liveEl) liveEl.textContent = tail;
+                if (cursorEl) cursorEl.style.display = visibleText.length ? 'inline-block' : 'none';
+            }
+
+            function keepAtBottom() {
                 const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
-                if (distanceFromBottom < 260) {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                if (distanceFromBottom < 260) chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function frame() {
+                rafId = 0;
+                if (stopped || !contentEl) return;
+
+                if (visibleText.length < targetText.length && targetText.startsWith(visibleText)) {
+                    // 依畫面更新頻率消費 1~3 字元；長回答會自動加速，但不會一次爆量。
+                    const remaining = targetText.length - visibleText.length;
+                    const step = remaining > 120 ? 3 : remaining > 40 ? 2 : 1;
+                    visibleText += targetText.slice(visibleText.length, visibleText.length + step);
+                    renderStablePart();
+                    keepAtBottom();
+                } else if (!targetText.startsWith(visibleText)) {
+                    // 極少數情況（例如 guardrail 清理造成前綴改變）直接重新同步一次，避免重複字串。
+                    visibleText = targetText;
+                    renderStablePart();
+                    keepAtBottom();
                 }
-                rafScheduled = false;
+
+                if (visibleText.length < targetText.length) {
+                    rafId = requestAnimationFrame(frame);
+                }
+            }
+
+            function schedule() {
+                if (!rafId && !stopped) rafId = requestAnimationFrame(frame);
             }
 
             return {
@@ -3966,17 +4158,30 @@ ${sopContent}
                 content: contentEl,
                 footer: document.getElementById(`${msgId}_footer`),
                 updateProgress: (rawText) => {
-                    lastClean = rawText;
-                    if (!rafScheduled) {
-                        rafScheduled = true;
-                        requestAnimationFrame(renderGeminiFlow);
-                    }
+                    const nextText = prepareStreamText(rawText);
+                    // SSE 是累積全文；只更新目標，不直接碰 DOM。
+                    targetText = nextText;
+                    schedule();
+                },
+                flush: () => {
+                    targetText = prepareStreamText(targetText);
+                    visibleText = targetText;
+                    renderStablePart();
+                    keepAtBottom();
+                },
+                stop: () => {
+                    stopped = true;
+                    if (rafId) cancelAnimationFrame(rafId);
+                    rafId = 0;
                 }
             };
         }
 
         function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImgs = []) {
             if (!elements || !elements.content) return;
+
+            // 結束串流前先停止 RAF，避免 finalize 後舊動畫又把畫面覆蓋回去。
+            if (typeof elements.stop === 'function') elements.stop();
 
             const msgId = elements.msgId;
             window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
