@@ -92,12 +92,12 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 Gemini 原生風格：行級平滑漸層湧現動效 (Line Fade & Shimmer) */
-        @keyframes geminiLineFlow {
+        /* 🌟 Gemini 原生行級柔焦湧現動畫 */
+        @keyframes geminiBlockFlow {
             0% {
                 opacity: 0;
-                transform: translateY(6px);
-                filter: blur(2px);
+                transform: translateY(8px);
+                filter: blur(3px);
             }
             100% {
                 opacity: 1;
@@ -106,14 +106,14 @@
             }
         }
 
-        .markdown-body.streaming-live > *:last-child {
-            animation: geminiLineFlow 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .markdown-body.streaming-render-active > *:last-child {
+            animation: geminiBlockFlow 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity, filter;
         }
 
-        .markdown-body.streaming-live {
-            mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 85%, rgba(0,0,0,0.6) 96%, transparent 100%);
+        .markdown-body.streaming-render-active {
+            mask-image: linear-gradient(to bottom, black 86%, rgba(0,0,0,0.5) 96%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 86%, rgba(0,0,0,0.5) 96%, transparent 100%);
         }
 
         #aiFloatingTriggerWrapper { position: fixed; z-index: 30; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -291,7 +291,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v26.0)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v27.0 穩定版)</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -369,7 +369,7 @@
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
                     <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v26.0 Gemini 排版湧現版</span>
+                        <span>v27.0 穩定旗艦版</span>
                     </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
@@ -491,7 +491,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v26.0</span>
+                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.0</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -676,7 +676,7 @@
                             <div class="flex justify-between items-center text-xs">
                                 <div>
                                     <span class="text-white font-medium text-sm">全公司今日累積消耗</span>
-                                    <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-11</span>
+                                    <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-12</span>
                                 </div>
                                 <div class="text-right">
                                     <span id="todayTokensBadge" class="font-mono text-emerald-400 font-bold text-base">0 Tokens</span>
@@ -784,7 +784,7 @@
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-clock-rotate-left text-xs text-neutral-400"></i>
+                            <i class="fa-solid fa-clock-rotate-left text-xs text-neutral-500"></i>
                             <span class="text-xs font-medium text-white tracking-wider">SOP 雲端修訂日誌 (Diff)</span>
                             <span id="updateLogsCountBadge" class="text-[10px] bg-neutral-800 text-neutral-300 px-2 py-0.2 rounded font-mono">共 0 筆</span>
                         </div>
@@ -1008,17 +1008,20 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
-                version: "v26.0",
+                version: "v27.0",
                 date: "2026-09-12",
-                title: "Gemini 即時 Markdown 排版 ＆ 行級漸層湧現",
+                title: "Gemini 行級漸層湧現 ＆ 效能全面優化版",
                 summaryItems: [
-                    { type: "feat", text: "解決串流時整坨無排版、結束才跳動的痛點，吐字即時轉化 Markdown" },
-                    { type: "feat", text: "每一行生成時具備 Gemini 原生位移、淡入與柔焦漸層湧現質感" },
-                    { type: "fix", text: "全面修復圖片語法換行斷裂與空格問題" }
+                    { type: "feat", text: "即時解析 Markdown 結構，徹底消除串流無排版與結束劇烈跳動" },
+                    { type: "feat", text: "各段落與清單具備行級平滑淡入、位移與柔焦湧現動態" },
+                    { type: "fix", text: "修復語音輸入因 interimResults 導致的重複疊字 Bug" },
+                    { type: "fix", text: "視窗拖曳事件改為隨按隨掛載，消除閒置背景 CPU 損耗" },
+                    { type: "fix", text: "鎖定 Asia/Taipei 台灣時區，防止跨日歸檔受設備時鐘誤差干擾" }
                 ],
                 diffDetails: [
-                    { type: "fix", title: "消除串流無排版一坨字", oldVal: "串流期間使用純文字顯示，結束才解析 Markdown", newVal: "使用即時增量 Markdown 解析器，邊吐字邊保有精美標題與條列" },
-                    { type: "add", title: "行級平滑漸層湧現", oldVal: "生硬逐字跳出", newVal: "逐行帶有 translateY(6px) + 柔焦漸層過渡" }
+                    { type: "fix", title: "消除串流一坨無排版文字", oldVal: "純文字塞入，結束時才 marked.parse 重繪", newVal: "吐字全程保持 Markdown 結構化語意標籤與段落湧現" },
+                    { type: "fix", title: "語音辨識疊字修復", oldVal: "每派發一次 interim 結果就重複 append", newVal: "動態分割 stable 與 interim，輸入框不再跳針" },
+                    { type: "perf", title: "拖曳事件池解耦", oldVal: "14 組全局監聽器常駐", newVal: "pointerdown 觸發時掛載，pointerup 立即卸載" }
                 ]
             }
         ];
@@ -1027,6 +1030,7 @@
         let documentCatalog = [];
         let speechRecognitionInstance = null;
         let isRecordingVoice = false;
+        let speechBaseText = '';
 
         function initSpeechRecognition() {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1039,6 +1043,8 @@
 
             rec.onstart = function() {
                 isRecordingVoice = true;
+                const input = document.getElementById('userInput');
+                speechBaseText = input && input.value ? input.value.trim() + ' ' : '';
                 const micBtn = document.getElementById('micBtn');
                 const micIcon = document.getElementById('micBtnIcon');
                 if (micBtn) micBtn.classList.add('mic-active');
@@ -1046,14 +1052,18 @@
             };
 
             rec.onresult = function(event) {
-                let transcript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    transcript += event.results[i][0].transcript;
+                let finalTranscript = '';
+                let interimTranscript = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
                 }
                 const input = document.getElementById('userInput');
-                if (input && transcript) {
-                    const prev = input.value.trim();
-                    input.value = prev ? `${prev} ${transcript}` : transcript;
+                if (input) {
+                    input.value = speechBaseText + finalTranscript + interimTranscript;
                     input.style.height = 'auto';
                     input.style.height = Math.min(input.scrollHeight, 110) + 'px';
                 }
@@ -1067,7 +1077,7 @@
         function toggleVoiceInput() {
             if (!speechRecognitionInstance) speechRecognitionInstance = initSpeechRecognition();
             if (!speechRecognitionInstance) {
-                alert('您的瀏覽器不支援直接語音轉文字（建議使用 Chrome, Edge 或 Safari 行動版，並請確認已允許麥克風權限）。');
+                alert('您的瀏覽器不支援語音辨識（建議使用 Chrome、Edge 或 Safari，並請確認已允許麥克風權限）。');
                 return;
             }
             if (isRecordingVoice) speechRecognitionInstance.stop();
@@ -1088,7 +1098,7 @@
         function sanitizeIncompleteMarkdown(rawText) {
             if (!rawText) return '';
             let text = rawText;
-            text = text.replace(/!\[[^\]]*\]?\([^\)]*$/, '');
+            text = text.replace(/!\[[^\]]*\]?\s*\([^\)]*$/, '');
             text = text.replace(/!\[[^\]]*$/, '');
             text = text.replace(/(?<!\!)\[[^\]]*\]?\([^\)]*$/, '');
             text = text.replace(/(?<!\!)\[[^\]]*$/, '');
@@ -1682,12 +1692,9 @@
             try { localStorage.setItem('shiye_codes_cache', JSON.stringify(codes)); } catch (e) {}
         }
 
+        // 🌟 鎖定台灣時區 (Asia/Taipei UTC+8)，杜絕時差誤判
         function getTodayDateString() {
-            const d = new Date();
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date());
         }
 
         function checkAndPerformDailyReset(cloudState) {
@@ -2278,12 +2285,9 @@
         }
 
         let globalZIndex = 100;
-        function bindWindowDragAndResize(winEl, headerEl, minW = 340, minH = 260, isGlobalModal = false) {
-            let isResizing = false;
-            let isDragging = false;
-            let currentHandle = '';
-            let startX, startY, startW, startH, startL, startT;
 
+        // 🌟 修正：隨按隨掛載，放開即卸載，消除常駐背景的 14 組全局拖曳監聽器
+        function bindWindowDragAndResize(winEl, headerEl, minW = 340, minH = 260, isGlobalModal = false) {
             winEl.addEventListener('pointerdown', () => {
                 globalZIndex++;
                 winEl.style.zIndex = globalZIndex;
@@ -2291,21 +2295,22 @@
                 winEl.classList.add('active-window');
             });
 
-            const onStartResize = (e, handleType) => {
+            const onStartInteraction = (e, handleType = '') => {
                 if (window.innerWidth < 1024 && !isGlobalModal) return;
-                e.preventDefault();
-                e.stopPropagation();
-                isResizing = true;
-                currentHandle = handleType;
+                if (!handleType && (e.target.closest('button') || e.target.classList.contains('resize-handle'))) return;
 
+                e.preventDefault();
+                const isResize = Boolean(handleType);
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = winEl.getBoundingClientRect();
 
-                startX = clientX; startY = clientY;
-                startW = rect.width; startH = rect.height;
-                startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
-                startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
+                const startX = clientX;
+                const startY = clientY;
+                const startW = rect.width;
+                const startH = rect.height;
+                const startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
+                const startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
 
                 winEl.classList.add('custom-resized');
                 winEl.style.left = startL + 'px'; winEl.style.top = startT + 'px';
@@ -2313,94 +2318,66 @@
                 winEl.style.right = 'auto'; winEl.style.bottom = 'auto'; winEl.style.transform = 'none';
 
                 document.body.style.userSelect = 'none';
-                document.body.style.cursor = window.getComputedStyle(e.target).cursor;
+
+                const onMove = (moveEvt) => {
+                    const curX = moveEvt.touches ? moveEvt.touches[0].clientX : moveEvt.clientX;
+                    const curY = moveEvt.touches ? moveEvt.touches[0].clientY : moveEvt.clientY;
+                    const dx = curX - startX;
+                    const dy = curY - startY;
+
+                    const parent = isGlobalModal ? document.body : (winEl.parentElement || document.getElementById('adminDesktop'));
+                    const containerW = parent.clientWidth;
+                    const containerH = parent.clientHeight;
+                    const limitMinW = Math.min(minW, containerW - 20);
+                    const limitMinH = Math.min(minH, containerH - 30);
+                    const maxW = containerW - 10;
+                    const maxH = containerH - 10;
+
+                    if (!isResize) {
+                        let newL = Math.max(0, Math.min(containerW - startW, startL + dx));
+                        let newT = Math.max(0, Math.min(containerH - startH, startT + dy));
+                        winEl.style.left = newL + 'px'; winEl.style.top = newT + 'px';
+                    } else {
+                        let newW = startW, newH = startH, newL = startL, newT = startT;
+                        if (handleType.includes('r')) newW = Math.min(maxW - startL, Math.max(limitMinW, startW + dx));
+                        if (handleType.includes('b')) newH = Math.min(maxH - startT, Math.max(limitMinH, startH + dy));
+                        if (handleType.includes('l')) {
+                            const candW = startW - dx;
+                            if (candW >= limitMinW && (startL + dx) >= 0) { newW = candW; newL = startL + dx; }
+                        }
+                        if (handleType.includes('t')) {
+                            const candH = startH - dy;
+                            if (candH >= limitMinH && (startT + dy) >= 0) { newH = candH; newT = startT + dy; }
+                        }
+                        winEl.style.width = newW + 'px'; winEl.style.height = newH + 'px';
+                        winEl.style.left = newL + 'px'; winEl.style.top = newT + 'px';
+                    }
+                };
+
+                const onEnd = () => {
+                    window.removeEventListener('mousemove', onMove);
+                    window.removeEventListener('mouseup', onEnd);
+                    window.removeEventListener('touchmove', onMove);
+                    window.removeEventListener('touchend', onEnd);
+                    document.body.style.userSelect = '';
+                };
+
+                window.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onEnd);
+                window.addEventListener('touchmove', onMove, { passive: false });
+                window.addEventListener('touchend', onEnd);
             };
 
             winEl.querySelectorAll('.resize-handle').forEach(el => {
                 const handleType = el.getAttribute('data-handle');
-                el.addEventListener('mousedown', (e) => onStartResize(e, handleType));
-                el.addEventListener('touchstart', (e) => onStartResize(e, handleType), { passive: false });
+                el.addEventListener('mousedown', (e) => onStartInteraction(e, handleType));
+                el.addEventListener('touchstart', (e) => onStartInteraction(e, handleType), { passive: false });
             });
 
-            const onStartDrag = (e) => {
-                if (window.innerWidth < 1024 && !isGlobalModal) return;
-                if (e.target.closest('button') || e.target.classList.contains('resize-handle')) return;
-                isDragging = true;
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                const rect = winEl.getBoundingClientRect();
-
-                startX = clientX; startY = clientY;
-                startW = rect.width; startH = rect.height;
-                startL = isGlobalModal ? rect.left : (rect.left - (winEl.parentElement?.getBoundingClientRect().left || 0));
-                startT = isGlobalModal ? rect.top : (rect.top - (winEl.parentElement?.getBoundingClientRect().top || 0));
-
-                winEl.classList.add('custom-resized');
-                winEl.style.left = startL + 'px'; winEl.style.top = startT + 'px';
-                winEl.style.width = startW + 'px'; winEl.style.height = startH + 'px';
-                winEl.style.right = 'auto'; winEl.style.bottom = 'auto'; winEl.style.transform = 'none';
-
-                document.body.style.userSelect = 'none';
-            };
-
             if (headerEl) {
-                headerEl.addEventListener('mousedown', onStartDrag);
-                headerEl.addEventListener('touchstart', onStartDrag, { passive: false });
+                headerEl.addEventListener('mousedown', (e) => onStartInteraction(e, ''));
+                headerEl.addEventListener('touchstart', (e) => onStartInteraction(e, ''), { passive: false });
             }
-
-            const onMove = (e) => {
-                if (!isResizing && !isDragging) return;
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                const dx = clientX - startX;
-                const dy = clientY - startY;
-
-                const parent = isGlobalModal ? document.body : (winEl.parentElement || document.getElementById('adminDesktop'));
-                const containerW = parent.clientWidth;
-                const containerH = parent.clientHeight;
-
-                const limitMinW = Math.min(minW, containerW - 20);
-                const limitMinH = Math.min(minH, containerH - 30);
-                const maxW = containerW - 10;
-                const maxH = containerH - 10;
-
-                if (isDragging) {
-                    let newL = Math.max(0, Math.min(containerW - startW, startL + dx));
-                    let newT = Math.max(0, Math.min(containerH - startH, startT + dy));
-                    winEl.style.left = newL + 'px'; winEl.style.top = newT + 'px';
-                    return;
-                }
-
-                if (isResizing) {
-                    let newW = startW, newH = startH, newL = startL, newT = startT;
-                    if (currentHandle.includes('r')) newW = Math.min(maxW - startL, Math.max(limitMinW, startW + dx));
-                    if (currentHandle.includes('b')) newH = Math.min(maxH - startT, Math.max(limitMinH, startH + dy));
-                    if (currentHandle.includes('l')) {
-                        const candW = startW - dx;
-                        if (candW >= limitMinW && (startL + dx) >= 0) { newW = candW; newL = startL + dx; }
-                    }
-                    if (currentHandle.includes('t')) {
-                        const candH = startH - dy;
-                        if (candH >= limitMinH && (startT + dy) >= 0) { newH = candH; newT = startT + dy; }
-                    }
-
-                    winEl.style.width = newW + 'px'; winEl.style.height = newH + 'px';
-                    winEl.style.left = newL + 'px'; winEl.style.top = newT + 'px';
-                }
-            };
-
-            const onEnd = () => {
-                if (isResizing || isDragging) {
-                    isResizing = false; isDragging = false;
-                    document.body.style.userSelect = '';
-                    document.body.style.cursor = '';
-                }
-            };
-
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', onEnd);
-            window.addEventListener('touchmove', onMove, { passive: false });
-            window.addEventListener('touchend', onEnd);
         }
 
         const ADMIN_WIN_CONFIG = {
@@ -2920,7 +2897,7 @@
                     `;
                 } else {
                     locationBadgeHtml = `
-                        <span class="text-[10px] bg-neutral-800 text-amber-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
+                        <span class="text-[10px] bg-neutral-800 text-amber-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
                             ➕ 文末安全增補
                         </span>
                     `;
@@ -3736,7 +3713,6 @@ ${sopContent}
                                         const delta = parsed.choices?.[0]?.delta?.content || '';
                                         if (delta) {
                                             accumulatedReply += delta;
-                                            // 🌟 即時驅動 Gemini 行級漸層 Markdown 渲染
                                             liveMsgElements.updateProgress(accumulatedReply);
                                         }
                                     } catch (err) {}
@@ -3905,227 +3881,4 @@ ${sopContent}
             };
         }
 
-        /**
-         * 🌟 核心升級：Gemini 即時 Markdown 排版 ＋ 行級漸層湧現動效
-         */
-        function createLiveAssistantBubble() {
-            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            const html = `
-                <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
-                    <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
-                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
-                        <div id="${msgId}_content" class="markdown-body break-words selectable-text streaming-live">
-                            <span class="gemini-cursor"></span>
-                        </div>
-                        <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const contentEl = document.getElementById(`${msgId}_content`);
-            let lastRenderedText = '';
-
-            return {
-                msgId: msgId,
-                wrapper: document.getElementById(`${msgId}_wrapper`),
-                content: contentEl,
-                footer: document.getElementById(`${msgId}_footer`),
-                updateProgress: (rawText) => {
-                    if (!contentEl) return;
-                    let cleanText = cleanGuardrailArtifacts(rawText);
-                    cleanText = cleanText.replace(/```(?:sop_proposal|json)?[\s\S]*$/, '').replace(/\{[\s\S]*?"topic"[\s\S]*$/, '').trim();
-
-                    if (cleanText === lastRenderedText) return;
-                    lastRenderedText = cleanText;
-
-                    const safeText = sanitizeIncompleteMarkdown(cleanText);
-                    // 🌟 核心修復：吐字時即時使用 marked 解析為帶有標題與結構的 HTML，並在末端銜接游標
-                    contentEl.innerHTML = renderMarkdownPure(safeText) + '<span class="gemini-cursor"></span>';
-
-                    const distanceFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
-                    if (distanceFromBottom < 260) {
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
-                    }
-                }
-            };
-        }
-
-        function finalizeLiveBubble(elements, fullText, relatedQuestion, meta, attachedImgs = []) {
-            if (!elements || !elements.content) return;
-
-            const msgId = elements.msgId;
-            window.tempMsgStore[msgId] = { q: relatedQuestion, a: fullText, imgs: attachedImgs };
-
-            // 串流結束，移除串流遮罩，回歸穩定狀態
-            elements.content.classList.remove('streaming-live');
-
-            const { displayText, proposalJson } = robustProposalExtractor(fullText);
-            const parsed = renderMarkdownPure(displayText);
-            elements.content.innerHTML = parsed;
-
-            if (proposalJson && proposalJson.topic) {
-                window.tempProposalStore[msgId] = proposalJson;
-
-                const currentSop = localStorage.getItem('shiye_sop') || '';
-                const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
-                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((proposalJson.newText || '').trim());
-
-                let locBadgeHtml = '';
-                if (loc.found) {
-                    locBadgeHtml = `
-                        <div class="text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center justify-between">
-                            <span>📍 目標鎖定：第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行</span>
-                            <span class="text-neutral-500 text-[9px]">${isDelete ? '【即將整列抽除】' : '【即將原地替換】'}</span>
-                        </div>
-                    `;
-                } else {
-                    locBadgeHtml = `
-                        <div class="text-[10px] text-amber-400 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <span>➕ 查無匹配舊行（將於文末增補）</span>
-                        </div>
-                    `;
-                }
-
-                const proposalCardHtml = `
-                    <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border border-neutral-700 space-y-3 my-2 shadow-lg">
-                        <div class="flex items-center space-x-2 text-white text-xs font-semibold">
-                            <i class="fa-solid fa-file-pen text-neutral-400"></i>
-                            <span>SOP 修改/刪除/增補草稿確認</span>
-                        </div>
-
-                        ${locBadgeHtml}
-
-                        <div class="text-[11px] space-y-1 bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                            <p><strong class="text-white">• 項目：</strong><span class="text-neutral-300">${escapeHtml(proposalJson.topic)}</span></p>
-                            <p><strong class="text-neutral-400">• 原內容：</strong><span class="text-neutral-400 font-mono line-through">${escapeHtml(proposalJson.oldText)}</span></p>
-                            <p><strong class="${isDelete ? 'text-red-400 font-bold' : 'text-white'}">• ${isDelete ? '執行操作：' : '修訂/增補為：'}</strong><span class="${isDelete ? 'text-red-300 font-bold' : 'text-neutral-200'} font-mono font-medium">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(proposalJson.newText)}</span></p>
-                        </div>
-                        <div class="flex items-center space-x-2 pt-1 ui-no-select">
-                            <button onclick="submitSopProposal('${msgId}', this)" class="bg-white hover:bg-neutral-200 text-black text-xs px-3.5 py-1.5 rounded-xl font-medium transition shadow-md">
-                                確認送出審核
-                            </button>
-                            <button onclick="cancelSopProposal('${msgId}', this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs px-3 py-1.5 rounded-xl transition">
-                                取消
-                            </button>
-                        </div>
-                    </div>
-                `;
-                elements.content.insertAdjacentHTML('beforeend', proposalCardHtml);
-            }
-
-            if (elements.footer && meta) {
-                elements.footer.className = "flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select";
-                elements.footer.innerHTML = `
-                    <div class="flex items-center flex-wrap gap-1.5 font-mono">
-                        <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                            <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Auto Free')}
-                        </span>
-                        ${meta.tokens > 0 ? `
-                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                <i class="fa-solid fa-bolt text-[8px] text-neutral-400"></i> ${meta.tokens} Tokens
-                            </span>
-                        ` : ''}
-                        <span class="text-neutral-500 text-[9px]">
-                            <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
-                        </span>
-                    </div>
-                    <div class="flex items-center space-x-2.5">
-                        <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
-                            <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
-                        </button>
-                        <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
-                            <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
-                        </button>
-                        <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
-                            <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
-                        </button>
-                    </div>
-                `;
-            }
-
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function appendMessage(text, sender, isError = false, relatedQuestion = '', meta = null, attachedImgs = []) {
-            const isUser = sender === 'user';
-            const parsedContent = isUser ? escapeHtml(text) : renderMarkdownPure(text);
-
-            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            if (!isUser) {
-                window.tempMsgStore[msgId] = { q: relatedQuestion, a: text, imgs: attachedImgs };
-                const keys = Object.keys(window.tempMsgStore);
-                if (keys.length > 50) delete window.tempMsgStore[keys[0]];
-            }
-
-            let metaFooter = '';
-            if (!isUser && meta) {
-                metaFooter = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[10px] text-neutral-400 ui-no-select">
-                        <div class="flex items-center flex-wrap gap-1.5 font-mono">
-                            <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                <i class="fa-solid fa-microchip text-[8px] text-neutral-400"></i> ${escapeHtml(meta.model || 'Gemini')}
-                            </span>
-                            ${meta.tokens > 0 ? `
-                                <span class="bg-white/10 text-neutral-300 px-2 py-0.5 rounded text-[9px] flex items-center gap-1 border border-white/10">
-                                    <i class="fa-solid fa-bolt text-[8px] text-neutral-400"></i> ${meta.tokens} Tokens
-                                </span>
-                            ` : ''}
-                            <span class="text-neutral-500 text-[9px]">
-                                <i class="fa-regular fa-clock text-[8px]"></i> ${meta.time}s
-                            </span>
-                        </div>
-                        <div class="flex items-center space-x-2.5">
-                            <button onclick="retryQuestion('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="以此問題重新回答">
-                                <i class="fa-solid fa-arrows-rotate text-[9px]"></i> <span>重新回答</span>
-                            </button>
-                            <button onclick="copyAnswerText('${msgId}')" class="text-[10px] text-neutral-400 hover:text-white transition flex items-center space-x-1" title="複製此回答文字">
-                                <i class="fa-regular fa-copy text-[9px]"></i> <span>複製回答</span>
-                            </button>
-                            <button onclick="reportErrorLog('${msgId}')" class="text-[10px] text-neutral-400 hover:text-red-400 transition flex items-center space-x-1">
-                                <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span>回報錯誤</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            let imgsHtml = '';
-            if (attachedImgs && attachedImgs.length > 0) {
-                imgsHtml = `
-                    <div class="flex flex-wrap gap-2 mb-2">
-                        ${attachedImgs.map(img => `
-                            <div class="img-thumb-wrapper" data-src="${img.base64}" data-caption="${escapeHtml(img.name)}" style="margin:0;">
-                                <img src="${img.base64}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover">
-                                <div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[8px]"></i></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            const html = `
-                <div id="${msgId}_wrapper" class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
-                    <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
-                    <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] selectable-text">
-                        ${imgsHtml}
-                        <div class="${isUser ? 'whitespace-pre-wrap break-words user-bubble-text' : 'markdown-body break-words selectable-text'}">${parsedContent}</div>
-                        ${metaFooter}
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        userInput.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { 
-                e.preventDefault(); 
-                handleSend(); 
-            } 
-        });
-    </script>
-</body>
-</html>
+        // 🌟 核心引擎升級：Gemini 增量幀
