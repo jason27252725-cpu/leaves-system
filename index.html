@@ -92,53 +92,228 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* 🌟 Gemini 流光湧現引擎：穩定 DOM + 尾端光束 */
-        @keyframes geminiLineReveal {
-            0% { opacity: 0; transform: translateY(4px); filter: blur(2px); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        /* ✨ v27.7 Lovable-inspired Answer Motion Engine
+           動畫只作用在視覺層，不碰 AI 原始回覆字串與 Markdown 邏輯。 */
+        @keyframes answerBlockReveal {
+            0% { opacity: 0; transform: translate3d(0, 5px, 0); filter: blur(1.8px); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+        }
+        @keyframes answerAuraSweep {
+            0% { background-position: 0 0, 180% 50%; }
+            100% { background-position: 0 0, -180% 50%; }
+        }
+        @keyframes answerCaretPulse {
+            0%, 100% { opacity: .46; transform: scaleY(.72); }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+        @keyframes answerShellBreathe {
+            0%, 100% { box-shadow: 0 16px 42px rgba(0,0,0,.36), 0 0 0 rgba(192,132,252,0); }
+            50% { box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 0 24px rgba(192,132,252,.08); }
         }
 
-        .gemini-flow-static {
-            display: block;
+        .ai-answer-shell {
+            position: relative;
+            isolation: isolate;
+            border: 1px solid transparent;
+            background:
+                linear-gradient(rgba(20,20,20,.82), rgba(20,20,20,.82)) padding-box,
+                linear-gradient(105deg, rgba(255,255,255,.11), rgba(255,255,255,.055)) border-box;
+            background-size: 100% 100%, 260% 100%;
+            background-position: 0 0, 0 50%;
+            transition: box-shadow .28s ease, background-color .28s ease;
         }
-
-        .gemini-flow-block {
-            animation: geminiLineReveal 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+        .ai-answer-shell::after {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            filter: blur(18px);
+            transform: scale(.98);
+            background: linear-gradient(105deg, rgba(236,72,153,.5), rgba(168,85,247,.5), rgba(96,165,250,.45), rgba(249,115,22,.42));
+            transition: opacity .28s ease;
         }
+        .ai-answer-shell.is-streaming {
+            background:
+                linear-gradient(rgba(20,20,20,.82), rgba(20,20,20,.82)) padding-box,
+                linear-gradient(105deg, rgba(236,72,153,.82) 0%, rgba(168,85,247,.92) 28%, rgba(96,165,250,.84) 52%, rgba(249,115,22,.76) 76%, rgba(236,72,153,.82) 100%) border-box;
+            background-size: 100% 100%, 260% 100%;
+            animation: answerAuraSweep 3.2s linear infinite, answerShellBreathe 2.8s ease-in-out infinite;
+        }
+        .ai-answer-shell.is-streaming::after { opacity: .08; }
+        .ai-answer-shell.is-settled::after { opacity: 0; }
 
-        .gemini-flow-live {
-            display: block;
+        .answer-stream-static { display: block; }
+        .answer-stream-block {
+            animation: answerBlockReveal .28s cubic-bezier(.16,1,.3,1) both;
+            will-change: transform, opacity;
+        }
+        .answer-stream-live {
             white-space: pre-wrap;
             overflow-wrap: anywhere;
-            min-height: 1.2em;
-            background: linear-gradient(100deg, rgba(255,255,255,.72) 0%, rgba(96,165,250,.95) 35%, rgba(192,132,252,.95) 55%, rgba(255,255,255,.72) 75%, rgba(255,255,255,.72) 100%);
-            background-size: 220% 100%;
+            color: #e8e8e8;
+            text-wrap: pretty;
+        }
+        .answer-stream-caret {
+            display: none;
+            width: 5px;
+            height: 1.02em;
+            margin-left: 3px;
+            vertical-align: -.15em;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #f472b6 0%, #a78bfa 42%, #60a5fa 72%, #fb923c 100%);
+            box-shadow: 0 0 10px rgba(167,139,250,.52);
+            transform-origin: center;
+            animation: answerCaretPulse .82s ease-in-out infinite;
+        }
+        .ai-answer-shell.is-streaming .answer-stream-caret { display: inline-block; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ai-answer-shell, .ai-answer-shell::after,
+            .answer-stream-block, .answer-stream-caret {
+                animation: none !important;
+                transition: none !important;
+            }
+            .ai-answer-shell.is-streaming::after { opacity: .04; }
+        }
+
+        /* 🧠 Live Thinking Summary v27.4+；v27.5 版本中心；v27.6 全介面版本同步；v27.7 Answer Motion Engine */
+        @keyframes thinkingHaloPulse {
+            0%, 100% { opacity: .45; transform: scale(.96); }
+            50% { opacity: .9; transform: scale(1.04); }
+        }
+        @keyframes thinkingSpinner {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes thinkingStepIn {
+            0% { opacity: 0; transform: translateY(5px); filter: blur(2px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes thinkingShimmer {
+            0% { background-position: 180% 0; }
+            100% { background-position: -180% 0; }
+        }
+        .thinking-summary-card {
+            position: relative;
+            overflow: hidden;
+            min-width: min(440px, 76vw);
+            max-width: min(520px, 86vw);
+            background:
+                radial-gradient(circle at 12% 0%, rgba(96,165,250,.12), transparent 34%),
+                radial-gradient(circle at 92% 100%, rgba(52,211,153,.08), transparent 30%),
+                rgba(18,18,18,.88);
+            border: 1px solid rgba(255,255,255,.11);
+            box-shadow: 0 18px 50px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.04);
+        }
+        .thinking-summary-card::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            top: -74px;
+            left: -38px;
+            border-radius: 999px;
+            background: rgba(96,165,250,.18);
+            filter: blur(24px);
+            pointer-events: none;
+            animation: thinkingHaloPulse 2.2s ease-in-out infinite;
+        }
+        .thinking-title-gradient {
+            background: linear-gradient(100deg, #fff 0%, #93c5fd 40%, #c4b5fd 62%, #fff 100%);
+            background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: geminiTextBeam 1.9s linear infinite;
+            animation: thinkingShimmer 2.4s linear infinite;
         }
-
-        @keyframes geminiTextBeam {
-            0% { background-position: 120% 0; }
-            100% { background-position: -120% 0; }
+        .thinking-step {
+            display: grid;
+            grid-template-columns: 18px minmax(0, 1fr);
+            column-gap: 8px;
+            align-items: start;
+            opacity: .52;
+            transition: opacity .24s ease, transform .24s ease;
         }
-
-        .gemini-flowing-cursor {
-            display: inline-block;
+        .thinking-step[data-state="active"] {
+            opacity: 1;
+            transform: translateX(2px);
+            animation: thinkingStepIn .3s cubic-bezier(.16,1,.3,1) both;
+        }
+        .thinking-step[data-state="done"] { opacity: .72; }
+        .thinking-step-dot {
+            width: 16px;
+            height: 16px;
+            margin-top: 1px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a3a3a3;
+            font-size: 7px;
+            background: rgba(255,255,255,.035);
+        }
+        .thinking-step[data-state="active"] .thinking-step-dot {
+            border-color: rgba(96,165,250,.55);
+            background: rgba(96,165,250,.12);
+            box-shadow: 0 0 16px rgba(96,165,250,.18);
+        }
+        .thinking-step[data-state="active"] .thinking-step-dot::after {
+            content: '';
             width: 7px;
-            height: 1.05em;
-            margin-left: 3px;
-            vertical-align: -0.16em;
-            border-radius: 9999px;
-            background: linear-gradient(90deg, #60a5fa, #c084fc, #60a5fa);
-            background-size: 200% 100%;
-            animation: geminiBeamLight 1.4s infinite linear;
-            box-shadow: 0 0 10px rgba(96, 165, 250, 0.8), 0 0 18px rgba(192, 132, 252, 0.45);
+            height: 7px;
+            border-radius: 999px;
+            border: 1.5px solid rgba(147,197,253,.32);
+            border-top-color: #93c5fd;
+            animation: thinkingSpinner .8s linear infinite;
         }
-
+        .thinking-step[data-state="done"] .thinking-step-dot {
+            color: #6ee7b7;
+            border-color: rgba(52,211,153,.35);
+            background: rgba(52,211,153,.08);
+        }
+        .thinking-step[data-state="done"] .thinking-step-dot::before {
+            content: '✓';
+            font-size: 9px;
+            font-weight: 700;
+        }
+        .thinking-plan-chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 22px;
+            padding: 0 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(255,255,255,.035);
+            color: #d4d4d4;
+            font-size: 9px;
+            letter-spacing: .04em;
+            white-space: nowrap;
+        }
+        .thinking-progress-track {
+            height: 2px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(255,255,255,.06);
+        }
+        .thinking-progress-fill {
+            height: 100%;
+            width: 8%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, rgba(96,165,250,.95), rgba(196,181,253,.95), rgba(52,211,153,.95));
+            box-shadow: 0 0 12px rgba(96,165,250,.25);
+            transition: width .45s cubic-bezier(.16,1,.3,1);
+        }
+        @media (max-width: 640px) {
+            .thinking-summary-card { min-width: 0; max-width: 86vw; }
+        }
         @media (prefers-reduced-motion: reduce) {
-            .gemini-flow-block, .gemini-flow-live, .gemini-flowing-cursor { animation: none !important; }
+            .thinking-summary-card::before, .thinking-title-gradient,
+            .thinking-step[data-state="active"], .thinking-step[data-state="active"] .thinking-step-dot::after {
+                animation: none !important;
+            }
         }
 
         #aiFloatingTriggerWrapper { position: fixed; z-index: 30; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -232,24 +407,193 @@
         }
         .markdown-body p, .markdown-body li, .user-bubble-text { font-weight: var(--ui-body-weight) !important; }
 
+        /* v27.7 回答內容排版：更清楚的閱讀節奏、圖片卡與防破版表格 */
+        .markdown-body {
+            color: #e7e7e7;
+            letter-spacing: .005em;
+            max-width: 100%;
+        }
+        .markdown-body > :first-child { margin-top: 0 !important; }
+        .markdown-body > :last-child { margin-bottom: 0 !important; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+            color: #fff;
+            line-height: 1.35;
+            letter-spacing: -.012em;
+            margin: 1rem 0 .42rem;
+        }
+        .markdown-body h1 { font-size: 1.08em; }
+        .markdown-body h2 { font-size: 1.04em; }
+        .markdown-body h3, .markdown-body h4 { font-size: 1em; }
+        .markdown-body p { margin: 0 0 .68rem; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body ul, .markdown-body ol {
+            padding-left: 1.22rem;
+            margin: .42rem 0 .72rem;
+        }
+        .markdown-body li { margin: .22rem 0; padding-left: .1rem; }
+        .markdown-body li::marker { color: rgba(255,255,255,.48); }
+        .markdown-body blockquote {
+            margin: .72rem 0;
+            padding: .58rem .78rem;
+            border-left: 2px solid rgba(167,139,250,.62);
+            background: rgba(255,255,255,.035);
+            border-radius: 0 .65rem .65rem 0;
+            color: #d4d4d4;
+        }
+        .markdown-body hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255,255,255,.09);
+            margin: .9rem 0;
+        }
+        .markdown-body code {
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.06);
+            padding: .12rem .34rem;
+            border-radius: .35rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: .82em;
+            color: #f3f4f6;
+            overflow-wrap: anywhere;
+        }
+        .markdown-body pre {
+            background: rgba(0,0,0,.54);
+            border: 1px solid rgba(255,255,255,.11);
+            border-radius: .85rem;
+            padding: .78rem .9rem;
+            margin: .72rem 0;
+            overflow-x: auto;
+            max-width: 100%;
+            overscroll-behavior-inline: contain;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            color: #e5e7eb;
+            font-size: .78rem;
+            line-height: 1.55;
+            overflow-wrap: normal;
+            word-break: normal;
+        }
+        .answer-table-scroll {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            margin: .72rem 0;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: .8rem;
+            overscroll-behavior-inline: contain;
+        }
+        .markdown-body table {
+            width: 100%;
+            min-width: 420px;
+            border-collapse: collapse;
+            font-size: .78rem;
+            margin: 0;
+        }
+        .markdown-body th, .markdown-body td {
+            border-bottom: 1px solid rgba(255,255,255,.09);
+            padding: .52rem .62rem;
+            text-align: left;
+            vertical-align: top;
+            word-break: normal;
+        }
+        .markdown-body th {
+            background: rgba(255,255,255,.07);
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .markdown-body tr:last-child td { border-bottom: 0; }
+        .markdown-body tr:nth-child(even) { background: rgba(255,255,255,.018); }
+
         .img-thumb-wrapper {
-            position: relative; display: inline-block; margin: 0.6rem 0; border-radius: 0.85rem; overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer; vertical-align: middle;
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            width: min(252px, 100%);
+            margin: .46rem .46rem .64rem 0;
+            border-radius: .95rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.13);
+            background: rgba(255,255,255,.045);
+            box-shadow: 0 10px 26px rgba(0,0,0,.28);
+            transition: transform .22s cubic-bezier(.16,1,.3,1), border-color .22s ease, box-shadow .22s ease;
+            cursor: pointer;
+            vertical-align: top;
+            text-decoration: none !important;
+            isolation: isolate;
         }
         .img-thumb-wrapper:hover {
-            transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.45);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(96, 165, 250, 0.3);
+            transform: translate3d(0,-2px,0);
+            border-color: rgba(255,255,255,.3);
+            box-shadow: 0 14px 32px rgba(0,0,0,.38), 0 0 20px rgba(96,165,250,.09);
         }
-        .img-thumb-wrapper img { width: 220px; height: 140px; object-fit: cover; display: block; }
+        .img-thumb-wrapper:focus-visible {
+            outline: 2px solid rgba(147,197,253,.75);
+            outline-offset: 2px;
+        }
+        .answer-photo-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            background: #0b0b0b;
+        }
+        .img-thumb-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s ease;
+        }
+        .img-thumb-wrapper:hover img { transform: scale(1.025); }
+        .answer-photo-caption {
+            display: flex;
+            align-items: center;
+            gap: .42rem;
+            min-width: 0;
+            padding: .48rem .58rem .52rem;
+            background: rgba(14,14,14,.94);
+            color: #d4d4d4;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+        .answer-photo-caption i { color: #a3a3a3; font-size: 9px; flex: 0 0 auto; }
+        .answer-photo-caption span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         .img-thumb-badge {
-            position: absolute; bottom: 6px; right: 6px; background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 2px 7px; border-radius: 9999px; font-size: 10px; color: #fff;
-            display: flex; align-items: center; gap: 4px; pointer-events: none; transition: background 0.2s, color 0.2s;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            background: rgba(0,0,0,.68);
+            backdrop-filter: blur(9px);
+            -webkit-backdrop-filter: blur(9px);
+            border: 1px solid rgba(255,255,255,.18);
+            padding: 3px 7px;
+            border-radius: 9999px;
+            font-size: 9px;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
         }
-        .img-thumb-wrapper:hover .img-thumb-badge { background: rgba(255, 255, 255, 0.95); color: #000; }
+        .img-thumb-wrapper.is-image-error .answer-photo-media::after {
+            content: '圖片暫時無法載入';
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: #a3a3a3;
+            font-size: 10px;
+            background: #101010;
+        }
+        .img-thumb-wrapper.is-image-error img { opacity: 0; }
 
         #photoViewerWindow, #versionSummaryModal {
             position: fixed; z-index: 120; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
@@ -259,28 +603,108 @@
             transform: scale(0.94); transition: opacity 0.25s ease, transform 0.25s ease;
         }
         #photoViewerWindow { width: 580px; height: 480px; max-width: 94vw; max-height: 90vh; background: rgba(16, 16, 16, 0.95); }
-        #versionSummaryModal { width: 480px; height: 420px; max-width: 94vw; max-height: 85vh; background: rgba(18, 18, 18, 0.96); z-index: 140; }
-
+        #versionSummaryModal { width: 720px; height: 650px; max-width: 94vw; max-height: 88vh; background: rgba(12, 12, 12, 0.97); z-index: 140; }
         #photoViewerWindow.pop-active, #versionSummaryModal.pop-active { opacity: 1; pointer-events: auto; transform: scale(1); }
 
-        .markdown-body a { color: #60a5fa; text-decoration: none; border-bottom: 1px dashed rgba(96, 165, 250, 0.6); padding-bottom: 1px; transition: all 0.2s; }
-        .markdown-body a:hover { color: #93c5fd; border-bottom-style: solid; }
+        .markdown-body a { color: #7db7ff; text-decoration: none; border-bottom: 1px dashed rgba(125,183,255,.46); padding-bottom: 1px; transition: color .2s, border-color .2s; }
+        .markdown-body a:hover { color: #a7ccff; border-bottom-style: solid; }
         .markdown-body a.doc-download-btn {
-            display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.45rem 0.85rem; border-radius: 0.65rem; color: #fff; text-decoration: none; margin: 0.35rem 0; font-weight: 500; font-size: 0.75rem; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: .5rem; background: rgba(255,255,255,.065); border: 1px solid rgba(255,255,255,.14);
+            padding: .48rem .78rem; border-radius: .7rem; color: #fff; text-decoration: none; margin: .38rem .38rem .38rem 0; font-weight: 500; font-size: .75rem; transition: transform .2s, background .2s, border-color .2s;
         }
-        .markdown-body a.doc-download-btn:hover { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
-        .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
-        .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
-        .markdown-body p { margin-bottom: 0.55rem; }
-        .markdown-body p:last-child { margin-bottom: 0; }
-        .markdown-body code { background: rgba(255, 255, 255, 0.12); padding: 0.15rem 0.35rem; border-radius: 0.3rem; font-family: monospace; font-size: 0.75rem; color: #f3f4f6; }
-        .markdown-body pre { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0.75rem; padding: 0.75rem 1rem; margin: 0.6rem 0; overflow-x: auto; max-width: 100%; }
-        .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 0.75rem; line-height: 1.5; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.75rem; display: table; }
-        .markdown-body th, .markdown-body td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.4rem 0.6rem; text-align: left; }
-        .markdown-body th { background: rgba(255, 255, 255, 0.1); color: #fff; font-weight: 600; }
-        .markdown-body tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+        .markdown-body a.doc-download-btn:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); transform: translateY(-1px); }
+
+        @media (max-width: 560px) {
+            .img-thumb-wrapper { width: 100%; margin-right: 0; }
+            .markdown-body table { min-width: 360px; }
+        }
+
+
+        /* 🧾 v27.7 Version Center / Public Simple Log + Admin Detailed Timeline */
+        .release-version-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(10,10,10,.72);
+            color: rgba(255,255,255,.82);
+            border-radius: 9999px;
+            padding: .32rem .68rem;
+            font-size: 9px;
+            line-height: 1;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            letter-spacing: .04em;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 8px 24px rgba(0,0,0,.22);
+        }
+        .release-version-chip .release-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 9px rgba(52,211,153,.65);
+        }
+        .auth-update-entry {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(255,255,255,.025);
+            border-radius: 14px;
+            padding: .7rem .8rem;
+            transition: .2s ease;
+        }
+        .auth-update-entry:hover {
+            border-color: rgba(96,165,250,.34);
+            background: rgba(96,165,250,.055);
+            transform: translateY(-1px);
+        }
+        .release-rail-btn {
+            width: 100%;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.018);
+            border-radius: 14px;
+            padding: .72rem .78rem;
+            transition: .18s ease;
+        }
+        .release-rail-btn:hover {
+            border-color: rgba(255,255,255,.18);
+            background: rgba(255,255,255,.04);
+        }
+        .release-rail-btn.is-active {
+            border-color: rgba(168,85,247,.38);
+            background: linear-gradient(135deg, rgba(88,28,135,.22), rgba(30,41,59,.28));
+            box-shadow: inset 3px 0 0 rgba(192,132,252,.85);
+        }
+        .release-type-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .28rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,.09);
+            padding: .22rem .48rem;
+            font-size: 9px;
+            line-height: 1;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .release-metric-card {
+            border: 1px solid rgba(255,255,255,.075);
+            background: rgba(255,255,255,.018);
+            border-radius: 16px;
+            padding: .78rem .9rem;
+        }
+        .release-detail-panel {
+            border: 1px solid rgba(255,255,255,.075);
+            background: rgba(5,5,5,.42);
+            border-radius: 18px;
+        }
+        .release-changelog-scroll { scrollbar-gutter: stable; }
+        @media (max-width: 720px) {
+            #versionSummaryModal { width: 94vw !important; height: 84vh !important; }
+            .release-desktop-grid { grid-template-columns: 1fr !important; }
+        }
 
         @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -306,7 +730,7 @@
         <div id="versionSummaryHeader" class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-neutral-900/90 cursor-move ui-no-select">
             <div class="flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新摘要 (v27.1)</span>
+                <span class="font-medium text-white text-xs tracking-wider" id="quickModalTitle">版本更新中心</span>
             </div>
             <button onclick="closeQuickUpdateModal()" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition">
                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -347,6 +771,13 @@
                 </div>
                 <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN</h2>
                 <p id="authSubtitle" class="text-xs text-neutral-300 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
+                <div class="flex justify-center pt-0.5">
+                    <button type="button" onclick="openQuickUpdateModal()" class="release-version-chip hover:border-blue-400/40 hover:text-white transition" title="查看目前版本與更新紀錄">
+                        <span class="release-dot"></span>
+                        <span class="text-neutral-500 tracking-[0.12em]">CURRENT</span>
+                        <strong id="authVersionBadgeText" class="text-neutral-200 font-semibold">v27.7</strong>
+                    </button>
+                </div>
             </div>
             <div class="space-y-4">
                 <input type="password" id="passcodeinput" placeholder="PASSCODE" class="w-full bg-neutral-950/70 border border-neutral-700/80 rounded-2xl px-4 py-3.5 text-xs text-center tracking-[0.3em] text-white placeholder-neutral-500 focus:outline-none focus:border-white transition shadow-inner">
@@ -354,11 +785,26 @@
                     ENTER SYSTEM
                 </button>
             </div>
-            <div class="flex items-center justify-between pt-1">
-                <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[11px] text-neutral-400 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
-                <button type="button" onclick="openQuickUpdateModal()" class="text-[10px] text-blue-400 hover:text-blue-300 transition flex items-center gap-1">
-                    <i class="fa-solid fa-bullhorn text-[9px]"></i><span>更新日誌</span>
+            <div class="space-y-3 pt-1">
+                <button type="button" onclick="openQuickUpdateModal()" class="auth-update-entry text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-400/20 text-blue-300 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-white tracking-wider">版本更新日誌</span>
+                                <span id="authVersionInlineText" class="text-[9px] text-blue-300 font-mono">v27.7</span>
+                            </div>
+                            <p class="text-[9px] text-neutral-500 mt-0.5 truncate">查看本次更新與歷史版本</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[9px] text-neutral-600 group-hover:text-blue-300 transition shrink-0"></i>
                 </button>
+                <div class="flex items-center justify-between px-0.5">
+                    <a href="#" onclick="switchAuthMode(event)" id="authSwitchBtn" class="text-[10px] text-neutral-500 hover:text-white transition tracking-wider">切換為管理員登入通道</a>
+                    <span id="authVersionDateText" class="text-[9px] text-neutral-600 font-mono">2026.09.12</span>
+                </div>
             </div>
         </div>
 
@@ -382,18 +828,19 @@
             <div class="space-y-1">
                 <div class="flex items-center space-x-2.5">
                     <h1 class="text-sm font-light tracking-[0.25em] text-white uppercase">LEAVES DESIGN</h1>
-                    <span class="text-[9px] bg-neutral-900 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>v27.1 Markdown 穩定修正版</span>
-                    </span>
                 </div>
                 <p class="text-[9px] text-neutral-400 tracking-widest uppercase hidden sm:block">INTERIOR ARCHITECTURE • 內部智慧空間規範系統</p>
             </div>
 
-            <div class="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-xs tracking-widest">
+            <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 text-xs tracking-widest">
+                <button type="button" onclick="openQuickUpdateModal()" id="appVersionBadge" class="text-[9px] bg-neutral-950/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 hover:border-emerald-500/40 px-2.5 py-1 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm transition" title="查看目前系統版本與更新日誌">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="appVersionBadgeText">v27.7</span>
+                    <span class="hidden sm:inline text-neutral-600">CURRENT</span>
+                </button>
                 <button onclick="openQuickUpdateModal()" class="text-[10px] bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition shadow-sm" title="查看最新版本更新與修復項目">
                     <i class="fa-solid fa-sparkles text-amber-400 text-[9px]"></i>
-                    <span>更新亮點</span>
+                    <span>更新日誌</span>
                 </button>
                 <span id="roleBadge" class="text-[9px] bg-white/10 text-neutral-300 border border-white/20 px-3 py-1 rounded-full font-light tracking-wider">MEMBER</span>
                 <a href="#admin" id="navAdmin" onclick="navigate('admin')" class="text-neutral-400 hover:text-white transition hidden-view text-[11px]">ADMIN</a>
@@ -506,7 +953,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.1</span>
+                    <span id="adminSidebarVersionBadge" class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.7</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -652,22 +1099,49 @@
 
                 <div id="win_systemUpdates" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
-                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-code-compare text-xs text-purple-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">系統版本演進紀錄 ＆ 新舊版本對比 (Changelog Diff)</span>
-                        </div>
-                        <button onclick="closeAdminWindow('systemUpdates')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
-                    </div>
-                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-950 p-3.5 rounded-2xl border border-neutral-800">
-                            <div>
-                                <h3 class="text-xs font-semibold text-white">版本對照查詢</h3>
-                                <p class="text-[10px] text-neutral-400">選擇想深入查看的系統演進版本紀錄</p>
+                    <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/95 flex justify-between items-center cursor-move">
+                        <div class="flex items-center space-x-2.5 min-w-0">
+                            <i class="fa-solid fa-clock-rotate-left text-xs text-purple-400"></i>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-medium text-white tracking-wider truncate">系統版本更新中心</span>
+                                    <span id="adminCurrentVersionBadge" class="text-[9px] font-mono text-purple-300 border border-purple-800/70 bg-purple-950/50 px-2 py-0.5 rounded-full">v27.7</span>
+                                </div>
+                                <p class="text-[9px] text-neutral-500 mt-0.5">完整版本歷程、功能新增、修復項目與技術差異</p>
                             </div>
-                            <select id="versionSelect" onchange="renderSystemUpdateDetails(this.value)" class="bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-white font-mono"></select>
                         </div>
-                        <div id="versionDetailContainer" class="space-y-4"></div>
+                        <button onclick="closeAdminWindow('systemUpdates')" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4 release-changelog-scroll">
+                        <div id="versionMetricsGrid" class="grid grid-cols-2 xl:grid-cols-4 gap-2.5"></div>
+
+                        <div class="flex flex-col md:flex-row gap-2.5 md:items-center md:justify-between bg-neutral-950/70 border border-neutral-800 rounded-2xl p-3">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <i class="fa-solid fa-filter text-[10px] text-neutral-500"></i>
+                                <span class="text-[10px] text-neutral-400">篩選歷史版本</span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                                <input id="versionSearchInput" oninput="renderSystemVersionRail()" type="text" placeholder="搜尋版本、標題或更新內容..." class="w-full md:w-64 bg-neutral-900 border border-neutral-700 text-neutral-200 placeholder-neutral-600 text-[10px] rounded-xl px-3 py-2 focus:outline-none focus:border-neutral-500">
+                                <select id="versionTypeFilter" onchange="renderSystemVersionRail()" class="bg-neutral-900 border border-neutral-700 text-neutral-300 text-[10px] rounded-xl px-3 py-2 focus:outline-none focus:border-neutral-500 font-mono">
+                                    <option value="all">全部類型</option>
+                                    <option value="feat">新增功能</option>
+                                    <option value="fix">問題修復</option>
+                                    <option value="perf">效能／體驗優化</option>
+                                    <option value="security">安全性</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="release-desktop-grid grid grid-cols-[230px_minmax(0,1fr)] gap-3 min-h-[390px]">
+                            <aside class="release-detail-panel p-2.5 overflow-y-auto max-h-[590px]">
+                                <div class="px-1.5 pb-2 mb-2 border-b border-neutral-800 flex items-center justify-between">
+                                    <span class="text-[10px] text-neutral-400 tracking-wider">版本歷程</span>
+                                    <span id="versionRailCount" class="text-[9px] text-neutral-600 font-mono">0</span>
+                                </div>
+                                <div id="versionHistoryRail" class="space-y-2"></div>
+                            </aside>
+                            <section id="versionDetailContainer" class="space-y-4 min-w-0"></section>
+                        </div>
                     </div>
                 </div>
 
@@ -1023,9 +1497,123 @@
 
         const SYSTEM_VERSION_HISTORY = [
             {
+                version: "v27.7",
+                date: "2026-09-13",
+                title: "AI 回答動態引擎、排版與圖片智慧調度全面優化",
+                modules: ["AI 對話", "串流渲染", "Markdown", "圖片調度", "回答排版"],
+                publicItems: [
+                    { type: "perf", text: "AI 回答文字顯示更流暢，回答中的動態效果也更自然。" },
+                    { type: "perf", text: "回答排版、表格與施工參考圖片顯示更好閱讀。" },
+                    { type: "feat", text: "AI 會更主動判斷何時搭配相關施工照片一起回答。" }
+                ],
+                summaryItems: [
+                    { type: "perf", text: "重構 AI 串流顯示層：OpenRouter SSE 原始回覆仍以 accumulatedReply 完整累積，動畫只負責畫面節奏，避免視覺效果反向干擾 AI 核心資料" },
+                    { type: "perf", text: "將逐 frame 固定 1~3 字改為依時間差與 backlog 自適應速率的 reveal queue，使 60Hz/120Hz 螢幕與不同網路速度下都維持接近一致的述說節奏" },
+                    { type: "fix", text: "修正串流清理流程使用 trim() 可能讓尾端空白與換行反覆消失／重現、導致 prefix 不連續與畫面跳動的風險" },
+                    { type: "fix", text: "修正舊版 Proposal 隱藏 regex 因語言標記為 optional，可能把一般 ``` 程式碼區塊誤判成 SOP proposal 並在串流期間整段隱藏的問題" },
+                    { type: "fix", text: "Markdown 串流改採安全區塊 commit：只有完整段落／清單群組／封閉 code fence 才交給 marked，活動尾端永遠使用 textContent，避免未閉合粗體、連結、表格或程式碼造成破版" },
+                    { type: "perf", text: "完成的 Markdown 區塊採 append-only 增量 DOM，不再每次邊界前進都重建已完成內容，降低長回答閃爍、捲動跳動與舊動畫重播" },
+                    { type: "perf", text: "加入 Lovable 參考的低干擾漸層描邊／呼吸光暈；只動畫視覺層，不改 width/height/內容節點，並支援 prefers-reduced-motion" },
+                    { type: "perf", text: "回答最終化前加入短暫 accelerated drain，讓畫面追上已收到的 token 後再切換最終 Markdown，降低串流結束瞬間整段跳出的突兀感" },
+                    { type: "perf", text: "全面調整 Markdown 閱讀層級：標題、段落、清單、引用、程式碼與表格間距統一；表格加入水平安全容器避免手機與窄聊天室破版" },
+                    { type: "perf", text: "施工圖片升級為帶標題的響應式圖片卡，支援 hover/focus、lazy decoding、載入失敗狀態與窄螢幕單欄顯示" },
+                    { type: "feat", text: "新增零額外 API 呼叫的本地圖片相關度評分，依問題關鍵字／工種語意從 photos.json 提供本題優先圖片候選，再交由主模型判斷是否插入 1~3 張真正有幫助的照片" },
+                    { type: "perf", text: "強化回答格式與圖文規則：簡單問題保持精簡，長回答建立清楚段落；圖片貼近相關工序說明，不硬塞、不重複、不捏造 URL" }
+                ],
+                diffDetails: [
+                    { type: "perf", title: "AI 邏輯與動畫完全解耦", oldVal: "SSE 到達速度與畫面顯示速度高度綁定，視覺層需要頻繁根據累積全文更新", newVal: "accumulatedReply 保留完整 canonical response；UI controller 只讀取副本並依自己的 RAF queue 顯示，動畫失效也不會改變 AI 最終答案" },
+                    { type: "perf", title: "Frame-rate independent reveal", oldVal: "每個 requestAnimationFrame 消費固定 1~3 字，120Hz 螢幕可能比 60Hz 顯示快近一倍", newVal: "依 performance.now() 計算 delta time 與 backlog，換算每秒字元數；不同刷新率仍維持穩定閱讀速度，落後時才漸進加速追趕" },
+                    { type: "fix", title: "串流前綴穩定性", oldVal: "cleanGuardrailArtifacts() 會 trim() 累積文字，SSE 尾端換行尚未接到下一段時會被刪除，下一 chunk 又重新出現", newVal: "新增 streaming 專用清理流程，不 trim 尾端；只有最終答案才做完整 trim，因此 targetText 維持單調成長，避免重置與重複字" },
+                    { type: "fix", title: "SOP Proposal 誤吃一般 code fence", oldVal: "```(?:sop_proposal|json)? 的語言部分可選，任何 ``` 都可能被當成 proposal 起點而被隱藏", newVal: "只隱藏明確 ```sop_proposal 或具 topic/newText 結構的 raw proposal；一般 ```js、```json、```html 程式碼照常串流顯示" },
+                    { type: "fix", title: "Markdown 破版防護", oldVal: "已完成區域邊界前進時仍可能重 parse 大段內容，未完成語法與表格狀態較難隔離", newVal: "只在空白段落邊界或封閉 code fence 後 commit；未完成尾端以 textContent 顯示，完整回答最後再一次使用 marked 產出正確最終結構" },
+                    { type: "perf", title: "Lovable 風格動態", oldVal: "活動尾端以整段漸層文字流光呈現，視覺感較強且與內容可讀性綁定", newVal: "文字保持正常實色；把彩色動態移到回答卡描邊與尾端 caret，保留品牌動勢又不影響文字、選取、Markdown 與可讀性" },
+                    { type: "perf", title: "最終化銜接", oldVal: "SSE 結束立即 stop RAF 並整段換成 final Markdown，若 UI queue 落後會突然補出大量文字", newVal: "先以 finishing 模式短暫加速 drain，最多等待受控時間，再原子切換 final Markdown；兼顧流暢度與不拖慢回答完成" },
+                    { type: "feat", title: "圖片智慧候選", oldVal: "主模型只看到完整相簿索引並自行搜尋，除明確流程題外不一定會主動搭配照片", newVal: "前端以施工工種詞彙＋文字重疊分數預選最多 5 張候選，寫入本題提示；主模型仍負責最後語意判斷，無額外 API 延遲與成本" },
+                    { type: "perf", title: "圖文回答版面", oldVal: "圖片為固定 220×140 縮圖，標題資訊弱；表格在窄視窗可能擠壓內容", newVal: "圖片改成自適應卡片＋caption；表格自動包入 overflow 容器；標題、清單、引用、code block 使用一致閱讀節奏" }
+                ]
+            },
+            {
+                version: "v27.6",
+                date: "2026-09-13",
+                title: "前台更新日誌簡化與全介面版本同步修正",
+                modules: ["版本管理", "前端介面", "身分驗證", "管理後台"],
+                publicItems: [
+                    { type: "perf", text: "前端與登入頁的更新日誌改成簡短、好讀的版本說明。" },
+                    { type: "fix", text: "修正管理後台仍顯示舊版本號的問題。" },
+                    { type: "perf", text: "所有主要介面的版本號現在會同步顯示最新版本。" }
+                ],
+                summaryItems: [
+                    { type: "perf", text: "將一般前端與身分驗證區的更新日誌改為獨立 publicItems 資料層，只呈現使用者看得懂的簡短更新摘要，不再直接暴露後台技術 Diff 與實作細節" },
+                    { type: "fix", text: "修正管理後台 WORKSPACE 側欄版本標籤仍硬編碼為 v27.1 的問題，新增 adminSidebarVersionBadge 並納入版本同步機制" },
+                    { type: "fix", text: "補強後台版本同步觸發時機：DOMContentLoaded、身分路由切換與開啟系統版本更新中心時都會重新同步目前版本" },
+                    { type: "perf", text: "前台快速更新日誌移除技術差異、統計卡與過度詳細的修正說明，保留目前版本、簡短更新項目與歷史版本瀏覽" },
+                    { type: "perf", text: "維持管理後台完整 Release Notes、版本搜尋、類型篩選、更新統計與 Before / After 技術差異，形成前台簡潔／後台詳細的雙層版本資訊架構" },
+                    { type: "fix", text: "統一由 SYSTEM_VERSION_HISTORY[0] 作為 CURRENT BUILD 單一來源，前端、驗證頁、後台側欄與後台版本中心不再各自維護版本字串" }
+                ],
+                diffDetails: [
+                    { type: "perf", title: "前台／後台更新資訊分層", oldVal: "前端、驗證頁與管理後台共用同一份詳細 summaryItems 與 diffDetails，導致一般使用者看到過多技術內容", newVal: "新增 publicItems 作為前端／驗證頁專用簡短摘要；summaryItems 與 diffDetails 僅在管理後台顯示完整技術內容" },
+                    { type: "fix", title: "管理後台側欄版本同步", oldVal: "WORKSPACE 標題右側版本文字直接寫死為 v27.1，因此即使版本中心已更新仍會顯示舊版", newVal: "加入 adminSidebarVersionBadge，並由 syncCurrentVersionUI() 自動套用 SYSTEM_VERSION_HISTORY[0].version" },
+                    { type: "fix", title: "版本同步觸發時機", oldVal: "主要依賴 initData() 完成後才執行版本同步，若雲端初始化較慢或先切換管理介面，可能暫時看到 fallback 舊值", newVal: "DOMContentLoaded 一開始、checkAuthAndRoute() 與 openAdminWindow('systemUpdates') 都會同步版本，降低任何介面出現不同版本號的機會" },
+                    { type: "perf", title: "一般使用者更新日誌", oldVal: "快速更新視窗包含更新統計、技術 Diff、Before / After 等較適合開發維護者的內容", newVal: "快速視窗只顯示版本、日期、簡短更新項目與歷史版本；技術細節集中留在管理後台" },
+                    { type: "perf", title: "後台版本中心保留完整度", oldVal: "若直接簡化共用資料，管理後台也會失去技術修復紀錄", newVal: "後台仍使用 summaryItems / diffDetails，因此搜尋、分類、統計與完整修正方式全部保留" }
+                ]
+            },
+            {
+                version: "v27.5",
+                date: "2026-09-12",
+                title: "版本識別與更新日誌中心全面升級",
+                modules: ["版本管理", "身分驗證", "前端介面", "管理後台"],
+                publicItems: [
+                    { type: "feat", text: "新增目前版本標籤，前端與登入頁都能直接看到版本號。" },
+                    { type: "feat", text: "更新日誌可以查看過去的版本紀錄。" },
+                    { type: "perf", text: "管理後台新增更完整的版本更新中心。" }
+                ],
+                summaryItems: [
+                    { type: "feat", text: "前端主介面右上版本標籤改為自動同步目前最新版本，不再依賴手動寫死舊版文字" },
+                    { type: "feat", text: "身分驗證區新增 CURRENT 版本號標籤、版本日期與獨立更新日誌入口" },
+                    { type: "perf", text: "前端／驗證區共用的更新日誌視窗升級為版本更新中心，可直接瀏覽最新版本與完整歷史版本" },
+                    { type: "perf", text: "管理後台版本日誌全面重製：加入版本時間軸、搜尋、類型篩選、統計摘要、詳細更新項目與技術 Diff" },
+                    { type: "fix", text: "修正前端仍顯示 v27.1 Markdown 穩定修正版的過期版本標籤，避免實際程式版本與 UI 顯示不一致" },
+                    { type: "perf", text: "建立單一版本來源：只要 SYSTEM_VERSION_HISTORY 第一筆是最新版，所有版本標籤與更新中心會同步更新" }
+                ],
+                diffDetails: [
+                    { type: "fix", title: "前端版本標籤同步", oldVal: "首頁版本文字硬編碼為 v27.1，後續程式已更新仍可能顯示舊版本", newVal: "由 SYSTEM_VERSION_HISTORY[0] 自動同步 appVersionBadge、驗證頁與後台版本標籤" },
+                    { type: "feat", title: "驗證頁版本資訊", oldVal: "身分驗證頁只有更新日誌文字按鈕，無法立即知道目前系統版本", newVal: "新增 CURRENT 版本 pill、版本日期，以及具有說明文字的更新日誌入口" },
+                    { type: "perf", title: "快速更新日誌", oldVal: "只顯示最新版本摘要，歷史版本必須進管理後台查看", newVal: "一般前端與驗證頁皆可在更新中心瀏覽 v27.1 起的完整歷史版本與技術差異" },
+                    { type: "perf", title: "管理員版本中心", oldVal: "單一下拉選單 + Diff 卡片，難以快速理解版本演進", newVal: "改為統計卡、搜尋／類型篩選、左側版本時間軸與右側完整 Release Notes / Diff Details" },
+                    { type: "perf", title: "未來版本維護", oldVal: "每次更新需分別修改多個 UI 位置的版本字串", newVal: "版本 UI 採單一資料源同步，新增新版本紀錄即可自動帶入主要版本標籤" }
+                ]
+            },
+            {
+                version: "v27.4",
+                date: "2026-09-12",
+                title: "AI 即時思考摘要與準備輸出視覺化",
+                modules: ["AI 對話", "OpenRouter", "串流體驗"],
+                publicItems: [
+                    { type: "feat", text: "新增 AI 回答前的處理進度顯示。" },
+                    { type: "perf", text: "可以看到 AI 正在理解問題、查找資料與準備回答。" }
+                ],
+                summaryItems: [
+                    { type: "perf", text: "新增 ChatGPT 風格的即時思考摘要卡，顯示理解問題、讀取內部資料、模型路由與準備輸出階段" },
+                    { type: "perf", text: "思考卡改以實際程式事件推進，不再只靠固定秒數輪播假進度" },
+                    { type: "perf", text: "依問題類型與是否夾帶現場照片，自動顯示本次回答預計包含的內容結構" },
+                    { type: "security", text: "不直接展示模型逐字內部推理；若模型回傳 reasoning 訊號，只顯示可解釋的處理狀態摘要" }
+                ],
+                diffDetails: [
+                    { type: "perf", title: "思考階段真實化", oldVal: "固定每 1.3 秒切換預設句子，與實際資料讀取／模型狀態沒有直接關聯", newVal: "由 fetch SOP、資源索引、OpenRouter 路由、模型推理、第一個回答 token 等真實事件驅動畫面" },
+                    { type: "perf", title: "準備輸出預覽", oldVal: "只顯示正在思考，無法知道 AI 接下來準備回答哪些面向", newVal: "依問題意圖顯示核心結論、工序、SOP 對照、照片判讀、驗收建議等預計輸出標籤" },
+                    { type: "security", title: "推理資訊邊界", oldVal: "若直接顯示 provider reasoning 可能暴露逐字內部推理與系統資訊", newVal: "只使用 reasoning 是否存在作為狀態訊號，不把 raw reasoning 內容渲染到畫面" }
+                ]
+            },
+            {
                 version: "v27.3",
                 date: "2026-09-12",
                 title: "登出／閒置鎖定登入按鈕狀態修復",
+                modules: ["身分驗證", "閒置鎖定", "登入 UI"],
+                publicItems: [
+                    { type: "fix", text: "修復登出後登入按鈕無法再次使用的問題。" },
+                    { type: "fix", text: "修復 20 分鐘自動登出後登入畫面沒有正常恢復。" }
+                ],
                 summaryItems: [
                     { type: "fix", text: "修正手動登出後登入按鈕仍停留在 VERIFYING... 且無法再次點擊的問題" },
                     { type: "fix", text: "修正閒置 20 分鐘自動鎖定後登入介面沒有完整恢復初始狀態的問題" },
@@ -1042,6 +1630,11 @@
                 version: "v27.2",
                 date: "2026-09-12",
                 title: "Gemini 流光串流渲染優化",
+                modules: ["AI 對話", "Markdown", "串流渲染"],
+                publicItems: [
+                    { type: "perf", text: "AI 回答文字顯示得更順暢。" },
+                    { type: "fix", text: "修復回答過程中的跳字、閃爍與版面不穩定。" }
+                ],
                 summaryItems: [
                     { type: "perf", text: "改為文字 buffer queue + requestAnimationFrame 漸進輸出，避免 SSE chunk 爆量跳字" },
                     { type: "fix", text: "避免串流期間每個封包重建整個 Markdown DOM，降低閃爍與動畫重置" },
@@ -1056,6 +1649,11 @@
                 version: "v27.1",
                 date: "2026-09-12",
                 title: "Markdown 圖片穩定修正 ＆ 串流尾端資料防遺失",
+                modules: ["Markdown", "圖片 Viewer", "SSE 串流", "安全過濾"],
+                publicItems: [
+                    { type: "fix", text: "修復 AI 回答中的圖片顯示問題。" },
+                    { type: "fix", text: "修復部分回答最後一段文字可能遺失的問題。" }
+                ],
                 summaryItems: [
                     { type: "fix", text: "移除會重寫完整圖片 Markdown 的 regex，改回 marked 原生解析，避免圖片網址被錯誤截斷" },
                     { type: "fix", text: "補強串流 SSE 最後一個未換行 chunk，避免回答最後一段文字靜默遺失" },
@@ -1270,10 +1868,123 @@
                 const safeTitle = escapeHtml(actualTitle || actualText || '施工工法照片');
                 const safeSrc = escapeHtml(cleanUrl);
 
-                return `<div class="img-thumb-wrapper" data-src="${safeSrc}" data-caption="${safeTitle}" title="點擊展開放大檢視"><img src="${safeSrc}" alt="${safeTitle}" loading="lazy"><div class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>檢視大圖</span></div></div>`;
+                return `<span class="img-thumb-wrapper answer-photo-card" role="button" tabindex="0" data-src="${safeSrc}" data-caption="${safeTitle}" title="點擊展開放大檢視"><span class="answer-photo-media"><img src="${safeSrc}" alt="${safeTitle}" loading="lazy" decoding="async"><span class="img-thumb-badge"><i class="fa-solid fa-magnifying-glass-plus text-[9px]"></i><span>放大</span></span></span><span class="answer-photo-caption"><i class="fa-regular fa-image"></i><span>${safeTitle}</span></span></span>`;
             };
 
             marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
+        }
+
+        function enhanceAssistantContent(container) {
+            if (!container) return;
+
+            // 表格永遠放在自己的水平捲動容器，避免聊天視窗被撐破。
+            container.querySelectorAll('table').forEach(table => {
+                if (table.parentElement?.classList.contains('answer-table-scroll')) return;
+                const scroller = document.createElement('div');
+                scroller.className = 'answer-table-scroll';
+                table.parentNode.insertBefore(scroller, table);
+                scroller.appendChild(table);
+            });
+
+            // 圖片卡：鍵盤可開啟、載入失敗有 graceful fallback。
+            container.querySelectorAll('.img-thumb-wrapper').forEach(card => {
+                if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+                if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+                const img = card.querySelector('img');
+                if (img && !img.dataset.answerBound) {
+                    img.dataset.answerBound = '1';
+                    img.decoding = 'async';
+                    img.addEventListener('error', () => card.classList.add('is-image-error'), { once: true });
+                }
+                if (!card.dataset.keyBound) {
+                    card.dataset.keyBound = '1';
+                    card.addEventListener('keydown', (event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        openPhotoViewer(card.dataset.src || img?.src || '', card.dataset.caption || img?.alt || '施工參考大圖');
+                    });
+                }
+            });
+        }
+
+        const PHOTO_TOPIC_GROUPS = [
+            ['放樣', '墨線', '基準線', '水平線', '丈量'],
+            ['水電', '給水', '排水', '電線', '配管', '插座', '弱電', '燈具'],
+            ['泥作', '砌磚', '粉光', '打底', '貼磚', '磁磚'],
+            ['防水', '試水', '淹水', '浴室', '廁所', '淋浴', '洩水坡'],
+            ['木作', '角材', '封板', '矽酸鈣板', '天花', '造型牆'],
+            ['油漆', '批土', '底漆', '面漆', '乳膠漆'],
+            ['地板', '木地板', 'SPC', '超耐磨', '人字拼'],
+            ['櫃體', '系統櫃', '廚具', '五金', '門片'],
+            ['保護', '成品保護', '養生', '防護'],
+            ['拆除', '打除', '清運'],
+            ['空調', '冷氣', '風管', '回風', '出風'],
+            ['驗收', '收邊', '矽利康', '填縫', '缺失']
+        ];
+
+        function normalizePhotoMatchText(value) {
+            return String(value || '')
+                .toLowerCase()
+                .normalize('NFKC')
+                .replace(/[\s\p{P}\p{S}_]+/gu, '');
+        }
+
+        function getCjkBigrams(value) {
+            const clean = normalizePhotoMatchText(value);
+            const grams = new Set();
+            for (let i = 0; i < clean.length - 1; i++) {
+                const pair = clean.slice(i, i + 2);
+                if (/^[\u3400-\u9fff]{2}$/.test(pair)) grams.add(pair);
+            }
+            return grams;
+        }
+
+        function selectRelevantPhotoCandidates(question, catalog = photoCatalog, limit = 5) {
+            if (!question || !Array.isArray(catalog) || catalog.length === 0) return [];
+            const q = normalizePhotoMatchText(question);
+            const qBigrams = getCjkBigrams(question);
+
+            const scored = catalog.map((item, index) => {
+                const descRaw = `${item?.desc || ''} ${item?.name || ''}`;
+                const desc = normalizePhotoMatchText(descRaw);
+                if (!desc) return null;
+
+                let score = 0;
+                if (desc.length >= 3 && q.includes(desc)) score += 18;
+                if (q.length >= 4 && desc.includes(q)) score += 16;
+
+                PHOTO_TOPIC_GROUPS.forEach(group => {
+                    const qHit = group.some(term => q.includes(normalizePhotoMatchText(term)));
+                    if (!qHit) return;
+                    const hits = group.filter(term => desc.includes(normalizePhotoMatchText(term))).length;
+                    if (hits) score += 7 + Math.min(8, hits * 2);
+                });
+
+                const dBigrams = getCjkBigrams(descRaw);
+                let overlap = 0;
+                qBigrams.forEach(g => { if (dBigrams.has(g)) overlap++; });
+                score += Math.min(8, overlap * .8);
+
+                // 「施工／工程／現場」太泛用，只給非常小的基礎分，避免亂塞圖片。
+                if (/(施工|工程|現場)/.test(q) && /(施工|工程|現場)/.test(desc)) score += .8;
+
+                return { item, score, index };
+            }).filter(Boolean)
+              .filter(x => x.score >= 4)
+              .sort((a,b) => b.score - a.score || a.index - b.index)
+              .slice(0, Math.max(1, limit));
+
+            return scored;
+        }
+
+        function buildRelevantPhotoCandidatesPrompt(question, candidates = []) {
+            if (!Array.isArray(candidates) || candidates.length === 0) {
+                return '本題目前沒有高相關度的優先照片候選；除非完整相簿索引中確實有能直接幫助理解的照片，否則不要硬塞圖片。';
+            }
+            return candidates.map(({ item }, idx) => {
+                const safeUrl = `${GITHUB_REPO_IMAGE_BASE}${encodeURIComponent(item.name)}`;
+                return `${idx + 1}. ${item.desc || item.name} | ![${item.desc || item.name}](${safeUrl})`;
+            }).join('\n');
         }
 
         function openPhotoViewer(src, caption) {
@@ -1301,42 +2012,155 @@
             if (win) win.classList.remove('pop-active');
         }
 
-        function openQuickUpdateModal() {
-            const modal = document.getElementById('versionSummaryModal');
-            const titleEl = document.getElementById('quickModalTitle');
-            const contentEl = document.getElementById('quickModalContent');
-            const latest = SYSTEM_VERSION_HISTORY[0];
+        const RELEASE_TYPE_META = {
+            feat: { label: '新增', icon: 'fa-circle-plus', badge: 'text-emerald-300 border-emerald-800/70 bg-emerald-950/45' },
+            fix: { label: '修復', icon: 'fa-wrench', badge: 'text-amber-300 border-amber-800/70 bg-amber-950/45' },
+            perf: { label: '優化', icon: 'fa-bolt', badge: 'text-blue-300 border-blue-800/70 bg-blue-950/45' },
+            security: { label: '安全', icon: 'fa-shield-halved', badge: 'text-red-300 border-red-800/70 bg-red-950/45' }
+        };
 
-            if (titleEl) titleEl.textContent = `版本更新摘要 (${latest.version})`;
-            if (contentEl) {
-                contentEl.innerHTML = `
-                    <div class="space-y-3">
-                        <div class="border-b border-white/10 pb-2">
-                            <h4 class="text-white font-medium text-xs">${latest.title}</h4>
-                            <span class="text-[10px] text-neutral-500 font-mono">發布日期：${latest.date}</span>
+        function getReleaseTypeMeta(type) {
+            return RELEASE_TYPE_META[type] || RELEASE_TYPE_META.perf;
+        }
+
+        function formatReleaseDate(dateStr) {
+            return String(dateStr || '').replaceAll('-', '.');
+        }
+
+        function getCurrentRelease() {
+            return SYSTEM_VERSION_HISTORY[0] || { version: 'v--', date: '', title: '' };
+        }
+
+        function syncCurrentVersionUI() {
+            const latest = getCurrentRelease();
+            const targets = {
+                appVersionBadgeText: latest.version,
+                authVersionBadgeText: latest.version,
+                authVersionInlineText: latest.version,
+                authVersionDateText: formatReleaseDate(latest.date),
+                adminCurrentVersionBadge: latest.version,
+                adminSidebarVersionBadge: latest.version
+            };
+            Object.entries(targets).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            });
+            const appBadge = document.getElementById('appVersionBadge');
+            if (appBadge) appBadge.title = `${latest.version} · ${latest.title}｜查看版本更新日誌`;
+        }
+
+        function buildReleaseSummaryList(release) {
+            return (release.summaryItems || []).map(item => {
+                const meta = getReleaseTypeMeta(item.type);
+                return `
+                    <div class="flex items-start gap-2.5 bg-neutral-950/55 border border-neutral-800/80 rounded-xl p-3">
+                        <span class="release-type-pill shrink-0 ${meta.badge}"><i class="fa-solid ${meta.icon} text-[8px]"></i>${meta.label}</span>
+                        <span class="text-[11px] text-neutral-300 leading-relaxed">${escapeHtml(item.text)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buildPublicReleaseSummaryList(release) {
+            const items = Array.isArray(release.publicItems) && release.publicItems.length
+                ? release.publicItems
+                : (release.summaryItems || []).slice(0, 3);
+            return items.map(item => {
+                const meta = getReleaseTypeMeta(item.type);
+                return `
+                    <div class="flex items-start gap-2.5 bg-neutral-950/55 border border-neutral-800/80 rounded-xl p-3">
+                        <span class="release-type-pill shrink-0 ${meta.badge}"><i class="fa-solid ${meta.icon} text-[8px]"></i>${meta.label}</span>
+                        <span class="text-[11px] text-neutral-300 leading-relaxed">${escapeHtml(item.text)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buildReleaseDiffList(release, compact = false) {
+            return (release.diffDetails || []).map(diff => {
+                const meta = getReleaseTypeMeta(diff.type);
+                return `
+                    <div class="bg-neutral-950/65 border border-neutral-800 rounded-xl ${compact ? 'p-3' : 'p-3.5'} space-y-2">
+                        <div class="flex items-center gap-2 text-white font-medium text-[11px]">
+                            <i class="fa-solid ${meta.icon} text-[9px]"></i>
+                            <span>${escapeHtml(diff.title)}</span>
                         </div>
-                        <div class="space-y-2">
-                            ${latest.summaryItems.map(item => {
-                                let badgeClass = item.type === 'feat' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : (item.type === 'fix' ? 'bg-amber-950/80 text-amber-400 border-amber-800' : 'bg-blue-950/80 text-blue-400 border-blue-800');
-                                let label = item.type === 'feat' ? '新增' : (item.type === 'fix' ? '修復' : '優化');
-                                return `
-                                    <div class="flex items-start space-x-2">
-                                        <span class="text-[9px] px-1.5 py-0.2 rounded border font-mono shrink-0 ${badgeClass}">${label}</span>
-                                        <span class="text-neutral-300 leading-relaxed">${escapeHtml(item.text)}</span>
-                                    </div>
-                                `;
-                            }).join('')}
+                        <div class="grid gap-1.5 font-mono text-[9px] leading-relaxed">
+                            <div class="text-neutral-500 bg-neutral-900/55 rounded-lg px-2.5 py-2"><span class="text-red-400/70">−</span> ${escapeHtml(diff.oldVal)}</div>
+                            <div class="text-emerald-300 bg-emerald-950/15 border border-emerald-900/25 rounded-lg px-2.5 py-2"><span class="text-emerald-400">＋</span> ${escapeHtml(diff.newVal)}</div>
                         </div>
                     </div>
                 `;
-            }
+            }).join('');
+        }
 
-            const w = Math.min(480, window.innerWidth * 0.92);
-            const h = Math.min(420, window.innerHeight * 0.82);
+        function renderQuickVersionContent(version) {
+            const contentEl = document.getElementById('quickModalContent');
+            if (!contentEl) return;
+            const latest = getCurrentRelease();
+            const selected = SYSTEM_VERSION_HISTORY.find(v => v.version === version) || latest;
+
+            contentEl.innerHTML = `
+                <div class="space-y-4">
+                    <section class="release-detail-panel p-4 bg-gradient-to-br from-neutral-950/90 to-blue-950/10">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="flex items-center flex-wrap gap-2 mb-2">
+                                    <span class="text-[10px] font-bold font-mono text-blue-300 border border-blue-800/70 bg-blue-950/45 px-2.5 py-1 rounded-full">${selected.version}</span>
+                                    ${selected.version === latest.version ? '<span class="text-[9px] font-mono text-emerald-300 border border-emerald-800/60 bg-emerald-950/40 px-2 py-1 rounded-full">CURRENT</span>' : ''}
+                                    <span class="text-[9px] text-neutral-500 font-mono">${formatReleaseDate(selected.date)}</span>
+                                </div>
+                                <h3 class="text-sm text-white font-medium leading-relaxed">${escapeHtml(selected.title)}</h3>
+                                <p class="text-[10px] text-neutral-500 mt-2 leading-relaxed">簡單看看這個版本更新了什麼。</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-[10px] text-neutral-400 tracking-[0.12em]">本次更新</h4>
+                            <span class="text-[9px] text-neutral-600">WHAT'S NEW</span>
+                        </div>
+                        <div class="space-y-2">${buildPublicReleaseSummaryList(selected)}</div>
+                    </section>
+
+                    <section class="space-y-2.5 pt-1">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-[10px] text-neutral-400 tracking-[0.12em]">歷史版本</h4>
+                            <span class="text-[9px] text-neutral-600">${SYSTEM_VERSION_HISTORY.length} RELEASES</span>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-2">
+                            ${SYSTEM_VERSION_HISTORY.map(v => `
+                                <button type="button" onclick="renderQuickVersionContent('${v.version}')" class="release-rail-btn ${v.version === selected.version ? 'is-active' : ''}">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="text-[10px] font-mono text-white">${v.version}</span>
+                                        <span class="text-[8px] text-neutral-600 font-mono">${formatReleaseDate(v.date)}</span>
+                                    </div>
+                                    <div class="text-[9px] text-neutral-400 mt-1.5 leading-relaxed line-clamp-2">${escapeHtml(v.title)}</div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </section>
+                </div>
+            `;
+            contentEl.scrollTop = 0;
+        }
+
+        function openQuickUpdateModal(version = null) {
+            const modal = document.getElementById('versionSummaryModal');
+            const titleEl = document.getElementById('quickModalTitle');
+            const latest = getCurrentRelease();
+            if (!modal) return;
+
+            if (titleEl) titleEl.textContent = `更新日誌 · ${latest.version}`;
+            renderQuickVersionContent(version || latest.version);
+
+            const w = Math.min(720, window.innerWidth * 0.94);
+            const h = Math.min(650, window.innerHeight * 0.88);
             modal.style.width = `${w}px`;
             modal.style.height = `${h}px`;
-            modal.style.left = `${(window.innerWidth - w) / 2}px`;
-            modal.style.top = `${(window.innerHeight - h) / 2}px`;
+            modal.style.left = `${Math.max(8, (window.innerWidth - w) / 2)}px`;
+            modal.style.top = `${Math.max(8, (window.innerHeight - h) / 2)}px`;
 
             modal.classList.add('pop-active');
             globalZIndex++;
@@ -2040,52 +2864,185 @@
             ];
         }
 
-        function initSystemUpdateHistory() {
-            const select = document.getElementById('versionSelect');
-            if (!select) return;
+        let currentSystemVersionView = null;
 
-            select.innerHTML = SYSTEM_VERSION_HISTORY.map(v => `
-                <option value="${v.version}">${v.version} - ${v.title} (${v.date})</option>
+        function getReleaseStats() {
+            const allItems = SYSTEM_VERSION_HISTORY.flatMap(v => v.summaryItems || []);
+            return {
+                releases: SYSTEM_VERSION_HISTORY.length,
+                changes: allItems.length,
+                fixes: allItems.filter(x => x.type === 'fix').length,
+                features: allItems.filter(x => x.type === 'feat').length,
+                improvements: allItems.filter(x => x.type === 'perf').length,
+                security: allItems.filter(x => x.type === 'security').length
+            };
+        }
+
+        function renderVersionMetrics() {
+            const grid = document.getElementById('versionMetricsGrid');
+            if (!grid) return;
+            const latest = getCurrentRelease();
+            const stats = getReleaseStats();
+            const cards = [
+                { label: '目前版本', value: latest.version, sub: latest.title, icon: 'fa-code-branch', tone: 'text-purple-300' },
+                { label: '已收錄版本', value: stats.releases, sub: `共 ${stats.changes} 筆更新項目`, icon: 'fa-clock-rotate-left', tone: 'text-blue-300' },
+                { label: '累計修復', value: stats.fixes, sub: `新增 ${stats.features} · 優化 ${stats.improvements}`, icon: 'fa-wrench', tone: 'text-amber-300' },
+                { label: '最後更新', value: formatReleaseDate(latest.date), sub: 'Release history', icon: 'fa-calendar-check', tone: 'text-emerald-300' }
+            ];
+            grid.innerHTML = cards.map(c => `
+                <div class="release-metric-card min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[9px] text-neutral-500">${c.label}</span>
+                        <i class="fa-solid ${c.icon} ${c.tone} text-[9px]"></i>
+                    </div>
+                    <div class="text-sm text-white font-mono mt-1.5 truncate">${escapeHtml(String(c.value))}</div>
+                    <div class="text-[8px] text-neutral-600 mt-1 truncate" title="${escapeHtml(c.sub)}">${escapeHtml(c.sub)}</div>
+                </div>
             `).join('');
+        }
 
-            renderSystemUpdateDetails(SYSTEM_VERSION_HISTORY[0].version);
+        function filterSystemReleases() {
+            const q = (document.getElementById('versionSearchInput')?.value || '').trim().toLowerCase();
+            const type = document.getElementById('versionTypeFilter')?.value || 'all';
+            return SYSTEM_VERSION_HISTORY.filter(v => {
+                const haystack = [
+                    v.version, v.title, v.date,
+                    ...(v.modules || []),
+                    ...(v.summaryItems || []).map(x => x.text),
+                    ...(v.diffDetails || []).flatMap(x => [x.title, x.oldVal, x.newVal])
+                ].join(' ').toLowerCase();
+                const matchesQ = !q || haystack.includes(q);
+                const matchesType = type === 'all' || (v.summaryItems || []).some(x => x.type === type) || (v.diffDetails || []).some(x => x.type === type);
+                return matchesQ && matchesType;
+            });
+        }
+
+        function renderSystemVersionRail() {
+            const rail = document.getElementById('versionHistoryRail');
+            const count = document.getElementById('versionRailCount');
+            if (!rail) return;
+            const releases = filterSystemReleases();
+            if (count) count.textContent = `${releases.length} / ${SYSTEM_VERSION_HISTORY.length}`;
+
+            if (!releases.length) {
+                rail.innerHTML = `
+                    <div class="text-center py-10 px-3 text-neutral-600">
+                        <i class="fa-solid fa-magnifying-glass text-lg mb-2"></i>
+                        <p class="text-[10px]">找不到符合條件的版本</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!releases.some(v => v.version === currentSystemVersionView)) {
+                currentSystemVersionView = releases[0].version;
+                renderSystemUpdateDetails(currentSystemVersionView);
+            }
+
+            rail.innerHTML = releases.map((v, idx) => {
+                const fixes = (v.summaryItems || []).filter(x => x.type === 'fix').length;
+                const additions = (v.summaryItems || []).filter(x => x.type === 'feat').length;
+                return `
+                    <button type="button" onclick="selectSystemVersion('${v.version}')" class="release-rail-btn ${v.version === currentSystemVersionView ? 'is-active' : ''}">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-[10px] text-white font-mono">${v.version}</span>
+                                ${idx === 0 && v.version === getCurrentRelease().version ? '<span class="text-[7px] text-emerald-300 border border-emerald-900/60 bg-emerald-950/30 px-1.5 py-0.5 rounded-full">CURRENT</span>' : ''}
+                            </div>
+                            <span class="text-[8px] text-neutral-600 font-mono shrink-0">${formatReleaseDate(v.date)}</span>
+                        </div>
+                        <p class="text-[9px] text-neutral-400 leading-relaxed mt-1.5 line-clamp-2">${escapeHtml(v.title)}</p>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="text-[8px] text-neutral-500 border border-neutral-800 px-1.5 py-0.5 rounded">${(v.summaryItems || []).length} 項</span>
+                            ${fixes ? `<span class="text-[8px] text-amber-400/80">${fixes} 修復</span>` : ''}
+                            ${additions ? `<span class="text-[8px] text-emerald-400/80">${additions} 新增</span>` : ''}
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectSystemVersion(version) {
+            currentSystemVersionView = version;
+            renderSystemVersionRail();
+            renderSystemUpdateDetails(version);
+        }
+
+        function initSystemUpdateHistory() {
+            syncCurrentVersionUI();
+            renderVersionMetrics();
+            currentSystemVersionView = currentSystemVersionView || getCurrentRelease().version;
+            renderSystemVersionRail();
+            renderSystemUpdateDetails(currentSystemVersionView);
         }
 
         function renderSystemUpdateDetails(ver) {
             const container = document.getElementById('versionDetailContainer');
             if (!container) return;
+            const target = SYSTEM_VERSION_HISTORY.find(v => v.version === ver) || getCurrentRelease();
+            currentSystemVersionView = target.version;
 
-            const target = SYSTEM_VERSION_HISTORY.find(v => v.version === ver) || SYSTEM_VERSION_HISTORY[0];
+            const grouped = ['feat', 'fix', 'perf', 'security'].map(type => ({
+                type,
+                count: (target.summaryItems || []).filter(x => x.type === type).length
+            })).filter(x => x.count > 0);
 
             container.innerHTML = `
-                <div class="glass-card p-4 rounded-2xl border border-neutral-800 space-y-2">
-                    <div class="flex justify-between items-center text-xs">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs font-bold font-mono text-purple-400 bg-purple-950/80 border border-purple-800 px-2 py-0.5 rounded">${target.version}</span>
-                            <span class="text-white font-medium">${escapeHtml(target.title)}</span>
-                        </div>
-                        <span class="text-[10px] text-neutral-500 font-mono">${target.date}</span>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="text-xs font-medium text-neutral-300 tracking-wider">新舊版本詳細行級對比清單 (Diff Details)</h4>
-                    <div class="space-y-2 text-xs">
-                        ${target.diffDetails.map(diff => {
-                            let icon = diff.type === 'add' ? 'fa-circle-plus text-emerald-400' : (diff.type === 'perf' ? 'fa-bolt text-amber-400' : (diff.type === 'security' ? 'fa-shield-halved text-red-400' : 'fa-wrench text-blue-400'));
-                            return `
-                                <div class="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 space-y-1.5">
-                                    <div class="flex items-center space-x-2 text-white font-medium text-[11px]">
-                                        <i class="fa-solid ${icon} text-[10px]"></i>
-                                        <span>${escapeHtml(diff.title)}</span>
-                                    </div>
-                                    <div class="bg-neutral-900/50 p-2.5 rounded-lg font-mono text-[10px] space-y-1">
-                                        <div class="text-neutral-500 line-through">- 舊版: ${escapeHtml(diff.oldVal)}</div>
-                                        <div class="text-emerald-400 font-medium">+ 新版: ${escapeHtml(diff.newVal)}</div>
-                                    </div>
+                <div class="release-detail-panel overflow-hidden">
+                    <div class="p-4 lg:p-5 border-b border-neutral-800 bg-gradient-to-br from-neutral-950/90 via-neutral-950/85 to-purple-950/10">
+                        <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                            <div class="min-w-0">
+                                <div class="flex items-center flex-wrap gap-2 mb-2.5">
+                                    <span class="text-xs font-bold font-mono text-purple-300 bg-purple-950/55 border border-purple-800/70 px-2.5 py-1 rounded-full">${target.version}</span>
+                                    ${target.version === getCurrentRelease().version ? '<span class="text-[8px] font-mono text-emerald-300 bg-emerald-950/35 border border-emerald-900/60 px-2 py-1 rounded-full">CURRENT BUILD</span>' : ''}
+                                    <span class="text-[9px] text-neutral-500 font-mono">${formatReleaseDate(target.date)}</span>
                                 </div>
-                            `;
-                        }).join('')}
+                                <h3 class="text-sm lg:text-base text-white font-medium leading-relaxed">${escapeHtml(target.title)}</h3>
+                                <div class="flex flex-wrap gap-1.5 mt-3">
+                                    ${(target.modules || []).map(m => `<span class="text-[9px] text-neutral-400 border border-neutral-800 bg-neutral-950/70 px-2 py-1 rounded-full">${escapeHtml(m)}</span>`).join('')}
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap xl:justify-end gap-1.5 shrink-0">
+                                ${grouped.map(g => {
+                                    const meta = getReleaseTypeMeta(g.type);
+                                    return `<span class="release-type-pill ${meta.badge}"><i class="fa-solid ${meta.icon} text-[8px]"></i>${meta.label} ${g.count}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 lg:p-5 space-y-5">
+                        <section class="space-y-2.5">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <h4 class="text-[11px] text-white font-medium tracking-wider">本版更新內容</h4>
+                                    <p class="text-[9px] text-neutral-600 mt-0.5">實際新增、修復與最佳化項目</p>
+                                </div>
+                                <span class="text-[9px] text-neutral-600 font-mono">${(target.summaryItems || []).length} ITEMS</span>
+                            </div>
+                            <div class="space-y-2">${buildReleaseSummaryList(target)}</div>
+                        </section>
+
+                        <section class="space-y-2.5">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <h4 class="text-[11px] text-white font-medium tracking-wider">技術差異與修正方式</h4>
+                                    <p class="text-[9px] text-neutral-600 mt-0.5">舊版行為與新版實作差異</p>
+                                </div>
+                                <span class="text-[9px] text-neutral-600 font-mono">DIFF DETAILS</span>
+                            </div>
+                            <div class="space-y-2">${buildReleaseDiffList(target)}</div>
+                        </section>
+
+                        <section class="rounded-xl border border-neutral-800 bg-neutral-950/55 p-3.5">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-400/20 text-purple-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-layer-group text-[10px]"></i></div>
+                                <div class="min-w-0">
+                                    <div class="text-[10px] text-white">影響模組</div>
+                                    <div class="flex flex-wrap gap-1.5 mt-2">${(target.modules || ['核心系統']).map(m => `<span class="text-[9px] text-neutral-400 border border-neutral-800 px-2 py-1 rounded-full">${escapeHtml(m)}</span>`).join('')}</div>
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             `;
@@ -2226,6 +3183,7 @@
         }
 
         async function checkAuthAndRoute() {
+            syncCurrentVersionUI();
             const authModal = document.getElementById('authModal');
             const authCard = document.getElementById('authCard');
             const appContainer = document.getElementById('appContainer');
@@ -2411,6 +3369,7 @@
 
         window.addEventListener('hashchange', checkAuthAndRoute);
         window.addEventListener('DOMContentLoaded', async () => { 
+            syncCurrentVersionUI();
             await initData(); 
             checkAuthAndRoute(); 
         });
@@ -2581,7 +3540,7 @@
         const ADMIN_WIN_CONFIG = {
             uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
             tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 720, defaultH: 560, defaultX: 30, defaultY: 20 },
-            systemUpdates: { id: 'win_systemUpdates', defaultW: 740, defaultH: 540, defaultX: 45, defaultY: 25 },
+            systemUpdates: { id: 'win_systemUpdates', defaultW: 980, defaultH: 680, defaultX: 32, defaultY: 22 },
             proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
             snapshots: { id: 'win_snapshots', defaultW: 620, defaultH: 450, defaultX: 80, defaultY: 80 },
@@ -2604,6 +3563,8 @@
         }
 
         function openAdminWindow(key) {
+            syncCurrentVersionUI();
+            if (key === 'systemUpdates') initSystemUpdateHistory();
             const conf = ADMIN_WIN_CONFIG[key];
             if (!conf) return;
             const winEl = document.getElementById(conf.id);
@@ -3750,10 +4711,18 @@
             currentAbortController = new AbortController();
 
             const startTime = performance.now();
-            const loadingTracker = appendThinkingLoading();
+            const loadingTracker = appendThinkingLoading(text, currentImgs);
 
             try {
+                loadingTracker.setStage('knowledge', '正在讀取拾葉內部 SOP 與最新雲端規範…');
                 const sopContent = await fetchSopFromGist();
+                loadingTracker.setStage('resources', `SOP 已載入；整理 ${photoCatalog.length || 0} 筆相簿與 ${documentCatalog.length || 0} 筆文件索引…`);
+
+                const relevantPhotoCandidates = selectRelevantPhotoCandidates(text, photoCatalog, 5);
+                if (relevantPhotoCandidates.length > 0) {
+                    loadingTracker.setStage('resources', `SOP 已載入；已找到 ${relevantPhotoCandidates.length} 張與本題較相關的施工照片，正在整理圖文參考…`);
+                }
+                const relevantPhotoCandidatesPrompt = buildRelevantPhotoCandidatesPrompt(text, relevantPhotoCandidates);
 
                 let photoCatalogPrompt = "目前內部相簿庫尚無資料。";
                 if (Array.isArray(photoCatalog) && photoCatalog.length > 0) {
@@ -3774,8 +4743,20 @@
                 const systemPrompt = `你現在是台灣室內設計品牌「拾葉設計 (LEAVES DESIGN)」的資深工務與設計總監級 AI 助手。
 
 【圖文調度最高準則（極度重要）】：
-- 當同仁詢問整體施工流程、階段工法（如：毛胚屋全流程、放樣工序、泥作防水、保護工程等），你【必須主動】調閱下方【內部相簿索引清單】中的相關照片！
-- 輸出照片與檔案時，請【直接複製】清單中的 Markdown 語法（例如：\`![現況丈量](https://raw.githubusercontent.com/.../images/現況丈量.png)\`）。絕對不要擅自更改網址。
+- 圖片的目的不是裝飾，而是降低施工內容的理解成本。只要照片能幫助辨識「工序、材料外觀、施工節點、正反例、完成狀態、驗收缺失」，請主動搭配 1～3 張最相關照片。
+- 整體施工流程、階段工法（如：毛胚屋全流程、放樣、水電、泥作防水、木作、油漆、保護工程等）優先使用圖片輔助；簡單制度問題、純文字 SOP 查詢或沒有高相關照片時不要硬塞圖片。
+- 優先從【本題優先圖片候選】挑選，再視需要查閱完整【內部相簿索引清單】。不可因候選排序而使用不相關照片。
+- 每張圖片要放在「它所對應的說明段落附近」，先說明為什麼要看，再放圖片；不要把所有圖片無脈絡堆在回答最後。
+- 同一張圖不要重複。一般回答最多 3 張；只有使用者明確要求完整圖集時才可超過。
+- 輸出照片與檔案時，請【直接複製】清單中的 Markdown 語法（例如：\`![現況丈量](https://raw.githubusercontent.com/.../images/現況丈量.png)\`）。絕對不要自行猜測、改寫或捏造網址。
+
+【回答排版與閱讀節奏】：
+- 先直接回答問題，再補充原因／步驟；簡單問題不要為了格式硬切成很多章節。
+- 長回答使用簡短小標題＋段落＋清單，段落之間留一個空白行，讓內容容易掃讀。
+- 單一清單盡量控制在 3～6 點；工序回答要按實際施工先後排序。
+- 只有真的需要比較尺寸、材料或方案時才使用 Markdown 表格；不要為了好看濫用表格。
+- 不要輸出 raw HTML。程式碼或結構化內容使用完整 fenced code block，必須成對關閉。
+- 圖片 Markdown 獨立成行，圖片前後各保留空行，避免與清單／表格黏在一起造成排版不穩。
 
 【重要準則與回覆約束】：
 1. 語言規範：你【必須且只能使用台灣繁體中文 (Traditional Chinese, zh-TW)】回答。嚴格禁止輸出簡體中文字、大陸用語或安全標籤。
@@ -3791,6 +4772,11 @@
   "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
 }
 \`\`\`
+
+【本題優先圖片候選（前端本地相關度預選，最終仍需由你判斷是否真的有幫助）】：
+---------------------
+${relevantPhotoCandidatesPrompt}
+---------------------
 
 【內部相簿索引清單】：
 ---------------------
@@ -3848,6 +4834,7 @@ ${sopContent}
                     currentAbortController.signal.addEventListener('abort', onParentAbort);
 
                     try {
+                        loadingTracker.setStage('routing', `正在連接 OpenRouter 智慧路由（節點嘗試 ${kIndex + 1}/${apiKeys.length}）…`);
                         const timeoutPromise = new Promise((_, reject) => {
                             timeoutTimerId = setTimeout(() => {
                                 attemptAbortController.abort();
@@ -3881,6 +4868,7 @@ ${sopContent}
                             let errJson = await res.json().catch(() => ({}));
                             const errMsg = errJson.error?.message || `HTTP ${res.status}`;
                             lastErrorMessage = errMsg;
+                            loadingTracker.setNotice(`目前節點忙碌：${errMsg}，正在切換下一組可用節點…`);
                             continue;
                         }
 
@@ -3888,10 +4876,10 @@ ${sopContent}
                         const decoder = new TextDecoder('utf-8');
                         let buffer = '';
 
-                        loadingTracker.stop();
-                        liveMsgElements = createLiveAssistantBubble();
+                        loadingTracker.setStage('reasoning', '雲端模型已接手，正在整理答案結構與回答順序…');
 
                         let isStreamDone = false;
+                        let firstContentReceived = false;
 
                         const processSseLine = (line) => {
                             const trimmed = line.trim();
@@ -3908,11 +4896,25 @@ ${sopContent}
                                 const parsed = JSON.parse(trimmed.substring(6));
                                 if (parsed.model && !detectedRealModel) detectedRealModel = parsed.model;
 
-                                const delta = parsed.choices?.[0]?.delta?.content || '';
+                                const choiceDelta = parsed.choices?.[0]?.delta || {};
+                                const reasoningSignal = choiceDelta.reasoning || choiceDelta.reasoning_details || null;
+                                if (reasoningSignal && !firstContentReceived) {
+                                    // 僅把 reasoning 當成「模型正在推理」的狀態訊號。
+                                    // 不將 raw reasoning 內容顯示在前端，避免暴露逐字內部推理或系統資訊。
+                                    loadingTracker.setStage('reasoning', '模型正在內部推理、交叉檢核 SOP 與準備回答架構…');
+                                }
+
+                                const delta = choiceDelta.content || '';
                                 if (typeof delta === 'string' && delta) {
+                                    if (!firstContentReceived) {
+                                        firstContentReceived = true;
+                                        loadingTracker.setStage('draft', '答案已組織完成，開始輸出內容…');
+                                        loadingTracker.finish();
+                                        liveMsgElements = createLiveAssistantBubble();
+                                    }
                                     accumulatedReply += delta;
                                     // 🌟 核心：通知差分流光渲染管線更新最新行
-                                    liveMsgElements.updateProgress(accumulatedReply);
+                                    if (liveMsgElements) liveMsgElements.updateProgress(accumulatedReply);
                                 }
                             } catch (err) {
                                 // 單一 SSE chunk 不完整時不要讓整個串流失敗；
@@ -3948,8 +4950,10 @@ ${sopContent}
                         if (!cleanedCheck && accumulatedReply.toLowerCase().includes('user safety')) {
                             accumulatedReply = '';
                             if (liveMsgElements && liveMsgElements.wrapper) {
+                                if (typeof liveMsgElements.stop === 'function') liveMsgElements.stop();
                                 liveMsgElements.wrapper.remove();
                             }
+                            loadingTracker.setNotice('此節點沒有產生可顯示內容，正在切換下一個節點…');
                             continue;
                         }
 
@@ -3959,6 +4963,7 @@ ${sopContent}
                         if (timeoutTimerId) clearTimeout(timeoutTimerId);
                         if (e.name === 'AbortError' || (currentAbortController && currentAbortController.signal.aborted)) break keyLoop;
                         lastErrorMessage = e.message;
+                        loadingTracker.setNotice(`連線暫時中斷：${e.message}，正在嘗試下一個可用節點…`);
                     } finally {
                         currentAbortController.signal.removeEventListener('abort', onParentAbort);
                         if (activeStreamReader) {
@@ -4010,6 +5015,11 @@ ${sopContent}
                         pushCodesToCloud(latestCodes).catch(() => {});
                     }
 
+                    if (liveMsgElements && typeof liveMsgElements.finish === 'function') {
+                        // 只等待很短的受控時間讓顯示 queue 追上；不改 AI 回覆內容，也不阻塞網路串流。
+                        await liveMsgElements.finish(accumulatedReply, 680);
+                    }
+
                     finalizeLiveBubble(liveMsgElements, accumulatedReply, text, {
                         model: isUserAborted ? `${finalModelName} (已手動中斷)` : finalModelName,
                         tokens: estimatedTokens,
@@ -4049,78 +5059,198 @@ ${sopContent}
             }
         }
 
-        function appendThinkingLoading() {
-            const id = 'loading_' + Date.now();
+        function buildThinkingPlan(question = '', imageCount = 0) {
+            const q = String(question || '').trim();
+            const normalized = q.toLowerCase();
+            const hasImages = Number(imageCount || 0) > 0;
+            const isSopEdit = /(sop|規範|知識庫).*(修改|修正|刪除|新增|增補|更新)|(?:修改|修正|刪除|新增|增補|更新).*(sop|規範|知識庫)/i.test(q);
+            const isProcess = /(流程|工序|施工|怎麼做|怎麼施作|做法|步驟|順序|驗收)/i.test(q);
+            const isCompare = /(比較|差別|差異|哪個|優缺點|vs\.?)/i.test(normalized);
+            const isTroubleshoot = /(問題|錯誤|異常|破圖|裂|漏水|滲水|不平|歪|失敗|修復|解決)/i.test(q);
+
+            let summary = '先釐清問題核心，再交叉比對內部資料並組織答案。';
+            let chips = ['核心結論', '依據', '執行步驟', '注意事項'];
+
+            if (hasImages) {
+                summary = `先判讀 ${imageCount} 張現場影像，再比對 SOP、施工風險與驗收重點。`;
+                chips = ['照片判讀', 'SOP 對照', '問題定位', '驗收建議'];
+            } else if (isSopEdit) {
+                summary = '先定位現行 SOP 原文，再整理差異與可套用的修訂草稿。';
+                chips = ['原文定位', '差異比對', '修訂草稿', '變更風險'];
+            } else if (isProcess) {
+                summary = '先確認工程因果與工序順序，再整理施工步驟、尺寸與交接風險。';
+                chips = ['施工順序', '尺寸公差', '工種交接', '驗收重點'];
+            } else if (isTroubleshoot) {
+                summary = '先拆解症狀與可能原因，再依優先級整理檢查與修復方式。';
+                chips = ['問題定位', '可能原因', '檢查順序', '修復建議'];
+            } else if (isCompare) {
+                summary = '先拆分比較條件，再整理差異、取捨與適用情境。';
+                chips = ['比較條件', '差異', '優缺點', '建議'];
+            }
+
+            const topic = q ? (q.length > 58 ? q.slice(0, 58) + '…' : q) : (hasImages ? '現場照片工法審查' : '本次提問');
+            return { summary, chips, topic };
+        }
+
+        function appendThinkingLoading(question = '', currentImgs = []) {
+            const id = 'loading_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+            const imageCount = Array.isArray(currentImgs) ? currentImgs.length : 0;
+            const plan = buildThinkingPlan(question, imageCount);
             const steps = [
-                "正在剖析施工工種與工序階段...",
-                "檢索內部知識庫與施工規範...",
-                "比對現場工程照片庫 (毛胚屋/放樣/防水)...",
-                "檢核驗收尺寸公差與跨工種防衝突預警...",
-                "正在生成圖文並茂指導教學..."
+                { key: 'understand', label: '理解問題', detail: '拆解需求、上下文與回答目標' },
+                { key: 'knowledge', label: '讀取內部資料', detail: '同步拾葉 SOP 與最新雲端規範' },
+                { key: 'resources', label: '整理參考資源', detail: imageCount > 0 ? `納入 ${imageCount} 張現場照片與內部索引` : '整理相簿、文件與可引用資料' },
+                { key: 'routing', label: '連接 AI 節點', detail: '選擇可用的 OpenRouter 模型節點' },
+                { key: 'reasoning', label: '推理與組織', detail: '交叉檢核資訊並整理回答結構' },
+                { key: 'draft', label: '準備輸出', detail: '完成答案架構，準備開始顯示內容' }
             ];
-            let currentStepIdx = 0;
+
+            const safeTopic = escapeHtml(plan.topic);
+            const safeSummary = escapeHtml(plan.summary);
+            const chipHtml = plan.chips.map(chip => `<span class="thinking-plan-chip">${escapeHtml(chip)}</span>`).join('');
+            const stepsHtml = steps.map((step, index) => `
+                <div id="${id}_step_${step.key}" class="thinking-step" data-state="${index === 0 ? 'active' : 'idle'}">
+                    <span class="thinking-step-dot" aria-hidden="true"></span>
+                    <div class="min-w-0">
+                        <div class="text-[10px] font-medium text-neutral-200 tracking-wide">${escapeHtml(step.label)}</div>
+                        <div id="${id}_detail_${step.key}" class="text-[9px] text-neutral-500 leading-relaxed mt-0.5">${escapeHtml(step.detail)}</div>
+                    </div>
+                </div>
+            `).join('');
 
             const html = `
                 <div id="${id}" class="flex items-start space-x-3 msg-animate ui-no-select">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">AI</div>
-                    <div class="glass-card p-4 rounded-2xl text-neutral-300 text-xs tracking-wider space-y-2.5 shadow-xl border border-neutral-700/80 max-w-[85%]">
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-wand-magic-sparkles text-blue-400 text-xs animate-spin"></i>
-                            <span id="${id}_text" class="font-medium text-white text-[11px] transition-opacity duration-300">${steps[0]}</span>
-                        </div>
-                        <div class="w-full bg-neutral-800/80 h-1 rounded-full overflow-hidden">
-                            <div id="${id}_bar" class="bg-gradient-to-r from-blue-400 to-emerald-400 h-full w-1/5 transition-all duration-700 ease-out"></div>
+                    <div class="thinking-summary-card p-4 rounded-2xl text-neutral-300 text-xs">
+                        <div class="relative z-[1]">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-blue-300 text-[10px]"></i>
+                                    <span class="thinking-title-gradient text-[11px] font-semibold tracking-[0.12em]">AI 正在思考</span>
+                                </div>
+                                <span id="${id}_time" class="text-[9px] font-mono text-neutral-500 shrink-0">0.0s</span>
+                            </div>
+
+                            <div class="mt-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2.5">
+                                <div class="text-[8px] uppercase tracking-[0.2em] text-neutral-600 mb-1">本次理解</div>
+                                <div class="text-[10px] text-neutral-300 leading-relaxed break-words">${safeTopic}</div>
+                                <div class="text-[9px] text-neutral-500 leading-relaxed mt-1.5">${safeSummary}</div>
+                            </div>
+
+                            <div class="mt-3 space-y-2.5">${stepsHtml}</div>
+
+                            <div class="mt-3 pt-3 border-t border-white/5">
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <span class="text-[8px] uppercase tracking-[0.2em] text-neutral-600">準備輸出</span>
+                                    <span id="${id}_notice" class="text-[8px] text-neutral-600 truncate">依實際處理狀態更新</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5">${chipHtml}</div>
+                                <div class="thinking-progress-track mt-3">
+                                    <div id="${id}_bar" class="thinking-progress-fill"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
+
             chatContainer.insertAdjacentHTML('beforeend', html);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            const startTs = performance.now();
+            let currentIndex = 0;
+            let stopped = false;
+            let finishTimer = null;
+            const timeEl = document.getElementById(`${id}_time`);
+            const noticeEl = document.getElementById(`${id}_notice`);
+            const barEl = document.getElementById(`${id}_bar`);
+
             const timer = setInterval(() => {
-                currentStepIdx++;
-                const textEl = document.getElementById(`${id}_text`);
-                const barEl = document.getElementById(`${id}_bar`);
-                if (currentStepIdx < steps.length) {
-                    if (textEl) {
-                        textEl.style.opacity = '0';
-                        setTimeout(() => {
-                            textEl.textContent = steps[currentStepIdx];
-                            textEl.style.opacity = '1';
-                        }, 150);
-                    }
-                    if (barEl) barEl.style.width = `${((currentStepIdx + 1) / steps.length) * 92}%`;
-                } else if (currentStepIdx === steps.length) {
-                    if (textEl) textEl.textContent = '雲端多模態節點運算中，即將輸出圖文...';
-                    if (barEl) barEl.style.width = '98%';
+                if (stopped) return;
+                if (timeEl) timeEl.textContent = `${((performance.now() - startTs) / 1000).toFixed(1)}s`;
+            }, 100);
+
+            function setStepState(index, state) {
+                const step = steps[index];
+                if (!step) return;
+                const el = document.getElementById(`${id}_step_${step.key}`);
+                if (el) el.dataset.state = state;
+            }
+
+            function scrollIfNearBottom() {
+                const distance = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
+                if (distance < 240) chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function setStage(key, detail = '') {
+                if (stopped) return;
+                const nextIndex = Math.max(0, steps.findIndex(step => step.key === key));
+                for (let i = 0; i < steps.length; i++) {
+                    if (i < nextIndex) setStepState(i, 'done');
+                    else if (i === nextIndex) setStepState(i, 'active');
+                    else setStepState(i, 'idle');
                 }
-            }, 1300);
+                currentIndex = nextIndex;
+                if (detail) {
+                    const detailEl = document.getElementById(`${id}_detail_${steps[nextIndex].key}`);
+                    if (detailEl) detailEl.textContent = detail;
+                    if (noticeEl) noticeEl.textContent = detail;
+                }
+                if (barEl) {
+                    const pct = Math.max(8, Math.min(96, ((nextIndex + 0.65) / steps.length) * 100));
+                    barEl.style.width = `${pct}%`;
+                }
+                scrollIfNearBottom();
+            }
+
+            function setNotice(message = '') {
+                if (stopped || !noticeEl) return;
+                noticeEl.textContent = message || '處理中…';
+            }
+
+            function stop(remove = true) {
+                if (stopped) return;
+                stopped = true;
+                clearInterval(timer);
+                if (finishTimer) clearTimeout(finishTimer);
+                const el = document.getElementById(id);
+                if (remove && el) el.remove();
+            }
+
+            function finish() {
+                if (stopped) return;
+                for (let i = 0; i < steps.length; i++) setStepState(i, 'done');
+                if (barEl) barEl.style.width = '100%';
+                if (noticeEl) noticeEl.textContent = '答案已就緒，開始輸出';
+                finishTimer = setTimeout(() => stop(true), 220);
+            }
 
             return {
-                id: id,
-                stop: () => {
-                    clearInterval(timer);
-                    const el = document.getElementById(id);
-                    if (el) el.remove();
-                }
+                id,
+                setStage,
+                setNotice,
+                finish,
+                stop: () => stop(true)
             };
         }
 
         /**
-         * 🌟 Gemini 流光湧現引擎 v2
-         * 核心原則：SSE 只進佇列；畫面以 requestAnimationFrame 穩定消費。
-         * 串流期間只更新「已完成 Markdown 區塊」與「純文字尾端」，絕不反覆 innerHTML 整個訊息。
+         * ✨ Lovable-inspired Answer Motion Engine v3
+         *
+         * 安全架構：
+         * 1) OpenRouter SSE / accumulatedReply 是唯一 canonical response，這裡絕不回寫 AI 資料。
+         * 2) targetText 只是顯示副本；RAF 依時間而不是 frame 數消費，因此 60/120Hz 節奏一致。
+         * 3) 只有「完整 Markdown 區塊」才 append 到 static DOM；活動尾端永遠用 textContent。
+         * 4) 已 commit 的區塊不重建，避免長回答反覆 innerHTML、閃爍或圖片重新載入。
          */
         function createLiveAssistantBubble() {
             const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             const html = `
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 msg-animate">
                     <div class="bg-white text-black w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">AI</div>
-                    <div class="glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
+                    <div class="ai-answer-shell is-streaming glass-card text-neutral-200 p-4 rounded-2xl shadow-xl max-w-[88%] text-xs font-light leading-relaxed space-y-2 selectable-text">
                         <div id="${msgId}_content" class="markdown-body break-words selectable-text">
-                            <div class="gemini-flow-static"></div>
-                            <div class="gemini-flow-live"></div>
-                            <span class="gemini-flowing-cursor" aria-hidden="true"></span>
+                            <div class="answer-stream-static"></div><span class="answer-stream-live"></span><span class="answer-stream-caret" aria-hidden="true"></span>
                         </div>
                         <div id="${msgId}_footer" class="hidden-view ui-no-select"></div>
                     </div>
@@ -4129,71 +5259,118 @@ ${sopContent}
             chatContainer.insertAdjacentHTML('beforeend', html);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            const wrapperEl = document.getElementById(`${msgId}_wrapper`);
+            const shellEl = wrapperEl?.querySelector('.ai-answer-shell');
             const contentEl = document.getElementById(`${msgId}_content`);
-            const staticEl = contentEl?.querySelector('.gemini-flow-static');
-            const liveEl = contentEl?.querySelector('.gemini-flow-live');
-            const cursorEl = contentEl?.querySelector('.gemini-flowing-cursor');
+            const staticEl = contentEl?.querySelector('.answer-stream-static');
+            const liveEl = contentEl?.querySelector('.answer-stream-live');
+            const cursorEl = contentEl?.querySelector('.answer-stream-caret');
+            const liveTextNode = document.createTextNode('');
+            if (liveEl) liveEl.appendChild(liveTextNode);
 
             let targetText = '';
             let visibleText = '';
+            let committedLength = 0;
             let rafId = 0;
             let stopped = false;
+            let finishing = false;
+            let lastFrameTime = 0;
+            let charBudget = 0;
+            let finishWaiters = [];
 
             function prepareStreamText(rawText) {
-                let text = cleanGuardrailArtifacts(rawText || '');
-                // Proposal JSON 在串流期間不應直接污染畫面；完整答案交給 finalizeLiveBubble 處理。
-                text = text
-                    .replace(/```(?:sop_proposal|json)?[\s\S]*$/i, '')
-                    .replace(/\{[\s\S]*?"topic"[\s\S]*$/i, '')
-                    .trimStart();
-                return text;
+                let text = String(rawText || '')
+                    .replace(/User Safety:\s*safe/gi, '')
+                    .replace(/Response Safety:\s*safe/gi, '');
+
+                // 只隱藏真正的 SOP proposal。舊版 optional regex 會誤吃一般 ``` code fence。
+                const fencedProposal = text.search(/```sop_proposal\b/i);
+                if (fencedProposal >= 0) text = text.slice(0, fencedProposal);
+
+                // 模型極少數會漏掉 fence，僅在 JSON 明確從新行以 topic 欄位起頭時隱藏。
+                const rawProposal = text.search(/(?:^|\n)\s*\{\s*"topic"\s*:/i);
+                if (rawProposal >= 0) text = text.slice(0, rawProposal);
+
+                // 故意不 trimEnd()：SSE 尾端空白／換行是下一 chunk 的前綴，刪除會造成非單調字串。
+                return text.replace(/^\s+/, '');
             }
 
-            function findStableBoundary(text) {
+            function commonPrefixLength(a, b) {
+                const max = Math.min(a.length, b.length);
+                let i = 0;
+                while (i < max && a.charCodeAt(i) === b.charCodeAt(i)) i++;
+                return i;
+            }
+
+            function findSafeCommitBoundary(text) {
                 if (!text) return 0;
-                // 只把已完成的段落/清單/標題送進 marked；最後一段留給純文字尾端。
-                // 這樣 **、`、```、表格等未完成語法不會把整個訊息 DOM 弄亂。
-                const lines = text.split('\n');
-                if (lines.length <= 1) return 0;
-
-                let boundary = 0;
+                let offset = 0;
+                let lastSafe = 0;
                 let fenceOpen = false;
-                for (let i = 0; i < lines.length - 1; i++) {
-                    const line = lines[i];
-                    if (/^\s*```/.test(line)) fenceOpen = !fenceOpen;
-                    if (!fenceOpen && (line.trim() === '' || /^\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|>\s)/.test(line))) {
-                        boundary = text.split('\n').slice(0, i + 1).join('\n').length + 1;
+                const lines = text.match(/.*(?:\r?\n|$)/g) || [];
+
+                for (const line of lines) {
+                    if (!line) continue;
+                    const lineStart = offset;
+                    offset += line.length;
+                    const body = line.replace(/\r?\n$/, '');
+                    const fence = /^\s*```/.test(body);
+
+                    if (fence) {
+                        const wasOpen = fenceOpen;
+                        fenceOpen = !fenceOpen;
+                        // 關閉 fenced code block 後已是完整 Markdown block，可以安全 commit。
+                        if (wasOpen && !fenceOpen) lastSafe = offset;
+                        continue;
+                    }
+
+                    if (!fenceOpen && body.trim() === '') {
+                        lastSafe = offset;
+                    }
+
+                    // 水平線本身是完整 block；保留為可安全 commit 點。
+                    if (!fenceOpen && /^\s*(?:---+|\*\*\*+|___+)\s*$/.test(body) && lineStart >= committedLength) {
+                        lastSafe = offset;
                     }
                 }
-
-                // 一般長段落也在換行後逐步交給 Markdown。
-                if (!fenceOpen) {
-                    const lastNewline = text.lastIndexOf('\n');
-                    if (lastNewline > boundary && text.slice(lastNewline + 1).trim() !== '') boundary = lastNewline + 1;
-                }
-                return Math.max(0, Math.min(boundary, text.length));
+                return Math.max(committedLength, Math.min(lastSafe, text.length));
             }
 
-            function renderStablePart() {
-                if (!staticEl) return;
-                const boundary = findStableBoundary(visibleText);
-                const stableText = visibleText.slice(0, boundary);
-                const tail = visibleText.slice(boundary);
+            function appendRenderedSegment(segment) {
+                if (!staticEl || !segment) return;
+                const rendered = renderMarkdownPure(segment);
+                if (!rendered) return;
 
-                if (stableText) {
-                    const html = renderMarkdownPure(stableText);
-                    if (staticEl.dataset.source !== stableText) {
-                        staticEl.innerHTML = html;
-                        staticEl.dataset.source = stableText;
-                        staticEl.querySelectorAll(':scope > *').forEach(el => el.classList.add('gemini-flow-block'));
-                    }
-                } else if (staticEl.dataset.source) {
-                    staticEl.innerHTML = '';
-                    staticEl.dataset.source = '';
+                const template = document.createElement('template');
+                template.innerHTML = rendered;
+                const nodes = Array.from(template.content.childNodes);
+                nodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) node.classList.add('answer-stream-block');
+                });
+                staticEl.appendChild(template.content);
+                enhanceAssistantContent(staticEl);
+            }
+
+            function renderVisibleText() {
+                if (!contentEl) return;
+                const safeBoundary = findSafeCommitBoundary(visibleText);
+
+                if (safeBoundary > committedLength) {
+                    const segment = visibleText.slice(committedLength, safeBoundary);
+                    appendRenderedSegment(segment);
+                    committedLength = safeBoundary;
                 }
 
-                if (liveEl) liveEl.textContent = tail;
+                liveTextNode.nodeValue = visibleText.slice(committedLength);
                 if (cursorEl) cursorEl.style.display = visibleText.length ? 'inline-block' : 'none';
+            }
+
+            function rebuildToPrefix(prefixText) {
+                if (staticEl) staticEl.replaceChildren();
+                committedLength = 0;
+                visibleText = prefixText || '';
+                liveTextNode.nodeValue = '';
+                renderVisibleText();
             }
 
             function keepAtBottom() {
@@ -4201,54 +5378,118 @@ ${sopContent}
                 if (distanceFromBottom < 260) chatContainer.scrollTop = chatContainer.scrollHeight;
             }
 
-            function frame() {
+            function getCharsPerSecond(backlog) {
+                if (finishing) return backlog > 500 ? 900 : backlog > 180 ? 640 : 420;
+                if (backlog > 900) return 260;
+                if (backlog > 480) return 190;
+                if (backlog > 220) return 128;
+                if (backlog > 90) return 82;
+                return 44;
+            }
+
+            function resolveFinishWaiters() {
+                if (visibleText.length < targetText.length) return;
+                const pending = finishWaiters.splice(0);
+                pending.forEach(fn => fn());
+            }
+
+            function frame(now) {
                 rafId = 0;
                 if (stopped || !contentEl) return;
 
+                if (!lastFrameTime) lastFrameTime = now;
+                const dt = Math.min(50, Math.max(0, now - lastFrameTime));
+                lastFrameTime = now;
+
                 if (visibleText.length < targetText.length && targetText.startsWith(visibleText)) {
-                    // 依畫面更新頻率消費 1~3 字元；長回答會自動加速，但不會一次爆量。
-                    const remaining = targetText.length - visibleText.length;
-                    const step = remaining > 120 ? 3 : remaining > 40 ? 2 : 1;
-                    visibleText += targetText.slice(visibleText.length, visibleText.length + step);
-                    renderStablePart();
-                    keepAtBottom();
-                } else if (!targetText.startsWith(visibleText)) {
-                    // 極少數情況（例如 guardrail 清理造成前綴改變）直接重新同步一次，避免重複字串。
-                    visibleText = targetText;
-                    renderStablePart();
-                    keepAtBottom();
+                    const backlog = targetText.length - visibleText.length;
+                    charBudget += getCharsPerSecond(backlog) * (dt / 1000);
+                    const step = Math.min(backlog, Math.floor(charBudget));
+
+                    if (step > 0) {
+                        charBudget -= step;
+                        visibleText += targetText.slice(visibleText.length, visibleText.length + step);
+                        renderVisibleText();
+                        keepAtBottom();
+                    }
                 }
 
+                resolveFinishWaiters();
                 if (visibleText.length < targetText.length) {
                     rafId = requestAnimationFrame(frame);
                 }
             }
 
             function schedule() {
-                if (!rafId && !stopped) rafId = requestAnimationFrame(frame);
+                if (rafId || stopped) return;
+                lastFrameTime = 0;
+                rafId = requestAnimationFrame(frame);
+            }
+
+            function updateTarget(rawText) {
+                const nextText = prepareStreamText(rawText);
+
+                if (!nextText.startsWith(visibleText)) {
+                    // 只在 guardrail／provider 非單調輸出等極少數情況重建到共同前綴。
+                    // 這是視覺層容錯，不會修改 accumulatedReply。
+                    const prefixLen = commonPrefixLength(visibleText, nextText);
+                    rebuildToPrefix(nextText.slice(0, prefixLen));
+                }
+
+                targetText = nextText;
+                schedule();
+            }
+
+            function finish(rawText, maxWaitMs = 680) {
+                updateTarget(rawText);
+                finishing = true;
+                schedule();
+
+                return new Promise(resolve => {
+                    let done = false;
+                    const complete = () => {
+                        if (done) return;
+                        done = true;
+                        clearTimeout(timeoutId);
+                        finishing = false;
+                        resolve();
+                    };
+
+                    const timeoutId = setTimeout(() => {
+                        if (!stopped) {
+                            visibleText = targetText;
+                            renderVisibleText();
+                            keepAtBottom();
+                        }
+                        complete();
+                    }, Math.max(120, maxWaitMs));
+
+                    if (visibleText.length >= targetText.length) complete();
+                    else finishWaiters.push(complete);
+                });
             }
 
             return {
-                msgId: msgId,
-                wrapper: document.getElementById(`${msgId}_wrapper`),
+                msgId,
+                wrapper: wrapperEl,
                 content: contentEl,
                 footer: document.getElementById(`${msgId}_footer`),
-                updateProgress: (rawText) => {
-                    const nextText = prepareStreamText(rawText);
-                    // SSE 是累積全文；只更新目標，不直接碰 DOM。
-                    targetText = nextText;
-                    schedule();
-                },
+                updateProgress: updateTarget,
+                finish,
                 flush: () => {
-                    targetText = prepareStreamText(targetText);
                     visibleText = targetText;
-                    renderStablePart();
+                    renderVisibleText();
                     keepAtBottom();
                 },
                 stop: () => {
                     stopped = true;
+                    finishing = false;
                     if (rafId) cancelAnimationFrame(rafId);
                     rafId = 0;
+                    finishWaiters.splice(0).forEach(fn => fn());
+                    shellEl?.classList.remove('is-streaming');
+                    shellEl?.classList.add('is-settled');
+                    if (cursorEl) cursorEl.style.display = 'none';
                 }
             };
         }
@@ -4265,6 +5506,9 @@ ${sopContent}
             const { displayText, proposalJson } = robustProposalExtractor(fullText);
             const parsed = renderMarkdownPure(displayText);
             elements.content.innerHTML = parsed;
+            enhanceAssistantContent(elements.content);
+            elements.wrapper?.querySelector('.ai-answer-shell')?.classList.remove('is-streaming');
+            elements.wrapper?.querySelector('.ai-answer-shell')?.classList.add('is-settled');
 
             if (proposalJson && proposalJson.topic) {
                 window.tempProposalStore[msgId] = proposalJson;
@@ -4410,7 +5654,7 @@ ${sopContent}
             const html = `
                 <div id="${msgId}_wrapper" class="flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''} msg-animate">
                     <div class="${isUser ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-bold text-[10px] ui-no-select">${isUser ? '<i class="fa-solid fa-user"></i>' : 'AI'}</div>
-                    <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] selectable-text">
+                    <div class="${isError ? 'bg-neutral-900 text-neutral-300 border border-red-900' : (isUser ? 'bg-neutral-900 text-neutral-100 border border-neutral-800' : 'ai-answer-shell is-settled glass-card text-neutral-200')} p-4 rounded-2xl shadow-xl max-w-[88%] selectable-text">
                         ${imgsHtml}
                         <div class="${isUser ? 'whitespace-pre-wrap break-words user-bubble-text' : 'markdown-body break-words selectable-text'}">${parsedContent}</div>
                         ${metaFooter}
@@ -4418,6 +5662,10 @@ ${sopContent}
                 </div>
             `;
             chatContainer.insertAdjacentHTML('beforeend', html);
+            if (!isUser) {
+                const insertedContent = document.querySelector(`#${msgId}_wrapper .markdown-body`);
+                enhanceAssistantContent(insertedContent);
+            }
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
