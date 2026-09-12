@@ -92,7 +92,7 @@
         }
         .mic-active { animation: micPulse 1.2s infinite ease-in-out; color: #ef4444 !important; background: rgba(239, 68, 68, 0.15); }
 
-        /* ✨ v27.7 Lovable-inspired Answer Motion Engine
+        /* ✨ v27.8 SOP Cloud Revision Control + Lovable Answer Motion
            動畫只作用在視覺層，不碰 AI 原始回覆字串與 Markdown 邏輯。 */
         @keyframes answerBlockReveal {
             0% { opacity: 0; transform: translate3d(0, 5px, 0); filter: blur(1.8px); }
@@ -179,7 +179,7 @@
             .ai-answer-shell.is-streaming::after { opacity: .04; }
         }
 
-        /* 🧠 Live Thinking Summary v27.4+；v27.5 版本中心；v27.6 全介面版本同步；v27.7 Answer Motion Engine */
+        /* 🧠 Live Thinking Summary v27.4+；v27.5 版本中心；v27.6 全介面版本同步；v27.7 Answer Motion Engine；v27.8 SOP Cloud Revision Control */
         @keyframes thinkingHaloPulse {
             0%, 100% { opacity: .45; transform: scale(.96); }
             50% { opacity: .9; transform: scale(1.04); }
@@ -620,7 +620,7 @@
         }
 
 
-        /* 🧾 v27.7 Version Center / Public Simple Log + Admin Detailed Timeline */
+        /* 🧾 v27.8 Version Center / Public Simple Log + Admin Detailed Timeline */
         .release-version-chip {
             display: inline-flex;
             align-items: center;
@@ -775,7 +775,7 @@
                     <button type="button" onclick="openQuickUpdateModal()" class="release-version-chip hover:border-blue-400/40 hover:text-white transition" title="查看目前版本與更新紀錄">
                         <span class="release-dot"></span>
                         <span class="text-neutral-500 tracking-[0.12em]">CURRENT</span>
-                        <strong id="authVersionBadgeText" class="text-neutral-200 font-semibold">v27.7</strong>
+                        <strong id="authVersionBadgeText" class="text-neutral-200 font-semibold">v27.8</strong>
                     </button>
                 </div>
             </div>
@@ -794,7 +794,7 @@
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] text-white tracking-wider">版本更新日誌</span>
-                                <span id="authVersionInlineText" class="text-[9px] text-blue-300 font-mono">v27.7</span>
+                                <span id="authVersionInlineText" class="text-[9px] text-blue-300 font-mono">v27.8</span>
                             </div>
                             <p class="text-[9px] text-neutral-500 mt-0.5 truncate">查看本次更新與歷史版本</p>
                         </div>
@@ -835,7 +835,7 @@
             <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 text-xs tracking-widest">
                 <button type="button" onclick="openQuickUpdateModal()" id="appVersionBadge" class="text-[9px] bg-neutral-950/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 hover:border-emerald-500/40 px-2.5 py-1 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm transition" title="查看目前系統版本與更新日誌">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="appVersionBadgeText">v27.7</span>
+                    <span id="appVersionBadgeText">v27.8</span>
                     <span class="hidden sm:inline text-neutral-600">CURRENT</span>
                 </button>
                 <button onclick="openQuickUpdateModal()" class="text-[10px] bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition shadow-sm" title="查看最新版本更新與修復項目">
@@ -953,7 +953,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span id="adminSidebarVersionBadge" class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.7</span>
+                    <span id="adminSidebarVersionBadge" class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.8</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -1105,7 +1105,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-white tracking-wider truncate">系統版本更新中心</span>
-                                    <span id="adminCurrentVersionBadge" class="text-[9px] font-mono text-purple-300 border border-purple-800/70 bg-purple-950/50 px-2 py-0.5 rounded-full">v27.7</span>
+                                    <span id="adminCurrentVersionBadge" class="text-[9px] font-mono text-purple-300 border border-purple-800/70 bg-purple-950/50 px-2 py-0.5 rounded-full">v27.8</span>
                                 </div>
                                 <p class="text-[9px] text-neutral-500 mt-0.5">完整版本歷程、功能新增、修復項目與技術差異</p>
                             </div>
@@ -1308,17 +1308,35 @@
                 <div id="win_sopViewer" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
-                        <div class="flex items-center space-x-2.5">
+                        <div class="flex items-center flex-wrap gap-2.5 min-w-0">
                             <i class="fa-solid fa-eye text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">雲端 SOP 全文檢視</span>
+                            <span class="text-xs font-medium text-white tracking-wider">SOP 雲端主版本檢視</span>
+                            <span id="sopViewerSourceBadge" class="text-[9px] px-2 py-0.5 rounded-full border border-emerald-800/60 bg-emerald-950/30 text-emerald-300 font-mono">Supabase canonical</span>
+                            <span id="sopViewerRevisionBadge" class="text-[9px] px-2 py-0.5 rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300 font-mono">r--</span>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="refreshSopViewerOnly()" class="text-[10px] text-neutral-400 hover:text-white bg-neutral-800 px-2.5 py-1 rounded"><i class="fa-solid fa-arrows-rotate mr-1"></i>重整</button>
+                        <div class="flex items-center space-x-2 ui-no-select">
+                            <button onclick="importSopFromGistToCloud()" class="text-[10px] text-neutral-400 hover:text-white bg-neutral-800 px-2.5 py-1 rounded" title="只在需要時，將 Gist 唯讀內容匯入成新的 Supabase SOP 版本"><i class="fa-brands fa-github mr-1"></i>從 Gist 匯入</button>
+                            <button onclick="refreshSopViewerOnly()" class="text-[10px] text-neutral-400 hover:text-white bg-neutral-800 px-2.5 py-1 rounded"><i class="fa-solid fa-arrows-rotate mr-1"></i>重整雲端主版本</button>
                             <button onclick="closeAdminWindow('sopViewer')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                         </div>
                     </div>
-                    <div class="flex-1 overflow-hidden p-4 flex flex-col">
-                        <textarea id="cloudSopViewer" readonly class="flex-1 w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed resize-none selectable-text" placeholder="載入中..."></textarea>
+                    <div class="flex-1 overflow-hidden p-4 flex flex-col gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 ui-no-select">
+                            <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5">
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Cloud state</div>
+                                <div id="sopViewerCloudState" class="text-[11px] text-emerald-300 mt-1 font-medium">等待同步檢查</div>
+                            </div>
+                            <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5 min-w-0">
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Content hash</div>
+                                <div id="sopViewerHash" class="text-[11px] text-neutral-300 mt-1 font-mono truncate">--</div>
+                            </div>
+                            <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5 min-w-0">
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Last published</div>
+                                <div id="sopViewerUpdatedAt" class="text-[11px] text-neutral-300 mt-1 truncate">--</div>
+                            </div>
+                        </div>
+                        <textarea id="cloudSopViewer" readonly class="flex-1 w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-neutral-300 font-mono text-xs focus:outline-none leading-relaxed resize-none selectable-text" placeholder="正在讀取 Supabase SOP 主版本..."></textarea>
+                        <p class="text-[10px] text-neutral-500 leading-relaxed ui-no-select">說明：SOP 修改後的正式主版本儲存在 Supabase。GitHub Gist 為唯讀備份／匯入來源，按一般「重整」不會再用 Gist 舊內容覆蓋已發布版本。</p>
                     </div>
                 </div>
 
@@ -1446,7 +1464,7 @@
                                 </div>
                                 <span class="text-[9px] text-neutral-400 font-mono">Dynamic Cloud Config</span>
                             </div>
-                            <p class="text-[10px] text-neutral-400 leading-relaxed">在此修改網址或 Key 並點擊「同步雲端」，設定會自動存入 Gist。所有同仁開啟網頁時會自動抓取此設定，無需重新發布程式碼！</p>
+                            <p class="text-[10px] text-neutral-400 leading-relaxed">在此修改網址或 Key 並點擊「同步雲端」，系統設定會寫入 Supabase。SOP 正文另由專用的 <span class="font-mono text-emerald-300">sop_document</span> 主版本管理，不再以 Gist 作為可寫入主版本。</p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <input type="text" id="supabaseUrlInput" placeholder="https://dadlmrmzupmmzthlvrmo.supabase.co" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                                 <input type="password" id="supabaseKeyInput" placeholder="anon key (eyJhbGciOi...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
@@ -1454,7 +1472,7 @@
                         </div>
 
                         <div class="space-y-1.5 border-t border-neutral-800 pt-3">
-                            <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 (SOP) GitHub Gist 網址 (備份與外部 SOP 抓取)</label>
+                            <label class="text-[11px] text-neutral-300 font-medium">AI 知識庫 GitHub Gist 網址（唯讀備份／人工匯入來源）</label>
                             <input type="text" id="gistIdInput" placeholder="https://gist.githubusercontent.com/.../shiye-sop.txt" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                         </div>
 
@@ -1495,7 +1513,51 @@
         const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
+        // v27.8 SOP Cloud Revision Control
+        const SOP_DOCUMENT_ROW_ID = 'sop_document';
+        const SOP_PROPOSAL_PREFIX = 'sop_proposal_';
+        const SOP_LOG_PREFIX = 'sop_log_';
+        const SOP_SNAPSHOT_PREFIX = 'sop_snapshot_';
+        const SOP_WORKFLOW_CONTROL_ROW_ID = 'sop_workflow_control';
+        const SOP_SCHEMA_VERSION = 2;
+        let currentSopDocument = null;
+        let sopCloudBusy = false;
+
         const SYSTEM_VERSION_HISTORY = [
+            {
+                version: "v27.8",
+                date: "2026-09-13",
+                title: "SOP 雲端修訂引擎、版本鎖定與同步一致性全面重構",
+                modules: ["SOP 雲端", "AI 修訂", "修訂草稿", "版本控制", "修訂日誌", "快照回滾"],
+                publicItems: [
+                    { type: "fix", text: "修復 SOP 修改後重整又變回舊內容的雲端同步問題。" },
+                    { type: "perf", text: "SOP 修改、刪除與還原流程更穩定，並加入版本檢查避免誤覆蓋。" },
+                    { type: "feat", text: "後台 SOP 全文現在會顯示雲端版本與同步狀態。" }
+                ],
+                summaryItems: [
+                    { type: "fix", text: "修正根本資料來源衝突：舊版採納 SOP 提案只改 localStorage，再把設定／日誌寫入 Supabase，但 SOP 正文本身並未寫入 Gist；之後重整又從 Gist 抓回舊正文並覆蓋本機，造成『剛修改成功、重整後又回舊版』" },
+                    { type: "feat", text: "新增 Supabase app_config.sop_document 作為可寫入的 SOP canonical document；Gist 改為唯讀匯入／災備來源，不再當成修改後的主版本" },
+                    { type: "fix", text: "新增 optimistic concurrency control：每次修改前讀取最新 revision / updated_at，寫入時以 updated_at 作條件鎖；若其他管理員已先更新則拒絕覆寫並要求重新比對" },
+                    { type: "fix", text: "採納修訂後會立即再次從 Supabase 讀回並核對 revision + contentHash；只有雲端驗證一致才標示成功，避免 UI 先說成功但實際未落盤" },
+                    { type: "fix", text: "修正舊版 locateSopLine 查不到『修改／刪除』目標時一律改成文末增補的危險 fallback；v27.8 對修改／刪除找不到原文時直接進入衝突狀態，只有明確 append/new 才允許增補" },
+                    { type: "perf", text: "重寫 SOP 定位器：exact block → normalized multi-line → fuzzy Dice score，且模糊命中必須達安全門檻與唯一性，降低誤改相似條文" },
+                    { type: "feat", text: "修訂提案加入 action、baseRevision、baseHash、submittedAt 與比對狀態；管理員採納時會以最新雲端版本重新 rebase，而不是直接相信送出當下的本機內容" },
+                    { type: "feat", text: "SOP 修訂草稿、修訂日誌與快照新增 dedicated app_config rows，相較舊版把所有陣列塞在 global_state，可降低不同裝置互相覆寫的風險，並保留 legacy 相容同步" },
+                    { type: "perf", text: "SOP 全文視窗新增 canonical source、revision、hash、最後更新時間與同步驗證狀態；重整按鈕改讀 Supabase 主版本，不再從 Gist 把舊資料覆蓋回來" },
+                    { type: "feat", text: "新增『從 Gist 匯入』明確動作：Gist 僅在管理員確認後才可成為下一版 SOP，匯入前自動快照、匯入後雲端驗證與寫入日誌" },
+                    { type: "perf", text: "AI SOP proposal schema 升級 action=modify/delete/append + reason；要求修改／刪除時 oldText 必須逐字引用現行 SOP，找不到原文則不應硬生成可直接採納的提案" },
+                    { type: "fix", text: "再次修正 robustProposalExtractor：只解析 ```sop_proposal fenced block 或結構完整 raw JSON，不再讓 optional code-fence regex 誤判一般程式碼" }
+                ],
+                diffDetails: [
+                    { type: "fix", title: "SOP 主版本資料源", oldVal: "採納後只 localStorage.setItem('shiye_sop')；pushCodesToCloudWithDetails() 的 payload 沒有 SOP 正文；refreshSopViewerOnly() 又呼叫 fetchSopFromGist() 將 Gist 舊文覆蓋回來", newVal: "SOP 正文獨立寫入 app_config / sop_document；所有 AI、全文檢視、採納與回滾都以 Supabase canonical document 為主，Gist 只作唯讀初始化／人工匯入" },
+                    { type: "fix", title: "成功訊息可信度", oldVal: "localStorage 更新後即 alert『已發布至雲端』，實際只同步 global_state 的設定／日誌，沒有驗證 SOP 正文是否真的在遠端", newVal: "write → re-read → revision/hash/content 三重驗證；只有驗證成功才顯示發布成功，否則保留提案並回報雲端錯誤" },
+                    { type: "fix", title: "修改目標找不到時的處理", oldVal: "locateSopLine() 找不到任何 oldText，就無條件在文末建立『最新增補』，連刪除或修改意圖也可能被轉成新增", newVal: "append 只有 action=append 或 oldText=無 才允許；modify/delete 未定位或模糊多解時直接阻擋寫入，要求重新比對" },
+                    { type: "fix", title: "多人同時修改防覆蓋", oldVal: "讀取舊 SOP → 計算新字串 → 直接 local write，沒有版本鎖，兩名管理員同時操作可能後寫覆蓋先寫", newVal: "以 sop_document.updated_at 作 optimistic lock；更新條件不符表示遠端已變更，系統重新抓最新版並拒絕 silent overwrite" },
+                    { type: "perf", title: "Gist 定位", oldVal: "Gist raw URL 被同時當作主要知識來源與修改後應該同步的『雲端』，但瀏覽器端沒有 GitHub write token，因此實際上只能讀不能寫", newVal: "UI 與設定文字明確標示 Gist 為唯讀備份／匯入來源；可寫主版本統一改由現有 Supabase app_config 承擔，不增加前端 GitHub PAT 洩漏風險" },
+                    { type: "feat", title: "修訂追蹤", oldVal: "pendingProposals/updateLogs/snapshots 主要是 global_state 內的大陣列，任何一次全量 upsert 都有覆寫其他裝置剛更新資料的機會", newVal: "新增 sop_proposal_* / sop_log_* / sop_snapshot_* dedicated rows；提案、日誌、快照各自 upsert，global_state 只保留 legacy mirror，逐步降低競態範圍" },
+                    { type: "perf", title: "SOP Viewer", oldVal: "只有 textarea 和『重整』按鈕，看不到目前內容到底來自本地、Gist 還是 Supabase，也沒有版本資訊", newVal: "顯示 Supabase 主版本、revision、hash、最後更新者／時間與驗證狀態；重整只刷新 canonical cloud，另提供受控的 Gist 匯入按鈕" }
+                ]
+            },
             {
                 version: "v27.7",
                 date: "2026-09-13",
@@ -2765,81 +2827,572 @@
             return codes;
         }
 
-        async function fetchSopFromGist() {
-            let rawUrl = getStoredGistUrl();
-            const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-            if (rawUrl) {
-                try {
-                    const cleanUrl = normalizeGistUrl(rawUrl);
-                    const separator = cleanUrl.includes('?') ? '&' : '?';
-                    const res = await fetch(`${cleanUrl}${separator}${randomBuster}`, { cache: 'no-store' });
-                    if (res.ok) {
-                        let content = await res.text();
-                        content = content.replace(/\r\n/g, '\n');
-                        localStorage.setItem('shiye_sop', content);
-                        broadcastSopUpdate(content);
-                        return content;
-                    }
-                } catch (e) {}
-            }
-
-            const fallback = localStorage.getItem('shiye_sop') || '尚無SOP內容';
-            broadcastSopUpdate(fallback);
-            return fallback;
+        function normalizeSopText(text) {
+            return String(text ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         }
 
-        function broadcastSopUpdate(newContent) {
+        function sopContentHash(text) {
+            // 非安全用途雜湊：只用於同步一致性／版本辨識。
+            const str = normalizeSopText(text);
+            let h1 = 0x811c9dc5;
+            let h2 = 0x9e3779b9;
+            for (let i = 0; i < str.length; i++) {
+                const c = str.charCodeAt(i);
+                h1 ^= c;
+                h1 = Math.imul(h1, 0x01000193);
+                h2 ^= (c + i);
+                h2 = Math.imul(h2, 0x85ebca6b);
+            }
+            return `${(h1 >>> 0).toString(16).padStart(8, '0')}${(h2 >>> 0).toString(16).padStart(8, '0')}`;
+        }
+
+        function getCachedSopMeta() {
+            return safeJsonParse(localStorage.getItem('shiye_sop_meta'), null);
+        }
+
+        function cacheSopDocument(doc) {
+            if (!doc || typeof doc.content !== 'string') return;
+            const normalized = normalizeSopText(doc.content);
+            const canonical = {
+                schemaVersion: SOP_SCHEMA_VERSION,
+                revision: Number(doc.revision || 1),
+                content: normalized,
+                contentHash: doc.contentHash || sopContentHash(normalized),
+                updatedAt: doc.updatedAt || doc._rowUpdatedAt || new Date().toISOString(),
+                updatedBy: doc.updatedBy || 'SYSTEM',
+                source: doc.source || 'supabase',
+                note: doc.note || '',
+                _rowUpdatedAt: doc._rowUpdatedAt || doc.updatedAt || ''
+            };
+            currentSopDocument = canonical;
+            localStorage.setItem('shiye_sop', normalized);
+            localStorage.setItem('shiye_sop_meta', JSON.stringify({
+                revision: canonical.revision,
+                contentHash: canonical.contentHash,
+                updatedAt: canonical.updatedAt,
+                updatedBy: canonical.updatedBy,
+                source: canonical.source,
+                _rowUpdatedAt: canonical._rowUpdatedAt
+            }));
+            broadcastSopUpdate(normalized, canonical);
+        }
+
+        function getCachedSopDocument() {
+            const content = normalizeSopText(localStorage.getItem('shiye_sop') || '');
+            if (!content) return null;
+            const meta = getCachedSopMeta() || {};
+            return {
+                schemaVersion: SOP_SCHEMA_VERSION,
+                revision: Number(meta.revision || 0),
+                content,
+                contentHash: meta.contentHash || sopContentHash(content),
+                updatedAt: meta.updatedAt || '',
+                updatedBy: meta.updatedBy || 'LOCAL',
+                source: meta.source || 'local-cache',
+                _rowUpdatedAt: meta._rowUpdatedAt || ''
+            };
+        }
+
+        function updateSopViewerMeta(doc, stateText = '') {
+            const sourceBadge = document.getElementById('sopViewerSourceBadge');
+            const revBadge = document.getElementById('sopViewerRevisionBadge');
+            const hashEl = document.getElementById('sopViewerHash');
+            const updatedEl = document.getElementById('sopViewerUpdatedAt');
+            const stateEl = document.getElementById('sopViewerCloudState');
+            if (sourceBadge) sourceBadge.textContent = doc?.source === 'local-fallback' ? 'Local fallback' : 'Supabase canonical';
+            if (revBadge) revBadge.textContent = doc?.revision ? `r${doc.revision}` : 'r--';
+            if (hashEl) hashEl.textContent = doc?.contentHash || '--';
+            if (updatedEl) {
+                const d = doc?.updatedAt ? new Date(doc.updatedAt) : null;
+                const when = d && !Number.isNaN(d.getTime()) ? d.toLocaleString('zh-TW') : (doc?.updatedAt || '--');
+                updatedEl.textContent = `${when}${doc?.updatedBy ? ` · ${doc.updatedBy}` : ''}`;
+            }
+            if (stateEl) stateEl.textContent = stateText || (doc?.source === 'local-fallback' ? '離線快取（未驗證雲端）' : '已載入並通過主版本讀取');
+        }
+
+        async function fetchSopFromGistReadOnly() {
+            const rawUrl = getStoredGistUrl();
+            if (!rawUrl) throw new Error('尚未設定 Gist SOP 網址');
+            const cleanUrl = normalizeGistUrl(rawUrl);
+            const separator = cleanUrl.includes('?') ? '&' : '?';
+            const randomBuster = `_r=${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+            const res = await fetch(`${cleanUrl}${separator}${randomBuster}`, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Gist 讀取失敗 HTTP ${res.status}`);
+            return normalizeSopText(await res.text());
+        }
+
+        async function readSopDocumentFromCloud({ allowBootstrap = true, preferCacheOnError = true } = {}) {
+            const client = getSupabaseClient();
+            if (!client) {
+                const cached = getCachedSopDocument();
+                if (cached && preferCacheOnError) {
+                    const fallback = { ...cached, source: 'local-fallback' };
+                    cacheSopDocument(fallback);
+                    updateSopViewerMeta(fallback, 'Supabase 未連線，暫用本機快取');
+                    return fallback;
+                }
+                throw new Error('Supabase 尚未設定或無法初始化');
+            }
+
+            try {
+                const { data, error } = await client
+                    .from('app_config')
+                    .select('data,updated_at')
+                    .eq('id', SOP_DOCUMENT_ROW_ID)
+                    .maybeSingle();
+
+                if (error) throw error;
+                if (data?.data && typeof data.data.content === 'string') {
+                    const raw = data.data;
+                    const content = normalizeSopText(raw.content);
+                    const doc = {
+                        schemaVersion: Number(raw.schemaVersion || SOP_SCHEMA_VERSION),
+                        revision: Number(raw.revision || 1),
+                        content,
+                        contentHash: raw.contentHash || sopContentHash(content),
+                        updatedAt: raw.updatedAt || data.updated_at || '',
+                        updatedBy: raw.updatedBy || 'UNKNOWN',
+                        source: raw.source || 'supabase',
+                        note: raw.note || '',
+                        _rowUpdatedAt: data.updated_at || raw.updatedAt || ''
+                    };
+                    cacheSopDocument(doc);
+                    updateSopViewerMeta(doc, '雲端主版本已同步');
+                    return doc;
+                }
+
+                if (!allowBootstrap) return null;
+
+                const preMigrationLocal = normalizeSopText(localStorage.getItem('shiye_sop') || '');
+                let initialContent = '';
+                let source = 'migration-local';
+                try {
+                    initialContent = await fetchSopFromGistReadOnly();
+                    source = 'migration-gist';
+                } catch (gistErr) {
+                    initialContent = preMigrationLocal;
+                }
+                if (!initialContent) initialContent = '尚無SOP內容';
+
+                const now = new Date().toISOString();
+                const initialDoc = {
+                    schemaVersion: SOP_SCHEMA_VERSION,
+                    revision: 1,
+                    content: initialContent,
+                    contentHash: sopContentHash(initialContent),
+                    updatedAt: now,
+                    updatedBy: 'SYSTEM-MIGRATION',
+                    source,
+                    note: 'v27.8 首次建立 Supabase SOP canonical document'
+                };
+                const { data: seeded, error: seedError } = await client
+                    .from('app_config')
+                    .upsert({ id: SOP_DOCUMENT_ROW_ID, data: initialDoc, updated_at: now })
+                    .select('data,updated_at')
+                    .single();
+                if (seedError) throw seedError;
+                const seededDoc = { ...seeded.data, _rowUpdatedAt: seeded.updated_at, source: seeded.data.source || source };
+
+                // 若升級前本機快取與 Gist 不同，保留一份「遷移救援快照」，避免舊版尚未真正發布的修改永久遺失。
+                if (preMigrationLocal && normalizeSopText(preMigrationLocal) !== normalizeSopText(initialContent)) {
+                    const rescueId = Date.now() * 1000 + Math.floor(Math.random() * 1000);
+                    await upsertSopWorkflowRow(`${SOP_SNAPSHOT_PREFIX}${rescueId}`, {
+                        id: rescueId,
+                        createdAtMs: Date.now(),
+                        time: new Date().toLocaleString('zh-TW'),
+                        summary: 'v27.8 遷移救援：舊版本機 SOP（與 Gist 不同）',
+                        revision: 0,
+                        contentHash: sopContentHash(preMigrationLocal),
+                        content: preMigrationLocal,
+                        actor: 'SYSTEM-MIGRATION',
+                        sourceUpdatedAt: ''
+                    });
+                }
+
+                cacheSopDocument(seededDoc);
+                updateSopViewerMeta(seededDoc, '已建立 Supabase SOP 主版本');
+                return seededDoc;
+            } catch (err) {
+                console.error('SOP canonical read failed:', err);
+                const cached = getCachedSopDocument();
+                if (cached && preferCacheOnError) {
+                    const fallback = { ...cached, source: 'local-fallback' };
+                    cacheSopDocument(fallback);
+                    updateSopViewerMeta(fallback, `雲端讀取失敗，暫用快取：${err.message || err}`);
+                    return fallback;
+                }
+                throw err;
+            }
+        }
+
+        async function writeSopDocumentAtomic(nextContent, { expectedDoc = null, actor = 'ADMIN', source = 'admin-edit', note = '' } = {}) {
+            const client = getSupabaseClient();
+            if (!client) return { success: false, message: 'Supabase 無法初始化，為避免假成功，本次不允許只寫本機。' };
+
+            const normalized = normalizeSopText(nextContent);
+            if (!normalized.trim()) return { success: false, message: 'SOP 內容不可為空。' };
+
+            let base = expectedDoc;
+            if (!base || !base._rowUpdatedAt) {
+                try { base = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false }); }
+                catch (e) { return { success: false, message: `讀取最新雲端 SOP 失敗：${e.message || e}` }; }
+            }
+
+            const now = new Date().toISOString();
+            const nextDoc = {
+                schemaVersion: SOP_SCHEMA_VERSION,
+                revision: Number(base?.revision || 0) + 1,
+                content: normalized,
+                contentHash: sopContentHash(normalized),
+                updatedAt: now,
+                updatedBy: actor || 'ADMIN',
+                source,
+                note
+            };
+
+            try {
+                let query = client
+                    .from('app_config')
+                    .update({ data: nextDoc, updated_at: now })
+                    .eq('id', SOP_DOCUMENT_ROW_ID);
+                if (base?._rowUpdatedAt) query = query.eq('updated_at', base._rowUpdatedAt);
+                const { data, error } = await query.select('data,updated_at');
+                if (error) throw error;
+                if (!Array.isArray(data) || data.length !== 1) {
+                    const latest = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                    return {
+                        success: false,
+                        conflict: true,
+                        latest,
+                        message: `SOP 已被其他裝置更新（目前 r${latest?.revision || '?'}），為避免覆蓋他人變更，本次寫入已取消。`
+                    };
+                }
+
+                const written = { ...data[0].data, _rowUpdatedAt: data[0].updated_at };
+                const verify = await readSopDocumentFromCloud({ allowBootstrap: false, preferCacheOnError: false });
+                if (!verify || Number(verify.revision) !== Number(written.revision) || verify.contentHash !== written.contentHash || normalizeSopText(verify.content) !== normalized) {
+                    return { success: false, message: '雲端寫入後校驗失敗：revision / hash / content 不一致，系統未宣告成功。' };
+                }
+                cacheSopDocument(verify);
+                updateSopViewerMeta(verify, '寫入完成，已重新讀回校驗');
+                return { success: true, doc: verify, previous: base };
+            } catch (err) {
+                console.error('SOP atomic write failed:', err);
+                return { success: false, message: err.message || String(err) };
+            }
+        }
+
+        async function upsertSopWorkflowRow(rowId, payload) {
+            const client = getSupabaseClient();
+            if (!client) return { success: false, message: 'Supabase unavailable' };
+            const now = new Date().toISOString();
+            const data = { ...payload, updatedAt: payload.updatedAt || now };
+            try {
+                const { error } = await client.from('app_config').upsert({ id: rowId, data, updated_at: now });
+                if (error) throw error;
+                return { success: true };
+            } catch (e) {
+                console.warn('SOP workflow row upsert failed:', rowId, e);
+                return { success: false, message: e.message || String(e) };
+            }
+        }
+
+        async function fetchSopWorkflowRows(prefix) {
+            const client = getSupabaseClient();
+            if (!client) return null;
+            try {
+                const { data, error } = await client
+                    .from('app_config')
+                    .select('id,data,updated_at')
+                    .like('id', `${prefix}%`);
+                if (error) throw error;
+                return (data || []).map(row => ({ ...row.data, _rowId: row.id, _rowUpdatedAt: row.updated_at }));
+            } catch (e) {
+                console.warn('SOP workflow rows fetch failed:', prefix, e);
+                return null;
+            }
+        }
+
+        async function getSopWorkflowControl() {
+            const client = getSupabaseClient();
+            if (!client) return {};
+            try {
+                const { data, error } = await client.from('app_config').select('data').eq('id', SOP_WORKFLOW_CONTROL_ROW_ID).maybeSingle();
+                if (error) throw error;
+                return data?.data || {};
+            } catch (e) { return {}; }
+        }
+
+        async function loadSopWorkflowFromCloud({ migrateLegacy = true } = {}) {
+            const [proposalRows, logRows, snapshotRows, control] = await Promise.all([
+                fetchSopWorkflowRows(SOP_PROPOSAL_PREFIX),
+                fetchSopWorkflowRows(SOP_LOG_PREFIX),
+                fetchSopWorkflowRows(SOP_SNAPSHOT_PREFIX),
+                getSopWorkflowControl()
+            ]);
+
+            if (proposalRows === null || logRows === null || snapshotRows === null) return false;
+
+            if (migrateLegacy) {
+                // 每次同步都把 legacy global_state 中「dedicated rows 尚未收錄」的紀錄補進來，
+                // 讓尚未更新到 v27.8 的舊分頁仍可送出提案，不會因 dedicated workflow 已存在就被忽略。
+                const legacyProposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
+                const legacyLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
+                const legacySnapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
+                const proposalIds = new Set(proposalRows.map(x => String(x.id)));
+                const logIds = new Set(logRows.map(x => String(x.id)));
+                const snapshotIds = new Set(snapshotRows.map(x => String(x.id)));
+                const jobs = [];
+                for (const item of legacyProposals) {
+                    if (item?.id != null && !proposalIds.has(String(item.id))) jobs.push(upsertSopWorkflowRow(`${SOP_PROPOSAL_PREFIX}${item.id}`, { ...item, status: item.status || 'pending', migratedFromLegacy: true }));
+                }
+                for (const item of legacyLogs) {
+                    if (item?.id != null && !logIds.has(String(item.id))) jobs.push(upsertSopWorkflowRow(`${SOP_LOG_PREFIX}${item.id}`, { ...item, migratedFromLegacy: true }));
+                }
+                for (const item of legacySnapshots) {
+                    if (item?.id != null && !snapshotIds.has(String(item.id))) jobs.push(upsertSopWorkflowRow(`${SOP_SNAPSHOT_PREFIX}${item.id}`, { ...item, migratedFromLegacy: true }));
+                }
+                if (jobs.length) {
+                    await Promise.allSettled(jobs);
+                    return loadSopWorkflowFromCloud({ migrateLegacy: false });
+                }
+            }
+
+            const logsCutoff = Number(control?.logsClearedBefore || 0);
+            const snapshotsCutoff = Number(control?.snapshotsClearedBefore || 0);
+            const toTs = item => Number(item.createdAtMs || item.id || 0) || new Date(item.createdAt || item.updatedAt || item.time || 0).getTime() || 0;
+
+            const proposals = proposalRows
+                .filter(p => (p.status || 'pending') === 'pending')
+                .sort((a,b) => toTs(b) - toTs(a));
+            const logs = logRows
+                .filter(l => toTs(l) > logsCutoff)
+                .sort((a,b) => toTs(b) - toTs(a));
+            const snapshots = snapshotRows
+                .filter(x => toTs(x) > snapshotsCutoff)
+                .sort((a,b) => toTs(b) - toTs(a));
+
+            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
+            localStorage.setItem('shiye_sop_update_logs', JSON.stringify(logs));
+            localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
+            return true;
+        }
+
+        // Backward-compatible name: from v27.8 onward this returns the Supabase canonical SOP.
+        // It intentionally no longer re-imports Gist on every refresh.
+        async function fetchSopFromGist() {
+            const doc = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: true });
+            return doc?.content || localStorage.getItem('shiye_sop') || '尚無SOP內容';
+        }
+
+        function broadcastSopUpdate(newContent, doc = currentSopDocument) {
             const viewer = document.getElementById('cloudSopViewer');
             if (viewer && viewer.value !== newContent) viewer.value = newContent;
+            if (doc) updateSopViewerMeta(doc);
         }
 
         async function refreshSopViewerOnly() {
+            if (sopCloudBusy) return;
+            sopCloudBusy = true;
             const viewer = document.getElementById('cloudSopViewer');
-            if (viewer) viewer.value = '正在連線雲端即時獲取最新內容...';
-            const content = await fetchSopFromGist();
-            if (viewer) viewer.value = content;
-            alert('✅ 已即時從雲端獲取最新 SOP 內容！');
+            if (viewer) viewer.value = '正在從 Supabase 讀取 SOP 主版本並核對 revision / hash...';
+            updateSopViewerMeta(currentSopDocument, '正在重新讀取雲端主版本...');
+            try {
+                const doc = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                if (viewer) viewer.value = doc.content;
+                updateSopViewerMeta(doc, '已從 Supabase 重新讀取並驗證');
+                await loadSopWorkflowFromCloud({ migrateLegacy: true });
+                renderPendingProposals();
+                renderUpdateLogs();
+                renderSnapshots();
+            } catch (e) {
+                const cached = getCachedSopDocument();
+                if (cached && viewer) viewer.value = cached.content;
+                updateSopViewerMeta(cached, `重整失敗：${e.message || e}`);
+                alert(`❌ SOP 雲端主版本讀取失敗：${e.message || e}`);
+            } finally {
+                sopCloudBusy = false;
+            }
+        }
+
+        async function createSopSnapshot(doc, summary, actor = 'ADMIN') {
+            if (!doc?.content) return { success: false, message: 'missing source document' };
+            const id = Date.now() * 1000 + Math.floor(Math.random() * 1000);
+            const record = {
+                id,
+                createdAtMs: Date.now(),
+                time: new Date().toLocaleString('zh-TW'),
+                summary,
+                revision: Number(doc.revision || 0),
+                contentHash: doc.contentHash || sopContentHash(doc.content),
+                content: doc.content,
+                actor,
+                sourceUpdatedAt: doc.updatedAt || ''
+            };
+            const result = await upsertSopWorkflowRow(`${SOP_SNAPSHOT_PREFIX}${id}`, record);
+            if (result.success) {
+                const list = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
+                list.unshift(record);
+                localStorage.setItem('shiye_sop_snapshots', JSON.stringify(list.slice(0, 50)));
+            }
+            return { ...result, record };
+        }
+
+        async function writeSopAuditLog(record) {
+            const id = record.id || (Date.now() * 1000 + Math.floor(Math.random() * 1000));
+            const payload = { ...record, id, createdAtMs: record.createdAtMs || Date.now(), time: record.time || new Date().toLocaleString('zh-TW') };
+            const result = await upsertSopWorkflowRow(`${SOP_LOG_PREFIX}${id}`, payload);
+            if (result.success) {
+                const logs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
+                logs.unshift(payload);
+                localStorage.setItem('shiye_sop_update_logs', JSON.stringify(logs.slice(0, 200)));
+            }
+            return result;
+        }
+
+        async function importSopFromGistToCloud() {
+            if (sopCloudBusy) return;
+            if (!getStoredGistUrl()) return alert('尚未設定 GitHub Gist SOP 網址。');
+            sopCloudBusy = true;
+            try {
+                const [gistText, current] = await Promise.all([
+                    fetchSopFromGistReadOnly(),
+                    readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false })
+                ]);
+                const gistHash = sopContentHash(gistText);
+                if (gistHash === current.contentHash && normalizeSopText(gistText) === normalizeSopText(current.content)) {
+                    alert(`ℹ️ Gist 與目前 Supabase SOP r${current.revision} 內容完全相同，無需匯入。`);
+                    return;
+                }
+                if (!confirm(`確定要把 Gist 內容匯入成新的 SOP 主版本嗎？\n\n目前：r${current.revision} / ${current.contentHash}\nGist：${gistHash}\n\n系統會先建立完整快照，再寫入並重新讀回驗證。`)) return;
+                await createSopSnapshot(current, `Gist 匯入前自動快照 r${current.revision}`, activeCode || 'ADMIN');
+                const write = await writeSopDocumentAtomic(gistText, { expectedDoc: current, actor: activeCode || 'ADMIN', source: 'gist-import', note: '管理員手動從 Gist 匯入' });
+                if (!write.success) throw new Error(write.message);
+                await writeSopAuditLog({
+                    topic: '從 Gist 匯入 SOP',
+                    proposer: 'SYSTEM / ADMIN',
+                    reviewer: activeCode || 'ADMIN',
+                    action: 'import',
+                    lineRange: '全文版本更新',
+                    oldText: `r${current.revision} · ${current.contentHash}`,
+                    newText: `r${write.doc.revision} · ${write.doc.contentHash}`,
+                    fromRevision: current.revision,
+                    toRevision: write.doc.revision,
+                    verified: true
+                });
+                await loadSopWorkflowFromCloud({ migrateLegacy: false });
+                renderUpdateLogs();
+                renderSnapshots();
+                renderPendingProposals();
+                alert(`✅ Gist 已匯入並發布為 Supabase SOP r${write.doc.revision}，雲端讀回校驗通過。`);
+            } catch (e) {
+                alert(`❌ Gist 匯入失敗：${e.message || e}`);
+            } finally {
+                sopCloudBusy = false;
+            }
         }
 
         function locateSopLine(sopText, oldText, topic = '') {
-            if (!sopText || !oldText || oldText === '無' || oldText === '（無）' || oldText.trim().length < 2) {
-                return { found: false, startLine: -1, endLine: -1, isAppend: true };
+            const result = { found: false, startLine: -1, endLine: -1, isAppend: false, method: 'none', score: 0, ambiguous: false, candidates: [] };
+            if (!sopText || !oldText || ['無', '（無）', '(無)'].includes(String(oldText).trim()) || String(oldText).trim().length < 2) {
+                return { ...result, isAppend: true, method: 'append-intent' };
             }
-            const cleanSop = sopText.replace(/\r\n/g, '\n');
+
+            const cleanSop = normalizeSopText(sopText);
+            const cleanOld = normalizeSopText(oldText).trim();
             const lines = cleanSop.split('\n');
-            const cleanOld = oldText.trim().replace(/\r\n/g, '\n');
-            const oldLines = cleanOld.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            if (oldLines.length === 0) return { found: false, startLine: -1, endLine: -1, isAppend: true };
+            const oldRawLines = cleanOld.split('\n');
+            const oldLines = oldRawLines.map(l => l.trim()).filter(Boolean);
+            if (!oldLines.length) return { ...result, isAppend: true, method: 'append-intent' };
 
-            const exactIdx = cleanSop.indexOf(cleanOld);
-            if (exactIdx !== -1) {
-                const before = cleanSop.substring(0, exactIdx);
+            // 1) 完整原文 block 精準比對。
+            const exactPositions = [];
+            let from = 0;
+            while (true) {
+                const idx = cleanSop.indexOf(cleanOld, from);
+                if (idx < 0) break;
+                exactPositions.push(idx);
+                from = idx + Math.max(1, cleanOld.length);
+            }
+            if (exactPositions.length === 1) {
+                const before = cleanSop.slice(0, exactPositions[0]);
                 const startLine = before.split('\n').length;
-                const count = cleanOld.split('\n').length;
-                return { found: true, startLine: startLine, endLine: startLine + count - 1, isAppend: false, method: 'exact' };
+                return { ...result, found: true, startLine, endLine: startLine + oldRawLines.length - 1, method: 'exact', score: 1 };
+            }
+            if (exactPositions.length > 1) {
+                return { ...result, ambiguous: true, method: 'exact-multiple', score: 1, candidates: exactPositions.map(idx => {
+                    const line = cleanSop.slice(0, idx).split('\n').length;
+                    return { startLine: line, endLine: line + oldRawLines.length - 1, score: 1 };
+                }) };
             }
 
-            const normalize = (s) => s.replace(/^[\s\-\*\+\d\.\:]+/, '').replace(/[\s\:\：\，\、\。\(\)\（\）]/g, '').toLowerCase();
-            const normTargetFirst = normalize(oldLines[0]);
+            const normalize = (value) => String(value || '')
+                .replace(/^[\s\-\*\+\d\.\:\：\、]+/, '')
+                .replace(/[\s\t\:：，,、。．；;！!？?「」『』【】\(\)（）\[\]]/g, '')
+                .toLowerCase();
+            const normOldLines = oldLines.map(normalize).filter(Boolean);
 
-            if (normTargetFirst.length >= 2) {
-                for (let i = 0; i < lines.length; i++) {
-                    const normLine = normalize(lines[i]);
-                    if (normLine.includes(normTargetFirst) || normTargetFirst.includes(normLine)) {
-                        let multiMatch = true;
-                        if (oldLines.length > 1) {
-                            for (let j = 1; j < oldLines.length; j++) {
-                                if (i + j >= lines.length || !normalize(lines[i + j]).includes(normalize(oldLines[j]))) {
-                                    multiMatch = false; break;
-                                }
-                            }
-                        }
-                        if (multiMatch) return { found: true, startLine: i + 1, endLine: i + oldLines.length, isAppend: false, method: 'normalized' };
-                    }
+            // 2) 正規化後多行精準比對。
+            const normalizedMatches = [];
+            for (let i = 0; i <= lines.length - normOldLines.length; i++) {
+                let ok = true;
+                for (let j = 0; j < normOldLines.length; j++) {
+                    if (normalize(lines[i + j]) !== normOldLines[j]) { ok = false; break; }
                 }
+                if (ok) normalizedMatches.push({ startLine: i + 1, endLine: i + normOldLines.length, score: 0.98 });
             }
-            return { found: false, startLine: -1, endLine: -1, isAppend: true };
+            if (normalizedMatches.length === 1) return { ...result, found: true, ...normalizedMatches[0], method: 'normalized-exact' };
+            if (normalizedMatches.length > 1) return { ...result, ambiguous: true, method: 'normalized-multiple', score: 0.98, candidates: normalizedMatches };
+
+            // 3) 模糊比對僅作最後手段，必須高分且唯一，避免誤改相似條文。
+            const bigrams = (value) => {
+                const t = normalize(value);
+                if (t.length < 2) return t ? [t] : [];
+                const arr = [];
+                for (let i = 0; i < t.length - 1; i++) arr.push(t.slice(i, i + 2));
+                return arr;
+            };
+            const dice = (a, b) => {
+                const A = bigrams(a), B = bigrams(b);
+                if (!A.length || !B.length) return 0;
+                const bag = new Map();
+                for (const x of A) bag.set(x, (bag.get(x) || 0) + 1);
+                let hit = 0;
+                for (const x of B) {
+                    const n = bag.get(x) || 0;
+                    if (n > 0) { hit++; bag.set(x, n - 1); }
+                }
+                return (2 * hit) / (A.length + B.length);
+            };
+            const topicNorm = normalize(topic);
+            const candidates = [];
+            const span = Math.max(1, oldLines.length);
+            for (let i = 0; i < lines.length; i++) {
+                const candidateText = lines.slice(i, Math.min(lines.length, i + span)).join('\n');
+                let score = dice(cleanOld, candidateText);
+                if (topicNorm && normalize(candidateText).includes(topicNorm)) score = Math.min(1, score + 0.035);
+                if (score >= 0.82) candidates.push({ startLine: i + 1, endLine: Math.min(lines.length, i + span), score });
+            }
+            candidates.sort((a,b) => b.score - a.score);
+            const best = candidates[0];
+            const second = candidates[1];
+            if (best && best.score >= 0.91 && (!second || best.score - second.score >= 0.07)) {
+                return { ...result, found: true, ...best, method: 'fuzzy-safe', candidates: candidates.slice(0, 3) };
+            }
+            if (best) {
+                return { ...result, ambiguous: true, method: 'fuzzy-ambiguous', score: best.score, candidates: candidates.slice(0, 3) };
+            }
+            return result;
+        }
+
+        function getSopProposalAction(proposal) {
+            const explicit = String(proposal?.action || '').toLowerCase().trim();
+            if (['modify', 'delete', 'append'].includes(explicit)) return explicit;
+            const newText = String(proposal?.newText || '').trim();
+            const oldText = String(proposal?.oldText || '').trim();
+            if (/^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test(newText)) return 'delete';
+            if (!oldText || ['無', '（無）', '(無)'].includes(oldText)) return 'append';
+            return 'modify';
         }
 
         function inspectSopLine(lineNum) {
@@ -3073,6 +3626,7 @@
             if (!localStorage.getItem('shiye_daily_archive')) localStorage.setItem('shiye_daily_archive', JSON.stringify([]));
 
             await fetchSopFromGist();
+            await loadSopWorkflowFromCloud({ migrateLegacy: true });
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
 
@@ -3594,6 +4148,12 @@
             if (navBtn) navBtn.classList.add('bg-neutral-900', 'text-white');
             const badge = document.getElementById(`nav_badge_${key}`);
             if (badge) badge.classList.remove('hidden-view');
+
+            if (['proposals', 'diffLogs', 'snapshots'].includes(key)) {
+                Promise.resolve().then(() => refreshSopRevisionWorkspace()).catch(() => {});
+            } else if (key === 'sopViewer') {
+                Promise.resolve().then(() => refreshSopViewerOnly()).catch(() => {});
+            }
         }
 
         function closeAdminWindow(key) {
@@ -3835,6 +4395,8 @@
             document.getElementById('bgImagesInput').value = Array.isArray(bgList) ? bgList.join('\n') : '';
 
             currentCodesList = await fetchCodesFromCloud();
+            await fetchSopFromGist();
+            await loadSopWorkflowFromCloud({ migrateLegacy: true });
             renderCodesTable();
             renderErrorLogs();
             renderPendingProposals();
@@ -3842,7 +4404,6 @@
             renderSnapshots();
             renderAutoFreeDashboard();
             await renderTokenAnalytics();
-            await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
 
@@ -3853,6 +4414,8 @@
 
         async function refreshCloudData() {
             currentCodesList = await fetchCodesFromCloud();
+            await fetchSopFromGist();
+            await loadSopWorkflowFromCloud({ migrateLegacy: true });
             renderCodesTable();
             renderErrorLogs();
             renderPendingProposals();
@@ -3860,10 +4423,9 @@
             renderSnapshots();
             renderAutoFreeDashboard();
             await renderTokenAnalytics();
-            await fetchSopFromGist();
             await fetchPhotoCatalog();
             await fetchDocumentCatalog();
-            alert('✅ 已成功從雲端同步最新資料與修訂紀錄！');
+            alert(`✅ 已同步最新雲端資料。SOP 主版本目前為 r${currentSopDocument?.revision || '--'}，全文與修訂工作流已重新讀取。`);
         }
 
         function recordDispatchLog(modelId, durationSec, tokenCount, hasImages = false) {
@@ -4024,7 +4586,7 @@
             if (!container) return;
 
             const list = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            badge.textContent = `${list.length} 筆`;
+            if (badge) badge.textContent = `${list.length} 筆`;
 
             if (list.length === 0) {
                 container.innerHTML = `
@@ -4036,155 +4598,238 @@
                 return;
             }
 
-            const currentSop = localStorage.getItem('shiye_sop') || '';
+            const currentSop = currentSopDocument?.content || localStorage.getItem('shiye_sop') || '';
+            const currentRevision = Number(currentSopDocument?.revision || getCachedSopMeta()?.revision || 0);
 
             container.innerHTML = list.map(item => {
-                const loc = locateSopLine(currentSop, item.oldText, item.topic);
-                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((item.newText || '').trim());
+                const action = getSopProposalAction(item);
+                const loc = action === 'append'
+                    ? { found: false, isAppend: true, ambiguous: false, method: 'append-intent' }
+                    : locateSopLine(currentSop, item.oldText, item.topic);
+                const safeToApply = action === 'append' || (loc.found && !loc.ambiguous);
+                const staleBase = item.baseRevision && currentRevision && Number(item.baseRevision) !== currentRevision;
+                const actionLabel = action === 'delete' ? '刪除' : action === 'append' ? '新增' : '修改';
+                const actionTone = action === 'delete' ? 'text-red-300 border-red-900/50 bg-red-950/20' : action === 'append' ? 'text-blue-300 border-blue-900/50 bg-blue-950/20' : 'text-emerald-300 border-emerald-900/50 bg-emerald-950/20';
 
                 let locationBadgeHtml = '';
-                if (loc.found) {
+                if (action === 'append') {
+                    locationBadgeHtml = `<span class="text-[10px] bg-blue-950/30 text-blue-300 border border-blue-900/50 px-2.5 py-0.5 rounded font-mono">➕ 明確新增：文末增補</span>`;
+                } else if (loc.found && !loc.ambiguous) {
                     locationBadgeHtml = `
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center flex-wrap gap-2">
                             <span class="text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-0.5 rounded font-mono">
-                                📍 鎖定第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行
+                                📍 ${loc.method} · 第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行${loc.score ? ` · ${(loc.score * 100).toFixed(0)}%` : ''}
                             </span>
-                            <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">
-                                查看所在行
-                            </button>
-                        </div>
-                    `;
+                            <button onclick="inspectSopLine(${loc.startLine})" class="text-[10px] text-neutral-400 hover:text-white underline font-mono">查看所在行</button>
+                        </div>`;
                 } else {
+                    const candidateText = (loc.candidates || []).slice(0, 2).map(c => `第 ${c.startLine} 行 ${(c.score * 100).toFixed(0)}%`).join(' / ');
                     locationBadgeHtml = `
-                        <span class="text-[10px] bg-neutral-800 text-amber-300 border border-neutral-700 px-2 py-0.5 rounded font-mono">
-                            ➕ 文末安全增補
-                        </span>
-                    `;
+                        <span class="text-[10px] bg-red-950/30 text-red-300 border border-red-900/50 px-2.5 py-0.5 rounded font-mono">
+                            ⚠ ${loc.ambiguous ? '比對結果不唯一' : '找不到原文'}${candidateText ? ` · 候選 ${candidateText}` : ''} — 已禁止自動寫入
+                        </span>`;
                 }
 
                 return `
-                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-2xl space-y-3 selectable-text">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-900 pb-3 ui-no-select">
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-neutral-800 text-neutral-300 text-[10px] px-2.5 py-0.5 rounded-full font-medium">
-                                <i class="fa-solid fa-user mr-1"></i> ${escapeHtml(item.userName)}
-                            </span>
-                            <span class="text-xs font-medium text-white">${escapeHtml(item.topic)}</span>
+                <div class="p-4 bg-neutral-950 border ${safeToApply ? 'border-neutral-800' : 'border-red-900/50'} rounded-2xl space-y-3 selectable-text">
+                    <div class="flex flex-col gap-2 border-b border-neutral-900 pb-3 ui-no-select">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div class="flex items-center flex-wrap gap-2">
+                                <span class="bg-neutral-800 text-neutral-300 text-[10px] px-2.5 py-0.5 rounded-full font-medium"><i class="fa-solid fa-user mr-1"></i>${escapeHtml(item.userName || '同仁')}</span>
+                                <span class="text-xs font-medium text-white">${escapeHtml(item.topic || '未命名 SOP 修訂')}</span>
+                                <span class="text-[9px] px-2 py-0.5 rounded-full border ${actionTone} font-mono">${actionLabel}</span>
+                            </div>
+                            <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(item.time || item.submittedAt || '')}</span>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center flex-wrap gap-2">
                             ${locationBadgeHtml}
-                            <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(item.time)}</span>
+                            <span class="text-[9px] text-neutral-500 border border-neutral-800 bg-neutral-900 px-2 py-0.5 rounded font-mono">提案基準 r${Number(item.baseRevision || 0) || '--'} → 目前 r${currentRevision || '--'}</span>
+                            ${staleBase ? '<span class="text-[9px] text-amber-300 border border-amber-900/50 bg-amber-950/20 px-2 py-0.5 rounded font-mono">需要 rebase 再確認</span>' : ''}
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                        <div class="bg-neutral-900/50 border border-neutral-800 p-3 rounded-xl space-y-1">
-                            <span class="text-[10px] font-semibold text-neutral-400">原 SOP 內容：</span>
-                            <div class="text-neutral-400 font-mono whitespace-pre-wrap">${escapeHtml(item.oldText)}</div>
+                        <div class="bg-neutral-900/50 border border-neutral-800 p-3 rounded-xl space-y-1 min-w-0">
+                            <span class="text-[10px] font-semibold text-neutral-400">原 SOP 內容</span>
+                            <div class="text-neutral-400 font-mono whitespace-pre-wrap break-words">${escapeHtml(item.oldText || '無（新增項目）')}</div>
                         </div>
-                        <div class="${isDelete ? 'bg-red-950/20 border border-red-900/40' : 'bg-neutral-900/80 border border-neutral-700'} p-3 rounded-xl space-y-1">
-                            <span class="text-[10px] font-semibold ${isDelete ? 'text-red-400' : 'text-neutral-200'}">${isDelete ? '執行操作：' : '修訂/增補為：'}</span>
-                            <div class="${isDelete ? 'text-red-300 font-bold' : 'text-white'} font-mono whitespace-pre-wrap">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(item.newText)}</div>
+                        <div class="${action === 'delete' ? 'bg-red-950/20 border border-red-900/40' : 'bg-neutral-900/80 border border-neutral-700'} p-3 rounded-xl space-y-1 min-w-0">
+                            <span class="text-[10px] font-semibold ${action === 'delete' ? 'text-red-400' : 'text-neutral-200'}">${action === 'delete' ? '執行操作' : action === 'append' ? '新增內容' : '修訂內容'}</span>
+                            <div class="${action === 'delete' ? 'text-red-300 font-bold' : 'text-white'} font-mono whitespace-pre-wrap break-words">${action === 'delete' ? '【刪除此條規範】' : escapeHtml(item.newText || '')}</div>
+                            ${item.reason ? `<div class="pt-2 mt-2 border-t border-neutral-800 text-[10px] text-neutral-500">理由：${escapeHtml(item.reason)}</div>` : ''}
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end space-x-2.5 pt-2 border-t border-neutral-900 ui-no-select">
-                        <button onclick="rejectSopProposal(${item.id})" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-xl transition">
-                            駁回提案
-                        </button>
-                        <button onclick="adoptSopProposal(${item.id})" class="text-xs bg-white hover:bg-neutral-200 text-black font-semibold px-4 py-1.5 rounded-xl transition shadow-md">
-                            採納並更新雲端 SOP
+                    ${!safeToApply ? `<div class="rounded-xl border border-red-900/40 bg-red-950/10 px-3 py-2 text-[10px] text-red-300">為避免把「修改／刪除」誤當成新增，系統不會在找不到原文時自動追加到文末。請先重新整理雲端 SOP 或重新提出草案。</div>` : ''}
+
+                    <div class="flex items-center justify-end flex-wrap gap-2.5 pt-2 border-t border-neutral-900 ui-no-select">
+                        <button onclick="refreshSopRevisionWorkspace()" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-xl transition"><i class="fa-solid fa-arrows-rotate mr-1"></i>重新比對</button>
+                        <button onclick="rejectSopProposal(${Number(item.id)})" class="text-xs text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-xl transition">駁回提案</button>
+                        <button onclick="adoptSopProposal(${Number(item.id)})" ${safeToApply ? '' : 'disabled'} class="text-xs ${safeToApply ? 'bg-white hover:bg-neutral-200 text-black' : 'bg-neutral-900 text-neutral-600 cursor-not-allowed'} font-semibold px-4 py-1.5 rounded-xl transition shadow-md">
+                            ${safeToApply ? '驗證後採納並發布' : '比對衝突，禁止寫入'}
                         </button>
                     </div>
-                </div>
-                `;
+                </div>`;
             }).join('');
         }
 
-        async function adoptSopProposal(proposalId) {
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            let target = proposals.find(p => p.id === proposalId);
-            if (!target) return alert('找不到此提案紀錄');
+        async function refreshSopRevisionWorkspace() {
+            try {
+                await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                await loadSopWorkflowFromCloud({ migrateLegacy: true });
+                renderPendingProposals();
+                renderUpdateLogs();
+                renderSnapshots();
+            } catch (e) {
+                alert(`❌ 重新比對失敗：${e.message || e}`);
+            }
+        }
 
-            if (!confirm(`確定要採納【${target.topic}】的修訂並直接寫入雲端 SOP 嗎？\n系統將自動建立備份快照。`)) return;
+        function buildSopMutation(sopText, proposal) {
+            const action = getSopProposalAction(proposal);
+            const oldSnippet = normalizeSopText(proposal.oldText || '').trim();
+            const newSnippet = normalizeSopText(proposal.newText || '').trim();
+            const loc = action === 'append'
+                ? { found: false, isAppend: true, ambiguous: false, method: 'append-intent' }
+                : locateSopLine(sopText, oldSnippet, proposal.topic || '');
 
-            let sopText = await fetchSopFromGist();
-            sopText = sopText.replace(/\r\n/g, '\n');
-            let oldSnippet = (target.oldText || '').trim().replace(/\r\n/g, '\n');
-            let newSnippet = (target.newText || '').trim().replace(/\r\n/g, '\n');
+            if ((action === 'modify' || action === 'delete') && (!loc.found || loc.ambiguous)) {
+                return { success: false, conflict: true, action, loc, message: loc.ambiguous ? '原文比對有多個可能位置，無法安全自動修改。' : '找不到提案中的原 SOP 原文，無法安全自動修改。' };
+            }
+            if (action !== 'delete' && !newSnippet) return { success: false, action, loc, message: '修訂／新增內容不可為空。' };
 
-            const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test(newSnippet);
-            const loc = locateSopLine(sopText, oldSnippet, target.topic);
-
-            let newSopText = "";
-            let lineRangeInfo = "";
-
-            if (loc.found) {
-                const lines = sopText.split('\n');
+            let next = normalizeSopText(sopText);
+            let lineRangeInfo = '';
+            if (action === 'append') {
+                next = next.trimEnd() + `\n\n### 【最新增補】${proposal.topic || '未命名項目'}\n${newSnippet}\n`;
+                lineRangeInfo = `文末增補（原文件第 ${next.split('\n').length - newSnippet.split('\n').length - 2} 行後）`;
+            } else {
+                const lines = next.split('\n');
                 const startIdx = loc.startLine - 1;
                 const count = loc.endLine - loc.startLine + 1;
-
-                if (isDelete) {
+                if (action === 'delete') {
                     lines.splice(startIdx, count);
-                    if (lines[startIdx] === '' && lines[startIdx - 1] === '') lines.splice(startIdx, 1);
-                    newSopText = lines.join('\n');
-                    lineRangeInfo = `整行抽除第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
+                    while (startIdx < lines.length - 1 && lines[startIdx] === '' && lines[startIdx + 1] === '') lines.splice(startIdx, 1);
+                    next = lines.join('\n').replace(/\n{3,}/g, '\n\n');
+                    lineRangeInfo = `刪除第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
                 } else {
-                    const replacementLines = newSnippet.split('\n');
-                    lines.splice(startIdx, count, ...replacementLines);
-                    newSopText = lines.join('\n');
-                    lineRangeInfo = `精準替換第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
+                    lines.splice(startIdx, count, ...newSnippet.split('\n'));
+                    next = lines.join('\n');
+                    lineRangeInfo = `替換第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行`;
                 }
-            } else {
-                newSopText = sopText.trimEnd() + `\n\n### 【最新增補】${target.topic}\n${newSnippet}\n`;
-                lineRangeInfo = `文末增補 (第 ${sopText.split('\n').length + 1} 行)`;
             }
+            if (normalizeSopText(next) === normalizeSopText(sopText)) return { success: false, action, loc, message: '計算後內容沒有任何變更，已取消重複發布。' };
+            return { success: true, action, loc, newSopText: next, oldSnippet, newSnippet, lineRangeInfo };
+        }
 
-            let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            snapshots.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                summary: `${isDelete ? '刪除條目' : '修訂條目'}：${target.topic}`,
-                content: sopText
-            });
-            if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
+        async function adoptSopProposal(proposalId) {
+            if (sopCloudBusy) return alert('SOP 雲端目前正在執行另一項操作，請稍候。');
+            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
+            const target = proposals.find(p => String(p.id) === String(proposalId));
+            if (!target) return alert('找不到此提案紀錄，請先重新同步修訂草稿。');
 
-            let updateLogs = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
-            updateLogs.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                topic: target.topic,
-                proposer: `${target.userName} (${target.userCode})`,
-                reviewer: activeCode || 'ADMIN',
-                lineRange: lineRangeInfo,
-                oldText: oldSnippet || '（新增）',
-                newText: isDelete ? '【已整列移除】' : newSnippet
-            });
-            if (updateLogs.length > 50) updateLogs = updateLogs.slice(0, 50);
+            const action = getSopProposalAction(target);
+            if (!confirm(`確定要採納【${target.topic}】的${action === 'delete' ? '刪除' : action === 'append' ? '新增' : '修改'}提案嗎？\n\n系統將先抓最新 Supabase SOP、重新比對原文、建立雲端快照，再用版本鎖發布並讀回驗證。`)) return;
 
-            proposals = proposals.filter(p => p.id !== proposalId);
+            sopCloudBusy = true;
+            try {
+                const latest = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                const mutation = buildSopMutation(latest.content, target);
+                if (!mutation.success) {
+                    renderPendingProposals();
+                    const cands = mutation.loc?.candidates?.slice(0,3).map(c => `第 ${c.startLine} 行 ${(c.score * 100).toFixed(0)}%`).join('、');
+                    alert(`⚠️ 已停止寫入：${mutation.message}${cands ? `\n可能候選：${cands}` : ''}\n\n系統不會把找不到的修改／刪除提案偷偷改成文末新增。`);
+                    return;
+                }
 
-            localStorage.setItem('shiye_sop', newSopText);
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
-            localStorage.setItem('shiye_sop_update_logs', JSON.stringify(updateLogs));
+                if (target.baseRevision && Number(target.baseRevision) !== Number(latest.revision)) {
+                    const rebaseOk = confirm(`此提案是在 SOP r${target.baseRevision} 時送出，目前雲端已是 r${latest.revision}。\n\n系統剛剛已用最新版本重新定位，仍找到唯一安全目標：${mutation.lineRangeInfo}。\n是否以最新版本為基礎繼續採納？`);
+                    if (!rebaseOk) return;
+                }
 
-            broadcastSopUpdate(newSopText);
-            await pushCodesToCloud(currentCodesList);
+                const snapshotRes = await createSopSnapshot(latest, `${action === 'delete' ? '刪除' : action === 'append' ? '新增' : '修改'}前自動快照：${target.topic}`, activeCode || 'ADMIN');
+                if (!snapshotRes.success) throw new Error(`無法建立雲端快照，因此已取消寫入：${snapshotRes.message || 'unknown error'}`);
 
-            renderPendingProposals();
-            renderUpdateLogs();
-            renderSnapshots();
-            alert(`✅ 成功！SOP 已更新並發布至雲端資料庫！\n【操作結果】：${lineRangeInfo}\n所有已開啟的視窗已同步刷新。`);
+                const write = await writeSopDocumentAtomic(mutation.newSopText, {
+                    expectedDoc: latest,
+                    actor: activeCode || 'ADMIN',
+                    source: `proposal-${action}`,
+                    note: `${target.topic} / proposal ${target.id}`
+                });
+                if (!write.success) {
+                    if (write.conflict) await refreshSopRevisionWorkspace();
+                    throw new Error(write.message);
+                }
+
+                const audit = {
+                    id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
+                    topic: target.topic,
+                    proposer: `${target.userName || '同仁'} (${target.userCode || 'MEMBER'})`,
+                    reviewer: activeCode || 'ADMIN',
+                    action,
+                    lineRange: mutation.lineRangeInfo,
+                    oldText: action === 'append' ? '（新增）' : mutation.oldSnippet,
+                    newText: action === 'delete' ? '【已刪除此條規範】' : mutation.newSnippet,
+                    fromRevision: latest.revision,
+                    toRevision: write.doc.revision,
+                    baseRevision: target.baseRevision || null,
+                    beforeHash: latest.contentHash,
+                    afterHash: write.doc.contentHash,
+                    locatorMethod: mutation.loc?.method || 'append-intent',
+                    locatorScore: mutation.loc?.score || (action === 'append' ? 1 : 0),
+                    verified: true
+                };
+                const logRes = await writeSopAuditLog(audit);
+
+                const approvedProposal = {
+                    ...target,
+                    action,
+                    status: 'approved',
+                    reviewedAt: new Date().toISOString(),
+                    reviewedBy: activeCode || 'ADMIN',
+                    appliedRevision: write.doc.revision,
+                    appliedHash: write.doc.contentHash
+                };
+                const proposalStateRes = await upsertSopWorkflowRow(`${SOP_PROPOSAL_PREFIX}${target.id}`, approvedProposal);
+
+                proposals = proposals.filter(p => String(p.id) !== String(proposalId));
+                localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
+                cacheSopDocument(write.doc);
+                await loadSopWorkflowFromCloud({ migrateLegacy: false });
+                renderPendingProposals();
+                renderUpdateLogs();
+                renderSnapshots();
+
+                // Legacy mirror 是相容用途；canonical SOP 已經獨立安全寫入，不依賴這個結果。
+                pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
+
+                const warnings = [];
+                if (!logRes.success) warnings.push('修訂日誌雲端寫入失敗');
+                if (!proposalStateRes.success) warnings.push('提案狀態更新失敗');
+                alert(`✅ SOP 已發布為 r${write.doc.revision}，並從 Supabase 重新讀回驗證成功。\n【操作】：${mutation.lineRangeInfo}\n【Hash】：${write.doc.contentHash}${warnings.length ? `\n\n⚠ ${warnings.join('、')}，SOP 正文本身已安全發布。` : ''}`);
+            } catch (e) {
+                alert(`❌ SOP 發布失敗：${e.message || e}\n\n提案不會被當成成功完成，請重新同步後再試。`);
+            } finally {
+                sopCloudBusy = false;
+            }
         }
 
         async function rejectSopProposal(proposalId) {
             if (!confirm('確定要駁回此修訂提案嗎？')) return;
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            proposals = proposals.filter(p => p.id !== proposalId);
+            const target = proposals.find(p => String(p.id) === String(proposalId));
+            if (target) {
+                await upsertSopWorkflowRow(`${SOP_PROPOSAL_PREFIX}${target.id}`, {
+                    ...target,
+                    status: 'rejected',
+                    reviewedAt: new Date().toISOString(),
+                    reviewedBy: activeCode || 'ADMIN'
+                });
+            }
+            proposals = proposals.filter(p => String(p.id) !== String(proposalId));
             localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
             renderPendingProposals();
-            await pushCodesToCloud(currentCodesList);
+            pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
         }
 
         function renderUpdateLogs() {
@@ -4193,38 +4838,55 @@
             if (!container) return;
 
             const list = safeJsonParse(localStorage.getItem('shiye_sop_update_logs'), []);
-            badge.textContent = `共 ${list.length} 筆`;
+            if (badge) badge.textContent = `共 ${list.length} 筆`;
 
             if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <p class="text-xs text-neutral-500">尚無 SOP 雲端修訂日誌</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl"><p class="text-xs text-neutral-500">尚無 SOP 雲端修訂日誌</p></div>`;
                 return;
             }
 
-            container.innerHTML = list.map(l => `
-                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2 text-xs selectable-text">
-                    <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono border-b border-neutral-900 pb-2">
-                        <span class="text-white font-medium">${escapeHtml(l.topic)}</span>
-                        <span>${escapeHtml(l.time)} | 提案：${escapeHtml(l.proposer)}</span>
+            container.innerHTML = list.map(l => {
+                const action = l.action || 'modify';
+                const tone = action === 'delete' ? 'text-red-300' : action === 'append' ? 'text-blue-300' : action === 'rollback' ? 'text-purple-300' : 'text-emerald-300';
+                const label = action === 'delete' ? '刪除' : action === 'append' ? '新增' : action === 'rollback' ? '回滾' : action === 'import' ? '匯入' : '修改';
+                return `
+                <div class="p-4 bg-neutral-950 border border-neutral-800 rounded-xl space-y-3 text-xs selectable-text">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-900 pb-2">
+                        <div class="flex items-center flex-wrap gap-2">
+                            <span class="text-white font-medium">${escapeHtml(l.topic || 'SOP 更新')}</span>
+                            <span class="text-[9px] font-mono ${tone} border border-neutral-800 bg-neutral-900 px-2 py-0.5 rounded-full">${label}</span>
+                            ${l.verified ? '<span class="text-[9px] text-emerald-300 border border-emerald-900/50 bg-emerald-950/20 px-2 py-0.5 rounded-full">Cloud verified</span>' : ''}
+                        </div>
+                        <span class="text-[10px] text-neutral-500 font-mono">${escapeHtml(l.time || '')}</span>
                     </div>
-                    <div class="text-[11px] text-neutral-300 font-mono bg-neutral-900/50 p-2.5 rounded-lg space-y-1">
-                        <div class="text-neutral-500 text-[10px]">位置：<strong class="text-neutral-300 font-mono">${escapeHtml(l.lineRange)}</strong></div>
-                        <div class="text-neutral-500 font-mono line-through">- ${escapeHtml(l.oldText)}</div>
-                        <div class="text-neutral-200 font-mono font-medium">+ ${escapeHtml(l.newText)}</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] font-mono">
+                        <div class="bg-neutral-900/60 rounded-lg p-2.5"><span class="text-neutral-500">Revision</span><div class="text-neutral-200 mt-1">r${l.fromRevision ?? '--'} → r${l.toRevision ?? '--'}</div></div>
+                        <div class="bg-neutral-900/60 rounded-lg p-2.5 min-w-0"><span class="text-neutral-500">Locator</span><div class="text-neutral-200 mt-1 truncate">${escapeHtml(l.locatorMethod || l.lineRange || '--')}</div></div>
+                        <div class="bg-neutral-900/60 rounded-lg p-2.5 min-w-0"><span class="text-neutral-500">Hash</span><div class="text-neutral-200 mt-1 truncate">${escapeHtml(l.afterHash || '--')}</div></div>
                     </div>
-                </div>
-            `).join('');
+                    <div class="text-[11px] text-neutral-300 font-mono bg-neutral-900/50 p-2.5 rounded-lg space-y-1 min-w-0">
+                        <div class="text-neutral-500 text-[10px]">位置：<strong class="text-neutral-300 font-mono">${escapeHtml(l.lineRange || '--')}</strong> · 提案：${escapeHtml(l.proposer || '--')} · 審核：${escapeHtml(l.reviewer || '--')}</div>
+                        <div class="text-neutral-500 font-mono line-through whitespace-pre-wrap break-words">- ${escapeHtml(l.oldText || '')}</div>
+                        <div class="text-neutral-200 font-mono font-medium whitespace-pre-wrap break-words">+ ${escapeHtml(l.newText || '')}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function setSopWorkflowClearMarker(fieldName) {
+            const control = await getSopWorkflowControl();
+            const now = Date.now();
+            const payload = { ...control, [fieldName]: now, updatedAt: new Date().toISOString() };
+            return upsertSopWorkflowRow(SOP_WORKFLOW_CONTROL_ROW_ID, payload);
         }
 
         async function clearUpdateLogs() {
-            if (!confirm('確定要清空所有 SOP 修訂日誌紀錄嗎？此動作將同步更新至雲端資料庫。')) return;
+            if (!confirm('確定要清空目前顯示的 SOP 修訂日誌嗎？\n此操作只建立雲端清除時間點，不會刪除 SOP 正文。')) return;
+            const result = await setSopWorkflowClearMarker('logsClearedBefore');
+            if (!result.success) return alert(`❌ 無法同步清除狀態：${result.message || 'unknown error'}`);
             localStorage.setItem('shiye_sop_update_logs', JSON.stringify([]));
             renderUpdateLogs();
-            await pushCodesToCloud(currentCodesList);
-            alert('✅ 已成功清空所有修訂日誌紀錄！');
+            pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
         }
 
         function renderSnapshots() {
@@ -4233,65 +4895,83 @@
             if (!container) return;
 
             const list = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            badge.textContent = `${list.length} 個`;
-
+            if (badge) badge.textContent = `${list.length} 個`;
             if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl">
-                        <p class="text-xs text-neutral-500">尚無歷史快照紀錄</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="p-6 text-center border border-dashed border-neutral-800 rounded-2xl"><p class="text-xs text-neutral-500">尚無歷史快照紀錄</p></div>`;
                 return;
             }
 
             container.innerHTML = list.map(s => `
-                <div class="flex items-center justify-between p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl text-xs hover:border-neutral-700 transition">
-                    <div class="space-y-0.5">
-                        <div class="font-medium text-white flex items-center space-x-2">
-                            <span>${escapeHtml(s.summary)}</span>
-                            <span class="text-[9px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.2 rounded font-mono">${escapeHtml(s.time)}</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl text-xs hover:border-neutral-700 transition">
+                    <div class="space-y-1 min-w-0">
+                        <div class="font-medium text-white flex items-center flex-wrap gap-2">
+                            <span>${escapeHtml(s.summary || 'SOP 快照')}</span>
+                            <span class="text-[9px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">r${s.revision ?? '--'}</span>
                         </div>
+                        <div class="text-[9px] text-neutral-500 font-mono truncate">${escapeHtml(s.time || '')} · ${escapeHtml(s.contentHash || '')}</div>
                     </div>
-                    <button onclick="rollbackSnapshot(${s.id})" class="text-xs bg-neutral-900 hover:bg-white hover:text-black text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded-xl transition flex items-center space-x-1 shrink-0">
-                        <i class="fa-solid fa-rotate-left text-[10px]"></i>
-                        <span>一鍵還原</span>
+                    <button onclick="rollbackSnapshot(${Number(s.id)})" class="text-xs bg-neutral-900 hover:bg-white hover:text-black text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded-xl transition flex items-center justify-center space-x-1 shrink-0">
+                        <i class="fa-solid fa-rotate-left text-[10px]"></i><span>驗證後還原</span>
                     </button>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         async function clearSnapshots() {
-            if (!confirm('確定要清空所有歷史備份快照嗎？清空後將無法一鍵回滾舊版本。')) return;
+            if (!confirm('確定要清空目前顯示的歷史快照清單嗎？\n這只建立雲端清除時間點，不會修改目前 SOP 正文。')) return;
+            const result = await setSopWorkflowClearMarker('snapshotsClearedBefore');
+            if (!result.success) return alert(`❌ 無法同步清除狀態：${result.message || 'unknown error'}`);
             localStorage.setItem('shiye_sop_snapshots', JSON.stringify([]));
             renderSnapshots();
-            await pushCodesToCloud(currentCodesList);
-            alert('✅ 已成功清空歷史快照紀錄！');
+            pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
         }
 
         async function rollbackSnapshot(snapshotId) {
+            if (sopCloudBusy) return alert('SOP 雲端目前正在執行另一項操作，請稍候。');
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
-            let target = snapshots.find(s => s.id === snapshotId);
-            if (!target) return alert('找不到此快照版本');
+            const target = snapshots.find(s => String(s.id) === String(snapshotId));
+            if (!target) return alert('找不到此快照版本，請先同步雲端快照。');
+            if (!confirm(`確定要將目前 SOP 還原到此快照內容嗎？\n\n快照來源：r${target.revision ?? '--'} · ${target.time || ''}\n系統會先替目前版本再建立一份快照，然後以新 revision 發布，不會倒退 revision 編號。`)) return;
 
-            if (!confirm(`確定要將雲端 SOP 完整還原至【${target.time}】的備份版本嗎？`)) return;
+            sopCloudBusy = true;
+            try {
+                const current = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                const beforeSnap = await createSopSnapshot(current, `回滾前自動快照 r${current.revision}`, activeCode || 'ADMIN');
+                if (!beforeSnap.success) throw new Error(`回滾前快照建立失敗：${beforeSnap.message || 'unknown error'}`);
 
-            const currentSop = await fetchSopFromGist();
-            snapshots.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                summary: `還原前自動快照`,
-                content: currentSop
-            });
-            if (snapshots.length > 20) snapshots = snapshots.slice(0, 20);
+                const write = await writeSopDocumentAtomic(target.content, {
+                    expectedDoc: current,
+                    actor: activeCode || 'ADMIN',
+                    source: 'rollback',
+                    note: `Rollback from snapshot ${target.id} / source r${target.revision ?? '?'}`
+                });
+                if (!write.success) throw new Error(write.message);
 
-            localStorage.setItem('shiye_sop', target.content);
-            localStorage.setItem('shiye_sop_snapshots', JSON.stringify(snapshots));
+                await writeSopAuditLog({
+                    topic: `SOP 快照還原`,
+                    proposer: 'ADMIN',
+                    reviewer: activeCode || 'ADMIN',
+                    action: 'rollback',
+                    lineRange: '全文版本回滾',
+                    oldText: `r${current.revision} · ${current.contentHash}`,
+                    newText: `快照 r${target.revision ?? '--'} 內容 → 發布為 r${write.doc.revision}`,
+                    fromRevision: current.revision,
+                    toRevision: write.doc.revision,
+                    beforeHash: current.contentHash,
+                    afterHash: write.doc.contentHash,
+                    verified: true
+                });
 
-            broadcastSopUpdate(target.content);
-            await pushCodesToCloud(currentCodesList);
-            renderSnapshots();
-            renderPendingProposals();
-            alert('✅ 成功！SOP 知識庫已成功還原至指定快照版本！');
+                await loadSopWorkflowFromCloud({ migrateLegacy: false });
+                renderSnapshots();
+                renderPendingProposals();
+                renderUpdateLogs();
+                pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
+                alert(`✅ SOP 已依快照內容發布為新版本 r${write.doc.revision}，Supabase 讀回校驗通過。`);
+            } catch (e) {
+                alert(`❌ SOP 還原失敗：${e.message || e}`);
+            } finally {
+                sopCloudBusy = false;
+            }
         }
 
         async function generateNewCode() {
@@ -4409,9 +5089,15 @@
             let dailyArchive = safeJsonParse(localStorage.getItem('shiye_daily_archive'), []);
             let activeDate = localStorage.getItem('shiye_active_date') || getTodayDateString();
 
-            const payloadData = {
+            const localPayloadData = {
                 apiKey: encodeToken(apiKey),
                 sopUrl: sopUrl,
+                sopMeta: currentSopDocument ? {
+                    revision: currentSopDocument.revision,
+                    contentHash: currentSopDocument.contentHash,
+                    updatedAt: currentSopDocument.updatedAt,
+                    updatedBy: currentSopDocument.updatedBy
+                } : (getCachedSopMeta() || null),
                 supabaseUrl: supUrl,
                 supabaseKey: supKey,
                 bgList: bgList,
@@ -4428,6 +5114,13 @@
             const client = getSupabaseClient();
             if (client) {
                 try {
+                    // 保留 global_state 內未知/未來欄位，避免舊分頁全量 upsert 時順手刪掉新版欄位。
+                    let remoteBase = {};
+                    try {
+                        const { data: existing } = await client.from('app_config').select('data').eq('id', 'global_state').maybeSingle();
+                        if (existing?.data && typeof existing.data === 'object') remoteBase = existing.data;
+                    } catch (_) {}
+                    const payloadData = { ...remoteBase, ...localPayloadData };
                     const { error } = await client
                         .from('app_config')
                         .upsert({ id: 'global_state', data: payloadData, updated_at: new Date().toISOString() });
@@ -4475,7 +5168,18 @@
 
                 const result = await pushCodesToCloudWithDetails(currentCodesList);
                 if (result.success) {
-                    alert('✅ 成功：全套設定（含 Supabase 雲端設定與資料庫）已同步完成！');
+                    let sopNote = '';
+                    try {
+                        const doc = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                        await loadSopWorkflowFromCloud({ migrateLegacy: true });
+                        renderPendingProposals();
+                        renderUpdateLogs();
+                        renderSnapshots();
+                        sopNote = `\nSOP 主版本：r${doc.revision} · ${doc.contentHash}`;
+                    } catch (sopErr) {
+                        sopNote = `\n⚠ 設定已同步，但 SOP 主版本重新驗證失敗：${sopErr.message || sopErr}`;
+                    }
+                    alert(`✅ 系統設定已同步至 Supabase。${sopNote}\n\n注意：Gist 是唯讀備份／匯入來源，「同步雲端」不會把 SOP 正文回寫到 Gist。`);
                 } else {
                     alert(`❌ 寫入失敗: ${result.message}`);
                 }
@@ -4553,39 +5257,68 @@
             if (!proposalData) return alert('找不到修訂草稿資料');
 
             btnEl.disabled = true;
-            btnEl.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 上傳中...';
+            btnEl.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 建立雲端提案...';
 
-            const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
-            const userName = userObj ? userObj.name : '同仁';
+            try {
+                const userObj = currentCodesList.find(c => c.code && c.code.toUpperCase() === (activeCode || '').toUpperCase());
+                const userName = userObj ? userObj.name : '同仁';
+                const latest = await readSopDocumentFromCloud({ allowBootstrap: true, preferCacheOnError: false });
+                const action = getSopProposalAction(proposalData);
+                const loc = action === 'append'
+                    ? { found: false, isAppend: true, ambiguous: false, method: 'append-intent' }
+                    : locateSopLine(latest.content, proposalData.oldText, proposalData.topic);
 
-            let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
-            proposals.unshift({
-                id: Date.now(),
-                time: new Date().toLocaleString(),
-                userCode: activeCode || 'MEMBER',
-                userName: userName,
-                topic: proposalData.topic,
-                oldText: proposalData.oldText,
-                newText: proposalData.newText
-            });
+                const id = Date.now();
+                const record = {
+                    id,
+                    createdAtMs: Date.now(),
+                    submittedAt: new Date().toISOString(),
+                    time: new Date().toLocaleString('zh-TW'),
+                    userCode: activeCode || 'MEMBER',
+                    userName,
+                    topic: proposalData.topic,
+                    action,
+                    oldText: proposalData.oldText,
+                    newText: proposalData.newText,
+                    reason: proposalData.reason || '',
+                    status: 'pending',
+                    baseRevision: latest.revision,
+                    baseHash: latest.contentHash,
+                    locatorAtSubmit: {
+                        found: !!loc.found,
+                        ambiguous: !!loc.ambiguous,
+                        method: loc.method || 'none',
+                        startLine: loc.startLine || -1,
+                        endLine: loc.endLine || -1,
+                        score: loc.score || 0
+                    }
+                };
 
-            localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
-            const pushRes = await pushCodesToCloudWithDetails(currentCodesList);
+                const rowRes = await upsertSopWorkflowRow(`${SOP_PROPOSAL_PREFIX}${id}`, record);
+                if (!rowRes.success) throw new Error(rowRes.message || '提案專用雲端列寫入失敗');
 
-            const card = document.getElementById(`proposal_card_${msgId}`);
-            if (card) {
-                if (pushRes.success) {
+                let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
+                proposals.unshift(record);
+                localStorage.setItem('shiye_pending_proposals', JSON.stringify(proposals));
+
+                // 舊版相容 mirror；即使 mirror 失敗，dedicated proposal row 已是正式來源。
+                pushCodesToCloudWithDetails(currentCodesList).catch(() => {});
+
+                const card = document.getElementById(`proposal_card_${msgId}`);
+                if (card) {
                     card.innerHTML = `
-                        <div class="flex items-center space-x-2 text-white text-xs font-semibold py-1">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                            <span>已成功送交後台管理員審核！感謝您的即時校對。</span>
-                        </div>
-                    `;
-                } else {
-                    btnEl.disabled = false;
-                    btnEl.innerHTML = '<i class="fa-solid fa-rotate-right"></i> 重新送出';
-                    alert(`❌ 雲端同步失敗: ${pushRes.message}`);
+                        <div class="space-y-2 py-1">
+                            <div class="flex items-center space-x-2 text-white text-xs font-semibold">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                <span>已建立雲端 SOP 修訂提案</span>
+                            </div>
+                            <div class="text-[10px] text-neutral-500 font-mono">基準版本 r${latest.revision} · ${escapeHtml(latest.contentHash)} · 後台採納時會再次抓最新版重新比對</div>
+                        </div>`;
                 }
+            } catch (e) {
+                btnEl.disabled = false;
+                btnEl.innerHTML = '<i class="fa-solid fa-rotate-right"></i> 重新送出';
+                alert(`❌ SOP 提案送出失敗：${e.message || e}`);
             }
         }
 
@@ -4654,20 +5387,24 @@
             let displayText = cleanGuardrailArtifacts(fullText);
             let proposalJson = null;
 
-            const codeMatch = displayText.match(/```(?:sop_proposal|json)?\s*(\{[\s\S]*?"topic"[\s\S]*?\})\s*```/i);
+            // 只接受明確的 sop_proposal fenced block，避免一般 ```json / ```js 被誤判。
+            const codeMatch = displayText.match(/```sop_proposal\b\s*(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})\s*```/i);
             if (codeMatch) {
                 const parsed = safeJsonParse(codeMatch[1], null);
-                if (parsed && parsed.topic) {
+                if (parsed && parsed.topic && Object.prototype.hasOwnProperty.call(parsed, 'newText')) {
+                    parsed.action = getSopProposalAction(parsed);
                     displayText = displayText.replace(codeMatch[0], '').trim();
                     proposalJson = parsed;
                     return { displayText, proposalJson };
                 }
             }
 
-            const rawMatch = displayText.match(/(\{[\s\S]*?"topic"[\s\S]*?"newText"[\s\S]*?\})/i);
+            // 相容少數模型未包 code fence 的情況，但必須同時具備 topic / oldText / newText。
+            const rawMatch = displayText.match(/(\{[\s\S]*?"topic"[\s\S]*?"oldText"[\s\S]*?"newText"[\s\S]*?\})/i);
             if (rawMatch) {
                 const parsed = safeJsonParse(rawMatch[1], null);
-                if (parsed && parsed.topic) {
+                if (parsed && parsed.topic && Object.prototype.hasOwnProperty.call(parsed, 'oldText') && Object.prototype.hasOwnProperty.call(parsed, 'newText')) {
+                    parsed.action = getSopProposalAction(parsed);
                     displayText = displayText.replace(rawMatch[0], '').trim();
                     proposalJson = parsed;
                     return { displayText, proposalJson };
@@ -4716,7 +5453,8 @@
             try {
                 loadingTracker.setStage('knowledge', '正在讀取拾葉內部 SOP 與最新雲端規範…');
                 const sopContent = await fetchSopFromGist();
-                loadingTracker.setStage('resources', `SOP 已載入；整理 ${photoCatalog.length || 0} 筆相簿與 ${documentCatalog.length || 0} 筆文件索引…`);
+                const sopMetaForPrompt = currentSopDocument || getCachedSopDocument();
+                loadingTracker.setStage('resources', `SOP r${sopMetaForPrompt?.revision || '--'} 已載入；整理 ${photoCatalog.length || 0} 筆相簿與 ${documentCatalog.length || 0} 筆文件索引…`);
 
                 const relevantPhotoCandidates = selectRelevantPhotoCandidates(text, photoCatalog, 5);
                 if (relevantPhotoCandidates.length > 0) {
@@ -4764,14 +5502,28 @@
    - 【工序因果嚴格遵循】：回答工法流程時，主動貫徹工程因果順序（先放樣水電 ➔ 泥作打底防水 ➔ 木作骨架封板 ➔ 油漆批土面漆 ➔ 地板與設備安裝），杜絕工序顛倒。
    - 【跨工種交接防呆】：涉及跨工種交接面時主動提示交接公差與防衝突預警。
    - 【尺寸公差精準標註】：統一明確標註 cm/mm，嚴禁使用模糊詞彙。
-3. SOP 修訂/刪除/增補意圖草稿輸出：
+3. SOP 修訂/刪除/增補意圖草稿輸出（v27.8 版本控制規則）：
+- 只有當使用者明確要求修改 SOP、刪除 SOP 或新增 SOP 時才輸出 proposal。
+- action 必須是 modify / delete / append 三者之一。
+- modify / delete 的 oldText 必須從下方【拾葉設計內部知識庫】逐字引用現行原文，包含標點、符號與換行；禁止自行改寫或猜測 oldText。
+- 如果你找不到可逐字引用的現行原文，請在一般回答中說明「目前無法安全定位原條文」，不要輸出可直接採納的 modify/delete proposal。
+- append 時 oldText 固定填「無」。
+- delete 時 newText 固定填「（刪除此條規範）」。
+- reason 用一句話說明為什麼要改，方便管理員審核。
 \`\`\`sop_proposal
 {
+  "action": "modify",
   "topic": "欲修改、刪除或新增的項目名稱",
-  "oldText": "知識庫中一模一樣的原文字（包含符號；若為新增填無）",
-  "newText": "最新標準規範文字（若要求刪除則填寫：\"（刪除此條規範）\"）"
+  "oldText": "知識庫中逐字一致的現行原文；新增時填無",
+  "newText": "最新標準規範文字；刪除時填（刪除此條規範）",
+  "reason": "修訂理由"
 }
 \`\`\`
+
+【目前 SOP 主版本】
+- Revision: r${sopMetaForPrompt?.revision || '--'}
+- Content Hash: ${sopMetaForPrompt?.contentHash || '--'}
+- Source: Supabase canonical
 
 【本題優先圖片候選（前端本地相關度預選，最終仍需由你判斷是否真的有幫助）】：
 ---------------------
@@ -5288,7 +6040,7 @@ ${sopContent}
                 if (fencedProposal >= 0) text = text.slice(0, fencedProposal);
 
                 // 模型極少數會漏掉 fence，僅在 JSON 明確從新行以 topic 欄位起頭時隱藏。
-                const rawProposal = text.search(/(?:^|\n)\s*\{\s*"topic"\s*:/i);
+                const rawProposal = text.search(/(?:^|\n)\s*\{\s*(?:"action"\s*:\s*"(?:modify|delete|append)"\s*,\s*)?"topic"\s*:/i);
                 if (rawProposal >= 0) text = text.slice(0, rawProposal);
 
                 // 故意不 trimEnd()：SSE 尾端空白／換行是下一 chunk 的前綴，刪除會造成非單調字串。
@@ -5511,53 +6263,61 @@ ${sopContent}
             elements.wrapper?.querySelector('.ai-answer-shell')?.classList.add('is-settled');
 
             if (proposalJson && proposalJson.topic) {
+                proposalJson.action = getSopProposalAction(proposalJson);
                 window.tempProposalStore[msgId] = proposalJson;
 
-                const currentSop = localStorage.getItem('shiye_sop') || '';
-                const loc = locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
-                const isDelete = /^(刪除|移除|無|（刪除.*）|\(刪除.*\)|刪除此條?規範)$/i.test((proposalJson.newText || '').trim());
+                const currentSop = currentSopDocument?.content || localStorage.getItem('shiye_sop') || '';
+                const currentRevision = currentSopDocument?.revision || getCachedSopMeta()?.revision || 0;
+                const action = proposalJson.action;
+                const loc = action === 'append'
+                    ? { found: false, isAppend: true, ambiguous: false, method: 'append-intent' }
+                    : locateSopLine(currentSop, proposalJson.oldText, proposalJson.topic);
+                const safeMatch = action === 'append' || (loc.found && !loc.ambiguous);
+                const actionLabel = action === 'delete' ? '刪除' : action === 'append' ? '新增' : '修改';
 
                 let locBadgeHtml = '';
-                if (loc.found) {
+                if (action === 'append') {
                     locBadgeHtml = `
-                        <div class="text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center justify-between">
-                            <span>📍 目標鎖定：第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行</span>
-                            <span class="text-neutral-500 text-[9px]">${isDelete ? '【即將整列抽除】' : '【即將原地替換】'}</span>
-                        </div>
-                    `;
+                        <div class="text-[10px] text-blue-300 bg-blue-950/20 border border-blue-900/40 px-2.5 py-1.5 rounded-lg font-mono flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus"></i><span>明確新增提案 · 將由後台以最新雲端版本執行文末增補</span>
+                        </div>`;
+                } else if (loc.found && !loc.ambiguous) {
+                    locBadgeHtml = `
+                        <div class="text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2.5 py-1.5 rounded-lg font-mono flex flex-wrap items-center justify-between gap-2">
+                            <span>📍 目前 r${currentRevision || '--'} 初步鎖定：第 ${loc.startLine}${loc.endLine > loc.startLine ? `~${loc.endLine}` : ''} 行 · ${loc.method}${loc.score ? ` · ${(loc.score * 100).toFixed(0)}%` : ''}</span>
+                            <span class="text-neutral-500 text-[9px]">後台採納前會再抓最新版重新比對</span>
+                        </div>`;
                 } else {
                     locBadgeHtml = `
-                        <div class="text-[10px] text-amber-400 bg-neutral-900 border border-neutral-700 px-2.5 py-1 rounded-lg font-mono flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <span>➕ 查無匹配舊行（將於文末增補）</span>
-                        </div>
-                    `;
+                        <div class="text-[10px] text-red-300 bg-red-950/20 border border-red-900/40 px-2.5 py-1.5 rounded-lg font-mono flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>${loc.ambiguous ? '目前有多個相似位置，無法安全唯一定位' : '目前找不到逐字匹配原文'}；後台不會把此修改／刪除自動轉成新增。</span>
+                        </div>`;
                 }
 
                 const proposalCardHtml = `
-                    <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border border-neutral-700 space-y-3 my-2 shadow-lg">
-                        <div class="flex items-center space-x-2 text-white text-xs font-semibold">
-                            <i class="fa-solid fa-file-pen text-neutral-400"></i>
-                            <span>SOP 修改/刪除/增補草稿確認</span>
+                    <div id="proposal_card_${msgId}" class="glass-mono p-4 rounded-2xl border ${safeMatch ? 'border-neutral-700' : 'border-red-900/50'} space-y-3 my-2 shadow-lg">
+                        <div class="flex items-center justify-between gap-2 text-white text-xs font-semibold">
+                            <div class="flex items-center space-x-2"><i class="fa-solid fa-file-pen text-neutral-400"></i><span>SOP ${actionLabel}草稿確認</span></div>
+                            <span class="text-[9px] font-mono border border-neutral-700 bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded-full">基準 r${currentRevision || '--'}</span>
                         </div>
 
                         ${locBadgeHtml}
 
-                        <div class="text-[11px] space-y-1 bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                        <div class="text-[11px] space-y-2 bg-neutral-950 p-3 rounded-xl border border-neutral-800 min-w-0">
                             <p><strong class="text-white">• 項目：</strong><span class="text-neutral-300">${escapeHtml(proposalJson.topic)}</span></p>
-                            <p><strong class="text-neutral-400">• 原內容：</strong><span class="text-neutral-400 font-mono line-through">${escapeHtml(proposalJson.oldText)}</span></p>
-                            <p><strong class="${isDelete ? 'text-red-400 font-bold' : 'text-white'}">• ${isDelete ? '執行操作：' : '修訂/增補為：'}</strong><span class="${isDelete ? 'text-red-300 font-bold' : 'text-neutral-200'} font-mono font-medium">${isDelete ? '【將此行規範整列抽除（乾淨切除無破洞）】' : escapeHtml(proposalJson.newText)}</span></p>
+                            <p><strong class="text-neutral-400">• 原內容：</strong><span class="text-neutral-400 font-mono ${action !== 'append' ? 'line-through' : ''} whitespace-pre-wrap break-words">${escapeHtml(proposalJson.oldText || '無')}</span></p>
+                            <p><strong class="${action === 'delete' ? 'text-red-400 font-bold' : 'text-white'}">• ${action === 'delete' ? '執行操作：' : action === 'append' ? '新增內容：' : '修訂為：'}</strong><span class="${action === 'delete' ? 'text-red-300 font-bold' : 'text-neutral-200'} font-mono font-medium whitespace-pre-wrap break-words">${action === 'delete' ? '【刪除此條規範】' : escapeHtml(proposalJson.newText)}</span></p>
+                            ${proposalJson.reason ? `<p class="pt-2 border-t border-neutral-800"><strong class="text-neutral-500">• 理由：</strong><span class="text-neutral-400">${escapeHtml(proposalJson.reason)}</span></p>` : ''}
                         </div>
+                        <div class="text-[9px] text-neutral-500 leading-relaxed">送出只建立「待審提案」，不會直接改 SOP。管理員採納時會重新抓取 Supabase 主版本、做版本鎖、建立快照、寫入後再讀回校驗。</div>
                         <div class="flex items-center space-x-2 pt-1 ui-no-select">
                             <button onclick="submitSopProposal('${msgId}', this)" class="bg-white hover:bg-neutral-200 text-black text-xs px-3.5 py-1.5 rounded-xl font-medium transition shadow-md">
-                                確認送出審核
+                                送出雲端審核
                             </button>
-                            <button onclick="cancelSopProposal('${msgId}', this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs px-3 py-1.5 rounded-xl transition">
-                                取消
-                            </button>
+                            <button onclick="cancelSopProposal('${msgId}', this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs px-3 py-1.5 rounded-xl transition">取消</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 elements.content.insertAdjacentHTML('beforeend', proposalCardHtml);
             }
 
