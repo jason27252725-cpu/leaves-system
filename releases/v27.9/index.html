@@ -750,6 +750,10 @@
         .maintenance-live-dot.online { background:#34d399; box-shadow:0 0 12px rgba(52,211,153,.55); }
         .maintenance-live-dot.offline { background:#737373; }
         body.maintenance-locked { overflow:hidden !important; }
+        .maintenance-deploy-panel { display:none; margin-top:16px; padding:13px 14px; border-radius:16px; border:1px solid rgba(96,165,250,.18); background:rgba(3,7,18,.48); text-align:left; }
+        .maintenance-deploy-panel.active { display:block; }
+        .maintenance-deploy-track { height:7px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.07); }
+        .maintenance-deploy-fill { height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,#60a5fa,#c084fc,#34d399); transition:width .5s ease; }
 
         @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -829,7 +833,12 @@
                         <span id="maintenanceOverlayStartedAt" class="font-mono text-neutral-400">--</span>
                     </div>
                 </div>
-                <p class="text-[10px] text-neutral-600 mt-4">維護結束後畫面會自動恢復，不需要重新登入或重新整理。</p>
+                <div id="maintenanceDeploymentPanel" class="maintenance-deploy-panel">
+                    <div class="flex items-center justify-between gap-3 text-[9px] font-mono"><span id="maintenanceDeploymentRoute" class="text-neutral-500">-- → --</span><span id="maintenanceDeploymentPercent" class="text-blue-300">0%</span></div>
+                    <div class="maintenance-deploy-track mt-2"><div id="maintenanceDeploymentBar" class="maintenance-deploy-fill"></div></div>
+                    <div id="maintenanceDeploymentStep" class="text-[9px] text-neutral-400 mt-2.5 leading-relaxed">正在準備更新…</div>
+                </div>
+                <p id="maintenanceOverlayHint" class="text-[10px] text-neutral-600 mt-4">維護結束後畫面會自動進入最新正式版本，不需要重新登入。</p>
                 <button type="button" onclick="toggleMaintenanceAdminGate()" class="mt-5 text-[10px] text-neutral-500 hover:text-white transition">
                     <i class="fa-solid fa-shield-halved mr-1.5"></i>最高管理員維護入口
                 </button>
@@ -1670,6 +1679,14 @@
         let maintenancePollTimer = null;
         let maintenanceRealtimeConnected = false;
         let maintenanceWriteInFlight = false;
+
+        // v27.9 Phase 3 compatibility bridge: watches the global deployment pipeline.
+        const DEPLOYMENT_STATE_ROW_ID = 'deployment_state';
+        const BRIDGE_BUILD_VERSION = 'v27.9';
+        let deploymentState = { status:'idle', progress:0, step:'', sourceVersion:null, targetVersion:null, deploymentId:null };
+        let deploymentRealtimeChannel = null;
+        let deploymentPollTimer = null;
+        let deploymentRedirectTimer = null;
 
         const SYSTEM_VERSION_HISTORY = [
 
@@ -2889,6 +2906,89 @@
             return !!(currentAuth === 'admin' && activeCode && activeCode.trim().toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase());
         }
 
+        function normalizeBridgeDeploymentState(raw) {
+            const d = raw && typeof raw === 'object' ? raw : {};
+            return {
+                status: String(d.status || 'idle'),
+                progress: Math.max(0, Math.min(100, Number(d.progress || 0))),
+                step: String(d.step || '').slice(0, 240),
+                sourceVersion: d.sourceVersion || null,
+                targetVersion: d.targetVersion || null,
+                deploymentId: d.deploymentId || null,
+                error: d.error ? String(d.error).slice(0, 300) : null
+            };
+        }
+
+        function renderBridgeDeploymentState(next) {
+            deploymentState = normalizeBridgeDeploymentState(next);
+            const panel = document.getElementById('maintenanceDeploymentPanel');
+            const route = document.getElementById('maintenanceDeploymentRoute');
+            const pct = document.getElementById('maintenanceDeploymentPercent');
+            const bar = document.getElementById('maintenanceDeploymentBar');
+            const step = document.getElementById('maintenanceDeploymentStep');
+            const active = ['preparing','health_gate','maintenance','switching','verifying','rolling_back'].includes(deploymentState.status) || (maintenanceState?.enabled && deploymentState.progress > 0);
+            if (panel) panel.classList.toggle('active', active);
+            if (route) route.textContent = `${deploymentState.sourceVersion || '--'} → ${deploymentState.targetVersion || '--'}`;
+            if (pct) pct.textContent = `${Math.round(deploymentState.progress)}%`;
+            if (bar) bar.style.width = `${deploymentState.progress}%`;
+            if (step) step.textContent = deploymentState.error ? `${deploymentState.step}｜${deploymentState.error}` : (deploymentState.step || '系統更新中…');
+            maybeRedirectAfterBridgeDeployment();
+        }
+
+        async function readBridgeDeploymentState({ silent = true } = {}) {
+            const client = getSupabaseClient();
+            if (!client) return deploymentState;
+            try {
+                const { data, error } = await client.from('app_config').select('data,updated_at').eq('id', DEPLOYMENT_STATE_ROW_ID).maybeSingle();
+                if (error) throw error;
+                renderBridgeDeploymentState(data?.data || {});
+                return deploymentState;
+            } catch (e) {
+                if (!silent) throw e;
+                console.warn('Deployment bridge read failed:', e);
+                return deploymentState;
+            }
+        }
+
+        function getBridgeSiteRootUrl() {
+            const marker = '/releases/';
+            const path = window.location.pathname || '/';
+            const idx = path.indexOf(marker);
+            const rootPath = idx >= 0 ? path.slice(0, idx + 1) : path.replace(/[^/]*$/, '');
+            return `${window.location.origin}${rootPath || '/'}`;
+        }
+
+        function maybeRedirectAfterBridgeDeployment() {
+            const done = ['success','rolled_back'].includes(deploymentState.status);
+            if (!done || maintenanceState?.enabled || deploymentRedirectTimer) return;
+            const target = deploymentState.targetVersion;
+            if (!target || target === BRIDGE_BUILD_VERSION) return;
+            deploymentRedirectTimer = setTimeout(() => {
+                const u = new URL(getBridgeSiteRootUrl());
+                u.searchParams.set('releaseComplete', target);
+                location.replace(u.href);
+            }, 1200);
+        }
+
+        function startBridgeDeploymentObserver() {
+            if (deploymentPollTimer) clearInterval(deploymentPollTimer);
+            deploymentPollTimer = setInterval(() => readBridgeDeploymentState({ silent:true }).catch(() => {}), 8000);
+            try {
+                if (deploymentRealtimeChannel) { try { deploymentRealtimeChannel.unsubscribe(); } catch(_){} deploymentRealtimeChannel = null; }
+                const client = getSupabaseClient();
+                if (!client || typeof client.channel !== 'function') return;
+                deploymentRealtimeChannel = client.channel(`leaves-deployment-bridge-${Math.random().toString(36).slice(2,8)}`)
+                    .on('postgres_changes', { event:'*', schema:'public', table:'app_config', filter:`id=eq.${DEPLOYMENT_STATE_ROW_ID}` }, payload => {
+                        if (payload?.new?.data) renderBridgeDeploymentState(payload.new.data);
+                    }).subscribe();
+            } catch(e) { console.warn('Deployment bridge realtime unavailable:', e); }
+        }
+
+        async function initBridgeDeploymentObserver() {
+            await readBridgeDeploymentState({ silent:true });
+            startBridgeDeploymentObserver();
+        }
+
         function normalizeMaintenanceState(raw) {
             const d = raw && typeof raw === 'object' ? raw : {};
             return {
@@ -2960,6 +3060,8 @@
             if (overlay) overlay.classList.toggle('active', shouldLock);
             document.body.classList.toggle('maintenance-locked', shouldLock);
             renderMaintenanceAdminUi();
+            renderBridgeDeploymentState(deploymentState);
+            maybeRedirectAfterBridgeDeployment();
             return shouldLock;
         }
 
@@ -4351,6 +4453,7 @@
         window.addEventListener('hashchange', checkAuthAndRoute);
         window.addEventListener('DOMContentLoaded', async () => { 
             syncCurrentVersionUI();
+            await initBridgeDeploymentObserver();
             await initMaintenanceController();
             await initData(); 
             checkAuthAndRoute(); 
