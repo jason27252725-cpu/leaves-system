@@ -25,51 +25,179 @@
 (() => {
     'use strict';
     const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
-    const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYXNlIiwicmVmIjoiZGFkbG1ybXp1cG1tenRobHZybW8iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4ODkzODc3NSwiZXhwIjoyMTA1NDUxNDc3fQ.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
+    const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
     const FALLBACK = { stableVersion:'v27.9', sandboxVersion:'v28.1' };
     const status = document.getElementById('status');
     const links = document.getElementById('fallbackLinks');
     const stableFallback = document.getElementById('stableFallback');
     const sandboxFallback = document.getElementById('sandboxFallback');
+    const ROUTE_GUARD_KEY = 'leaves:release-router:last-route';
 
-    const safeVersion = (v, fallback) => /^v\d+\.\d+(?:\.\d+)?(?:[-._a-zA-Z0-9]+)?$/.test(String(v||'')) ? String(v) : fallback;
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    const safeVersion = (v, fallback = null) => /^v\d+\.\d+(?:\.\d+)?(?:[-._a-zA-Z0-9]+)?$/.test(String(v||'')) ? String(v) : fallback;
     const releasePath = (v) => `./releases/${encodeURIComponent(v)}/`;
 
-    async function loadManifest(){
-        const url = (localStorage.getItem('shiye_supabase_url') || DEFAULT_SUPABASE_URL).replace(/\/$/, '');
-        const key = localStorage.getItem('shiye_supabase_key') || DEFAULT_SUPABASE_KEY;
+    function getConnection() {
+        return {
+            url: (localStorage.getItem('shiye_supabase_url') || DEFAULT_SUPABASE_URL).replace(/\/$/, ''),
+            key: localStorage.getItem('shiye_supabase_key') || DEFAULT_SUPABASE_KEY
+        };
+    }
+
+    async function fetchConfigRow(id, timeoutMs = 4500) {
+        const { url, key } = getConnection();
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
-            const res = await fetch(`${url}/rest/v1/app_config?id=eq.release_manifest&select=data,updated_at&_=${Date.now()}`, {
+            // IMPORTANT: Do not append arbitrary cache-buster query params to PostgREST.
+            // PostgREST interprets unknown query params as column filters and may return HTTP 400.
+            const endpoint = `${url}/rest/v1/app_config?id=eq.${encodeURIComponent(id)}&select=data,updated_at`;
+            const res = await fetch(endpoint, {
+                method:'GET',
                 cache:'no-store',
-                headers:{ apikey:key, Authorization:`Bearer ${key}`, Accept:'application/json' }
+                signal:controller.signal,
+                headers:{
+                    apikey:key,
+                    Authorization:`Bearer ${key}`,
+                    Accept:'application/json',
+                    'Cache-Control':'no-cache, no-store, max-age=0',
+                    Pragma:'no-cache'
+                }
             });
-            if(!res.ok) throw new Error(`HTTP ${res.status}`);
+            if(!res.ok) {
+                const body = await res.text().catch(() => '');
+                throw new Error(`HTTP ${res.status}${body ? ` · ${body.slice(0,120)}` : ''}`);
+            }
             const rows = await res.json();
-            if(Array.isArray(rows) && rows[0]?.data) return { ...FALLBACK, ...rows[0].data };
-        } catch(err) {
-            console.warn('Release manifest unavailable; using safe fallback.', err);
+            return Array.isArray(rows) && rows[0] ? rows[0] : null;
+        } finally {
+            clearTimeout(timer);
         }
-        return FALLBACK;
+    }
+
+    async function loadManifestWithRetry() {
+        const waits = [0, 250, 700, 1500];
+        let lastError = null;
+        for (const wait of waits) {
+            if (wait) await sleep(wait);
+            try {
+                const row = await fetchConfigRow('release_manifest');
+                if (!row?.data) throw new Error('release_manifest row is empty');
+                return { manifest:{ ...FALLBACK, ...row.data }, error:null };
+            } catch (err) {
+                lastError = err;
+                console.warn('Release manifest read attempt failed:', err);
+            }
+        }
+        return { manifest:null, error:lastError };
+    }
+
+    async function loadDeploymentState() {
+        try {
+            const row = await fetchConfigRow('deployment_state', 3500);
+            return row?.data || null;
+        } catch (err) {
+            console.warn('Deployment state unavailable:', err);
+            return null;
+        }
+    }
+
+    function setFallbackLinks(stableVersion, sandboxVersion) {
+        stableFallback.href = `${releasePath(stableVersion)}?channel=stable`;
+        sandboxFallback.href = `${releasePath(sandboxVersion)}?channel=sandbox`;
+    }
+
+    function stopWithManualChoice(message, stableVersion, sandboxVersion) {
+        setFallbackLinks(stableVersion, sandboxVersion);
+        status.innerHTML = `<span class="err">${message}</span>`;
+        links.style.display = 'flex';
+    }
+
+    function recentlyRoutedTo(target) {
+        try {
+            const raw = sessionStorage.getItem(ROUTE_GUARD_KEY);
+            if (!raw) return false;
+            const info = JSON.parse(raw);
+            return info?.target === target && (Date.now() - Number(info?.at || 0)) < 4500;
+        } catch(_) { return false; }
+    }
+
+    function rememberRoute(target) {
+        try { sessionStorage.setItem(ROUTE_GUARD_KEY, JSON.stringify({ target, at:Date.now() })); } catch(_) {}
     }
 
     async function route(){
-        const manifest = await loadManifest();
         const params = new URLSearchParams(location.search);
         const requestedChannel = params.get('channel') === 'sandbox' ? 'sandbox' : 'stable';
-        const stableVersion = safeVersion(manifest.stableVersion, FALLBACK.stableVersion);
-        const sandboxVersion = safeVersion(manifest.sandboxVersion, FALLBACK.sandboxVersion);
-        stableFallback.href = `${releasePath(stableVersion)}?channel=stable`;
-        sandboxFallback.href = `${releasePath(sandboxVersion)}?channel=sandbox`;
+        const releaseComplete = safeVersion(params.get('releaseComplete'));
+        const fromVersion = safeVersion(params.get('fromVersion'));
+
+        const { manifest, error:manifestError } = await loadManifestWithRetry();
+        let stableVersion = safeVersion(manifest?.stableVersion, FALLBACK.stableVersion);
+        let sandboxVersion = safeVersion(manifest?.sandboxVersion, FALLBACK.sandboxVersion);
+        setFallbackLinks(stableVersion, sandboxVersion);
+
+        // When a deployment has just completed, never silently fall back to an old hard-coded
+        // stable version. If the manifest is temporarily unavailable, verify deployment_state
+        // and prefer the completed target; otherwise stop instead of creating a redirect loop.
+        if (requestedChannel === 'stable' && releaseComplete) {
+            const deployment = await loadDeploymentState();
+            const deploymentConfirmsTarget = !!(
+                deployment &&
+                ['success','rolled_back'].includes(String(deployment.status || '')) &&
+                safeVersion(deployment.targetVersion) === releaseComplete &&
+                Number(deployment.progress || 0) >= 100
+            );
+            if (deploymentConfirmsTarget && (!manifest || stableVersion !== releaseComplete)) {
+                console.warn('Manifest not yet reflecting completed deployment; using verified deployment target once.', { stableVersion, releaseComplete });
+                stableVersion = releaseComplete;
+                setFallbackLinks(stableVersion, sandboxVersion);
+            } else if (!manifest && !deploymentConfirmsTarget) {
+                stopWithManualChoice(`版本資訊暫時無法確認，已停止自動跳轉以避免循環。${manifestError ? ' 請稍後重新整理。' : ''}`, FALLBACK.stableVersion, FALLBACK.sandboxVersion);
+                return;
+            }
+        } else if (!manifest) {
+            // Normal non-deployment entry: preserve availability with the known-safe fallback.
+            console.warn('Release manifest unavailable; using safe fallback.', manifestError);
+        }
+
         const version = requestedChannel === 'sandbox' ? sandboxVersion : stableVersion;
+
+        // Hard loop breaker: if a release sent us here asking for a different target but the
+        // router is about to send the browser straight back to that same source release, stop.
+        if (requestedChannel === 'stable' && releaseComplete && fromVersion && fromVersion === version && releaseComplete !== version) {
+            stopWithManualChoice(`版本切換尚未同步完成（目前 ${version}，目標 ${releaseComplete}）。已停止自動跳轉，避免畫面反覆重載。`, version, sandboxVersion);
+            return;
+        }
+
+        // Transition-only params must NOT be forwarded to the release page.
+        params.delete('releaseComplete');
+        params.delete('fromVersion');
+        params.delete('deploymentId');
         params.set('channel', requestedChannel);
+
         const restQuery = params.toString();
         const target = `${releasePath(version)}${restQuery ? `?${restQuery}` : ''}${location.hash || ''}`;
+        if (recentlyRoutedTo(target)) {
+            stopWithManualChoice(`偵測到重複版本導向，已暫停自動跳轉。請手動開啟目前 ${requestedChannel === 'sandbox' ? 'Sandbox' : 'Stable'}。`, stableVersion, sandboxVersion);
+            return;
+        }
+
         status.textContent = requestedChannel === 'sandbox' ? `正在進入 Sandbox ${version}…` : `正在進入 Stable ${version}…`;
+        rememberRoute(target);
         location.replace(target);
     }
 
-    const timer = setTimeout(() => { status.innerHTML = '<span class="err">版本入口回應較慢，您可手動選擇入口。</span>'; links.style.display='flex'; }, 4500);
-    route().catch(err => { clearTimeout(timer); console.error(err); status.innerHTML='<span class="err">Release Router 發生錯誤，請使用手動入口。</span>'; links.style.display='flex'; });
+    const timer = setTimeout(() => {
+        status.innerHTML = '<span class="err">版本入口回應較慢，您可手動選擇入口。</span>';
+        links.style.display='flex';
+    }, 6500);
+
+    route().catch(err => {
+        clearTimeout(timer);
+        console.error(err);
+        stopWithManualChoice('Release Router 發生錯誤，已停止自動跳轉以避免循環。', FALLBACK.stableVersion, FALLBACK.sandboxVersion);
+    });
 })();
 </script>
 </body>
