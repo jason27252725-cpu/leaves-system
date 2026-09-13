@@ -706,6 +706,51 @@
             .release-desktop-grid { grid-template-columns: 1fr !important; }
         }
 
+
+        /* v27.9 — Maintenance Controller Phase 1 */
+        #maintenanceOverlay {
+            position: fixed; inset: 0; z-index: 99990; display: none;
+            align-items: center; justify-content: center; padding: 22px;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(59,130,246,.10), transparent 36%),
+                radial-gradient(circle at 85% 75%, rgba(168,85,247,.08), transparent 32%),
+                rgba(3,3,4,.965);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+        }
+        #maintenanceOverlay.active { display: flex; }
+        .maintenance-shell {
+            width: min(560px, 100%); border: 1px solid rgba(255,255,255,.14);
+            background: linear-gradient(180deg, rgba(18,18,20,.96), rgba(8,8,10,.96));
+            border-radius: 30px; padding: 30px; box-shadow: 0 32px 100px rgba(0,0,0,.58);
+            position: relative; overflow: hidden;
+        }
+        .maintenance-shell::before {
+            content: ''; position: absolute; inset: 0 0 auto 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(96,165,250,.8), rgba(192,132,252,.65), transparent);
+        }
+        .maintenance-orbit {
+            width: 64px; height: 64px; border-radius: 22px; margin: 0 auto 18px;
+            display: grid; place-items: center; border: 1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.04); position: relative;
+        }
+        .maintenance-orbit::after {
+            content: ''; position: absolute; inset: -6px; border-radius: 28px;
+            border: 1px solid rgba(96,165,250,.22); animation: maintenancePulse 2.2s ease-in-out infinite;
+        }
+        @keyframes maintenancePulse { 0%,100%{transform:scale(.96);opacity:.35} 50%{transform:scale(1.06);opacity:.9} }
+        .maintenance-status-line {
+            display:flex; align-items:center; justify-content:center; gap:8px;
+            font-size:10px; letter-spacing:.14em; color:#a3a3a3; text-transform:uppercase;
+        }
+        .maintenance-status-dot { width:7px; height:7px; border-radius:999px; background:#f59e0b; box-shadow:0 0 14px rgba(245,158,11,.65); animation:pulse 1.5s infinite; }
+        .maintenance-admin-gate { max-height:0; opacity:0; overflow:hidden; transition:max-height .35s ease, opacity .25s ease, margin .35s ease; margin-top:0; }
+        .maintenance-admin-gate.open { max-height:150px; opacity:1; margin-top:16px; }
+        .maintenance-control-status { border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.28); border-radius:18px; padding:14px; }
+        .maintenance-live-dot { width:8px; height:8px; border-radius:999px; }
+        .maintenance-live-dot.online { background:#34d399; box-shadow:0 0 12px rgba(52,211,153,.55); }
+        .maintenance-live-dot.offline { background:#737373; }
+        body.maintenance-locked { overflow:hidden !important; }
+
         @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -763,6 +808,42 @@
         </div>
     </div>
 
+
+    <!-- v27.9 Maintenance Overlay: shown to every non-superadmin session while maintenance_state.enabled = true -->
+    <div id="maintenanceOverlay" aria-live="assertive" aria-modal="true" role="dialog">
+        <div class="maintenance-shell ui-no-select">
+            <div class="maintenance-orbit">
+                <i class="fa-solid fa-screwdriver-wrench text-xl text-blue-300"></i>
+            </div>
+            <div class="text-center">
+                <div class="maintenance-status-line"><span class="maintenance-status-dot"></span><span>LEAVES DESIGN · SYSTEM MAINTENANCE</span></div>
+                <h2 class="text-2xl sm:text-3xl font-light tracking-[0.18em] text-white mt-4">維護中</h2>
+                <p id="maintenanceOverlayMessage" class="text-xs sm:text-sm text-neutral-300 leading-relaxed mt-4 max-w-md mx-auto">系統目前正在進行維護與更新，請稍候片刻。</p>
+                <div class="mt-6 rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+                    <div class="flex items-center justify-between gap-4 text-[10px]">
+                        <span class="text-neutral-500">目前版本</span>
+                        <span id="maintenanceOverlayVersion" class="font-mono text-neutral-200">v27.9</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 text-[10px] mt-2">
+                        <span class="text-neutral-500">維護開始</span>
+                        <span id="maintenanceOverlayStartedAt" class="font-mono text-neutral-400">--</span>
+                    </div>
+                </div>
+                <p class="text-[10px] text-neutral-600 mt-4">維護結束後畫面會自動恢復，不需要重新登入或重新整理。</p>
+                <button type="button" onclick="toggleMaintenanceAdminGate()" class="mt-5 text-[10px] text-neutral-500 hover:text-white transition">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i>最高管理員維護入口
+                </button>
+                <div id="maintenanceAdminGate" class="maintenance-admin-gate">
+                    <div class="flex gap-2">
+                        <input id="maintenanceAdminCodeInput" type="password" placeholder="SUPERADMIN PASSCODE" class="flex-1 min-w-0 bg-neutral-950 border border-neutral-700 rounded-xl px-3 py-2.5 text-[11px] text-center tracking-[0.16em] text-white focus:outline-none focus:border-blue-400">
+                        <button type="button" onclick="maintenanceSuperAdminLogin()" class="px-4 rounded-xl bg-white text-black text-[10px] font-semibold tracking-wider hover:bg-neutral-200 transition">進入</button>
+                    </div>
+                    <div id="maintenanceAdminGateError" class="text-[9px] text-red-400 mt-2 min-h-[14px]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="authModal" class="hidden-view ui-no-select flex flex-col justify-center items-center">
         <div id="authCard" class="glass-mono w-full max-w-sm rounded-3xl p-8 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 relative transition-all duration-500">
             <div class="text-center space-y-3">
@@ -775,7 +856,7 @@
                     <button type="button" onclick="openQuickUpdateModal()" class="release-version-chip hover:border-blue-400/40 hover:text-white transition" title="查看目前版本與更新紀錄">
                         <span class="release-dot"></span>
                         <span class="text-neutral-500 tracking-[0.12em]">CURRENT</span>
-                        <strong id="authVersionBadgeText" class="text-neutral-200 font-semibold">v27.8</strong>
+                        <strong id="authVersionBadgeText" class="text-neutral-200 font-semibold">v27.9</strong>
                     </button>
                 </div>
             </div>
@@ -794,7 +875,7 @@
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] text-white tracking-wider">版本更新日誌</span>
-                                <span id="authVersionInlineText" class="text-[9px] text-blue-300 font-mono">v27.8</span>
+                                <span id="authVersionInlineText" class="text-[9px] text-blue-300 font-mono">v27.9</span>
                             </div>
                             <p class="text-[9px] text-neutral-500 mt-0.5 truncate">查看本次更新與歷史版本</p>
                         </div>
@@ -835,7 +916,7 @@
             <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 text-xs tracking-widest">
                 <button type="button" onclick="openQuickUpdateModal()" id="appVersionBadge" class="text-[9px] bg-neutral-950/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 hover:border-emerald-500/40 px-2.5 py-1 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm transition" title="查看目前系統版本與更新日誌">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="appVersionBadgeText">v27.8</span>
+                    <span id="appVersionBadgeText">v27.9</span>
                     <span class="hidden sm:inline text-neutral-600">CURRENT</span>
                 </button>
                 <button onclick="openQuickUpdateModal()" class="text-[10px] bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition shadow-sm" title="查看最新版本更新與修復項目">
@@ -953,7 +1034,7 @@
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
-                    <span id="adminSidebarVersionBadge" class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.8</span>
+                    <span id="adminSidebarVersionBadge" class="text-[9px] font-mono text-neutral-500 border border-neutral-800 px-2 py-0.5 rounded">v27.9</span>
                 </div>
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
@@ -964,6 +1045,11 @@
                     <button onclick="toggleAdminWindow('tokenAnalytics')" id="nav_btn_tokenAnalytics" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-chart-pie text-xs text-emerald-400"></i><span class="tracking-wide text-white">用量與身分統計</span></div>
                         <span id="nav_badge_tokenAnalytics" class="w-2 h-2 rounded-full bg-emerald-400 hidden-view ml-2"></span>
+                    </button>
+
+                    <button onclick="toggleAdminWindow('maintenance')" id="nav_btn_maintenance" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink hidden-view">
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-screwdriver-wrench text-xs text-amber-400"></i><span class="tracking-wide text-white">系統維護控制</span></div>
+                        <span id="nav_badge_maintenance" class="w-2 h-2 rounded-full bg-amber-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('systemUpdates')" id="nav_btn_systemUpdates" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
                         <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-compare text-xs text-purple-400"></i><span class="tracking-wide text-white">系統更新紀錄 (Diff)</span></div>
@@ -1097,6 +1183,55 @@
                     </div>
                 </div>
 
+
+                <div id="win_maintenance" class="admin-window hidden-view">
+                    <div class="window-header px-5 py-4 border-b border-neutral-800 flex items-center justify-between bg-neutral-950/95 cursor-move">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl border border-amber-400/20 bg-amber-500/10 text-amber-300 flex items-center justify-center"><i class="fa-solid fa-screwdriver-wrench text-xs"></i></div>
+                            <div>
+                                <div class="flex items-center gap-2"><span class="text-xs font-medium text-white tracking-wider">系統維護控制中心</span><span class="text-[9px] font-mono text-amber-300 border border-amber-700/50 bg-amber-950/30 px-2 py-0.5 rounded-full">PHASE 1</span></div>
+                                <p class="text-[9px] text-neutral-500 mt-0.5">Realtime maintenance gate · Superadmin bypass · Cloud verified</p>
+                            </div>
+                        </div>
+                        <button onclick="closeAdminWindow('maintenance')" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="maintenance-control-status">
+                                <div class="text-[9px] text-neutral-500 tracking-wider">SYSTEM STATUS</div>
+                                <div class="flex items-center gap-2 mt-2"><span id="maintenanceAdminStatusDot" class="maintenance-live-dot online"></span><span id="maintenanceAdminStatusText" class="text-sm text-emerald-300 font-medium">正常運行</span></div>
+                            </div>
+                            <div class="maintenance-control-status">
+                                <div class="text-[9px] text-neutral-500 tracking-wider">SYNC CHANNEL</div>
+                                <div class="flex items-center gap-2 mt-2"><span id="maintenanceRealtimeDot" class="maintenance-live-dot offline"></span><span id="maintenanceRealtimeText" class="text-xs text-neutral-300">初始化中</span></div>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-neutral-800 bg-neutral-950/55 p-4">
+                            <label for="maintenanceReasonInput" class="text-[10px] text-neutral-400 tracking-wider">維護公告文字</label>
+                            <textarea id="maintenanceReasonInput" rows="3" maxlength="180" class="mt-2 w-full bg-black/40 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-amber-500/50 resize-none" placeholder="例如：系統正在部署新版功能，預計短時間內恢復。"></textarea>
+                            <div class="flex items-center justify-between gap-3 mt-2 text-[9px] text-neutral-600"><span>所有一般成員與一般管理員會即時顯示維護遮罩。</span><span id="maintenanceLastUpdateText" class="font-mono">--</span></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button id="maintenanceEnableBtn" onclick="setMaintenanceMode(true)" class="rounded-2xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/15 px-4 py-4 text-left transition">
+                                <div class="text-xs font-semibold text-red-300"><i class="fa-solid fa-lock mr-2"></i>啟用維護模式</div>
+                                <div class="text-[9px] text-neutral-500 mt-1.5 leading-relaxed">寫入 Supabase 後，其他使用者將透過 Realtime 或輪詢自動被維護畫面覆蓋。</div>
+                            </button>
+                            <button id="maintenanceDisableBtn" onclick="setMaintenanceMode(false)" class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 px-4 py-4 text-left transition">
+                                <div class="text-xs font-semibold text-emerald-300"><i class="fa-solid fa-unlock mr-2"></i>結束維護模式</div>
+                                <div class="text-[9px] text-neutral-500 mt-1.5 leading-relaxed">關閉後所有被遮罩的前端會自動恢復，使用者不需要手動重新整理。</div>
+                            </button>
+                        </div>
+                        <div class="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 text-[10px] text-neutral-400 leading-relaxed">
+                            <div class="text-blue-300 font-medium mb-1.5"><i class="fa-solid fa-circle-info mr-1.5"></i>Phase 1 安全範圍</div>
+                            目前維護模式是「應用程式層」的即時操作鎖與畫面遮罩，不等同 Supabase RLS 的資料庫硬鎖。正式的 Stable / Sandbox、部署進度、Health Check 與 Rollback 會在後續發布階段加入。
+                        </div>
+                        <div class="rounded-2xl border border-neutral-800 bg-neutral-950/50 p-4">
+                            <div class="flex items-center justify-between"><span class="text-[10px] text-white">最近維護事件</span><span class="text-[9px] text-neutral-600 font-mono">CLOUD AUDIT</span></div>
+                            <div id="maintenanceEventList" class="mt-3 space-y-2 text-[10px] text-neutral-400"><div class="text-neutral-600">尚無紀錄</div></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="win_systemUpdates" class="admin-window hidden-view">
                     <div class="resize-handle resize-t" data-handle="t"></div><div class="resize-handle resize-b" data-handle="b"></div><div class="resize-handle resize-l" data-handle="l"></div><div class="resize-handle resize-r" data-handle="r"></div><div class="resize-handle resize-tl" data-handle="tl"></div><div class="resize-handle resize-tr" data-handle="tr"></div><div class="resize-handle resize-bl" data-handle="bl"></div><div class="resize-handle resize-br" data-handle="br"></div>
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/95 flex justify-between items-center cursor-move">
@@ -1105,7 +1240,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-white tracking-wider truncate">系統版本更新中心</span>
-                                    <span id="adminCurrentVersionBadge" class="text-[9px] font-mono text-purple-300 border border-purple-800/70 bg-purple-950/50 px-2 py-0.5 rounded-full">v27.8</span>
+                                    <span id="adminCurrentVersionBadge" class="text-[9px] font-mono text-purple-300 border border-purple-800/70 bg-purple-950/50 px-2 py-0.5 rounded-full">v27.9</span>
                                 </div>
                                 <p class="text-[9px] text-neutral-500 mt-0.5">完整版本歷程、功能新增、修復項目與技術差異</p>
                             </div>
@@ -1513,7 +1648,7 @@
         const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZGxtcm16dXBtbXp0aGx2cm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mzg3NzUsImV4cCI6MjEwNDUxNDc3NX0.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
 
-        // v27.8 SOP Cloud Revision Control
+        // v27.9 Maintenance Controller Phase 1 + v27.8 SOP Cloud Revision Control
         const SOP_DOCUMENT_ROW_ID = 'sop_document';
         const SOP_PROPOSAL_PREFIX = 'sop_proposal_';
         const SOP_LOG_PREFIX = 'sop_log_';
@@ -1523,7 +1658,46 @@
         let currentSopDocument = null;
         let sopCloudBusy = false;
 
+
+        // v27.9 Maintenance Controller Phase 1
+        const MAINTENANCE_ROW_ID = 'maintenance_state';
+        const MAINTENANCE_POLL_MS = 10000;
+        let maintenanceState = { enabled: false, phase: 'normal', message: '', startedAt: null, updatedAt: null, updatedBy: null, revision: 0, events: [] };
+        let maintenanceRealtimeChannel = null;
+        let maintenancePollTimer = null;
+        let maintenanceRealtimeConnected = false;
+        let maintenanceWriteInFlight = false;
+
         const SYSTEM_VERSION_HISTORY = [
+
+            {
+                version: "v27.9",
+                date: "2026-09-13",
+                title: "Maintenance Controller Phase 1：即時維護模式與最高管理員維護通道",
+                modules: ["維護模式", "Supabase Realtime", "最高管理員", "前端遮罩", "後台控制"],
+                publicItems: [
+                    { type: "feat", text: "新增系統維護模式，維護期間一般使用者會自動看到維護中畫面。" },
+                    { type: "feat", text: "維護開啟或結束後，前端會自動同步狀態，不需要手動重新整理。" },
+                    { type: "perf", text: "新增最高管理員維護入口，維護期間仍可進入後台處理系統。" }
+                ],
+                summaryItems: [
+                    { type: "feat", text: "新增 app_config / maintenance_state 雲端控制列，維護狀態不再依單一瀏覽器 localStorage，而由 Supabase 作為全站單一來源" },
+                    { type: "feat", text: "新增 Supabase Realtime postgres_changes 監聽 maintenance_state；狀態切換時其他已開啟分頁可直接套用維護遮罩" },
+                    { type: "fix", text: "Realtime 不可用或資料表未加入 replication publication 時，自動退回 10 秒輪詢，避免使用者永遠收不到維護狀態" },
+                    { type: "feat", text: "新增全畫面 Maintenance Overlay，顯示維護訊息、開始時間與目前版本；結束維護後自動解除，不要求使用者重新登入" },
+                    { type: "feat", text: "最高管理員 SPECIAL_ADMIN_CODE 擁有 maintenance bypass；一般 member 與一般 admin 都會被遮罩，避免維護期間繼續操作" },
+                    { type: "feat", text: "新增後台『系統維護控制中心』，可編輯公告、啟用／結束維護、查看 Realtime 狀態與最近雲端事件" },
+                    { type: "fix", text: "維護控制採 write → re-read 驗證，只有 Supabase 回讀狀態與目標一致才宣告切換成功，避免 UI 顯示與雲端實際狀態不同步" },
+                    { type: "perf", text: "新增應用層 maintenance mutation guard，AI 新請求與主要管理寫入在非最高管理員維護期間會被拒絕" }
+                ],
+                diffDetails: [
+                    { type: "feat", title: "全站維護狀態", oldVal: "沒有中央維護狀態；每個已開啟分頁都會照常操作，管理員無法即時暫停前端", newVal: "maintenance_state 存在 Supabase app_config；前端 Realtime + polling 同步並套用同一個 Maintenance Overlay" },
+                    { type: "feat", title: "最高管理員逃生通道", oldVal: "若直接做全站遮罩，管理員也可能被自己的維護畫面鎖在外面", newVal: "僅 SPECIAL_ADMIN_CODE 判定為 superadmin bypass；Overlay 另有最高管理員維護登入入口，確保可進後台解除維護" },
+                    { type: "fix", title: "Realtime 失效保護", oldVal: "只依賴 WebSocket 時，若 Realtime publication 或網路環境異常，狀態可能無法更新", newVal: "Realtime 是主要通道，10 秒 cloud polling 為 fallback；兩者都會呼叫同一 applyMaintenanceState()，避免邏輯分叉" },
+                    { type: "fix", title: "維護切換可信度", oldVal: "若只在按鈕後本地切 UI，可能顯示『已維護』但遠端根本沒寫成功", newVal: "upsert maintenance_state 後立即 select 回讀並驗證 enabled 值；失敗時保留舊狀態並顯示錯誤" },
+                    { type: "perf", title: "部署架構準備", oldVal: "版本更新只靠人工覆蓋正式 index.html，沒有發布狀態的中央控制點", newVal: "Phase 1 先建立 Maintenance Controller；後續 Stable/Sandbox、Deploy Progress、Health Check、Rollback 可沿用同一控制中心擴充" }
+                ]
+            },
             {
                 version: "v27.8",
                 date: "2026-09-13",
@@ -2698,6 +2872,239 @@
             return null;
         }
 
+        function isSuperAdminSession() {
+            return !!(currentAuth === 'admin' && activeCode && activeCode.trim().toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase());
+        }
+
+        function normalizeMaintenanceState(raw) {
+            const d = raw && typeof raw === 'object' ? raw : {};
+            return {
+                enabled: d.enabled === true,
+                phase: d.enabled === true ? (d.phase || 'maintenance') : 'normal',
+                message: String(d.message || '系統目前正在進行維護與更新，請稍候片刻。').slice(0, 180),
+                startedAt: d.startedAt || null,
+                updatedAt: d.updatedAt || null,
+                updatedBy: d.updatedBy || null,
+                revision: Number(d.revision || 0),
+                events: Array.isArray(d.events) ? d.events.slice(0, 20) : []
+            };
+        }
+
+        function formatMaintenanceTime(iso) {
+            if (!iso) return '--';
+            try { return new Date(iso).toLocaleString('zh-TW', { hour12: false }); }
+            catch (_) { return String(iso); }
+        }
+
+        function updateMaintenanceRealtimeUi(mode, connected) {
+            maintenanceRealtimeConnected = !!connected;
+            const dot = document.getElementById('maintenanceRealtimeDot');
+            const text = document.getElementById('maintenanceRealtimeText');
+            if (dot) dot.className = `maintenance-live-dot ${connected ? 'online' : 'offline'}`;
+            if (text) text.textContent = connected ? (mode || 'Realtime 已連線') : (mode || '輪詢備援中');
+        }
+
+        function renderMaintenanceAdminUi() {
+            const state = normalizeMaintenanceState(maintenanceState);
+            const statusDot = document.getElementById('maintenanceAdminStatusDot');
+            const statusText = document.getElementById('maintenanceAdminStatusText');
+            const reason = document.getElementById('maintenanceReasonInput');
+            const updated = document.getElementById('maintenanceLastUpdateText');
+            const list = document.getElementById('maintenanceEventList');
+            const enableBtn = document.getElementById('maintenanceEnableBtn');
+            const disableBtn = document.getElementById('maintenanceDisableBtn');
+
+            if (statusDot) statusDot.className = `maintenance-live-dot ${state.enabled ? 'offline' : 'online'}`;
+            if (statusText) {
+                statusText.textContent = state.enabled ? '維護模式啟用中' : '正常運行';
+                statusText.className = `text-sm font-medium ${state.enabled ? 'text-amber-300' : 'text-emerald-300'}`;
+            }
+            if (reason && document.activeElement !== reason) reason.value = state.message || '';
+            if (updated) updated.textContent = state.updatedAt ? `更新 ${formatMaintenanceTime(state.updatedAt)}` : '--';
+            if (enableBtn) enableBtn.disabled = maintenanceWriteInFlight || state.enabled;
+            if (disableBtn) disableBtn.disabled = maintenanceWriteInFlight || !state.enabled;
+            if (list) {
+                const events = state.events || [];
+                list.innerHTML = events.length ? events.map(evt => `
+                    <div class="flex items-start justify-between gap-3 rounded-xl border border-neutral-800 bg-black/20 px-3 py-2">
+                        <div><span class="${evt.enabled ? 'text-amber-300' : 'text-emerald-300'}">${evt.enabled ? '啟用維護' : '結束維護'}</span><span class="text-neutral-600 ml-2">${escapeHtml(evt.actor || 'SYSTEM')}</span></div>
+                        <span class="text-[9px] text-neutral-600 font-mono shrink-0">${escapeHtml(formatMaintenanceTime(evt.at))}</span>
+                    </div>`).join('') : '<div class="text-neutral-600">尚無紀錄</div>';
+            }
+        }
+
+        function applyMaintenanceState(next, source = 'cloud') {
+            maintenanceState = normalizeMaintenanceState(next);
+            const overlay = document.getElementById('maintenanceOverlay');
+            const message = document.getElementById('maintenanceOverlayMessage');
+            const started = document.getElementById('maintenanceOverlayStartedAt');
+            const version = document.getElementById('maintenanceOverlayVersion');
+            if (message) message.textContent = maintenanceState.message;
+            if (started) started.textContent = formatMaintenanceTime(maintenanceState.startedAt);
+            if (version) version.textContent = getCurrentRelease().version;
+
+            const shouldLock = maintenanceState.enabled && !isSuperAdminSession();
+            if (overlay) overlay.classList.toggle('active', shouldLock);
+            document.body.classList.toggle('maintenance-locked', shouldLock);
+            renderMaintenanceAdminUi();
+            return shouldLock;
+        }
+
+        function guardMaintenanceMutation(actionLabel = '此操作') {
+            if (maintenanceState.enabled && !isSuperAdminSession()) {
+                alert(`系統目前處於維護模式，${actionLabel}已暫停。請等待維護結束。`);
+                applyMaintenanceState(maintenanceState, 'guard');
+                return false;
+            }
+            return true;
+        }
+
+        async function readMaintenanceStateFromCloud({ silent = true } = {}) {
+            const client = getSupabaseClient();
+            if (!client) {
+                if (!silent) throw new Error('Supabase 無法初始化');
+                return maintenanceState;
+            }
+            try {
+                const { data, error } = await client.from('app_config').select('data,updated_at').eq('id', MAINTENANCE_ROW_ID).maybeSingle();
+                if (error) throw error;
+                if (!data) {
+                    maintenanceState = normalizeMaintenanceState({ enabled: false, revision: 0, events: [] });
+                } else {
+                    maintenanceState = normalizeMaintenanceState({ ...(data.data || {}), updatedAt: data.data?.updatedAt || data.updated_at || null });
+                }
+                applyMaintenanceState(maintenanceState, 'cloud-read');
+                return maintenanceState;
+            } catch (e) {
+                console.warn('讀取 maintenance_state 失敗:', e);
+                if (!silent) throw e;
+                return maintenanceState;
+            }
+        }
+
+        async function writeMaintenanceState(enabled, message = '') {
+            if (!isSuperAdminSession()) throw new Error('只有最高管理員可以變更維護模式');
+            if (maintenanceWriteInFlight) throw new Error('維護狀態正在更新，請稍候');
+            maintenanceWriteInFlight = true;
+            renderMaintenanceAdminUi();
+            try {
+                const client = getSupabaseClient();
+                if (!client) throw new Error('Supabase 無法初始化');
+                let latest = await readMaintenanceStateFromCloud({ silent: false });
+                const now = new Date().toISOString();
+                const cleanMessage = String(message || latest.message || '系統目前正在進行維護與更新，請稍候片刻。').trim().slice(0, 180);
+                const event = { enabled: !!enabled, at: now, actor: activeCode || 'SUPERADMIN' };
+                const next = {
+                    enabled: !!enabled,
+                    phase: enabled ? 'maintenance' : 'normal',
+                    message: cleanMessage,
+                    startedAt: enabled ? (latest.enabled && latest.startedAt ? latest.startedAt : now) : null,
+                    updatedAt: now,
+                    updatedBy: activeCode || 'SUPERADMIN',
+                    revision: Number(latest.revision || 0) + 1,
+                    events: [event, ...(latest.events || [])].slice(0, 20)
+                };
+                const { error } = await client.from('app_config').upsert({ id: MAINTENANCE_ROW_ID, data: next, updated_at: now });
+                if (error) throw error;
+
+                const { data: verifyRow, error: verifyError } = await client.from('app_config').select('data,updated_at').eq('id', MAINTENANCE_ROW_ID).maybeSingle();
+                if (verifyError) throw verifyError;
+                const verified = normalizeMaintenanceState({ ...(verifyRow?.data || {}), updatedAt: verifyRow?.data?.updatedAt || verifyRow?.updated_at || now });
+                if (verified.enabled !== !!enabled || verified.revision !== next.revision) throw new Error('雲端回讀校驗不一致，維護狀態未安全切換');
+                applyMaintenanceState(verified, 'verified-write');
+                return verified;
+            } finally {
+                maintenanceWriteInFlight = false;
+                renderMaintenanceAdminUi();
+            }
+        }
+
+        async function setMaintenanceMode(enabled) {
+            if (!isSuperAdminSession()) { alert('只有最高管理員專用碼可以操作維護控制。'); return; }
+            const input = document.getElementById('maintenanceReasonInput');
+            const message = (input?.value || '').trim() || '系統目前正在進行維護與更新，請稍候片刻。';
+            const label = enabled ? '啟用維護模式' : '結束維護模式';
+            const confirmText = enabled
+                ? `確定要啟用全站維護模式嗎？\n\n一般成員與一般管理員會收到維護遮罩；最高管理員保留後台控制權。`
+                : '確定要結束維護模式並讓所有前端恢復操作嗎？';
+            if (!confirm(confirmText)) return;
+            try {
+                await writeMaintenanceState(enabled, message);
+                alert(`✅ ${label}完成，Supabase 雲端回讀校驗通過。`);
+            } catch (e) {
+                alert(`❌ ${label}失敗：${e.message || e}`);
+                await readMaintenanceStateFromCloud({ silent: true });
+            }
+        }
+
+        function toggleMaintenanceAdminGate() {
+            const gate = document.getElementById('maintenanceAdminGate');
+            if (gate) gate.classList.toggle('open');
+            const input = document.getElementById('maintenanceAdminCodeInput');
+            if (gate?.classList.contains('open') && input) setTimeout(() => input.focus(), 80);
+        }
+
+        async function maintenanceSuperAdminLogin() {
+            const input = document.getElementById('maintenanceAdminCodeInput');
+            const err = document.getElementById('maintenanceAdminGateError');
+            const code = (input?.value || '').trim();
+            if (err) err.textContent = '';
+            if (code.toUpperCase() !== SPECIAL_ADMIN_CODE.toUpperCase()) {
+                if (err) err.textContent = '最高管理員通行碼不正確。';
+                return;
+            }
+            currentAuth = 'admin';
+            activeCode = SPECIAL_ADMIN_CODE;
+            localStorage.setItem('shiye_auth', currentAuth);
+            localStorage.setItem('shiye_active_code', activeCode);
+            if (input) input.value = '';
+            window.location.hash = '#admin';
+            applyMaintenanceState(maintenanceState, 'superadmin-bypass');
+            await checkAuthAndRoute();
+            setTimeout(() => openAdminWindow('maintenance'), 80);
+        }
+
+        function startMaintenancePolling() {
+            if (maintenancePollTimer) clearInterval(maintenancePollTimer);
+            maintenancePollTimer = setInterval(() => {
+                readMaintenanceStateFromCloud({ silent: true }).catch(() => {});
+            }, MAINTENANCE_POLL_MS);
+        }
+
+        function startMaintenanceRealtime() {
+            try {
+                if (maintenanceRealtimeChannel) {
+                    try { maintenanceRealtimeChannel.unsubscribe(); } catch (_) {}
+                    maintenanceRealtimeChannel = null;
+                }
+                const client = getSupabaseClient();
+                if (!client || typeof client.channel !== 'function') {
+                    updateMaintenanceRealtimeUi('輪詢備援中', false);
+                    return;
+                }
+                maintenanceRealtimeChannel = client
+                    .channel(`leaves-maintenance-${Math.random().toString(36).slice(2,8)}`)
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'app_config', filter: `id=eq.${MAINTENANCE_ROW_ID}` }, payload => {
+                        const row = payload?.new;
+                        if (row?.data) applyMaintenanceState({ ...row.data, updatedAt: row.data.updatedAt || row.updated_at }, 'realtime');
+                    })
+                    .subscribe(status => {
+                        if (status === 'SUBSCRIBED') updateMaintenanceRealtimeUi('Realtime 已連線', true);
+                        else if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)) updateMaintenanceRealtimeUi('Realtime 異常 · 輪詢備援中', false);
+                    });
+            } catch (e) {
+                console.warn('Maintenance Realtime 初始化失敗:', e);
+                updateMaintenanceRealtimeUi('Realtime 不可用 · 輪詢備援中', false);
+            }
+        }
+
+        async function initMaintenanceController() {
+            await readMaintenanceStateFromCloud({ silent: true });
+            startMaintenanceRealtime();
+            startMaintenancePolling();
+            applyMaintenanceState(maintenanceState, 'init');
+        }
+
         function saveCodesToLocal(codes) {
             try { localStorage.setItem('shiye_codes_cache', JSON.stringify(codes)); } catch (e) {}
         }
@@ -3251,6 +3658,7 @@
         }
 
         async function importSopFromGistToCloud() {
+            if (!guardMaintenanceMutation('Gist 匯入')) return;
             if (sopCloudBusy) return;
             if (!getStoredGistUrl()) return alert('尚未設定 GitHub Gist SOP 網址。');
             sopCloudBusy = true;
@@ -3744,6 +4152,7 @@
             const viewAdmin = document.getElementById('viewAdmin');
 
             if (!currentAuth) {
+                applyMaintenanceState(maintenanceState, 'route-unauthenticated');
                 // 不論是手動登出、閒置鎖定或重新整理，只要回到驗證頁就恢復成可登入狀態。
                 resetAuthLoginUI({ clearInput: false, resetMode: false });
                 authModal.classList.remove('hidden-view', 'auth-modal-fade');
@@ -3757,8 +4166,11 @@
             authModal.style.pointerEvents = 'none';
             appContainer.classList.remove('hidden-view');
 
+            applyMaintenanceState(maintenanceState, 'route-authenticated');
             const roleBadge = document.getElementById('roleBadge');
             const navAdmin = document.getElementById('navAdmin');
+            const maintenanceNav = document.getElementById('nav_btn_maintenance');
+            if (maintenanceNav) maintenanceNav.classList.toggle('hidden-view', !isSuperAdminSession());
             if (currentAuth === 'admin') {
                 roleBadge.textContent = 'ADMIN';
                 navAdmin.classList.remove('hidden-view');
@@ -3855,6 +4267,7 @@
                 currentCodesList = freshCodes;
                 localStorage.setItem('shiye_auth', currentAuth);
                 localStorage.setItem('shiye_active_code', activeCode);
+                applyMaintenanceState(maintenanceState, 'login');
 
                 saveCodesToLocal(freshCodes);
                 pushCodesToCloud(freshCodes).catch(console.error);
@@ -3909,6 +4322,7 @@
             activeCode = null;
             localStorage.removeItem('shiye_auth');
             localStorage.removeItem('shiye_active_code');
+            applyMaintenanceState(maintenanceState, 'logout');
 
             // 關鍵修復：離開系統時立即把登入介面恢復為第二張圖的初始狀態。
             resetAuthLoginUI({ clearInput: true, resetMode: true });
@@ -3924,6 +4338,7 @@
         window.addEventListener('hashchange', checkAuthAndRoute);
         window.addEventListener('DOMContentLoaded', async () => { 
             syncCurrentVersionUI();
+            await initMaintenanceController();
             await initData(); 
             checkAuthAndRoute(); 
         });
@@ -3932,6 +4347,13 @@
             if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { 
                 e.preventDefault(); 
                 verifyPasscode();
+            }
+        });
+
+        document.getElementById('maintenanceAdminCodeInput')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+                e.preventDefault();
+                maintenanceSuperAdminLogin();
             }
         });
 
@@ -4094,6 +4516,7 @@
         const ADMIN_WIN_CONFIG = {
             uiCustomizer: { id: 'win_uiCustomizer', defaultW: 760, defaultH: 520, defaultX: 15, defaultY: 15 },
             tokenAnalytics: { id: 'win_tokenAnalytics', defaultW: 720, defaultH: 560, defaultX: 30, defaultY: 20 },
+            maintenance: { id: 'win_maintenance', defaultW: 760, defaultH: 650, defaultX: 22, defaultY: 18 },
             systemUpdates: { id: 'win_systemUpdates', defaultW: 980, defaultH: 680, defaultX: 32, defaultY: 22 },
             proposals: { id: 'win_proposals', defaultW: 680, defaultH: 520, defaultX: 45, defaultY: 35 },
             diffLogs: { id: 'win_diffLogs', defaultW: 640, defaultH: 480, defaultX: 60, defaultY: 50 },
@@ -4118,6 +4541,8 @@
 
         function openAdminWindow(key) {
             syncCurrentVersionUI();
+            if (key === 'maintenance' && !isSuperAdminSession()) { alert('只有最高管理員可以開啟系統維護控制中心。'); return; }
+            if (key === 'maintenance') { renderMaintenanceAdminUi(); readMaintenanceStateFromCloud({ silent: true }).catch(() => {}); }
             if (key === 'systemUpdates') initSystemUpdateHistory();
             const conf = ADMIN_WIN_CONFIG[key];
             if (!conf) return;
@@ -4723,6 +5148,7 @@
         }
 
         async function adoptSopProposal(proposalId) {
+            if (!guardMaintenanceMutation('SOP 修訂採納')) return;
             if (sopCloudBusy) return alert('SOP 雲端目前正在執行另一項操作，請稍候。');
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             const target = proposals.find(p => String(p.id) === String(proposalId));
@@ -4815,6 +5241,7 @@
         }
 
         async function rejectSopProposal(proposalId) {
+            if (!guardMaintenanceMutation('SOP 修訂駁回')) return;
             if (!confirm('確定要駁回此修訂提案嗎？')) return;
             let proposals = safeJsonParse(localStorage.getItem('shiye_pending_proposals'), []);
             const target = proposals.find(p => String(p.id) === String(proposalId));
@@ -4917,6 +5344,7 @@
         }
 
         async function clearSnapshots() {
+            if (!guardMaintenanceMutation('SOP 快照清理')) return;
             if (!confirm('確定要清空目前顯示的歷史快照清單嗎？\n這只建立雲端清除時間點，不會修改目前 SOP 正文。')) return;
             const result = await setSopWorkflowClearMarker('snapshotsClearedBefore');
             if (!result.success) return alert(`❌ 無法同步清除狀態：${result.message || 'unknown error'}`);
@@ -4926,6 +5354,7 @@
         }
 
         async function rollbackSnapshot(snapshotId) {
+            if (!guardMaintenanceMutation('SOP 快照回滾')) return;
             if (sopCloudBusy) return alert('SOP 雲端目前正在執行另一項操作，請稍候。');
             let snapshots = safeJsonParse(localStorage.getItem('shiye_sop_snapshots'), []);
             const target = snapshots.find(s => String(s.id) === String(snapshotId));
@@ -4975,6 +5404,7 @@
         }
 
         async function generateNewCode() {
+            if (!guardMaintenanceMutation('通行碼建立')) return;
             const nameInput = document.getElementById('newCodeName');
             const name = nameInput.value.trim() || '成員';
 
@@ -5022,6 +5452,7 @@
         }
 
         async function deleteCode(codeStr) {
+            if (!guardMaintenanceMutation('通行碼刪除')) return;
             if (codeStr.toUpperCase() === SPECIAL_ADMIN_CODE.toUpperCase()) return;
             if (!confirm(`確定要刪除身分碼【${codeStr}】嗎？`)) return;
 
@@ -5142,6 +5573,7 @@
         }
 
         async function saveAdminSettings() {
+            if (!guardMaintenanceMutation('系統設定同步')) return;
             const saveBtn = document.getElementById('saveAdminBtn');
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-1"></i> 同步中...';
@@ -5253,6 +5685,7 @@
         }
 
         async function submitSopProposal(msgId, btnEl) {
+            if (!guardMaintenanceMutation('SOP 修訂提案送出')) return;
             const proposalData = window.tempProposalStore[msgId];
             if (!proposalData) return alert('找不到修訂草稿資料');
 
@@ -5414,6 +5847,7 @@
         }
 
         async function handleSend() {
+            if (!guardMaintenanceMutation('新的 AI 問答')) return;
             if (isGenerating) return;
             const text = userInput.value.trim();
             const currentImgs = [...pendingImages];
