@@ -2963,9 +2963,22 @@
             if (!done || maintenanceState?.enabled || deploymentRedirectTimer) return;
             const target = deploymentState.targetVersion;
             if (!target || target === BRIDGE_BUILD_VERSION) return;
+
+            // Redirect-loop guard: once this exact deployment has asked the root Router
+            // to switch versions, never keep bouncing root -> old release -> root again.
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('releaseComplete') === target) return;
+            const redirectKey = `leaves:bridge-redirect:${deploymentState.deploymentId || target}`;
+            try {
+                if (sessionStorage.getItem(redirectKey) === '1') return;
+                sessionStorage.setItem(redirectKey, '1');
+            } catch(_) {}
+
             deploymentRedirectTimer = setTimeout(() => {
                 const u = new URL(getBridgeSiteRootUrl());
                 u.searchParams.set('releaseComplete', target);
+                u.searchParams.set('fromVersion', BRIDGE_BUILD_VERSION);
+                if (deploymentState.deploymentId) u.searchParams.set('deploymentId', deploymentState.deploymentId);
                 location.replace(u.href);
             }, 1200);
         }
