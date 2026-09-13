@@ -1888,6 +1888,7 @@
                 ],
                 summaryItems: [
                     { type: "feat", text: "新增 deployment_state 與 Deployment Pipeline，部署進度由真實步驟驅動，不再使用假計時進度條" },
+                    { type: "fix", text: "Hotfix：修復正式發布完成後 Root Router 與舊 Stable 之間可能反覆跳轉、造成畫面不停重載的問題" },
                     { type: "feat", text: "新增 Sandbox → Stable Promote：Preflight Health Gate、Production Maintenance、Manifest 原子切換、正式版本回讀驗證、完成後解除維護" },
                     { type: "feat", text: "新增 Previous Stable Rollback；部署失敗可保留維護狀態並回復上一個可用版本" },
                     { type: "feat", text: "Maintenance Overlay 新增版本路徑、百分比與目前部署階段；舊 Stable Bridge 亦可接收 deployment_state 顯示更新進度" },
@@ -3654,10 +3655,23 @@
             if (!done || maintenanceState?.enabled) return;
             const target = deploymentState.targetVersion;
             if (!target || target === BUILD_VERSION || deploymentRedirectTimer) return;
+
+            // Never allow a completed deployment / rollback notification to create an
+            // old-release <-> root-router redirect loop. One deployment gets one redirect.
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('releaseComplete') === target) return;
+            const redirectKey = `leaves:release-redirect:${deploymentState.deploymentId || target}`;
+            try {
+                if (sessionStorage.getItem(redirectKey) === '1') return;
+                sessionStorage.setItem(redirectKey, '1');
+            } catch(_) {}
+
             deploymentRedirectTimer = setTimeout(() => {
                 const root = getReleaseSiteRootUrl();
                 const u = new URL(root);
                 u.searchParams.set('releaseComplete', target);
+                u.searchParams.set('fromVersion', BUILD_VERSION);
+                if (deploymentState.deploymentId) u.searchParams.set('deploymentId', deploymentState.deploymentId);
                 location.replace(u.href);
             }, 1200);
         }
