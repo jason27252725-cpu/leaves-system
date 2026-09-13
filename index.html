@@ -19,14 +19,14 @@
         <div class="sub">RELEASE ROUTER</div>
         <div class="bar"><i></i></div>
         <div id="status" class="status">正在確認目前正式版本…</div>
-        <div id="fallbackLinks" class="links"><a id="stableFallback" href="./releases/v27.9/">開啟 Stable</a><a id="sandboxFallback" href="./releases/v28.0/">開啟 Sandbox</a></div>
+        <div id="fallbackLinks" class="links"><a id="stableFallback" href="./releases/v27.9/?channel=stable">開啟 Stable</a><a id="sandboxFallback" href="./releases/v28.1/?channel=sandbox">開啟 Sandbox</a></div>
     </main>
 <script>
 (() => {
     'use strict';
     const DEFAULT_SUPABASE_URL = 'https://dadlmrmzupmmzthlvrmo.supabase.co';
     const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYXNlIiwicmVmIjoiZGFkbG1ybXp1cG1tenRobHZybW8iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4ODkzODc3NSwiZXhwIjoyMTA1NDUxNDc3fQ.t26i-uQEQnI_xwAKfVRsM5gg7EzJ_ux5K6cGhYLR-Zg';
-    const FALLBACK = { stableVersion:'v27.9', sandboxVersion:'v28.0' };
+    const FALLBACK = { stableVersion:'v27.9', sandboxVersion:'v28.1' };
     const status = document.getElementById('status');
     const links = document.getElementById('fallbackLinks');
     const stableFallback = document.getElementById('stableFallback');
@@ -58,10 +58,10 @@
         const requestedChannel = params.get('channel') === 'sandbox' ? 'sandbox' : 'stable';
         const stableVersion = safeVersion(manifest.stableVersion, FALLBACK.stableVersion);
         const sandboxVersion = safeVersion(manifest.sandboxVersion, FALLBACK.sandboxVersion);
-        stableFallback.href = releasePath(stableVersion);
-        sandboxFallback.href = releasePath(sandboxVersion);
+        stableFallback.href = `${releasePath(stableVersion)}?channel=stable`;
+        sandboxFallback.href = `${releasePath(sandboxVersion)}?channel=sandbox`;
         const version = requestedChannel === 'sandbox' ? sandboxVersion : stableVersion;
-        params.delete('channel');
+        params.set('channel', requestedChannel);
         const restQuery = params.toString();
         const target = `${releasePath(version)}${restQuery ? `?${restQuery}` : ''}${location.hash || ''}`;
         status.textContent = requestedChannel === 'sandbox' ? `正在進入 Sandbox ${version}…` : `正在進入 Stable ${version}…`;
