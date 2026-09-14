@@ -778,7 +778,7 @@
         .release-channel-link { display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; padding:11px 12px; border-radius:13px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.24); transition:.2s ease; text-align:left; }
         .release-channel-link:hover { border-color:rgba(255,255,255,.16); background:rgba(255,255,255,.04); }
         body[data-app-env="sandbox"] #appContainer::after {
-            content:'SANDBOX'; position:fixed; right:18px; bottom:18px; z-index:16; pointer-events:none;
+            content:'沙盒'; position:fixed; right:18px; bottom:18px; z-index:16; pointer-events:none;
             color:rgba(216,180,254,.33); border:1px solid rgba(168,85,247,.14); border-radius:999px; padding:5px 9px;
             font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.18em; background:rgba(20,8,30,.22); backdrop-filter:blur(8px);
         }
@@ -817,6 +817,38 @@
         .release-upload-stage.fail { color:#fca5a5; }
         .release-upload-stage.fail .dot { background:#f87171; }
 
+
+        /* v28.2 Phase 4 Bootstrap UX Hotfix · 後台可讀性 */
+        #viewAdmin .text-\[8px\] { font-size: 10px !important; line-height: 1.55 !important; }
+        #viewAdmin .text-\[9px\] { font-size: 11px !important; line-height: 1.55 !important; }
+        #viewAdmin .text-\[10px\] { font-size: 12px !important; line-height: 1.6 !important; }
+        #viewAdmin .text-xs { font-size: 13px !important; line-height: 1.5 !important; }
+        #viewAdmin .text-neutral-600 { color: #a3a3a3 !important; }
+        #viewAdmin .text-neutral-500 { color: #b8b8b8 !important; }
+        #viewAdmin .text-neutral-400 { color: #d4d4d4 !important; }
+        #viewAdmin .window-header .text-xs,
+        #viewAdmin .window-header .text-\[10px\] { font-weight: 600 !important; letter-spacing: .04em; }
+        #viewAdmin nav { font-size: 13px !important; }
+        #viewAdmin .release-health-status { font-size: 10px !important; line-height: 1.1 !important; padding: 5px 8px; }
+        #viewAdmin .release-upload-stage { font-size: 11px !important; line-height: 1.5 !important; }
+        #viewAdmin .release-secret-input { font-size: 11px !important; line-height: 1.45 !important; }
+        #viewAdmin .release-env-card { padding: 15px; }
+        .release-bootstrap-notice {
+            display:none; align-items:flex-start; justify-content:space-between; gap:14px;
+            border:1px solid rgba(251,191,36,.26); background:linear-gradient(145deg,rgba(120,53,15,.13),rgba(0,0,0,.24));
+            border-radius:18px; padding:14px 15px;
+        }
+        .release-bootstrap-notice.show { display:flex; }
+        .release-bootstrap-notice .bootstrap-copy { min-width:0; }
+        .release-bootstrap-notice .bootstrap-title { color:#fde68a; font-size:12px; font-weight:600; letter-spacing:.03em; }
+        .release-bootstrap-notice .bootstrap-desc { color:#d4d4d4; font-size:11px; line-height:1.65; margin-top:5px; }
+        .release-bootstrap-notice .bootstrap-action {
+            flex:none; border:1px solid rgba(251,191,36,.30); background:rgba(120,53,15,.18); color:#fde68a;
+            border-radius:12px; padding:9px 12px; font-size:11px; font-weight:600; transition:.2s ease;
+        }
+        .release-bootstrap-notice .bootstrap-action:hover { background:rgba(120,53,15,.28); border-color:rgba(251,191,36,.48); }
+        .release-bootstrap-notice .bootstrap-action:disabled { opacity:.45; cursor:not-allowed; }
+
         @media screen and (max-width: 768px) { #userInput, #passcodeinput { font-size: 16px !important; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -828,7 +860,7 @@
     <div id="bgSlideshow" class="fixed inset-0 z-0"></div>
     <div class="fixed inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-    <div class="sandbox-environment-banner" id="sandboxEnvironmentBanner">SANDBOX · ISOLATED TEST ENVIRONMENT · v28.2</div>
+    <div class="sandbox-environment-banner" id="sandboxEnvironmentBanner">沙盒 · 隔離測試環境 · v28.2</div>
 
     <div id="versionSummaryModal" class="custom-resized" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
         <div class="resize-handle resize-t" data-handle="t"></div>
@@ -929,7 +961,7 @@
                 <h2 class="text-base font-light tracking-[0.2em] uppercase text-white">LEAVES DESIGN</h2>
                 <p id="authSubtitle" class="text-xs text-neutral-300 font-light tracking-wider">請輸入身分生成碼以進入系統</p>
                 <div class="flex justify-center items-center gap-2 pt-0.5 flex-wrap">
-                    <span class="env-sandbox-chip"><i class="fa-solid fa-flask text-[8px]"></i>SANDBOX</span>
+                    <span class="env-sandbox-chip"><i class="fa-solid fa-flask text-[8px]"></i>沙盒</span>
                     <button type="button" onclick="openQuickUpdateModal()" class="release-version-chip hover:border-blue-400/40 hover:text-white transition" title="查看目前版本與更新紀錄">
                         <span class="release-dot"></span>
                         <span class="text-neutral-500 tracking-[0.12em]">CURRENT</span>
@@ -991,7 +1023,7 @@
             </div>
 
             <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 text-xs tracking-widest">
-                <span class="env-sandbox-chip hidden sm:inline-flex"><i class="fa-solid fa-flask text-[8px]"></i>SANDBOX</span>
+                <span class="env-sandbox-chip hidden sm:inline-flex"><i class="fa-solid fa-flask text-[8px]"></i>沙盒</span>
                 <button type="button" onclick="openQuickUpdateModal()" id="appVersionBadge" class="text-[9px] bg-neutral-950/90 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 hover:border-emerald-500/40 px-2.5 py-1 rounded-full font-mono tracking-normal flex items-center gap-1.5 shadow-sm transition" title="查看目前系統版本與更新日誌">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span id="appVersionBadgeText">v28.2</span>
@@ -1108,7 +1140,7 @@
                     <div>
                         <div class="flex items-center space-x-2.5">
                             <span class="w-2.5 h-2.5 rounded-full bg-white"></span>
-                            <h2 class="text-xs font-semibold tracking-[0.2em] uppercase text-white">WORKSPACE</h2>
+                            <h2 class="text-xs font-semibold tracking-[0.2em] uppercase text-white">管理工作區</h2>
                         </div>
                         <p class="text-[10px] text-neutral-500 mt-0.5 tracking-wider hidden lg:block">拾葉總部資料庫中心</p>
                     </div>
@@ -1117,7 +1149,7 @@
 
                 <nav class="flex-1 overflow-x-auto lg:overflow-y-auto p-2.5 lg:p-3 flex lg:flex-col gap-1 text-xs whitespace-nowrap lg:whitespace-normal" id="sidebarNavList">
                     <button onclick="toggleAdminWindow('uiCustomizer')" id="nav_btn_uiCustomizer" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-palette text-xs text-blue-400"></i><span class="tracking-wide text-white">多端 UI 畫布</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-palette text-xs text-blue-400"></i><span class="tracking-wide text-white">多端介面畫布</span></div>
                         <span id="nav_badge_uiCustomizer" class="w-2 h-2 rounded-full bg-blue-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('tokenAnalytics')" id="nav_btn_tokenAnalytics" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
@@ -1130,11 +1162,11 @@
                         <span id="nav_badge_maintenance" class="w-2 h-2 rounded-full bg-amber-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('releaseCenter')" id="nav_btn_releaseCenter" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink hidden-view">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-branch text-xs text-purple-400"></i><span class="tracking-wide text-white">Stable / Sandbox</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-branch text-xs text-purple-400"></i><span class="tracking-wide text-white">正式版 / 沙盒</span></div>
                         <span id="nav_badge_releaseCenter" class="w-2 h-2 rounded-full bg-purple-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('systemUpdates')" id="nav_btn_systemUpdates" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
-                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-compare text-xs text-purple-400"></i><span class="tracking-wide text-white">系統更新紀錄 (Diff)</span></div>
+                        <div class="flex items-center space-x-2.5"><i class="fa-solid fa-code-compare text-xs text-purple-400"></i><span class="tracking-wide text-white">系統更新紀錄（差異）</span></div>
                         <span id="nav_badge_systemUpdates" class="w-2 h-2 rounded-full bg-purple-400 hidden-view ml-2"></span>
                     </button>
                     <button onclick="toggleAdminWindow('proposals')" id="nav_btn_proposals" class="px-3.5 py-2.5 lg:py-3 rounded-xl transition flex items-center justify-between text-neutral-400 hover:text-white hover:bg-neutral-900 shrink-0 lg:shrink">
@@ -1187,56 +1219,56 @@
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-palette text-xs text-blue-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">多端 UI 介面與排版畫布</span>
+                            <span class="text-xs font-medium text-white tracking-wider">多端介面與排版畫布</span>
                         </div>
                         <button onclick="closeAdminWindow('uiCustomizer')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
                     <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-5">
                         <div class="flex border-b border-neutral-800 gap-4 text-xs">
-                            <button onclick="switchUiDeviceTab('pc')" id="tab_ui_pc" class="pb-2 border-b-2 border-white text-white font-medium">💻 電腦版 (Desktop)</button>
-                            <button onclick="switchUiDeviceTab('mobile')" id="tab_ui_mobile" class="pb-2 text-neutral-500 hover:text-neutral-300">📱 手機版 (Mobile)</button>
-                            <button onclick="switchUiDeviceTab('ipad')" id="tab_ui_ipad" class="pb-2 text-neutral-500 hover:text-neutral-300">📟 iPad / 平板</button>
+                            <button onclick="switchUiDeviceTab('pc')" id="tab_ui_pc" class="pb-2 border-b-2 border-white text-white font-medium">💻 電腦版</button>
+                            <button onclick="switchUiDeviceTab('mobile')" id="tab_ui_mobile" class="pb-2 text-neutral-500 hover:text-neutral-300">📱 手機版</button>
+                            <button onclick="switchUiDeviceTab('ipad')" id="tab_ui_ipad" class="pb-2 text-neutral-500 hover:text-neutral-300">📟 平板版</button>
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             <div class="space-y-4 text-xs">
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>面板透明度 (Opacity)</span>
+                                        <span>面板透明度</span>
                                         <span id="val_drawer_opacity" class="font-mono text-neutral-400">0.88</span>
                                     </div>
                                     <input type="range" min="0.65" max="0.98" step="0.02" id="input_drawer_opacity" oninput="handleUiSliderChange('opacity', this.value)" class="w-full accent-white">
                                 </div>
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>毛玻璃模糊強度 (Blur)</span>
+                                        <span>毛玻璃模糊強度</span>
                                         <span id="val_drawer_blur" class="font-mono text-neutral-400">32px</span>
                                     </div>
                                     <input type="range" min="12" max="48" step="2" id="input_drawer_blur" oninput="handleUiSliderChange('blur', this.value)" class="w-full accent-white">
                                 </div>
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>對話主標題粗細 (Heading)</span>
+                                        <span>對話主標題粗細</span>
                                         <span id="val_title_weight" class="font-mono text-neutral-400">600</span>
                                     </div>
                                     <input type="range" min="400" max="700" step="100" id="input_title_weight" oninput="handleUiSliderChange('titleWeight', this.value)" class="w-full accent-white">
                                 </div>
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>一般內容字粗細 (Body Text)</span>
+                                        <span>一般內容字粗細</span>
                                         <span id="val_body_weight" class="font-mono text-neutral-400">400</span>
                                     </div>
                                     <input type="range" min="300" max="500" step="100" id="input_body_weight" oninput="handleUiSliderChange('bodyWeight', this.value)" class="w-full accent-white">
                                 </div>
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>文字大小倍率 (Font Scale)</span>
+                                        <span>文字大小倍率</span>
                                         <span id="val_font_scale" class="font-mono text-neutral-400">1.0x</span>
                                     </div>
                                     <input type="range" min="0.85" max="1.15" step="0.05" id="input_font_scale" oninput="handleUiSliderChange('fontScale', this.value)" class="w-full accent-white">
                                 </div>
                                 <div id="pc_width_control" class="space-y-1.5">
                                     <div class="flex justify-between items-center text-neutral-300">
-                                        <span>電腦端對話框寬度 (Width)</span>
+                                        <span>電腦端對話框寬度</span>
                                         <span id="val_pc_w" class="font-mono text-neutral-400">620px</span>
                                     </div>
                                     <input type="range" min="500" max="780" step="20" id="input_pc_w" oninput="handleUiSliderChange('pcDrawerW', this.value)" class="w-full accent-white">
@@ -1271,8 +1303,8 @@
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-xl border border-amber-400/20 bg-amber-500/10 text-amber-300 flex items-center justify-center"><i class="fa-solid fa-screwdriver-wrench text-xs"></i></div>
                             <div>
-                                <div class="flex items-center gap-2"><span class="text-xs font-medium text-white tracking-wider">系統維護控制中心</span><span class="text-[9px] font-mono text-amber-300 border border-amber-700/50 bg-amber-950/30 px-2 py-0.5 rounded-full">PHASE 1</span></div>
-                                <p class="text-[9px] text-neutral-500 mt-0.5">Realtime maintenance gate · Superadmin bypass · Cloud verified</p>
+                                <div class="flex items-center gap-2"><span class="text-xs font-medium text-white tracking-wider">系統維護控制中心</span><span class="text-[9px] font-mono text-amber-300 border border-amber-700/50 bg-amber-950/30 px-2 py-0.5 rounded-full">階段 1</span></div>
+                                <p class="text-[9px] text-neutral-500 mt-0.5">即時維護鎖定 · 最高管理員通道 · 雲端驗證</p>
                             </div>
                         </div>
                         <button onclick="closeAdminWindow('maintenance')" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -1280,11 +1312,11 @@
                     <div class="flex-1 overflow-y-auto p-5 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="maintenance-control-status">
-                                <div class="text-[9px] text-neutral-500 tracking-wider">SYSTEM STATUS</div>
+                                <div class="text-[9px] text-neutral-500 tracking-wider">系統狀態</div>
                                 <div class="flex items-center gap-2 mt-2"><span id="maintenanceAdminStatusDot" class="maintenance-live-dot online"></span><span id="maintenanceAdminStatusText" class="text-sm text-emerald-300 font-medium">正常運行</span></div>
                             </div>
                             <div class="maintenance-control-status">
-                                <div class="text-[9px] text-neutral-500 tracking-wider">SYNC CHANNEL</div>
+                                <div class="text-[9px] text-neutral-500 tracking-wider">同步通道</div>
                                 <div class="flex items-center gap-2 mt-2"><span id="maintenanceRealtimeDot" class="maintenance-live-dot offline"></span><span id="maintenanceRealtimeText" class="text-xs text-neutral-300">初始化中</span></div>
                             </div>
                         </div>
@@ -1304,11 +1336,11 @@
                             </button>
                         </div>
                         <div class="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 text-[10px] text-neutral-400 leading-relaxed">
-                            <div class="text-blue-300 font-medium mb-1.5"><i class="fa-solid fa-circle-info mr-1.5"></i>Phase 1 安全範圍</div>
-                            目前維護模式是「應用程式層」的即時操作鎖與畫面遮罩，不等同 Supabase RLS 的資料庫硬鎖。Stable / Sandbox 已啟用；Phase 3 新增真實部署進度、Health Gate、正式 Promote 與 Rollback；Phase 4 再加入安全的新版上傳與 Sandbox Builder。
+                            <div class="text-blue-300 font-medium mb-1.5"><i class="fa-solid fa-circle-info mr-1.5"></i>階段 1 安全範圍</div>
+                            目前維護模式是「應用程式層」的即時操作鎖與畫面遮罩，不等同 Supabase RLS 的資料庫硬鎖。正式版 / 沙盒已啟用；階段 3 新增真實部署進度、健康檢查門檻、正式發布與回滾；階段 4 再加入安全的新版上傳與沙盒建立器。
                         </div>
                         <div class="rounded-2xl border border-neutral-800 bg-neutral-950/50 p-4">
-                            <div class="flex items-center justify-between"><span class="text-[10px] text-white">最近維護事件</span><span class="text-[9px] text-neutral-600 font-mono">CLOUD AUDIT</span></div>
+                            <div class="flex items-center justify-between"><span class="text-[10px] text-white">最近維護事件</span><span class="text-[9px] text-neutral-600 font-mono">雲端稽核</span></div>
                             <div id="maintenanceEventList" class="mt-3 space-y-2 text-[10px] text-neutral-400"><div class="text-neutral-600">尚無紀錄</div></div>
                         </div>
                     </div>
@@ -1321,8 +1353,8 @@
                         <div class="flex items-center gap-2.5 min-w-0">
                             <div class="w-8 h-8 rounded-xl border border-purple-400/20 bg-purple-500/10 text-purple-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-code-branch text-xs"></i></div>
                             <div class="min-w-0">
-                                <div class="flex items-center gap-2 flex-wrap"><span class="text-xs font-medium text-white tracking-wider">Release & Sandbox Center</span><span class="text-[9px] font-mono text-purple-300 border border-purple-700/50 bg-purple-950/30 px-2 py-0.5 rounded-full">PHASE 4</span><span class="env-sandbox-chip">CURRENT · SANDBOX</span></div>
-                                <p class="text-[9px] text-neutral-500 mt-0.5">Upload · Validate · Sandbox Builder · Deploy · Rollback</p>
+                                <div class="flex items-center gap-2 flex-wrap"><span class="text-xs font-medium text-white tracking-wider">版本發布與沙盒中心</span><span class="text-[9px] font-mono text-purple-300 border border-purple-700/50 bg-purple-950/30 px-2 py-0.5 rounded-full">階段 4</span><span class="env-sandbox-chip">目前 · 沙盒</span></div>
+                                <p class="text-[9px] text-neutral-500 mt-0.5">上傳 · 驗證 · 建立沙盒 · 發布 · 回滾</p>
                             </div>
                         </div>
                         <button onclick="closeAdminWindow('releaseCenter')" class="text-neutral-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -1330,28 +1362,36 @@
                     <div class="flex-1 overflow-y-auto p-5 space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="release-env-card sandbox">
-                                <div class="text-[9px] text-neutral-500 tracking-wider">CURRENT BUILD</div>
-                                <div class="flex items-center gap-2 mt-2"><span class="release-env-dot sandbox"></span><span id="releaseCurrentEnvironmentText" class="text-sm text-purple-200 font-medium">SANDBOX</span></div>
+                                <div class="text-[9px] text-neutral-500 tracking-wider">目前執行版本</div>
+                                <div class="flex items-center gap-2 mt-2"><span class="release-env-dot sandbox"></span><span id="releaseCurrentEnvironmentText" class="text-sm text-purple-200 font-medium">沙盒</span></div>
                                 <div id="releaseCurrentBuildText" class="text-[10px] text-neutral-400 font-mono mt-2">v28.2</div>
                             </div>
                             <div class="release-env-card stable">
-                                <div class="text-[9px] text-neutral-500 tracking-wider">STABLE CHANNEL</div>
+                                <div class="text-[9px] text-neutral-500 tracking-wider">正式版通道</div>
                                 <div class="flex items-center gap-2 mt-2"><span class="release-env-dot stable"></span><span id="releaseStableVersionText" class="text-sm text-emerald-200 font-medium">v28.1</span></div>
                                 <div id="releaseStableMetaText" class="text-[9px] text-neutral-500 font-mono mt-2">正式同事入口</div>
                             </div>
                             <div class="release-env-card">
-                                <div class="text-[9px] text-neutral-500 tracking-wider">SANDBOX CHANNEL</div>
+                                <div class="text-[9px] text-neutral-500 tracking-wider">沙盒通道</div>
                                 <div class="flex items-center gap-2 mt-2"><span class="release-env-dot sandbox"></span><span id="releaseSandboxVersionText" class="text-sm text-purple-200 font-medium">v28.2</span></div>
-                                <div id="releaseManifestRevisionText" class="text-[9px] text-neutral-500 font-mono mt-2">manifest r--</div>
+                                <div id="releaseManifestRevisionText" class="text-[9px] text-neutral-500 font-mono mt-2">版本指標 r--</div>
                             </div>
+                        </div>
+
+                        <div id="releaseBootstrapNotice" class="release-bootstrap-notice">
+                            <div class="bootstrap-copy">
+                                <div class="bootstrap-title"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>目前版本尚未登錄為沙盒</div>
+                                <div id="releaseBootstrapMessage" class="bootstrap-desc">目前執行版本與雲端版本指標不同。先完成登錄後，「測試版入口」才會指向目前版本；這個動作不會修改正式版。</div>
+                            </div>
+                            <button id="releaseBootstrapRegisterBtn" type="button" onclick="registerCurrentBuildAsSandbox()" class="bootstrap-action"><i class="fa-solid fa-flask-vial mr-1.5"></i>登錄目前版本</button>
                         </div>
 
                         <div class="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-4">
                             <div class="flex items-start gap-3">
                                 <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-400/20 text-purple-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-flask text-[11px]"></i></div>
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-[10px] text-purple-200 font-medium">Phase 4 已啟用版本上傳與 Sandbox Builder</div>
-                                    <p class="text-[9px] text-neutral-400 leading-relaxed mt-1.5">未來新版 HTML 可直接在這裡拖曳上傳。系統會先在瀏覽器與伺服器雙重驗證，安全寫入 GitHub 的新版本資料夾，等待 GitHub Pages 真正可讀後才登錄成 Sandbox；正式發布仍交由 Phase 3 Health Gate 與 Rollback 管線。</p>
+                                    <div class="text-[10px] text-purple-200 font-medium">階段 4 已啟用版本上傳與沙盒建立器</div>
+                                    <p class="text-[9px] text-neutral-400 leading-relaxed mt-1.5">未來新版 HTML 可直接在這裡拖曳上傳。系統會先在瀏覽器與伺服器雙重驗證，安全寫入 GitHub 的新版本資料夾；等 GitHub Pages 真正可讀後才登錄成沙盒。正式發布仍由階段 3 的健康檢查與回滾流程負責。</p>
                                 </div>
                             </div>
                         </div>
@@ -1359,8 +1399,8 @@
                         <div class="release-env-card border border-purple-500/25" id="releaseCreatorPanel">
                             <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-3">
                                 <div>
-                                    <div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] text-white tracking-wider">建立新版本 / Release Creator</span><span id="releaseUploaderConnectionBadge" class="release-health-status wait">NOT TESTED</span></div>
-                                    <p class="text-[9px] text-neutral-500 mt-1 leading-relaxed">上傳完整 HTML → 本機驗證 → Edge Function 安全提交 GitHub → 等待 Pages 生效 → 自動登錄為 Sandbox。GitHub Token 不會存在瀏覽器。</p>
+                                    <div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] text-white tracking-wider">建立新版本</span><span id="releaseUploaderConnectionBadge" class="release-health-status wait">尚未測試</span></div>
+                                    <p class="text-[9px] text-neutral-500 mt-1 leading-relaxed">上傳完整 HTML → 本機驗證 → 後端安全提交 GitHub → 等待網頁部署生效 → 自動登錄為沙盒。GitHub 權杖不會存在瀏覽器。</p>
                                 </div>
                                 <button id="releaseUploaderTestBtn" type="button" onclick="testReleaseUploaderConnection()" class="rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-3 py-2 text-[9px] text-neutral-300 transition"><i class="fa-solid fa-plug-circle-check mr-1"></i>測試發布服務</button>
                             </div>
@@ -1372,55 +1412,55 @@
                                         <div>
                                             <div class="release-upload-file-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
                                             <div id="releaseCandidateFileName" class="text-[10px] text-neutral-200 font-medium">拖曳新版 HTML 到這裡</div>
-                                            <div id="releaseCandidateFileMeta" class="text-[9px] text-neutral-600 mt-1.5 font-mono">或點擊選擇檔案 · MAX 1.5 MB</div>
+                                            <div id="releaseCandidateFileMeta" class="text-[9px] text-neutral-600 mt-1.5 font-mono">或點擊選擇檔案 · 上限 1.5 MB</div>
                                         </div>
                                     </label>
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">DETECTED VERSION</span><span id="releaseCandidateVersion" class="text-[10px] text-neutral-300 font-mono mt-1 block">--</span></div>
-                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">APP SCHEMA</span><span id="releaseCandidateSchema" class="text-[10px] text-neutral-300 font-mono mt-1 block">--</span></div>
-                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">VALIDATION</span><span id="releaseCandidateValidationState" class="text-[10px] text-neutral-500 font-mono mt-1 block">WAITING</span></div>
+                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">偵測到的版本</span><span id="releaseCandidateVersion" class="text-[10px] text-neutral-300 font-mono mt-1 block">--</span></div>
+                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">應用資料結構</span><span id="releaseCandidateSchema" class="text-[10px] text-neutral-300 font-mono mt-1 block">--</span></div>
+                                        <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-[8px] text-neutral-600 block">驗證狀態</span><span id="releaseCandidateValidationState" class="text-[10px] text-neutral-500 font-mono mt-1 block">等待中</span></div>
                                     </div>
                                     <div id="releaseCandidateValidationList" class="space-y-2"><div class="text-[9px] text-neutral-600">選擇新版 HTML 後，這裡會顯示完整檢查結果。</div></div>
                                 </div>
 
                                 <div class="space-y-3">
                                     <div class="rounded-2xl border border-neutral-800 bg-black/20 p-3">
-                                        <div class="flex items-center justify-between gap-2"><span class="text-[9px] text-neutral-300">Release Admin Secret</span><span class="text-[8px] text-neutral-600 font-mono">SERVER AUTH</span></div>
+                                        <div class="flex items-center justify-between gap-2"><span class="text-[9px] text-neutral-300">發布管理密鑰</span><span class="text-[8px] text-neutral-600 font-mono">伺服器驗證</span></div>
                                         <input id="releaseAdminSecretInput" class="release-secret-input mt-2" type="password" autocomplete="new-password" placeholder="輸入 Supabase Edge Function 的 RELEASE_ADMIN_SECRET">
-                                        <p class="text-[8px] text-neutral-600 mt-2 leading-relaxed">只保留在目前頁面記憶體，不寫入 localStorage / Supabase，也不是 GitHub Token。</p>
+                                        <p class="text-[8px] text-neutral-600 mt-2 leading-relaxed">只保留在目前頁面記憶體，不寫入瀏覽器本機儲存或 Supabase，也不是 GitHub 權杖。</p>
                                     </div>
                                     <div class="rounded-2xl border border-neutral-800 bg-black/20 p-3 space-y-2">
-                                        <div class="flex items-center justify-between text-[9px]"><span class="text-neutral-300">Sandbox Builder</span><span id="releaseUploadProgressText" class="font-mono text-purple-300">0%</span></div>
+                                        <div class="flex items-center justify-between text-[9px]"><span class="text-neutral-300">沙盒建立器</span><span id="releaseUploadProgressText" class="font-mono text-purple-300">0%</span></div>
                                         <div class="release-uploader-progress"><div id="releaseUploadProgressBar"></div></div>
                                         <div id="releaseUploadStageText" class="text-[9px] text-neutral-600 leading-relaxed">等待新版檔案。</div>
                                     </div>
                                     <div class="space-y-1.5">
                                         <div id="releaseUploadStageValidate" class="release-upload-stage"><span class="dot"></span><span>驗證程式與版本資訊</span></div>
-                                        <div id="releaseUploadStageCommit" class="release-upload-stage"><span class="dot"></span><span>安全提交 GitHub Release</span></div>
-                                        <div id="releaseUploadStagePages" class="release-upload-stage"><span class="dot"></span><span>等待 GitHub Pages 生效</span></div>
-                                        <div id="releaseUploadStageManifest" class="release-upload-stage"><span class="dot"></span><span>登錄 Sandbox 與重建隔離資料</span></div>
+                                        <div id="releaseUploadStageCommit" class="release-upload-stage"><span class="dot"></span><span>安全提交 GitHub 版本</span></div>
+                                        <div id="releaseUploadStagePages" class="release-upload-stage"><span class="dot"></span><span>等待 GitHub Pages 部署生效</span></div>
+                                        <div id="releaseUploadStageManifest" class="release-upload-stage"><span class="dot"></span><span>登錄沙盒並重建隔離資料</span></div>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <button id="releaseValidateCandidateBtn" type="button" onclick="validateSelectedReleaseCandidate()" class="rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-3 py-2.5 text-[9px] text-neutral-300 transition"><i class="fa-solid fa-shield-halved mr-1"></i>重新驗證</button>
-                                        <button id="releaseUploadCandidateBtn" type="button" onclick="uploadReleaseCandidate()" disabled class="rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/15 disabled:opacity-35 disabled:cursor-not-allowed px-3 py-2.5 text-[9px] text-purple-200 transition"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>建立 Sandbox</button>
+                                        <button id="releaseUploadCandidateBtn" type="button" onclick="uploadReleaseCandidate()" disabled class="rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/15 disabled:opacity-35 disabled:cursor-not-allowed px-3 py-2.5 text-[9px] text-purple-200 transition"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>建立沙盒</button>
                                     </div>
-                                    <button id="releaseOpenUploadedSandboxBtn" type="button" onclick="openUploadedReleaseSandbox()" disabled class="w-full rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/15 disabled:opacity-35 disabled:cursor-not-allowed px-3 py-2.5 text-[9px] text-emerald-200 transition"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>開啟剛建立的 Sandbox</button>
+                                    <button id="releaseOpenUploadedSandboxBtn" type="button" onclick="openUploadedReleaseSandbox()" disabled class="w-full rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/15 disabled:opacity-35 disabled:cursor-not-allowed px-3 py-2.5 text-[9px] text-emerald-200 transition"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>開啟剛建立的沙盒</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div class="release-env-card space-y-2.5">
-                                <div class="flex items-center justify-between"><span class="text-[10px] text-white tracking-wider">版本入口</span><span class="text-[9px] text-neutral-600 font-mono">ROUTING</span></div>
+                                <div class="flex items-center justify-between"><span class="text-[10px] text-white tracking-wider">版本入口</span><span class="text-[9px] text-neutral-600 font-mono">版本路由</span></div>
                                 <button type="button" onclick="openReleaseChannel('stable')" class="release-channel-link">
-                                    <span><span class="text-[10px] text-emerald-300">開啟正式 Stable</span><span id="releaseStableUrlText" class="block text-[8px] text-neutral-600 font-mono mt-1 truncate max-w-[340px]">--</span></span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-neutral-500"></i>
+                                    <span><span class="text-[10px] text-emerald-300">開啟正式版</span><span id="releaseStableUrlText" class="block text-[8px] text-neutral-600 font-mono mt-1 truncate max-w-[340px]">--</span></span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-neutral-500"></i>
                                 </button>
                                 <button type="button" onclick="openReleaseChannel('sandbox')" class="release-channel-link">
-                                    <span><span class="text-[10px] text-purple-300">開啟測試 Sandbox</span><span id="releaseSandboxUrlText" class="block text-[8px] text-neutral-600 font-mono mt-1 truncate max-w-[340px]">--</span></span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-neutral-500"></i>
+                                    <span><span class="text-[10px] text-purple-300">開啟已登錄的測試版</span><span id="releaseSandboxUrlText" class="block text-[8px] text-neutral-600 font-mono mt-1 truncate max-w-[340px]">--</span></span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-neutral-500"></i>
                                 </button>
                             </div>
                             <div class="release-env-card space-y-2.5">
-                                <div class="flex items-center justify-between"><span class="text-[10px] text-white tracking-wider">沙盒資料</span><span class="text-[9px] text-neutral-600 font-mono">ISOLATED CLOUD</span></div>
+                                <div class="flex items-center justify-between"><span class="text-[10px] text-white tracking-wider">沙盒資料</span><span class="text-[9px] text-neutral-600 font-mono">隔離雲端</span></div>
                                 <p id="releaseSandboxSeedState" class="text-[9px] text-neutral-500 leading-relaxed">正在檢查 sandbox__global_state / sandbox__sop_document…</p>
                                 <button id="releaseReseedSandboxBtn" type="button" onclick="reseedSandboxFromProduction()" class="w-full rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-3 py-2.5 text-[10px] text-neutral-200 transition"><i class="fa-solid fa-arrows-rotate mr-1.5 text-purple-300"></i>重新複製正式核心資料到沙盒</button>
                             </div>
@@ -1428,35 +1468,35 @@
 
                         <div class="release-env-card">
                             <div class="flex items-center justify-between gap-3">
-                                <div><div class="text-[10px] text-white tracking-wider">Release Manifest</div><p class="text-[9px] text-neutral-600 mt-1">根目錄 Router 只讀這份雲端指標；Phase 3 由部署管線安全切換 Stable / Previous Stable。</p></div>
+                                <div><div class="text-[10px] text-white tracking-wider">版本指標</div><p class="text-[9px] text-neutral-600 mt-1">網站根入口只讀這份雲端版本指標；階段 3 的部署流程會安全切換目前正式版與上一個正式版。</p></div>
                                 <button id="releaseManifestRefreshBtn" type="button" onclick="refreshReleaseManifestAndUi()" class="rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-3 py-2 text-[9px] text-neutral-300 transition"><i class="fa-solid fa-rotate-right mr-1"></i>重新讀取</button>
                             </div>
                             <div class="grid grid-cols-2 gap-2 mt-3 text-[9px] font-mono">
-                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">stableVersion</span><span id="releaseManifestStableValue" class="text-neutral-300 mt-1 block">v28.1</span></div>
-                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">sandboxVersion</span><span id="releaseManifestSandboxValue" class="text-neutral-300 mt-1 block">v28.2</span></div>
-                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">previousStable</span><span id="releaseManifestPreviousValue" class="text-neutral-300 mt-1 block">v27.9</span></div>
-                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">schemaVersion</span><span id="releaseManifestSchemaValue" class="text-neutral-300 mt-1 block">3</span></div>
+                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">目前正式版</span><span id="releaseManifestStableValue" class="text-neutral-300 mt-1 block">v28.1</span></div>
+                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">目前沙盒版</span><span id="releaseManifestSandboxValue" class="text-neutral-300 mt-1 block">v28.2</span></div>
+                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">上一個正式版</span><span id="releaseManifestPreviousValue" class="text-neutral-300 mt-1 block">v27.9</span></div>
+                                <div class="rounded-xl border border-neutral-800 bg-black/25 p-2.5"><span class="text-neutral-600 block">資料結構版本</span><span id="releaseManifestSchemaValue" class="text-neutral-300 mt-1 block">3</span></div>
                             </div>
                         </div>
 
                         <div class="release-env-card">
                             <div class="flex items-center justify-between gap-3 mb-3">
-                                <div><div class="text-[10px] text-white tracking-wider">Environment Health Check</div><p class="text-[9px] text-neutral-600 mt-1">實際檢查兩個版本檔案、雲端隔離資料與資料索引是否可讀。</p></div>
+                                <div><div class="text-[10px] text-white tracking-wider">環境健康檢查</div><p class="text-[9px] text-neutral-600 mt-1">實際檢查兩個版本檔案、雲端隔離資料與資料索引是否可讀。</p></div>
                                 <button id="releaseHealthCheckBtn" type="button" onclick="runReleaseEnvironmentHealthCheck()" class="rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/15 px-3 py-2 text-[9px] text-purple-200 transition"><i class="fa-solid fa-stethoscope mr-1"></i>執行檢查</button>
                             </div>
-                            <div id="releaseHealthCheckList" class="space-y-2"><div class="text-[9px] text-neutral-600">尚未執行 Health Check。</div></div>
+                            <div id="releaseHealthCheckList" class="space-y-2"><div class="text-[9px] text-neutral-600">尚未執行環境健康檢查。</div></div>
                         </div>
 
                         <div class="release-env-card border border-blue-500/20" id="releaseDeploymentPanel">
                             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                                 <div>
-                                    <div class="flex items-center gap-2"><span class="text-[10px] text-white tracking-wider">Deployment Pipeline</span><span id="releaseDeploymentStatusBadge" class="release-health-status wait">IDLE</span></div>
+                                    <div class="flex items-center gap-2"><span class="text-[10px] text-white tracking-wider">部署流程</span><span id="releaseDeploymentStatusBadge" class="release-health-status wait">待命</span></div>
                                     <p id="releaseDeploymentStepText" class="text-[9px] text-neutral-500 mt-1">尚未執行部署。</p>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
-                                    <button id="releaseRegisterSandboxBtn" type="button" onclick="registerCurrentBuildAsSandbox()" class="rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/15 px-3 py-2 text-[9px] text-purple-200 transition"><i class="fa-solid fa-flask-vial mr-1"></i>登錄此版本為 Sandbox</button>
-                                    <button id="releasePromoteBtn" type="button" onclick="promoteSandboxToStable()" class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 px-3 py-2 text-[9px] text-emerald-200 transition"><i class="fa-solid fa-rocket mr-1"></i>發布 Sandbox → Stable</button>
-                                    <button id="releaseRollbackBtn" type="button" onclick="rollbackStableRelease()" class="rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15 px-3 py-2 text-[9px] text-amber-200 transition"><i class="fa-solid fa-rotate-left mr-1"></i>Rollback</button>
+                                    <button id="releaseRegisterSandboxBtn" type="button" onclick="registerCurrentBuildAsSandbox()" class="rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/15 px-3 py-2 text-[9px] text-purple-200 transition"><i class="fa-solid fa-flask-vial mr-1"></i>將目前版本登錄為沙盒</button>
+                                    <button id="releasePromoteBtn" type="button" onclick="promoteSandboxToStable()" class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 px-3 py-2 text-[9px] text-emerald-200 transition"><i class="fa-solid fa-rocket mr-1"></i>發布沙盒 → 正式版</button>
+                                    <button id="releaseRollbackBtn" type="button" onclick="rollbackStableRelease()" class="rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15 px-3 py-2 text-[9px] text-amber-200 transition"><i class="fa-solid fa-rotate-left mr-1"></i>回滾</button>
                                 </div>
                             </div>
                             <div class="mt-4">
@@ -1468,15 +1508,15 @@
 
                         <div class="release-env-card">
                             <div class="flex items-center justify-between gap-3 mb-3">
-                                <div><div class="text-[10px] text-white tracking-wider">Deployment History</div><p class="text-[9px] text-neutral-600 mt-1">保留成功、失敗與回滾紀錄，方便日後追查。</p></div>
+                                <div><div class="text-[10px] text-white tracking-wider">部署歷史</div><p class="text-[9px] text-neutral-600 mt-1">保留成功、失敗與回滾紀錄，方便日後追查。</p></div>
                                 <button type="button" onclick="loadDeploymentHistory()" class="rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-3 py-2 text-[9px] text-neutral-300 transition"><i class="fa-solid fa-clock-rotate-left mr-1"></i>重新整理</button>
                             </div>
                             <div id="releaseDeploymentHistory" class="space-y-2"><div class="text-[9px] text-neutral-600">尚無部署紀錄。</div></div>
                         </div>
 
                         <div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-[9px] text-neutral-400 leading-relaxed">
-                            <div class="text-amber-300 font-medium mb-1.5"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Phase 4 安全邊界</div>
-                            Release Creator 只建立新的不可變版本資料夾，不會直接覆蓋目前 Stable；GitHub Token 僅存在 Supabase Edge Function Secret。Sandbox 建立成功後仍必須人工測試，再由 Phase 3 發布管線切換 Stable。若新版需要資料庫 Schema Migration，仍必須建立獨立 Migration 步驟。
+                            <div class="text-amber-300 font-medium mb-1.5"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>階段 4 安全邊界</div>
+                            版本建立器只建立新的不可變版本資料夾，不會直接覆蓋目前正式版；GitHub 權杖只存在 Supabase 後端函式的安全密鑰中。沙盒建立成功後仍必須人工測試，再由階段 3 發布流程切換正式版。若新版需要資料庫結構變更，仍必須另外建立資料遷移步驟。
                         </div>
                     </div>
                 </div>
@@ -1552,7 +1592,7 @@
                                     <span id="currentDateBadge" class="ml-2 text-[10px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">2026-09-11</span>
                                 </div>
                                 <div class="text-right">
-                                    <span id="todayTokensBadge" class="font-mono text-emerald-400 font-bold text-base">0 Tokens</span>
+                                    <span id="todayTokensBadge" class="font-mono text-emerald-400 font-bold text-base">0 Token</span>
                                     <span class="text-[10px] text-neutral-500 font-mono ml-1" id="totalHistoricalTokensBadge">(歷史累計: 0)</span>
                                 </div>
                             </div>
@@ -1561,7 +1601,7 @@
                             </div>
                             <div class="flex justify-between items-center text-[10px] text-neutral-400 font-mono">
                                 <span>今日全體問答：<strong id="todayRequestCountBadge" class="text-white">0</strong> 次</span>
-                                <span class="text-neutral-500">每日午夜 (UTC+8) 自動歸檔歸零</span>
+                                <span class="text-neutral-500">每日午夜（台灣時間 UTC+8）自動歸檔歸零</span>
                             </div>
                         </div>
 
@@ -1594,7 +1634,7 @@
                                 </div>
                                 <div class="text-[11px] font-mono text-neutral-300 flex justify-between">
                                     <span>資料庫已用：<strong id="supabaseUsedSizeText" class="text-emerald-400">0 KB</strong></span>
-                                    <span class="text-neutral-500">上限 500 MB (Free)</span>
+                                    <span class="text-neutral-500">上限 500 MB（免費方案）</span>
                                 </div>
                                 <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
                                     <div id="supabaseProgressBar" class="bg-emerald-400 h-full w-[0.5%] transition-all duration-500"></div>
@@ -1625,7 +1665,7 @@
                                     <thead>
                                         <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase font-mono">
                                             <th class="p-3 font-medium">日期</th>
-                                            <th class="p-3 font-medium">當日全體消耗 Tokens</th>
+                                            <th class="p-3 font-medium">當日全體 Token 用量</th>
                                             <th class="p-3 font-medium">總問答數</th>
                                             <th class="p-3 font-medium text-right">當日用量榜首</th>
                                         </tr>
@@ -1658,7 +1698,7 @@
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-clock-rotate-left text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">SOP 雲端修訂日誌 (Diff)</span>
+                            <span class="text-xs font-medium text-white tracking-wider">SOP 雲端修訂日誌（差異）</span>
                             <span id="updateLogsCountBadge" class="text-[10px] bg-neutral-800 text-neutral-300 px-2 py-0.2 rounded font-mono">共 0 筆</span>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -1676,7 +1716,7 @@
                     <div class="window-header px-4 lg:px-5 py-3 border-b border-neutral-800 bg-neutral-900/90 flex justify-between items-center cursor-move">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-box-archive text-xs text-neutral-400"></i>
-                            <span class="text-xs font-medium text-white tracking-wider">SOP 版本歷史快照 (Rollback)</span>
+                            <span class="text-xs font-medium text-white tracking-wider">SOP 版本歷史快照（回滾）</span>
                             <span id="snapshotsCountBadge" class="text-[10px] bg-neutral-800 text-neutral-300 px-2 py-0.2 rounded font-mono">0 個</span>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -1695,7 +1735,7 @@
                         <div class="flex items-center flex-wrap gap-2.5 min-w-0">
                             <i class="fa-solid fa-eye text-xs text-neutral-400"></i>
                             <span class="text-xs font-medium text-white tracking-wider">SOP 雲端主版本檢視</span>
-                            <span id="sopViewerSourceBadge" class="text-[9px] px-2 py-0.5 rounded-full border border-emerald-800/60 bg-emerald-950/30 text-emerald-300 font-mono">Supabase canonical</span>
+                            <span id="sopViewerSourceBadge" class="text-[9px] px-2 py-0.5 rounded-full border border-emerald-800/60 bg-emerald-950/30 text-emerald-300 font-mono">Supabase 正式主版本</span>
                             <span id="sopViewerRevisionBadge" class="text-[9px] px-2 py-0.5 rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300 font-mono">r--</span>
                         </div>
                         <div class="flex items-center space-x-2 ui-no-select">
@@ -1707,15 +1747,15 @@
                     <div class="flex-1 overflow-hidden p-4 flex flex-col gap-3">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 ui-no-select">
                             <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5">
-                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Cloud state</div>
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">雲端狀態</div>
                                 <div id="sopViewerCloudState" class="text-[11px] text-emerald-300 mt-1 font-medium">等待同步檢查</div>
                             </div>
                             <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5 min-w-0">
-                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Content hash</div>
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">內容雜湊</div>
                                 <div id="sopViewerHash" class="text-[11px] text-neutral-300 mt-1 font-mono truncate">--</div>
                             </div>
                             <div class="rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2.5 min-w-0">
-                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">Last published</div>
+                                <div class="text-[9px] uppercase tracking-[0.16em] text-neutral-500">最後發布時間</div>
                                 <div id="sopViewerUpdatedAt" class="text-[11px] text-neutral-300 mt-1 truncate">--</div>
                             </div>
                         </div>
@@ -1750,7 +1790,7 @@
                                 <thead>
                                     <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase">
                                         <th class="p-3 font-medium">狀態</th>
-                                        <th class="p-3 font-medium">PASSCODE</th>
+                                        <th class="p-3 font-medium">通行碼</th>
                                         <th class="p-3 font-medium">成員名稱</th>
                                         <th class="p-3 font-medium">登入次數</th>
                                         <th class="p-3 font-medium">最近登入紀錄</th>
@@ -1772,7 +1812,7 @@
                         </div>
                         <div class="flex items-center space-x-2">
                             <button onclick="testAutoFreeHealth()" id="testModelsBtn" class="text-[10px] text-neutral-300 hover:text-white bg-neutral-800 px-2.5 py-1 rounded transition flex items-center gap-1">
-                                <i class="fa-solid fa-bolt text-amber-400 text-[9px]"></i><span>測速 Auto Free</span>
+                                <i class="fa-solid fa-bolt text-amber-400 text-[9px]"></i><span>測試 Auto Free 調度</span>
                             </button>
                             <button onclick="clearDispatchLogs()" class="text-[10px] text-neutral-400 hover:text-white bg-neutral-800 px-2 py-1 rounded">清空紀錄</button>
                             <button onclick="closeAdminWindow('aiMonitor')" class="text-neutral-400 hover:text-white w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -1809,10 +1849,10 @@
                                     <thead>
                                         <tr class="border-b border-neutral-800 text-neutral-500 text-[10px] tracking-wider uppercase font-mono">
                                             <th class="p-3 font-medium">時間</th>
-                                            <th class="p-3 font-medium">實際承接模型 (Real Assigned Model)</th>
+                                            <th class="p-3 font-medium">實際承接模型</th>
                                             <th class="p-3 font-medium">類型</th>
                                             <th class="p-3 font-medium">耗時</th>
-                                            <th class="p-3 font-medium text-right">Tokens</th>
+                                            <th class="p-3 font-medium text-right">Token 用量</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dispatchLogsTableBody" class="divide-y divide-neutral-900 font-mono text-[11px]"></tbody>
@@ -1834,7 +1874,7 @@
                     <div class="flex-1 overflow-y-auto p-4 lg:p-5 space-y-4">
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <label class="text-[11px] text-neutral-300 font-medium">OpenRouter API Key 多金鑰輪替池</label>
+                                <label class="text-[11px] text-neutral-300 font-medium">OpenRouter API 金鑰輪替池</label>
                                 <span id="keyCountBadge" class="text-[9px] bg-neutral-900 text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded font-mono">1 組金鑰</span>
                             </div>
                             <textarea id="apiKeyInput" rows="2" placeholder="sk-or-v1-aaaa... (每行一組)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text"></textarea>
@@ -1846,9 +1886,9 @@
                                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                     <label class="text-[11px] text-emerald-300 font-semibold">Supabase 雲端無鎖資料庫設定</label>
                                 </div>
-                                <span class="text-[9px] text-neutral-400 font-mono">Dynamic Cloud Config</span>
+                                <span class="text-[9px] text-neutral-400 font-mono">動態雲端設定</span>
                             </div>
-                            <p class="text-[10px] text-neutral-400 leading-relaxed">在此修改網址或 Key 並點擊「同步雲端」，系統設定會寫入 Supabase。SOP 正文另由專用的 <span class="font-mono text-emerald-300">sop_document</span> 主版本管理，不再以 Gist 作為可寫入主版本。</p>
+                            <p class="text-[10px] text-neutral-400 leading-relaxed">在此修改網址或 API 金鑰並點擊「同步雲端」，系統設定會寫入 Supabase。SOP 正文另由專用的 <span class="font-mono text-emerald-300">sop_document</span> 主版本管理，不再以 Gist 作為可寫入主版本。</p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <input type="text" id="supabaseUrlInput" placeholder="https://dadlmrmzupmmzthlvrmo.supabase.co" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
                                 <input type="password" id="supabaseKeyInput" placeholder="anon key (eyJhbGciOi...)" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-neutral-200 focus:outline-none focus:border-white font-mono selectable-text">
@@ -1974,13 +2014,17 @@
                     { type: "feat", text: "新增 Candidate Validator：檢查 BUILD_VERSION、版本日誌、Phase 3/4 核心標記、HTML/JS 語法、重複 DOM ID、Schema 相容性與檔案大小" },
                     { type: "feat", text: "新增 Sandbox Builder 真實進度：驗證 → GitHub commit → Raw 驗證 → 等待 GitHub Pages → Manifest 登錄 → Production 資料重新 seed 至 Sandbox" },
                     { type: "fix", text: "版本建立改為 immutable release path；同一版本若已存在預設拒絕覆寫，避免測試內容悄悄改變既有 Release" },
-                    { type: "perf", text: "Phase 3 Promote / Rollback 完整保留；Phase 4 只負責建立 candidate，不會繞過 Health Gate 直接修改 Stable" }
+                    { type: "perf", text: "Phase 3 Promote / Rollback 完整保留；Phase 4 只負責建立 candidate，不會繞過 Health Gate 直接修改 Stable" },
+                    { type: "fix", text: "Bootstrap Hotfix：當直接開啟新版本沙盒但 release_manifest 尚未登錄時，後台會明確顯示版本指標不一致並提供一鍵『登錄目前版本』；寫入後重新讀回雲端驗證，避免畫面與實際 Manifest 不同步" },
+                    { type: "perf", text: "後台可讀性全面提升：最小輔助字級放大、灰字提高亮度，版本發布中心與主要管理標題改為中文，降低操作時辨識負擔" }
                 ],
                 diffDetails: [
                     { type: "feat", title: "新版建立方式", oldVal: "每次必須進 GitHub 手動建立 releases/vXX.X/index.html 並貼入數十萬字元的完整程式", newVal: "最高管理員在 Release Creator 上傳完整 HTML；通過雙層驗證後由 Edge Function 安全建立 GitHub Release" },
                     { type: "security", title: "GitHub 寫入權限", oldVal: "若直接從純前端呼叫 GitHub API，必須暴露 GitHub Token，不可接受", newVal: "GitHub Token 僅存在 Supabase Secret；前端永遠無法取得 Token，Edge Function 僅接受通過 Release Admin Secret 的請求" },
                     { type: "feat", title: "Sandbox 自動化", oldVal: "建立版本後還需要人工等 Pages、手動登錄 Sandbox、再重建測試資料", newVal: "系統確認 Raw 與 GitHub Pages 都可讀後才更新 release_manifest，並自動以目前 Production 核心資料重新 seed Sandbox" },
-                    { type: "fix", title: "不可變版本", oldVal: "人工操作可能誤把已發布版本內容再次覆蓋，導致相同版本號實際程式不同", newVal: "Edge Function 預設拒絕任何已存在的 releases/<version>/index.html，要求使用新版本號" }
+                    { type: "fix", title: "不可變版本", oldVal: "人工操作可能誤把已發布版本內容再次覆蓋，導致相同版本號實際程式不同", newVal: "Edge Function 預設拒絕任何已存在的 releases/<version>/index.html，要求使用新版本號" },
+                    { type: "fix", title: "沙盒指標初始化", oldVal: "直接進入 /releases/v28.2/?channel=sandbox 只會切換執行環境；若 release_manifest.sandboxVersion 仍是 v28.1，版本入口仍會指向 v28.1，容易誤以為網址或程式錯誤", newVal: "新增醒目的沙盒版本未登錄提示與一鍵登錄；登錄後強制雲端回讀確認 sandboxVersion 已更新，正式版保持不變" },
+                    { type: "perf", title: "後台中文化與可讀性", oldVal: "大量 8–10px 灰色輔助文字與 stableVersion / sandboxVersion / Deployment Pipeline 等英文標題辨識負擔較高", newVal: "後台最小字級提升至 10–12px、低對比灰字增亮，版本中心與主要管理欄位改用中文名稱，保留必要的 GitHub / Supabase / OpenRouter 等產品名稱" }
                 ]
             },
 
@@ -3479,18 +3523,35 @@
             set('releaseCurrentBuildText', `${latest.version} · ${APP_ENVIRONMENT.toUpperCase()}`);
             const currentEnvText = document.getElementById('releaseCurrentEnvironmentText');
             if (currentEnvText) {
-                currentEnvText.textContent = APP_ENVIRONMENT === 'sandbox' ? 'SANDBOX' : 'STABLE';
+                currentEnvText.textContent = APP_ENVIRONMENT === 'sandbox' ? '沙盒' : '正式版';
                 currentEnvText.className = `text-sm font-medium ${APP_ENVIRONMENT === 'sandbox' ? 'text-purple-200' : 'text-emerald-200'}`;
             }
             set('releaseStableVersionText', manifest.stableVersion);
             set('releaseSandboxVersionText', manifest.sandboxVersion);
-            set('releaseManifestRevisionText', `manifest r${manifest.revision || 1}`);
+            set('releaseManifestRevisionText', `版本指標 r${manifest.revision || 1}`);
             set('releaseManifestStableValue', manifest.stableVersion);
             set('releaseManifestSandboxValue', manifest.sandboxVersion);
             set('releaseManifestPreviousValue', manifest.previousStableVersion || '--');
             set('releaseManifestSchemaValue', String(manifest.schemaVersion || RELEASE_MANIFEST_SCHEMA_VERSION));
             set('releaseStableUrlText', getReleaseUrl(manifest.stableVersion));
             set('releaseSandboxUrlText', getReleaseUrl(manifest.sandboxVersion));
+
+            // Bootstrap / existing-release registration guard:
+            // A direct /releases/vXX/?channel=sandbox URL only selects runtime mode.
+            // It does not mean release_manifest.sandboxVersion already points to this build.
+            const bootstrapNotice = document.getElementById('releaseBootstrapNotice');
+            const bootstrapMessage = document.getElementById('releaseBootstrapMessage');
+            const bootstrapBtn = document.getElementById('releaseBootstrapRegisterBtn');
+            const sandboxManifestMismatch = APP_ENVIRONMENT === 'sandbox' && manifest.sandboxVersion !== BUILD_VERSION;
+            if (bootstrapNotice) bootstrapNotice.classList.toggle('show', sandboxManifestMismatch);
+            if (bootstrapMessage && sandboxManifestMismatch) {
+                bootstrapMessage.textContent = `你目前正在執行 ${BUILD_VERSION} 沙盒，但雲端「目前沙盒版」仍是 ${manifest.sandboxVersion}，所以「已登錄的測試版入口」目前會指向 ${manifest.sandboxVersion}。按下右側按鈕後只會把沙盒指標改成 ${BUILD_VERSION}，正式版 ${manifest.stableVersion} 不會被修改。`;
+            }
+            if (bootstrapBtn) {
+                bootstrapBtn.disabled = !isSuperAdminSession() || !sandboxManifestMismatch || deploymentOperationBusy;
+                bootstrapBtn.title = sandboxManifestMismatch ? `將目前 ${BUILD_VERSION} 登錄為沙盒，不影響正式版 ${manifest.stableVersion}` : '目前版本已經是已登錄的沙盒版本';
+            }
+
             const registerBtn = document.getElementById('releaseRegisterSandboxBtn');
             const promoteBtn = document.getElementById('releasePromoteBtn');
             const rollbackBtn = document.getElementById('releaseRollbackBtn');
@@ -3569,7 +3630,7 @@
             box.innerHTML = items.map(item => `
                 <div class="release-health-row">
                     <div class="min-w-0"><div class="text-[10px] text-neutral-200">${escapeHtml(item.label)}</div><div class="text-[8px] text-neutral-600 mt-1 font-mono break-all">${escapeHtml(item.detail || '')}</div></div>
-                    <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? 'PASS' : 'FAIL'}</span>
+                    <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? '通過' : '失敗'}</span>
                 </div>`).join('');
         }
 
@@ -3581,9 +3642,9 @@
             const push = (label, ok, detail) => items.push({ label, ok: !!ok, detail });
             try {
                 const manifest = await readReleaseManifest({ createIfMissing: true });
-                push('Release Manifest', !!manifest, manifest ? `${manifest.stableVersion} → ${manifest.sandboxVersion} · r${manifest.revision}` : 'unavailable');
+                push('版本指標', !!manifest, manifest ? `${manifest.stableVersion} → ${manifest.sandboxVersion} · r${manifest.revision}` : 'unavailable');
 
-                for (const [label, version] of [['Stable bundle', manifest.stableVersion], ['Sandbox bundle', manifest.sandboxVersion]]) {
+                for (const [label, version] of [['正式版程式', manifest.stableVersion], ['沙盒程式', manifest.sandboxVersion]]) {
                     try {
                         const url = `${getReleaseUrl(version)}?_health=${Date.now()}`;
                         const res = await fetch(url, { cache: 'no-store' });
@@ -3595,17 +3656,17 @@
 
                 const client = getSupabaseClient();
                 if (client) {
-                    for (const [label, id] of [['Sandbox global_state', SANDBOX_GLOBAL_STATE_ROW_ID], ['Sandbox SOP canonical', SANDBOX_SOP_DOCUMENT_ROW_ID]]) {
+                    for (const [label, id] of [['沙盒全域資料', SANDBOX_GLOBAL_STATE_ROW_ID], ['沙盒 SOP 主版本', SANDBOX_SOP_DOCUMENT_ROW_ID]]) {
                         try {
                             const { data, error } = await client.from('app_config').select('id,data').eq('id', id).maybeSingle();
                             push(label, !error && !!data, error ? error.message : id);
                         } catch (e) { push(label, false, e.message || String(e)); }
                     }
                 } else {
-                    push('Supabase client', false, 'client unavailable');
+                    push('Supabase 連線', false, 'client unavailable');
                 }
 
-                for (const [label, url] of [['Photo catalog', PHOTO_CATALOG_URL], ['Document catalog', DOCUMENT_CATALOG_URL]]) {
+                for (const [label, url] of [['施工照片索引', PHOTO_CATALOG_URL], ['文件索引', DOCUMENT_CATALOG_URL]]) {
                     try {
                         const res = await fetch(`${url}?_health=${Date.now()}`, { cache: 'no-store' });
                         const data = res.ok ? await res.json() : null;
@@ -3742,14 +3803,14 @@
             if (versionEl) versionEl.textContent = releaseUploadState.version || '--';
             if (schemaEl) schemaEl.textContent = releaseUploadState.appSchemaVersion ? `schema ${releaseUploadState.appSchemaVersion}` : '--';
             if (stateEl) {
-                stateEl.textContent = result ? (result.allPass ? 'PASS' : 'FAIL') : 'WAITING';
+                stateEl.textContent = result ? (result.allPass ? '通過' : '失敗') : '等待中';
                 stateEl.className = `text-[10px] font-mono mt-1 block ${result ? (result.allPass ? 'text-emerald-300' : 'text-red-300') : 'text-neutral-500'}`;
             }
             if (list) {
                 list.innerHTML = result ? result.items.map(item => `
                     <div class="release-validator-row">
                         <div class="min-w-0"><div class="text-[9px] text-neutral-200">${escapeHtml(item.label)}</div><div class="text-[8px] text-neutral-600 mt-1 font-mono break-all">${escapeHtml(item.detail)}</div></div>
-                        <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? 'PASS' : 'FAIL'}</span>
+                        <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? '通過' : '失敗'}</span>
                     </div>`).join('') : '<div class="text-[9px] text-neutral-600">選擇新版 HTML 後，這裡會顯示完整檢查結果。</div>';
             }
             if (uploadBtn) uploadBtn.disabled = !result?.allPass || releaseUploadState.busy || APP_ENVIRONMENT !== 'sandbox' || !isSuperAdminSession();
@@ -3854,13 +3915,13 @@
             const btn = document.getElementById('releaseUploaderTestBtn');
             const badge = document.getElementById('releaseUploaderConnectionBadge');
             if (btn) { btn.disabled = true; btn.textContent = 'TESTING…'; }
-            if (badge) { badge.className = 'release-health-status wait'; badge.textContent = 'CHECKING'; }
+            if (badge) { badge.className = 'release-health-status wait'; badge.textContent = '檢查中'; }
             try {
                 const result = await invokeReleaseUploader('health');
-                if (badge) { badge.className = 'release-health-status pass'; badge.textContent = 'READY'; }
+                if (badge) { badge.className = 'release-health-status pass'; badge.textContent = '可使用'; }
                 alert(`✅ Release Uploader 連線正常\n\nRepository：${result.repository || 'configured'}\nBranch：${result.branch || 'main'}`);
             } catch (e) {
-                if (badge) { badge.className = 'release-health-status fail'; badge.textContent = 'OFFLINE'; }
+                if (badge) { badge.className = 'release-health-status fail'; badge.textContent = '未連線'; }
                 alert(`❌ 發布服務尚未就緒：${e.message || e}`);
             } finally {
                 if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-plug-circle-check mr-1"></i>測試發布服務'; }
@@ -4023,11 +4084,11 @@
 
         function deploymentStatusMeta(status) {
             const map = {
-                idle: ['IDLE','wait'], preparing:['PREPARING','wait'], health_gate:['HEALTH GATE','wait'], maintenance:['MAINTENANCE','wait'],
-                switching:['SWITCHING','wait'], verifying:['VERIFYING','wait'], success:['SUCCESS','pass'], failed:['FAILED','fail'],
-                rolling_back:['ROLLBACK','wait'], rolled_back:['ROLLED BACK','pass']
+                idle: ['待命','wait'], preparing:['準備中','wait'], health_gate:['健康檢查','wait'], maintenance:['維護中','wait'],
+                switching:['切換版本','wait'], verifying:['驗證中','wait'], success:['成功','pass'], failed:['失敗','fail'],
+                rolling_back:['回滾中','wait'], rolled_back:['已回滾','pass']
             };
-            return map[status] || [String(status || 'UNKNOWN').toUpperCase(),'wait'];
+            return map[status] || ['處理中','wait'];
         }
 
         function renderDeploymentChecks(items, targetId = 'releaseDeploymentChecks') {
@@ -4040,7 +4101,7 @@
             box.innerHTML = items.map(item => `
                 <div class="release-health-row">
                     <div class="min-w-0"><div class="text-[10px] text-neutral-200">${escapeHtml(item.label || 'Check')}</div><div class="text-[8px] text-neutral-600 mt-1 font-mono break-all">${escapeHtml(item.detail || '')}</div></div>
-                    <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? 'PASS' : 'FAIL'}</span>
+                    <span class="release-health-status ${item.ok ? 'pass' : 'fail'}">${item.ok ? '通過' : '失敗'}</span>
                 </div>`).join('');
         }
 
@@ -4200,7 +4261,7 @@
             const items = [];
             const push = (label, ok, detail) => items.push({ label, ok: !!ok, detail: detail || '' });
             const manifest = await readReleaseManifest({ createIfMissing: true });
-            push('Release Manifest', !!manifest, manifest ? `${manifest.stableVersion} → ${targetVersion} · r${manifest.revision}` : 'unavailable');
+            push('版本指標', !!manifest, manifest ? `${manifest.stableVersion} → ${targetVersion} · r${manifest.revision}` : 'unavailable');
 
             try {
                 const targetUrl = `${getReleaseUrl(targetVersion)}?_gate=${Date.now()}`;
@@ -4229,16 +4290,16 @@
                     } catch (e) { push(label, false, e.message || String(e)); }
                 }
                 if (includeSandboxData) {
-                    for (const [label, id] of [['Sandbox global_state', SANDBOX_GLOBAL_STATE_ROW_ID], ['Sandbox SOP canonical', SANDBOX_SOP_DOCUMENT_ROW_ID]]) {
+                    for (const [label, id] of [['沙盒全域資料', SANDBOX_GLOBAL_STATE_ROW_ID], ['沙盒 SOP 主版本', SANDBOX_SOP_DOCUMENT_ROW_ID]]) {
                         try {
                             const { data, error } = await client.from('app_config').select('id,data').eq('id', id).maybeSingle();
                             push(label, !error && !!data, error ? error.message : id);
                         } catch (e) { push(label, false, e.message || String(e)); }
                     }
                 }
-            } else push('Supabase client', false, 'client unavailable');
+            } else push('Supabase 連線', false, 'client unavailable');
 
-            for (const [label, url] of [['Photo catalog', PHOTO_CATALOG_URL], ['Document catalog', DOCUMENT_CATALOG_URL]]) {
+            for (const [label, url] of [['施工照片索引', PHOTO_CATALOG_URL], ['文件索引', DOCUMENT_CATALOG_URL]]) {
                 try {
                     const res = await fetch(`${url}?_gate=${Date.now()}`, { cache:'no-store' });
                     const data = res.ok ? await res.json() : null;
@@ -4249,16 +4310,41 @@
         }
 
         async function registerCurrentBuildAsSandbox() {
-            if (!isSuperAdminSession()) { alert('只有最高管理員可以登錄 Sandbox candidate。'); return; }
-            if (APP_ENVIRONMENT !== 'sandbox') { alert('請從 Sandbox 環境執行這個操作。'); return; }
-            if (!confirm(`要把目前 ${BUILD_VERSION} 登錄為 Sandbox candidate 嗎？\n\n這不會修改 Stable 正式版本。`)) return;
+            if (!isSuperAdminSession()) { alert('只有最高管理員可以登錄沙盒版本。'); return; }
+            if (APP_ENVIRONMENT !== 'sandbox') { alert('請從沙盒環境執行這個操作。'); return; }
             try {
                 await readReleaseManifest({ createIfMissing: true });
-                await writeReleaseManifest({ sandboxVersion: BUILD_VERSION, sandboxStatus: 'testing', schemaVersion: RELEASE_MANIFEST_SCHEMA_VERSION });
-                await ensureSandboxCoreSeed({ force: false });
+                const before = normalizeReleaseManifest(releaseManifest || getDefaultReleaseManifest());
+                if (before.sandboxVersion === BUILD_VERSION) {
+                    renderReleaseEnvironmentCenter();
+                    alert(`目前 ${BUILD_VERSION} 已經是已登錄的沙盒版本，不需要重複登錄。`);
+                    return;
+                }
+                if (!confirm(`要把目前執行中的 ${BUILD_VERSION} 登錄為沙盒版本嗎？\n\n目前正式版：${before.stableVersion}\n目前沙盒版：${before.sandboxVersion}\n登錄後沙盒版：${BUILD_VERSION}\n\n這個動作只更新沙盒指標，不會修改正式版。`)) return;
+
+                await writeReleaseManifest({
+                    sandboxVersion: BUILD_VERSION,
+                    sandboxStatus: 'testing',
+                    sandboxBaseStableVersion: before.stableVersion,
+                    schemaVersion: RELEASE_MANIFEST_SCHEMA_VERSION
+                });
+
+                // Never trust only the local object: read the cloud row back and verify.
+                await readReleaseManifest({ createIfMissing: true });
+                const verified = normalizeReleaseManifest(releaseManifest || getDefaultReleaseManifest());
+                if (verified.sandboxVersion !== BUILD_VERSION) {
+                    throw new Error(`雲端回讀驗證失敗：目前沙盒版仍為 ${verified.sandboxVersion || '--'}`);
+                }
+
+                const seedResult = await ensureSandboxCoreSeed({ force: false });
+                if (!seedResult.ok) throw new Error(seedResult.message || '沙盒隔離資料檢查失敗');
+
                 renderReleaseEnvironmentCenter();
-                alert(`✅ ${BUILD_VERSION} 已登錄為 Sandbox candidate。`);
-            } catch (e) { alert(`❌ Sandbox 登錄失敗：${e.message || e}`); }
+                alert(`✅ ${BUILD_VERSION} 已成功登錄為沙盒版本。\n\n正式版仍維持 ${verified.stableVersion}。\n「已登錄的測試版入口」現在會指向 ${BUILD_VERSION}。`);
+            } catch (e) {
+                renderReleaseEnvironmentCenter();
+                alert(`❌ 沙盒登錄失敗：${e.message || e}`);
+            }
         }
 
         async function writeDeploymentLog(state) {
@@ -4281,7 +4367,7 @@
                 box.innerHTML = rows.length ? rows.map(row => {
                     const d = normalizeDeploymentState(row.data || {});
                     const [label, cls] = deploymentStatusMeta(d.status);
-                    return `<div class="release-health-row"><div class="min-w-0"><div class="flex items-center gap-2"><span class="text-[10px] text-neutral-200">${escapeHtml(d.sourceVersion || '--')} → ${escapeHtml(d.targetVersion || '--')}</span><span class="release-health-status ${cls}">${escapeHtml(label)}</span></div><div class="text-[8px] text-neutral-600 mt-1 font-mono">${escapeHtml(d.mode || 'promote')} · ${escapeHtml(formatMaintenanceTime(d.completedAt || d.updatedAt || row.updated_at))} · ${escapeHtml(d.operator || '--')}</div>${d.error ? `<div class="text-[8px] text-red-300 mt-1">${escapeHtml(d.error)}</div>` : ''}</div><span class="text-[9px] text-neutral-500 font-mono">${Math.round(d.progress)}%</span></div>`;
+                    return `<div class="release-health-row"><div class="min-w-0"><div class="flex items-center gap-2"><span class="text-[10px] text-neutral-200">${escapeHtml(d.sourceVersion || '--')} → ${escapeHtml(d.targetVersion || '--')}</span><span class="release-health-status ${cls}">${escapeHtml(label)}</span></div><div class="text-[8px] text-neutral-600 mt-1 font-mono">${escapeHtml(d.mode === 'rollback' ? '回滾' : '正式發布')} · ${escapeHtml(formatMaintenanceTime(d.completedAt || d.updatedAt || row.updated_at))} · ${escapeHtml(d.operator || '--')}</div>${d.error ? `<div class="text-[8px] text-red-300 mt-1">${escapeHtml(d.error)}</div>` : ''}</div><span class="text-[9px] text-neutral-500 font-mono">${Math.round(d.progress)}%</span></div>`;
                 }).join('') : '<div class="text-[9px] text-neutral-600">尚無部署紀錄。</div>';
             } catch (e) {
                 if (!silent) alert(`Deployment History 讀取失敗：${e.message || e}`);
@@ -5901,7 +5987,7 @@
             document.body.dataset.appEnv = APP_ENVIRONMENT;
             const envBanner = document.getElementById('sandboxEnvironmentBanner');
             if (envBanner) {
-                envBanner.textContent = `SANDBOX · ISOLATED TEST ENVIRONMENT · ${BUILD_VERSION}`;
+                envBanner.textContent = `沙盒 · 隔離測試環境 · ${BUILD_VERSION}`;
                 envBanner.style.display = APP_ENVIRONMENT === 'sandbox' ? '' : 'none';
             }
             syncCurrentVersionUI();
