@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "key": "quotation",
+  "name": "AI 報價中心",
+  "version": "0.1.0",
+  "stage": "foundation",
+  "minCoreVersion": "v28.10.32",
+  "permissions": ["member", "admin", "owner"],
+  "entry": "quotation.module.js",
+  "style": "quotation.css",
+  "capabilities": [
+    "lazy-load",
+    "isolated-workspace",
+    "role-context",
+    "module-self-test",
+    "quotation-file-intake-preview"
+  ],
+  "notes": "Phase 0 only. No cost calculation, no Excel mutation, no Cost Master writes."
+}
