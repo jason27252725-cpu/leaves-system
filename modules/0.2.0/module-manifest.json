@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "key": "quotation",
+  "name": "AI 報價中心",
+  "version": "0.2.0",
+  "stage": "seamless-capability-foundation",
+  "minCoreVersion": "v28.10.34",
+  "permissions": ["member", "admin", "owner"],
+  "entry": "quotation.module.js",
+  "style": "quotation.css",
+  "capabilities": [
+    "lazy-load",
+    "seamless-chat-capability",
+    "composer-file-intake",
+    "quotation-inspector-sidecar",
+    "role-context",
+    "module-self-test",
+    "quotation-file-intake-preview",
+    "cost-master-draft-policy",
+    "admin-cost-publish-policy",
+    "original-workbook-preserve"
+  ],
+  "notes": "Phase 0.2 foundation. No real cost parsing, Cost Master write, Workbook mutation or export yet. Cost imports create drafts only; quotation originals remain immutable and future export creates a new file/version."
+}
