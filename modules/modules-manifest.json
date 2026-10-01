@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-30T15:51:00+08:00",
+  "generatedAt": "2026-10-01T02:05:00+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
       "description": "LEAVES AI 的報價／成本專業能力模組。載入後沿用同一聊天視窗，文件與 Draft 由 Quotation Inspector 同步呈現。",
       "minCoreVersion": "v28.10.34",
       "stableVersion": null,
-      "sandboxVersion": "0.2.0",
+      "sandboxVersion": "0.2.1",
       "versions": {
         "0.1.0": {
           "manifest": "quotation/0.1.0/module-manifest.json",
@@ -16,6 +16,10 @@
         "0.2.0": {
           "manifest": "quotation/0.2.0/module-manifest.json",
           "status": "seamless-capability-foundation"
+        },
+        "0.2.1": {
+          "manifest": "quotation/0.2.1/module-manifest.json",
+          "status": "draft-reopen-foundation"
         }
       }
     }
