@@ -1,30 +1,19 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T09:29:00+08:00",
+  "generatedAt": "2026-10-04T05:45:00+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
-      "description": "LEAVES AI 的報價／成本專業能力模組。載入後沿用同一聊天視窗，文件與 Draft 由 Quotation Inspector 同步呈現。",
+      "description": "LEAVES AI 的報價／成本專業能力模組。0.4.0 新增 Cost Master 後台：正式成本查詢、Revision Draft、Review、DB Preflight 與 Sandbox Atomic Publish。",
       "minCoreVersion": "v28.10.34",
       "stableVersion": null,
-      "sandboxVersion": "0.3.0",
+      "sandboxVersion": "0.4.0",
       "versions": {
-        "0.1.0": {
-          "manifest": "quotation/0.1.0/module-manifest.json",
-          "status": "foundation"
-        },
-        "0.2.0": {
-          "manifest": "quotation/0.2.0/module-manifest.json",
-          "status": "seamless-capability-foundation"
-        },
-        "0.2.1": {
-          "manifest": "quotation/0.2.1/module-manifest.json",
-          "status": "draft-reopen-foundation"
-        },
-        "0.3.0": {
-          "manifest": "quotation/0.3.0/module-manifest.json",
-          "status": "cost-master-read-foundation"
-        }
+        "0.1.0": { "manifest": "quotation/0.1.0/module-manifest.json", "status": "foundation" },
+        "0.2.0": { "manifest": "quotation/0.2.0/module-manifest.json", "status": "seamless-capability-foundation" },
+        "0.2.1": { "manifest": "quotation/0.2.1/module-manifest.json", "status": "draft-reopen-foundation" },
+        "0.3.0": { "manifest": "quotation/0.3.0/module-manifest.json", "status": "cost-master-read-foundation" },
+        "0.4.0": { "manifest": "quotation/0.4.0/module-manifest.json", "status": "cost-master-revision-ui" }
       }
     }
   }
