@@ -1,19 +1,22 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T05:45:00+08:00",
+  "generatedAt": "2026-10-04T07:30:00+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
-      "description": "LEAVES AI 的報價／成本專業能力模組。0.4.0 新增 Cost Master 後台：正式成本查詢、Revision Draft、Review、DB Preflight 與 Sandbox Atomic Publish。",
-      "minCoreVersion": "v28.10.34",
+      "description": "LEAVES AI 報價／成本專業能力模組。Sandbox 0.6.0：Session Lifecycle 修復、可拖曳八向縮放視窗、XLSX/XLSM Mini Excel 工作台、原始/草案比較、逐格採用/略過、拖放匯入與聊天修改建議。Cost Master V2.1 仍透過既有安全 Gateway / Atomic Publish 流程。",
+      "minCoreVersion": "v28.10.35",
       "stableVersion": null,
-      "sandboxVersion": "0.4.0",
+      "sandboxVersion": "0.6.0",
       "versions": {
         "0.1.0": { "manifest": "quotation/0.1.0/module-manifest.json", "status": "foundation" },
         "0.2.0": { "manifest": "quotation/0.2.0/module-manifest.json", "status": "seamless-capability-foundation" },
         "0.2.1": { "manifest": "quotation/0.2.1/module-manifest.json", "status": "draft-reopen-foundation" },
         "0.3.0": { "manifest": "quotation/0.3.0/module-manifest.json", "status": "cost-master-read-foundation" },
-        "0.4.0": { "manifest": "quotation/0.4.0/module-manifest.json", "status": "cost-master-revision-ui" }
+        "0.4.0": { "manifest": "quotation/0.4.0/module-manifest.json", "status": "cost-master-revision-ui" },
+        "0.4.1": { "manifest": "quotation/0.4.1/module-manifest.json", "status": "session-lifecycle-window-ux" },
+        "0.5.0": { "manifest": "quotation/0.5.0/module-manifest.json", "status": "workbook-grid-editing" },
+        "0.6.0": { "manifest": "quotation/0.6.0/module-manifest.json", "status": "ai-workbook-editing" }
       }
     }
   }
