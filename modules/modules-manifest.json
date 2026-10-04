@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T14:30:00+08:00",
+  "generatedAt": "2026-10-04T20:41:43+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
-      "description": "LEAVES AI 報價／成本專業能力模組。Sandbox 0.6.1：效能 Hotfix，修正報價工作台每次重繪累積事件監聽器造成操作次數倍增與頁面無回應；一般儲存格編輯改為局部更新，並加入 Suggestion 索引降低 Grid 重繪成本。功能沿用 0.6.0 Mini Excel / AI Workbook Editing。",
-      "minCoreVersion": "v28.10.35",
+      "description": "LEAVES AI 報價／成本專業能力模組。Sandbox 0.7.0：Intelligent Review Workspace，以真實報價 Print Area 為主視圖，新增 AI Workbook Context、語意稽核、問題定位、Formula Runtime、可拖曳 Compare/Review 與 Lossless OOXML Cell Patch Export；Cost Master Atomic Publish 安全鏈維持不變。",
+      "minCoreVersion": "v28.10.36",
       "stableVersion": null,
-      "sandboxVersion": "0.6.1",
+      "sandboxVersion": "0.7.0",
       "versions": {
         "0.1.0": {
           "manifest": "quotation/0.1.0/module-manifest.json",
@@ -43,7 +43,15 @@
         },
         "0.6.1": {
           "manifest": "quotation/0.6.1/module-manifest.json",
-          "status": "performance-hotfix"
+          "status": "performance-hotfix-workspace"
+        },
+        "0.6.2": {
+          "manifest": "quotation/0.6.2/module-manifest.json",
+          "status": "performance-hotfix-cost-console"
+        },
+        "0.7.0": {
+          "manifest": "quotation/0.7.0/module-manifest.json",
+          "status": "intelligent-review-workspace"
         }
       }
     }
