@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-05T20:05:00+08:00",
+  "generatedAt": "2026-10-06T20:05:00+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
@@ -56,6 +56,19 @@
         "0.7.1": {
           "manifest": "quotation/0.7.1/module-manifest.json",
           "status": "export-integrity-hotfix"
+        }
+      }
+    },
+    "quantity": {
+      "label": "3D 算量",
+      "description": "LEAVES SKP Direct Reader。Sandbox 0.1.0：直接拖入 .skp，在瀏覽器 Worker 本機解析，建立低負擔 3D 預覽、材質幾何面積、Face／物件統計與 AI Model Context；不需 SketchUp 外掛、不使用 Supabase 儲存。",
+      "minCoreVersion": "v28.10.37",
+      "stableVersion": null,
+      "sandboxVersion": "0.1.0",
+      "versions": {
+        "0.1.0": {
+          "manifest": "quantity/0.1.0/module-manifest.json",
+          "status": "skp-direct-reader-foundation"
         }
       }
     }
