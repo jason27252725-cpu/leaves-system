@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "key": "quantity",
+  "name": "3D 算量",
+  "version": "0.2.0",
+  "stage": "large-model-smart-takeoff",
+  "minCoreVersion": "v28.10.37",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "quantity.module.js",
+  "style": "quantity.css",
+  "capabilities": [
+    "direct-skp-file-intake",
+    "memory-only-model",
+    "background-worker-parse",
+    "adaptive-large-model-mode",
+    "wasm-safe-preview",
+    "cancelable-import",
+    "material-list",
+    "unused-material-audit",
+    "smart-surface-takeoff",
+    "material-alias",
+    "sheet-size-centimeters",
+    "quick-sheet-estimate",
+    "sketchup-navigation",
+    "wasd-walk",
+    "3d-to-material-selection",
+    "object-exclusion",
+    "quantity-quotation-bridge-event",
+    "render-on-demand",
+    "adaptive-pixel-ratio",
+    "gpu-resource-dispose",
+    "eight-direction-window-resize",
+    "material-health-orphan-audit",
+    "wasm-instanced-area-audit",
+    "multi-material-glb-area"
+  ],
+  "notes": "Quantity 0.2.0 keeps full deterministic SKP takeoff for normal models and adds a native C++/WASM safe path for large models. Files are parsed in a disposable Worker. Large-mode WASM returns instanced GLB geometry; material area in this mode is an explicitly labelled geometry approximation because raw SKP Face/layer/unused-material metadata is not available. Sheet dimensions use centimeters."
+}
