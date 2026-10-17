@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LEAVES｜模組升級中心 Sandbox</title>
+<style>
+:root{color-scheme:dark;font:14px/1.6 system-ui,-apple-system,'Noto Sans TC',sans-serif;background:#0a1114;color:#e7f0ed}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 75% -20%,#23473960,transparent 45%),#091115}header{padding:30px max(18px,calc((100% - 1120px)/2));border-bottom:1px solid #ffffff13;background:#0e181aa6}small,.muted{color:#9eaba8}h1{font-weight:580;letter-spacing:.02em;margin:8px 0;font-size:26px}h2{font-weight:600;font-size:17px}main{max-width:1120px;margin:auto;padding:25px 18px 70px}section{background:#101d20;border:1px solid #ffffff19;border-radius:18px;padding:20px;margin:16px 0;box-shadow:0 14px 34px #0004}button{border:1px solid #ffffff21;background:#213236;color:#eefaf6;padding:10px 15px;border-radius:10px;cursor:pointer;font:inherit}button:hover{background:#2b4247}button:disabled{opacity:.35;cursor:not-allowed}button.primary{background:#d7ede2;color:#122722;font-weight:650}input[type=file]{display:none}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button.active{border-color:#6ebfae;background:#1a403b}p{margin:6px 0 12px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tile{border:1px solid #ffffff19;border-radius:12px;padding:13px;background:#0d171a}.tile strong{display:block;margin-top:5px;font-size:15px}.status{font:12px/1.5 ui-monospace,monospace;color:#b0c7bf;word-break:break-word}.drop{border:1.5px dashed #76b9a555;background:#152a2a6a;border-radius:15px;padding:42px 18px;text-align:center;cursor:pointer}.drop.drag{background:#205044}.danger{color:#f7a7a7}.good{color:#93e0b4}.warn{color:#e9c68c}code,pre{font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-word}pre{border-radius:12px;background:#091416;border:1px solid #ffffff13;padding:15px;max-height:280px;overflow:auto}.actions{display:flex;gap:9px;flex-wrap:wrap}.notice{color:#e9c68c;background:#412e102d;border:1px solid #c89b4938;border-radius:10px;padding:12px}#result{min-height:100px}label{cursor:pointer}.pill{font-size:11px;border:1px solid #ffffff22;border-radius:30px;padding:3px 8px;color:#a8c7b9}@media(max-width:700px){.grid{grid-template-columns:1fr}h1{font-size:21px}}
+</style></head>
+<body><header><span class="pill">LEAVES DESIGN · SANDBOX</span><h1>模組升級中心</h1><div class="muted">兩個獨立升級視窗 · 3D 引擎 / AI 報價單 · 本機檢查，不直接修改正式網站</div></header>
+<main><section><div class="tabs"><button class="active" data-tab="quantity">◈ 3D 引擎升級</button><button data-tab="quotation">▤ AI 報價單升級</button></div><div class="grid" style="margin-top:14px"><div class="tile"><small>現有 Sandbox</small><strong id="current">讀取中</strong></div><div class="tile"><small>Stable</small><strong id="stable">讀取中</strong></div><div class="tile"><small>版本索引</small><strong id="index-status">讀取中</strong></div></div></section>
+<section><h2 id="upload-title">匯入 3D 引擎升級包</h2><p class="muted">可以選 ZIP 部署包，或直接選 module-manifest.json。系統只會在瀏覽器內分析，不會上傳任何原始檔或憑證。</p><input id="file" type="file" accept=".zip,.json,application/zip,application/json"><div id="drop" class="drop" tabindex="0" role="button">📦 把升級檔拖進來，或點此選取 ZIP / JSON<br><small>檢查版本、檔案路徑、最低 Core 和缺漏檔案</small></div><div id="result"><p class="muted">尚未選擇檔案。</p></div><div class="actions"><button id="report" disabled>下載檢查報告</button><button id="manifest" class="primary" disabled>下載 Sandbox Manifest 草稿</button></div></section>
+<section><h2>P0 / P1 技術驗收工具</h2><p>要比較 TypeScript / WASM 解析器、輸出計數和完整性紀錄，請使用獨立的本機 Benchmark。這個測試不修改現有 Quotation 或 Core。</p><p><a href="../tests/parser-benchmark.html" target="_blank" rel="noopener noreferrer" style="color:#a3ecd0;text-decoration:underline">打開 SKP Parser Benchmark 測試工具 ↗</a></p></section><section><h2>部署前安全檢查</h2><p class="notice">注意：這是「升級檔案檢查／部署準備工具」，不是 GitHub 自動發布器。GitHub Pages 無法直接接收網頁寫檔；不要把 GitHub Token 放在公開網頁。通過檢查後，仍需到 GitHub 將新版模組資料夾上傳，再以 Pull Request／人工確認切換 Sandbox manifest。</p><div class="grid"><div class="tile">① 匯入檔案<br><small>只在本機檢查</small></div><div class="tile">② 驗證相容性<br><small>不能取代實機 Regression</small></div><div class="tile">③ GitHub Sandbox 部署<br><small>Stable 不自動更改</small></div></div></section>
+</main>
+<script type="module">
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tab=location.hash==='#quotation'?'quotation':'quantity',index=null,record=null;
+// Resolve against repo root even when the page lives in /admin/.
+const manifestUrl=new URL('../modules/modules-manifest.json',location.href);
+const compatible=(actual,required)=>{const a=String(actual||'').replace(/^v/, '').split('.').map(Number),b=String(required||'').replace(/^v/,'').split('.').map(Number);for(let i=0;i<3;i++)if((a[i]||0)!==(b[i]||0))return(a[i]||0)>(b[i]||0);return true;};
+async function loadIndex(){try{const r=await fetch(manifestUrl+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);index=await r.json();$('#index-status').textContent='已連線';$('#index-status').className='good';}catch(e){index=null;$('#index-status').textContent='無法取得';$('#index-status').className='warn';}renderStatus();}
+function renderStatus(){const info=index?.modules?.[tab];$('#current').textContent=info?.sandboxVersion||'未發布／離線';$('#stable').textContent=info?.stableVersion||'未發布';$('#upload-title').textContent=tab==='quantity'?'匯入 3D 引擎升級包':'匯入 AI 報價單升級包';}
+for(const b of document.querySelectorAll('[data-tab]'))b.onclick=()=>{tab=b.dataset.tab;location.hash=tab;record=null;$('#result').innerHTML='<p class="muted">尚未選擇檔案。</p>';$('#report').disabled=true;$('#manifest').disabled=true;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));renderStatus();};
+const fileInput=$('#file'),drop=$('#drop');drop.onclick=()=>fileInput.click();drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fileInput.click();}};drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag')};drop.ondragleave=()=>drop.classList.remove('drag');drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)inspect(f)};fileInput.onchange=()=>{if(fileInput.files[0])inspect(fileInput.files[0]);fileInput.value='';};
+function download(content,name,type='application/json'){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function findEntry(files,path){return files.find(f=>f===path||f.endsWith('/'+path));}
+async function inspect(file){record=null;$('#manifest').disabled=true;$('#report').disabled=true;$('#result').innerHTML='<p class="muted">檢查中（資料只在本機處理）…</p>';try{
+if(file.size>60*1048576)throw Error('升級包超過 60MB，請改用較小的模組程式碼部署包（不要把 SKP 模型放進這裡）。');
+let manifest=null,files=[],zip=null,prefix='',source='';
+if(/\.json$/i.test(file.name)){manifest=JSON.parse(await file.text());files=[file.name];source='JSON manifest 單檔';}
+else if(/\.zip$/i.test(file.name)){const JSZip=(await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm')).default;zip=await JSZip.loadAsync(file,{checkCRC32:true});files=Object.values(zip.files).filter(f=>!f.dir).map(f=>f.name);
+if(files.length>300)throw Error('ZIP 超過 300 個檔案，請分割發布。');
+if(files.some(p=>p.includes('..')||p.startsWith('/')||p.includes('\\')))throw Error('發現不安全的 ZIP 路徑。');
+const candidates=files.filter(f=>new RegExp('(^|/)modules/'+tab+'/[^/]+/module-manifest\\.json$').test(f));if(candidates.length!==1)throw Error('必須剛好有一個 modules/'+tab+'/<version>/module-manifest.json。');
+source=candidates[0];manifest=JSON.parse(await zip.file(source).async('string'));prefix=source.slice(0,-'module-manifest.json'.length);
+}else throw Error('請選擇 ZIP 或 JSON 檔案。');
+if(manifest.key!==tab)throw Error('這份檔案屬於 '+(manifest.key||'未知')+'，不是 '+tab+'。');
+if(!/^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.]+)?$/.test(String(manifest.version||'')))throw Error('版本必須使用安全的 SemVer 字串。');
+if(!manifest.entry||!/^[a-z0-9_.-]+\.js$/i.test(manifest.entry))throw Error('模組 Entry 不安全或不存在。');
+if(!manifest.style||!/^[a-z0-9_.-]+\.css$/i.test(manifest.style))throw Error('模組 CSS 不安全或不存在。');
+const missing=zip?[manifest.entry,manifest.style].filter(x=>!files.includes(prefix+x)):[];
+const matches=source.endsWith('/'+manifest.version+'/module-manifest.json')||!zip;
+const current=index?.modules?.[tab]?.sandboxVersion||null;
+const minCore=String(manifest.minCoreVersion||'');const core='v28.10.37';
+const issues=[];if(!matches)issues.push('版本資料夾與 manifest.version 不一致');if(missing.length)issues.push('缺少 '+missing.join('、'));
+if(!compatible(core,minCore))issues.push('最低 Core '+minCore+' 高於預期 '+core);
+if(current===manifest.version)issues.push('此版本與目前 Sandbox 相同，不能當成新版本升級');
+if(!zip)issues.push('僅有 JSON，無法驗證 Entry/CSS 是否真實存在');
+const sha=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await file.arrayBuffer()))).map(b=>b.toString(16).padStart(2,'0')).join('');
+const checks={type:tab,version:manifest.version,minCore,source,file:file.name,fileSize:file.size,sha256:sha,files:files.length,missing,issues,verifiedPackage:!!zip&&issues.length===0};
+record={checks,manifest};
+$('#result').innerHTML='<div class="tile"><strong>'+esc(file.name)+'</strong><p class="status">SHA-256：'+sha+'</p><p>模組：'+esc(tab)+' · 版本 '+esc(manifest.version)+' · 最低 Core '+esc(minCore)+'</p><p class="'+(issues.length?'warn':'good')+'">'+(issues.length?'待處理／不完整：'+esc(issues.join('；')):'檔案結構 PASS（不代表 Parser/Quotation 實測 PASS）')+'</p><p class="muted">待部署位置：modules/'+esc(tab)+'/'+esc(manifest.version)+'/</p></div>';
+$('#report').disabled=false;$('#manifest').disabled=issues.length>0||!index;
+}catch(e){$('#result').innerHTML='<p class="danger">檢查失敗：'+esc(e.message)+'</p>'}}
+$('#report').onclick=()=>{if(record)download(JSON.stringify(record.checks,null,2),'LEAVES-'+tab+'-upgrade-check.json')};
+$('#manifest').onclick=()=>{if(!record||!index||!record.checks.verifiedPackage)return;const obj=structuredClone(index),{version}=record.manifest,mod=obj.modules[tab];if(!mod)throw Error('中央 manifest 沒有 '+tab);mod.versions[version]={manifest:tab+'/'+version+'/module-manifest.json',status:'sandbox-candidate'};mod.sandboxVersion=version;mod.minCoreVersion=record.manifest.minCoreVersion;download(JSON.stringify(obj,null,2),'modules-manifest-SANDBOX-REVIEW.json')};
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));loadIndex();
+</script></body></html>
