@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "key": "quantity",
+  "name": "3D 本機串流算量",
+  "version": "2.1.0-alpha.1",
+  "minCoreVersion": "v28.10.38",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "quantity.module.js",
+  "style": "quantity.css",
+  "capabilities": [
+    "local-only-vff-stream",
+    "opfs-model-cache",
+    "per-definition-parse",
+    "bounded-preview",
+    "material-selection",
+    "cancel-and-clear",
+    "source-parsed-not-validated"
+  ],
+  "notes": "VFF 2021+ 分批解析；預覽可簡化，正式算量尚未驗證。舊格式小檔沿用 2.0.0-alpha.2，禁用模型 AI provider。"
+}
