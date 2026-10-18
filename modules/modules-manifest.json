@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-18T00:00:00+08:00",
+  "generatedAt": "2026-10-18T10:53:32.407Z",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
@@ -64,7 +64,7 @@
       "description": "純瀏覽器 VFF 分批解析、OPFS 本機暫存、合批預覽、原始面參考面積；模型與資料不離開裝置。正式算量未獨立驗證。",
       "minCoreVersion": "v28.10.37",
       "stableVersion": null,
-      "sandboxVersion": "2.1.0-alpha.1",
+      "sandboxVersion": "2.1.0-alpha.2",
       "versions": {
         "0.1.0": {
           "manifest": "quantity/0.1.0/module-manifest.json",
@@ -85,6 +85,10 @@
         "2.1.0-alpha.1": {
           "manifest": "quantity/2.1.0-alpha.1/module-manifest.json",
           "status": "local-stream-real-model-tested-alpha"
+        },
+        "2.1.0-alpha.2": {
+          "manifest": "quantity/2.1.0-alpha.2/module-manifest.json",
+          "status": "sandbox-material-workspace-alpha"
         }
       }
     }
