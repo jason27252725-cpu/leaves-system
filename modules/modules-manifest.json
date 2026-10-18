@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-17T05:36:00+08:00",
+  "generatedAt": "2026-10-17T19:30:00+08:00",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
@@ -61,10 +61,10 @@
     },
     "quantity": {
       "label": "3D 算量",
-      "description": "SKP Direct Reader 2.0 alpha：P0/P1 資料完整性守門、Parser Benchmark、只讀大型 WASM 預覽及不自動送正式報價。",
+      "description": "Direct Reader 2.0 alpha.2：修正 18% 假進度、WASM Worker/GLB 交接峰值、取消與長時間解析診斷；WASM 仍 PREVIEW_ONLY。",
       "minCoreVersion": "v28.10.37",
       "stableVersion": null,
-      "sandboxVersion": "2.0.0-alpha.1",
+      "sandboxVersion": "2.0.0-alpha.2",
       "versions": {
         "0.1.0": {
           "manifest": "quantity/0.1.0/module-manifest.json",
@@ -77,6 +77,10 @@
         "2.0.0-alpha.1": {
           "manifest": "quantity/2.0.0-alpha.1/module-manifest.json",
           "status": "p0-p1-integrity-sandbox-experimental"
+        },
+        "2.0.0-alpha.2": {
+          "manifest": "quantity/2.0.0-alpha.2/module-manifest.json",
+          "status": "wasm-lifecycle-and-diagnostic-sandbox"
         }
       }
     }
