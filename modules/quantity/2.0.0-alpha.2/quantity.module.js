@@ -1,0 +1,267 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.0/+esm';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/controls/OrbitControls.js/+esm';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/loaders/GLTFLoader.js/+esm';
+import { attachQuotationWindow } from './quantity.window.js';
+import { quickSheetEstimate, runQuantityEngineSelfTest } from './quantity.engine.js';
+import {stageProgress,largeFileRisk} from './quantity.lifecycle.js';
+
+const VERSION='2.0.0-alpha.2';
+const WINDOW_ID='leavesSkpQuantityWindow';
+const PROGRESS_ID='leavesSkpImportProgress';
+const MODE_DIALOG_ID='leavesSkpModeDialog';
+const FULL_AUTO_MAX=64*1048576;
+const FULL_OPTION_MAX=96*1048576;
+const EXTREME_BYTES=400*1048576;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(n,d=2)=>Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:d});
+const mb=n=>`${fmt(Number(n||0)/1048576,1)} MB`;
+const relevant=q=>/模型|skp|材質|面積|數量|木皮|玻璃|塗料|漆|板材|組件|component|算量|幾坪|片數|施工面|外露面|多少/i.test(q);
+const isTypingTarget=el=>!!el?.closest?.('input,textarea,select,[contenteditable="true"]');
+
+function deviceInfo(){return{memory:Number(navigator.deviceMemory||0),cores:Number(navigator.hardwareConcurrency||0)};}
+function profileFor(file,mode){const size=file?.size||0;if(mode==='wasm-safe')return size>=EXTREME_BYTES?'extreme':'large';return size>=FULL_AUTO_MAX?'large':'standard';}
+function materialArea(m,profile,excluded){
+  const base=profile.takeoffMode==='raw'?Number(m.frontAreaM2||m.areaM2||0):Number(m.smartAreaM2??m.frontAreaM2??m.areaM2??0);
+  if(!excluded?.size||!Array.isArray(m.objects))return Math.max(0,base);
+  let cut=0;for(const o of m.objects)if(excluded.has(o.path))cut+=profile.takeoffMode==='raw'?Number(o.rawAreaM2||0):Number((o.smartAreaM2??o.rawAreaM2)||0);
+  return Math.max(0,base-cut);
+}
+function makeProfile(){return{alias:'',sheetWidthCm:122,sheetHeightCm:244,wastePct:10,takeoffMode:'smart'};}
+
+export async function registerLeavesModule(context){
+  let worker=null,fileInput=null,button=null,adminButtons=null,windowRoot=null,progressRoot=null,modeDialog=null,windowManager=null,upgradeRoot=null,upgradeWindowManager=null,pendingModeResolve=null,session=null;
+  let scene=null,camera=null,renderer=null,controls=null,raycaster=null,pointer=null,resizeObserver=null,raf=0,disposed=false,chatDispose=null,dropHandlers=null;
+  let renderObjects=[],selectedMaterial='',selection=null,activeTab='used',navTool='select',walkMode=false,walkRaf=0,lastWalk=0,activeJobId='',jobSequence=0,aiContextOptIn=false;
+  let progressTimer=null,progressStartedAt=0,progressLastWorkerAt=0,progressPhase='',lastJobDiagnostics=null;
+  const keys=new Set(),profiles=new Map(),excludedByMaterial=new Map(),materialRuntime=new Map();
+  const workerUrl=new URL('./quantity.worker.js',import.meta.url);
+  const gltfLoader=new GLTFLoader();
+
+  function profile(id){if(!profiles.has(id))profiles.set(id,makeProfile());return profiles.get(id);}
+  function excluded(id){if(!excludedByMaterial.has(id))excludedByMaterial.set(id,new Set());return excludedByMaterial.get(id);}
+  function requestRender(){if(raf||!renderer||!scene)return;raf=requestAnimationFrame(()=>{raf=0;controls?.update();renderer.render(scene,camera);});}
+  function cleanMaterialRuntime(){materialRuntime.clear();}
+  function releaseViewer(){
+    if(raf)cancelAnimationFrame(raf);raf=0;if(walkRaf)cancelAnimationFrame(walkRaf);walkRaf=0;lastWalk=0;keys.clear();
+    resizeObserver?.disconnect();resizeObserver=null;controls?.dispose();controls=null;
+    if(scene){const gs=new Set(),ms=new Set();scene.traverse(o=>{if(o.geometry)gs.add(o.geometry);const arr=Array.isArray(o.material)?o.material:[o.material];for(const m of arr)if(m)ms.add(m);});for(const g of gs)g.dispose?.();for(const m of ms){m.map?.dispose?.();m.dispose?.();}}
+    renderer?.dispose();renderer?.forceContextLoss?.();renderer?.domElement?.remove();renderer=null;scene=null;camera=null;raycaster=null;pointer=null;renderObjects=[];cleanMaterialRuntime();
+  }
+  function destroyWindow(){releaseViewer();windowManager?.cleanup();windowManager=null;windowRoot?.remove();windowRoot=null;}
+  function closeUpgradeWindow(){upgradeWindowManager?.cleanup();upgradeWindowManager=null;upgradeRoot?.remove();upgradeRoot=null;}
+  function openUpgradeWindow(tab='quantity'){if(!['owner','admin'].includes(context.accessRole))return;closeUpgradeWindow();upgradeRoot=document.createElement('aside');upgradeRoot.className='leaves-skp-window skp-upgrade-window';upgradeRoot.innerHTML=`<header class="skp-header" data-role="upgrade-drag"><div><span>LEAVES · SANDBOX MODULE CONTROL</span><h3>3D 引擎 / AI 報價單 升級中心</h3></div><div><button type="button" data-action="close-upgrade">×</button></div></header><iframe class="skp-upgrade-embed" title="模組升級中心" referrerpolicy="no-referrer" src="${new URL('../../../admin/module-upgrades.html',import.meta.url).href+'#'+(tab==='quotation'?'quotation':'quantity')}"></iframe>`;document.body.append(upgradeRoot);upgradeRoot.querySelector('[data-action="close-upgrade"]')?.addEventListener('click',closeUpgradeWindow);upgradeWindowManager=attachQuotationWindow(upgradeRoot,upgradeRoot.querySelector('[data-role="upgrade-drag"]'),context,{defaultWidth:1020,defaultHeight:740,minWidth:690,minHeight:510,offsetFromChat:true});}
+  function terminateWorker(){const current=worker;worker=null;if(current){current.onmessage=null;current.onerror=null;current.onmessageerror=null;current.terminate();return true;}return false;}
+  function cancelLoad(notify=false){
+    const interrupted=!!activeJobId;const previousJobId=activeJobId;activeJobId='';jobSequence++;
+    const terminated=terminateWorker();
+    if(interrupted)lastJobDiagnostics={jobId:previousJobId,outcome:'CANCELLED',workerTerminated:terminated,elapsedMs:progressStartedAt?Date.now()-progressStartedAt:null,phase:progressPhase,notes:'終止 Worker 不保證 Chrome 立即將保留的記憶體歸還作業系統。'};
+    closeProgress();
+    if(notify&&interrupted)context.ui?.alert?.('已要求終止本次 SKP Worker，該模型結果不會被使用。\n\nChrome 分頁的記憶體用量可能不會立即下降；如果分頁仍明顯卡頓，可以關閉並重新開啟 Sandbox 分頁。','解析已取消');
+  }
+  function closeProgress(){if(progressTimer){clearInterval(progressTimer);progressTimer=null;}progressRoot?.remove();progressRoot=null;progressStartedAt=0;progressLastWorkerAt=0;progressPhase='';}
+  function clock(ms){const sec=Math.max(0,Math.floor(ms/1000));return`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;}
+  function updateProgressDiagnostics(){
+    if(!progressRoot||!progressStartedAt)return;
+    const now=Date.now(),elapsed=now-progressStartedAt;
+    const el=progressRoot.querySelector('[data-progress="telemetry"]');if(!el)return;
+    const last=progressLastWorkerAt?`${clock(now-progressLastWorkerAt)} 前`:'尚無訊息';
+    el.textContent=`經過 ${clock(elapsed)} · 上次 Worker 回報 ${last}`;
+    const note=progressRoot.querySelector('[data-progress="detail"]');
+    if(note&&progressPhase==='wasm-parse'&&elapsed>90000)note.textContent='WASM 原生解析沒有提供心跳或實際完成百分比。長時間沒有更新不等於確定當機；如瀏覽器記憶體過高或操作遲滯，建議按取消解析。';
+  }
+
+  function showProgress(file,mode){
+    closeProgress();progressRoot=document.createElement('div');progressRoot.id=PROGRESS_ID;progressRoot.className='leaves-skp-progress';
+    const safe=mode==='wasm-safe';progressRoot.innerHTML=`<div class="skp-progress-card"><span class="skp-kicker">LEAVES AI · 3D QUANTITY 2.0.0-alpha.2</span>
+      <div class="skp-progress-head"><div><h3>${safe?'大型模型安全解析':'正在解析 SketchUp 模型'}</h3><p>${esc(file.name)}</p></div><span class="skp-mode-pill ${safe?'is-safe':''}">${safe?'WASM SAFE':'FULL'}</span></div>
+      <p class="skp-progress-size">${mb(file.size)} · 本機工作階段 · 不上傳 Supabase</p>
+      <div class="skp-progress-track"><span></span></div><div class="skp-progress-line"><strong data-progress="percent">0%</strong><span data-progress="stage">準備讀取</span></div>
+      <small data-progress="detail">WASM 原生解析階段沒有實際百分比／心跳；動畫只表示網站仍能操作，不代表解析器持續前進。</small><div class="skp-progress-diagnostics" data-progress="telemetry" aria-live="off">經過 00:00 · 等候解析器回報</div>
+      <button type="button" data-action="cancel">取消解析</button></div>`;
+    progressRoot.querySelector('[data-action="cancel"]').onclick=()=>cancelLoad(true);document.body.append(progressRoot);progressStartedAt=Date.now();progressLastWorkerAt=progressStartedAt;progressPhase='read';progressTimer=setInterval(updateProgressDiagnostics,1000);
+  }
+  function renderProgress(msg){
+    if(!progressRoot)return;
+    const data=stageProgress(msg.phase,msg.percent);
+    progressPhase=String(msg.phase||'');progressLastWorkerAt=Date.now();
+    const track=progressRoot.querySelector('.skp-progress-track');track.classList.toggle('is-indeterminate',!data.known);
+    const label=progressRoot.querySelector('[data-progress="percent"]');
+    if(data.known){track.querySelector('span').style.width=`${data.displayPercent}%`;label.textContent=`${data.displayPercent}%`;}
+    else label.textContent='解析中（無百分比）';
+    progressRoot.querySelector('[data-progress="stage"]').textContent=msg.label||msg.phase||'處理中';
+    updateProgressDiagnostics();
+  }
+
+  async function chooseMode(file){
+    if(file.size<FULL_AUTO_MAX)return'full';
+    return await new Promise(resolve=>{
+      pendingModeResolve?.(null);pendingModeResolve=resolve;modeDialog?.remove();modeDialog=document.createElement('div');modeDialog.id=MODE_DIALOG_ID;modeDialog.className='leaves-skp-mode-dialog';const info=deviceInfo(),canFull=file.size<=FULL_OPTION_MAX,risk=largeFileRisk(file.size,info.memory);
+      modeDialog.innerHTML=`<div class="skp-mode-card"><span class="skp-kicker">LEAVES LARGE MODEL MODE</span><h3>${file.size>=EXTREME_BYTES?'超大型 SKP':'大型 SKP'} · ${mb(file.size)}</h3>
+        <p>${esc(file.name)}</p><div class="skp-mode-facts"><span>裝置記憶體 ${info.memory?`${info.memory} GB`:'瀏覽器未提供'}</span><span>CPU ${info.cores||'--'} threads</span></div>
+        <div class="skp-mode-option is-recommended"><b>大型模型安全模式 · WASM</b><small>建議。把 SKP 放進獨立 Worker 的原生 WASM 解析，完成後立刻結束 Worker 釋放大型記憶體。保留 3D、材質與快速面積估算；原始 Face／Layer metadata 會較少。</small><button data-mode="wasm-safe">使用安全模式</button></div>
+        ${canFull?`<div class="skp-mode-option"><b>完整 SKP 算量</b><small>保留原始 Face、材質繼承、Smart Surface 與殘留材質健檢，但純 JavaScript parser 在大型檔案可能耗用大量 Heap。只建議這個尺寸範圍內嘗試。</small><button data-mode="full">完整分析</button></div>`:''}
+        ${risk.resourceWarning?'<div class="skp-extreme-note">大型模型可能瞬間使用數 GB RAM；曾觀察 409MB SKP 使 Chrome 分頁顯示約 4.2GB。這個版本改善取消與 WASM→3D 交接記憶體，但無法保證 WASM 原始解析的峰值降低。請先關閉其他高耗用分頁；記憶體不足就取消。</div>':''}
+        <button class="skp-mode-cancel" data-mode="cancel">取消</button></div>`;
+      modeDialog.addEventListener('click',e=>{const m=e.target.closest('[data-mode]')?.dataset.mode;if(!m)return;modeDialog.remove();modeDialog=null;pendingModeResolve=null;resolve(m==='cancel'?null:m);});document.body.append(modeDialog);
+    });
+  }
+
+  function ensureWorker(){
+    terminateWorker();const jobWorker=new Worker(workerUrl,{type:'module',name:'leaves-quantity-2-alpha2'});worker=jobWorker;
+    jobWorker.onmessage=async e=>{
+      const msg=e.data||{};
+      if(!activeJobId||msg.jobId!==activeJobId||worker!==jobWorker)return;
+      if(msg.type==='progress'){renderProgress(msg);return;}
+      if(msg.type==='error'){
+        const text=String(msg.error?.message||msg.error||'未知錯誤');
+        lastJobDiagnostics={jobId:msg.jobId,outcome:'ERROR',phase:progressPhase,error:text,workerTerminated:terminateWorker()};
+        activeJobId='';closeProgress();
+        await context.ui?.alert?.(`SKP 解析沒有完成。\n\n${text}\n\nLEAVES 沒有輸出任何假算量數字。`,'LEAVES 3D Quantity');
+        return;
+      }
+      if(msg.type==='ready'){
+        // Critical memory fix: transfer has completed. Release WASM heap BEFORE main-thread GLTFLoader.parse.
+        const terminated=terminateWorker(),handOffId=msg.jobId;
+        lastJobDiagnostics={jobId:handOffId,outcome:'WORKER_TRANSFERRED',workerTerminated:terminated,phase:msg.mode==='wasm-safe'?'wasm-transfer':'quantity',parseTimeMs:msg.wasm?.parseTimeMs||null,glbBytes:msg.wasm?.glbBytes||null};
+        try{if(msg.mode==='wasm-safe')await acceptWasm(msg);else if(handOffId===activeJobId)acceptFull(msg);}
+        catch(err){if(handOffId===activeJobId){activeJobId='';closeProgress();await context.ui?.alert?.(`3D Viewer 建立失敗：\n${String(err?.message||err)}`,'LEAVES 3D Quantity');}}
+      }
+    };
+    jobWorker.onerror=async e=>{
+      const failing=activeJobId;if(!failing||worker!==jobWorker)return;
+      const message=String(e.message||'可能為記憶體不足或解析器異常');
+      const terminated=terminateWorker();lastJobDiagnostics={jobId:failing,outcome:'WORKER_ERROR',error:message,workerTerminated:terminated,phase:progressPhase};
+      activeJobId='';closeProgress();
+      await context.ui?.alert?.(`大型模型 Worker 中止：${message}\n\n主 LEAVES AI 仍可繼續使用。`,'LEAVES 3D Quantity');
+    };
+    jobWorker.onmessageerror=async()=>{
+      if(!activeJobId||worker!==jobWorker)return;const failing=activeJobId;
+      const terminated=terminateWorker();lastJobDiagnostics={jobId:failing,outcome:'MESSAGE_ERROR',workerTerminated:terminated};activeJobId='';closeProgress();
+      await context.ui?.alert?.('解析器輸出無法傳遞到頁面；已終止 Worker。未產生正式算量。','LEAVES 3D Quantity');
+    };
+    return jobWorker;
+  }
+  async function ingest(file){
+    if(disposed)return{ok:false};if(!file||!/\.skp$/i.test(String(file.name||''))){await context.ui?.alert?.('請選擇 .skp 檔案。','3D Quantity');return{ok:false,code:'FILE_TYPE'};}
+    cancelLoad();destroyWindow();session=null;selection=null;selectedMaterial='';aiContextOptIn=false;profiles.clear();excludedByMaterial.clear();
+    const choiceGeneration=jobSequence;const mode=await chooseMode(file);if(choiceGeneration!==jobSequence)return{ok:false,code:'SUPERSEDED'};if(!mode)return{ok:false,code:'USER_CANCEL'};showProgress(file,mode);activeJobId=`quantity-${++jobSequence}-${Date.now()}`;ensureWorker().postMessage({type:'load',jobId:activeJobId,file,mode,options:{maxPlacedFaces:4_000_000}});return{ok:true,mode};
+  }
+  function acceptFull(msg){session={mode:'full',file:msg.file,result:msg.result,performanceProfile:profileFor(msg.file,'full')};closeProgress();openWindow();}
+  async function acceptWasm(msg){
+    const expectedJobId=msg.jobId;
+    renderProgress({phase:'wasm-transfer',percent:null,label:'WASM Worker 已終止，正在建立 GLB 預覽'});const bytes=msg.glb;if(!bytes?.byteLength)throw new Error('WASM GLB 資料為空');const gltf=await new Promise((resolve,reject)=>gltfLoader.parse(bytes.buffer,'',resolve,reject));
+    if(expectedJobId!==activeJobId){gltf.scene.traverse(o=>{o.geometry?.dispose?.();const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms)m?.dispose?.();});return;}const analyzed=analyzeWasmScene(gltf.scene,msg.wasm);session={mode:'wasm-safe',file:msg.file,result:analyzed,performanceProfile:profileFor(msg.file,'wasm-safe'),gltfScene:gltf.scene,wasm:msg.wasm};closeProgress();openWindow();
+  }
+
+  function geometryProfile(geometry,start=0,count=null){
+    const pos=geometry?.attributes?.position;if(!pos)return{area:0,triangles:0,axisArea:[0,0,0]};
+    const idx=geometry.index,total=idx?idx.count:pos.count,from=Math.max(0,Number(start)||0),limit=count==null?total-from:Math.max(0,Number(count)||0),to=Math.min(total,from+limit);
+    let area=0,tri=0;const axisArea=[0,0,0],a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3(),ab=new THREE.Vector3(),ac=new THREE.Vector3(),cross=new THREE.Vector3();
+    for(let i=from;i+2<to;i+=3){const ia=idx?idx.getX(i):i,ib=idx?idx.getX(i+1):i+1,ic=idx?idx.getX(i+2):i+2;a.fromBufferAttribute(pos,ia);b.fromBufferAttribute(pos,ib);c.fromBufferAttribute(pos,ic);ab.subVectors(b,a);ac.subVectors(c,a);cross.crossVectors(ab,ac);const len=cross.length(),ar=len/2;if(ar<=1e-14)continue;area+=ar;tri++;const ax=Math.abs(cross.x),ay=Math.abs(cross.y),az=Math.abs(cross.z),axis=ax>=ay&&ax>=az?0:ay>=az?1:2;axisArea[axis]+=ar;}
+    return{area,triangles:tri,axisArea};
+  }
+  function scaledProfileArea(profile,matrix){
+    const s=new THREE.Vector3().setFromMatrixScale(matrix),sx=Math.abs(s.x),sy=Math.abs(s.y),sz=Math.abs(s.z),a=profile?.axisArea||[0,0,Number(profile?.area||0)];
+    // OpenSKP GLB is in meters. For the overwhelmingly axis-aligned surfaces in
+    // interiors/cabinetry this is exact under non-uniform scale; for oblique
+    // triangles it is a bounded orientation approximation and is labelled so.
+    return Number(a[0]||0)*sy*sz+Number(a[1]||0)*sx*sz+Number(a[2]||0)*sx*sy;
+  }
+  function analyzeWasmScene(root,meta={}){
+    root.updateMatrixWorld(true);const geoCache=new WeakMap(),stats=new Map(),matIds=new Map();let matSeq=0,totalObjects=0,totalTriangles=0;
+    const matInfo=m=>{if(!m)return{id:'wasm:default',name:'未指定材質',color:[155,172,175]};if(!matIds.has(m)){const id=`wasm:${++matSeq}`,c=m.color||new THREE.Color(.6,.6,.6);m.userData={...(m.userData||{}),quantityMaterialId:id};matIds.set(m,{id,name:String(m.name||`材質 ${matSeq}`),color:[Math.round(c.r*255),Math.round(c.g*255),Math.round(c.b*255)]});}return matIds.get(m);};
+    const add=(m,area,triangles,path='WASM instanced geometry')=>{const info=matInfo(m),old=stats.get(info.id)||{...info,frontAreaM2:0,smartAreaM2:0,frontFaces:0,triangleCount:0,objects:[]};old.frontAreaM2+=area;old.smartAreaM2+=area;old.triangleCount+=triangles;old.frontFaces+=triangles;if(old.objects.length<100)old.objects.push({path,rawAreaM2:area,smartAreaM2:area,faces:triangles,reason:'wasm-triangle-estimate',confidence:'medium'});stats.set(info.id,old);};
+    const profilesFor=geometry=>{let cached=geoCache.get(geometry);if(cached)return cached;const mats=geometry.groups?.length?geometry.groups.map(g=>({materialIndex:Number(g.materialIndex||0),profile:geometryProfile(geometry,g.start,g.count)})):[{materialIndex:0,profile:geometryProfile(geometry)}];geoCache.set(geometry,mats);return mats;};
+    root.traverse(o=>{if(!o.isMesh||!o.geometry)return;const materials=Array.isArray(o.material)?o.material:[o.material],parts=profilesFor(o.geometry),instances=o.isInstancedMesh?Math.max(0,Number(o.count)||0):1;totalObjects+=instances;const processMatrix=(world,path)=>{for(const part of parts){const mat=materials[part.materialIndex]||materials[0]||null,area=scaledProfileArea(part.profile,world);add(mat,area,part.profile.triangles,path);totalTriangles+=part.profile.triangles;}};if(o.isInstancedMesh){const im=new THREE.Matrix4(),world=new THREE.Matrix4();for(let i=0;i<o.count;i++){o.getMatrixAt(i,im);world.multiplyMatrices(o.matrixWorld,im);processMatrix(world,`${o.name||'InstancedMesh'} #${i+1}`);}}else processMatrix(o.matrixWorld,o.name||'WASM Mesh');});
+    return{mode:'wasm-safe',version:'WASM Safe',units:'GLB meters',sourceMaterialCount:Number(meta.materialCount||stats.size),materials:[...stats.values()].map(m=>({...m,frontAreaM2:Number(m.frontAreaM2.toFixed(4)),smartAreaM2:Number(m.smartAreaM2.toFixed(4))})).sort((a,b)=>b.frontAreaM2-a.frontAreaM2),unused:[],totals:{placements:totalObjects,placedFaces:0,triangles:totalTriangles,previewTriangles:totalTriangles,truncated:false,previewComplete:true},materialAudit:{source:Number(meta.materialCount||stats.size),usedVisible:stats.size,unusedVisible:null,orphan:null,referencedNotVisible:null,defaultFaces:0},components:[],integrityReport:{fileValid:true,parseComplete:false,quantityValidated:false,previewReady:true,procurementReviewed:false,geometryIncomplete:null,previewPartial:false,issueCount:0,issues:[],status:'PREVIEW_ONLY',message:'WASM GLB 僅供模型預覽與粗略觀察，缺少原始 SKP Face/Hierarchy 等正式算量所需來源資料；禁止送正式報價。'},limitations:['WASM Safe 使用 GLB triangle/instance 推估面積，沒有原始 SKP Face、Layer 與未使用材質表。','非均勻縮放採用三角面主法向軸面積縮放；室內常見軸向面精準，斜面屬近似。']};
+  }
+
+  function materialsHtml(result,filter='',unused=false){
+    const q=filter.trim().toLocaleLowerCase(),list=unused?(result.unused||[]):(result.materials||[]);return list.filter(m=>!q||`${m.name} ${profile(m.id).alias}`.toLocaleLowerCase().includes(q)).slice(0,700).map(m=>{if(unused)return`<button class="skp-material-row is-unused ${m.unusedStatus==='orphan'?'is-orphan':''}" data-mat="${esc(m.id)}"><b>${esc(m.name)}</b><small>${esc(m.unusedLabel||'材質庫存在 · 目前可見場景未使用')}</small></button>`;const p=profile(m.id),name=p.alias||m.name,raw=Number(m.frontAreaM2||0),smart=Number(m.smartAreaM2??raw);return`<button class="skp-material-row ${selectedMaterial===m.id?'is-active':''}" data-mat="${esc(m.id)}"><span class="swatch" style="background:rgb(${(m.color||[155,172,175]).join(',')})"></span><b>${esc(name)}</b><strong>${fmt(smart)} m²</strong><small>${p.alias?`原名 ${esc(m.name)} · `:''}${session.mode==='wasm-safe'?`${fmt(m.triangleCount||m.frontFaces)} triangles`:`原始 ${fmt(raw)} m² · ${m.frontFaces} faces`}</small></button>`;}).join('')||'<p class="skp-empty">此分類沒有項目。</p>';
+  }
+  function selectedEditor(){
+    const r=session?.result,m=r?.materials?.find(x=>x.id===selectedMaterial);if(!m)return'';const p=profile(m.id),ex=excluded(m.id),area=materialArea(m,p,ex),sheet=quickSheetEstimate(area,p.sheetWidthCm,p.sheetHeightCm,p.wastePct);const smartAvailable=session.mode==='full';return`<section class="skp-material-editor"><div class="skp-editor-title"><span class="swatch" style="background:rgb(${(m.color||[155,172,175]).join(',')})"></span><div><b>${esc(p.alias||m.name)}</b><small>${esc(m.name)}</small></div></div>
+      <label>LEAVES 材質名稱<input data-profile="alias" value="${esc(p.alias)}" placeholder="例如：胡桃木皮"></label>
+      <div class="skp-inline-fields"><label>板材長（cm）<input type="number" min="0.1" step="0.1" data-profile="sheetHeightCm" value="${p.sheetHeightCm}"></label><label>板材寬（cm）<input type="number" min="0.1" step="0.1" data-profile="sheetWidthCm" value="${p.sheetWidthCm}"></label><label>損耗（%）<input type="number" min="0" max="200" step="1" data-profile="wastePct" value="${p.wastePct}"></label></div>
+      <label>算量方式<select data-profile="takeoffMode"><option value="smart" ${p.takeoffMode==='smart'?'selected':''}>智慧施工面</option><option value="raw" ${p.takeoffMode==='raw'?'selected':''}>所有幾何材質面</option></select></label>
+      <div class="skp-takeoff-grid"><div><span>原始幾何</span><b>${fmt(m.frontAreaM2)} m²</b></div><div><span>${smartAvailable?'智慧施工面':'安全模式面積'}</span><b>${fmt(m.smartAreaM2??m.frontAreaM2)} m²</b></div><div><span>目前計入</span><b>${fmt(area)} m²</b></div><div><span>快速片數</span><b>${sheet.wasteSheets} 片</b></div></div>
+      <div class="skp-sheet-note">${fmt(p.sheetWidthCm,1)} × ${fmt(p.sheetHeightCm,1)} cm · 單片 ${fmt(sheet.sheetAreaM2,3)} m² · 理論 ${sheet.netSheets} 片 · 含 ${fmt(p.wastePct,0)}% 損耗 ${sheet.wasteSheets} 片。這是面積快速估算，不是 2D 排料。</div>
+      ${smartAvailable&&Number(m.smartAdjustedObjects||0)>0?`<div class="skp-smart-note"><b>Smart Surface</b><span>已對 ${m.smartAdjustedObjects} 個薄板／牆板物件使用「單一主側」判斷；排除 ${fmt(Math.max(0,m.frontAreaM2-m.smartAreaM2))} m² 側邊／背側候選。${m.smartLowConfidenceObjects?` ${m.smartLowConfidenceObjects} 個物件信心較低，建議目視確認。`:''}</span></div>`:''}
+      ${selection?.materialId===m.id&&selection?.path?`<button class="skp-object-toggle" data-action="toggle-object-exclude">${ex.has(selection.path)?'重新納入目前物件':'排除目前選取物件'} · ${esc(selection.path.split(' / ').pop())}</button>`:''}
+      <button class="skp-quote-bridge" data-action="send-quotation">匯出算量參考資料（非正式報價）</button></section>`;
+  }
+  function listHtml(){const r=session?.result;if(!r)return'';if(activeTab==='components')return(r.components||[]).slice(0,800).map(x=>`<div class="skp-component"><b>${esc(x.name)}</b><span>× ${fmt(x.count)}</span></div>`).join('')||'<p class="skp-empty">安全模式沒有原始 Component 名稱資料。</p>';const search=windowRoot?.querySelector('[data-role="search"]')?.value||'';return`${activeTab==='used'?selectedEditor():''}${materialsHtml(r,search,activeTab==='unused')}`;}
+  function refreshList({scrollSelected=false}={}){if(!windowRoot||!session)return;const host=windowRoot.querySelector('[data-role="list"]');if(host)host.innerHTML=listHtml();if(scrollSelected&&selectedMaterial)requestAnimationFrame(()=>windowRoot?.querySelector(`[data-mat="${CSS.escape(selectedMaterial)}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'}));}
+
+  function windowHtml(){const r=session.result,t=r.totals||{},audit=r.materialAudit||{};return`<div class="skp-shell"><header class="skp-header" data-role="drag"><div><span>LEAVES AI · SKP DIRECT READER 2.0.0-alpha.2</span><h3>${esc(session.file.name)}</h3><small>${mb(session.file.size)} · ${session.mode==='wasm-safe'?'WASM LARGE MODEL':'FULL SKP'} · ${esc(r.units||'')}</small></div><div><button data-action="fit">置中</button><button data-action="walk">漫遊 OFF</button>${['owner','admin'].includes(context.accessRole)?'<button data-action="upgrades">升級中心</button>':''}<button data-action="close">×</button></div></header>
+    <div class="skp-stats"><b>材質 ${fmt(r.materials.length)}</b><b>${session.mode==='wasm-safe'?'Triangles':'Faces'} ${fmt(t.placedFaces||t.triangles||0)}</b><b>物件 ${fmt(t.placements||0)}</b><b>${audit.unusedVisible==null?'安全模式':`殘留候選 ${fmt(audit.orphan??0)}`}</b></div>
+    <div class="skp-warning is-safe"><b>算量完整性：${esc(r.integrityReport?.status||'UNKNOWN')}</b> — ${esc(r.integrityReport?.message||'尚未有獨立完整性驗證')}。<br>來源問題 ${fmt(r.integrityReport?.issueCount||0)} 項 · 3D 預覽局部缺漏：${r.integrityReport?.previewPartial?'是':'否'} · 正式報價：禁止（尚未通過 QUANTITY_VALIDATED 與 PROCUREMENT_REVIEWED）。</div>
+    ${r.integrityReport?.issues?.length?`<details class="skp-integrity-details"><summary>檢視解析異常（前 ${Math.min(250,r.integrityReport.issues.length)} 項）</summary><pre>${esc(JSON.stringify(r.integrityReport.issues,null,2))}</pre></details>`:''}
+    ${session.mode==='wasm-safe'?'<div class="skp-warning is-safe">大型模型安全模式只有 GLB 預覽。顯示的面積是估算，並非完整 SKP 算量。</div>':''}
+    <div class="skp-content"><div class="skp-viewport"><div class="skp-canvas"></div><div class="skp-view-toolbar"><button data-action="tool-select" class="is-active">選取</button><button data-action="tool-orbit">O Orbit</button><button data-action="tool-pan">H Pan</button><span>滾輪縮放 · 中鍵 Orbit · Shift+左鍵 / 中鍵+左鍵 Pan · Shift+Z 置中</span></div><div class="skp-selection" data-role="selection">點 3D 表面 → 右側自動定位材質。</div></div>
+      <aside class="skp-sidebar"><div class="skp-tabs"><button data-action="tab" data-tab="used" class="is-active">材料</button><button data-action="tab" data-tab="unused" ${session.mode==='wasm-safe'?'disabled':''}>材質健檢 ${r.unused?.length||0}</button><button data-action="tab" data-tab="components">組件</button></div><input type="search" data-role="search" placeholder="搜尋材質或組件"><div class="skp-list" data-role="list">${listHtml()}</div><div class="skp-sidebar-foot">板材尺寸單位：cm。Smart Surface 為施工候選推估、未經人工確認；原始 SKP 不修改。</div></aside></div>
+    <footer class="skp-footer"><label class="skp-ai-opt"><input type="checkbox" data-role="ai-consent" ${aiContextOptIn?'checked':''}> 明確允許把目前材料摘要送往外部 AI（關閉或換檔即取消）</label><span>SKP 本機解析 · 結果預設不傳外部 AI</span><button data-action="clear-highlight">全部顯示</button></footer></div>`;}
+
+  function openWindow(){destroyWindow();windowRoot=document.createElement('aside');windowRoot.id=WINDOW_ID;windowRoot.className=`leaves-skp-window is-${session.performanceProfile}`;windowRoot.innerHTML=windowHtml();document.body.append(windowRoot);windowManager=attachQuotationWindow(windowRoot,windowRoot.querySelector('[data-role="drag"]'),context,{defaultWidth:1180,defaultHeight:790,offsetFromChat:true,minWidth:700,minHeight:520});windowRoot.addEventListener('click',onWindowClick);windowRoot.addEventListener('input',onWindowInput);windowRoot.addEventListener('change',onWindowInput);windowRoot.querySelector('[data-role="search"]')?.addEventListener('input',()=>refreshList());const host=windowRoot.querySelector('.skp-canvas');initViewer(host);}
+
+  function baseViewer(host){
+    scene=new THREE.Scene();scene.background=new THREE.Color(0x101419);camera=new THREE.PerspectiveCamera(52,1,.01,50000);const antialias=session.performanceProfile==='standard';renderer=new THREE.WebGLRenderer({antialias,powerPreference:session.performanceProfile==='standard'?'high-performance':'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,session.performanceProfile==='standard'?1.4:session.performanceProfile==='large'?1.15:1));renderer.domElement.className='skp-webgl';renderer.domElement.style.touchAction='none';host.append(renderer.domElement);
+    controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.screenSpacePanning=true;controls.maxPolarAngle=Math.PI;controls.mouseButtons.LEFT=-1;controls.mouseButtons.MIDDLE=THREE.MOUSE.ROTATE;controls.mouseButtons.RIGHT=THREE.MOUSE.PAN;controls.addEventListener('change',requestRender);scene.add(new THREE.HemisphereLight(0xffffff,0x293039,1.45));const sun=new THREE.DirectionalLight(0xffffff,.75);sun.position.set(8,14,9);scene.add(sun);raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
+    installSketchupControls(host);resizeObserver=new ResizeObserver(()=>{const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();requestRender();});resizeObserver.observe(host);
+  }
+  function initViewer(host){baseViewer(host);if(session.mode==='wasm-safe'){scene.add(session.gltfScene);session.gltfScene.traverse(o=>{if(o.isMesh){const arr=Array.isArray(o.material)?o.material:[o.material];const ids=arr.map(m=>findRuntimeMaterialId(m));o.userData.quantityMaterialIds=ids;o.userData.quantityMaterialId=ids.length===1?ids[0]:'';renderObjects.push(o);}});}else{const colors=new Map(session.result.materials.map(m=>[m.id,m.color]));for(const g of session.result.previewGroups||[]){if(!g.positions?.length)continue;const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(g.positions,3));geometry.computeVertexNormals();const rgb=colors.get(g.id)||[155,172,175],material=new THREE.MeshLambertMaterial({color:new THREE.Color(...rgb.map(x=>(Number(x)||0)/255)),side:THREE.DoubleSide});material.userData={quantityMaterialId:g.id};const mesh=new THREE.Mesh(geometry,material);mesh.userData={quantityMaterialId:g.id,path:g.path||''};renderObjects.push(mesh);scene.add(mesh);registerRuntimeMaterial(g.id,material);}}
+    fit();requestRender();
+  }
+  function registerRuntimeMaterial(id,mat){if(!id||!mat)return;if(!materialRuntime.has(id))materialRuntime.set(id,new Set());materialRuntime.get(id).add(mat);mat.userData={...(mat.userData||{}),quantityMaterialId:id,baseOpacity:Number(mat.opacity??1),baseTransparent:!!mat.transparent};}
+  function findRuntimeMaterialId(mat){const arr=Array.isArray(mat)?mat:[mat];for(const m of arr){const known=String(m?.userData?.quantityMaterialId||'');if(known){registerRuntimeMaterial(known,m);return known;}for(const item of session.result.materials){if(m?.name&&item.name===m.name){registerRuntimeMaterial(item.id,m);return item.id;}}}return'';}
+  function fit(){if(!scene||!camera)return;const box=new THREE.Box3();for(const o of renderObjects)if(o.visible!==false)box.expandByObject(o);if(box.isEmpty())box.setFromObject(session.gltfScene||scene);if(box.isEmpty()){camera.position.set(8,6,8);controls.target.set(0,0,0);}else{const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),max=Math.max(size.x,size.y,size.z,.1),fov=camera.fov*Math.PI/180,d=(max/2)/Math.tan(fov/2)*1.55;camera.position.set(center.x+d*.7,center.y+d*.55,center.z+d*.7);camera.near=Math.max(.005,max/5000);camera.far=Math.max(100,d*30);camera.updateProjectionMatrix();controls.target.copy(center);controls.minDistance=Math.max(.01,max*.002);controls.maxDistance=Math.max(20,max*20);}controls.update();requestRender();}
+
+  function panPixels(dx,dy){if(!camera||!controls)return;const distance=camera.position.distanceTo(controls.target),scale=2*distance*Math.tan(camera.fov*Math.PI/360)/Math.max(1,renderer.domElement.clientHeight);const right=new THREE.Vector3().setFromMatrixColumn(camera.matrix,0),up=new THREE.Vector3().setFromMatrixColumn(camera.matrix,1),move=right.multiplyScalar(-dx*scale).add(up.multiplyScalar(dy*scale));camera.position.add(move);controls.target.add(move);controls.update();requestRender();}
+  function installSketchupControls(host){
+    let down=null,customPan=null;
+    host.addEventListener('pointerdown',e=>{if(e.button===0){down={x:e.clientX,y:e.clientY};if(e.shiftKey||(e.buttons&4)){customPan={x:e.clientX,y:e.clientY};controls.enabled=false;}}},{capture:true});
+    host.addEventListener('pointermove',e=>{if(customPan&&((e.buttons&1)||(e.buttons&4))){const dx=e.clientX-customPan.x,dy=e.clientY-customPan.y;customPan={x:e.clientX,y:e.clientY};panPixels(dx,dy);e.preventDefault();e.stopPropagation();}},{capture:true});
+    const finish=e=>{if(customPan){customPan=null;controls.enabled=!walkMode;}if(!down)return;const dx=Math.abs(e.clientX-down.x),dy=Math.abs(e.clientY-down.y),click=dx<4&&dy<4&&e.button===0&&!e.shiftKey;down=null;if(click&&navTool==='select')selectAt(e);};host.addEventListener('pointerup',finish,{capture:true});host.addEventListener('pointercancel',()=>{down=null;customPan=null;if(controls)controls.enabled=!walkMode;},{capture:true});
+  }
+  function selectAt(e){if(!raycaster||!camera)return;const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(renderObjects,true);const hit=hits.find(h=>h.object?.isMesh);if(!hit)return;let mat=hit.object.material;if(Array.isArray(mat)&&Number.isInteger(hit.face?.materialIndex))mat=mat[hit.face.materialIndex]||mat[0];const id=hit.object.userData.quantityMaterialId||findRuntimeMaterialId(mat);if(!id)return;selection={materialId:id,path:hit.object.userData.path||hit.object.name||'3D 物件',object:hit.object,instanceId:hit.instanceId};selectMaterial(id,{path:selection.path,scroll:true,fromViewer:true});}
+  function selectMaterial(id,{path='',scroll=false}={}){selectedMaterial=String(id||'');activeTab='used';if(windowRoot){windowRoot.querySelectorAll('.skp-tabs button').forEach(b=>b.classList.toggle('is-active',b.dataset.tab==='used'));const search=windowRoot.querySelector('[data-role="search"]');if(search)search.value='';const m=session.result.materials.find(x=>x.id===selectedMaterial);windowRoot.querySelector('[data-role="selection"]').textContent=m?`${profile(m.id).alias||m.name} · ${fmt(materialArea(m,profile(m.id),excluded(m.id)))} m²${path?` · ${path}`:''}`:'材質未能唯一對應';}highlight(selectedMaterial);refreshList({scrollSelected:scroll});}
+  function highlight(id){for(const [mid,set] of materialRuntime){for(const m of set){const active=!id||mid===id,base=Number(m.userData?.baseOpacity??1);m.opacity=active?base:Math.min(base,.05);m.transparent=!active||!!m.userData?.baseTransparent;m.depthWrite=active;m.needsUpdate=true;}}requestRender();}
+
+  function setNavTool(tool){navTool=tool;walkMode=false;keys.clear();if(controls){controls.enabled=true;controls.mouseButtons.LEFT=tool==='orbit'?THREE.MOUSE.ROTATE:tool==='pan'?THREE.MOUSE.PAN:-1;}windowRoot?.querySelectorAll('.skp-view-toolbar button').forEach(b=>b.classList.toggle('is-active',b.dataset.action===`tool-${tool}`));const wb=windowRoot?.querySelector('[data-action="walk"]');if(wb)wb.textContent='漫遊 OFF';}
+  function toggleWalk(){walkMode=!walkMode;navTool='select';if(controls){controls.enabled=true;controls.mouseButtons.LEFT=-1;}const b=windowRoot?.querySelector('[data-action="walk"]');if(b)b.textContent=walkMode?'漫遊 ON':'漫遊 OFF';windowRoot?.classList.toggle('is-walk',walkMode);if(walkMode)startWalk();}
+  function startWalk(){if(walkRaf)return;lastWalk=performance.now();const tick=now=>{walkRaf=0;if(!walkMode||!camera||!controls)return;const dt=Math.min(.05,(now-lastWalk)/1000);lastWalk=now;let moved=false;const forward=new THREE.Vector3();camera.getWorldDirection(forward);forward.y=0;if(forward.lengthSq()<1e-6)forward.set(0,0,-1);forward.normalize();const right=new THREE.Vector3().crossVectors(forward,camera.up).normalize();const scale=Math.max(.1,camera.position.distanceTo(controls.target)*.35)*(keys.has('shift')?3.5:1)*dt;const move=new THREE.Vector3();if(keys.has('w'))move.add(forward);if(keys.has('s'))move.sub(forward);if(keys.has('d'))move.add(right);if(keys.has('a'))move.sub(right);if(keys.has('e'))move.y+=1;if(keys.has('q'))move.y-=1;if(move.lengthSq()>0){move.normalize().multiplyScalar(scale);camera.position.add(move);controls.target.add(move);moved=true;}if(moved){controls.update();requestRender();}if(keys.size)walkRaf=requestAnimationFrame(tick);};walkRaf=requestAnimationFrame(tick);}
+  const onKeyDown=e=>{if(!windowRoot?.isConnected||isTypingTarget(e.target))return;const k=e.key.toLowerCase();if(k==='o'){setNavTool('orbit');e.preventDefault();return;}if(k==='h'){setNavTool('pan');e.preventDefault();return;}if(e.shiftKey&&k==='z'){fit();e.preventDefault();return;}if(['w','a','s','d','q','e'].includes(k)&&walkMode){keys.add(k);if(e.shiftKey)keys.add('shift');startWalk();e.preventDefault();}};
+  const onKeyUp=e=>{const k=e.key.toLowerCase();keys.delete(k);if(!e.shiftKey)keys.delete('shift');};window.addEventListener('keydown',onKeyDown,true);window.addEventListener('keyup',onKeyUp,true);
+
+  function onWindowInput(e){if(e.target?.dataset?.role==='ai-consent'){aiContextOptIn=!!e.target.checked;return;}if(e.type==='input')return;const key=e.target?.dataset?.profile;if(!key||!selectedMaterial)return;const p=profile(selectedMaterial);p[key]=key==='alias'?String(e.target.value||''):key==='takeoffMode'?String(e.target.value||'smart'):Math.max(0,Number(e.target.value)||0);refreshList();}
+  async function onWindowClick(e){const action=e.target.closest('[data-action]')?.dataset.action;if(action==='close'){aiContextOptIn=false;destroyWindow();session=null;selection=null;selectedMaterial='';profiles.clear();excludedByMaterial.clear();return;}if(action==='upgrades'){if(!['owner','admin'].includes(context.accessRole))return;openUpgradeWindow('quantity');return;}if(action==='fit'){fit();return;}if(action==='walk'){toggleWalk();return;}if(action?.startsWith('tool-')){setNavTool(action.slice(5));return;}if(action==='clear-highlight'){selectedMaterial='';selection=null;highlight('');refreshList();const sel=windowRoot.querySelector('[data-role="selection"]');if(sel)sel.textContent='點 3D 表面 → 右側自動定位材質。';return;}if(action==='tab'){const b=e.target.closest('[data-tab]');activeTab=b.dataset.tab;windowRoot.querySelectorAll('.skp-tabs button').forEach(x=>x.classList.toggle('is-active',x===b));refreshList();return;}if(action==='toggle-object-exclude'&&selectedMaterial&&selection?.path){const set=excluded(selectedMaterial);set.has(selection.path)?set.delete(selection.path):set.add(selection.path);refreshList();return;}if(action==='send-quotation'){sendToQuotation();return;}const row=e.target.closest('[data-mat]');if(row){selectMaterial(row.dataset.mat,{scroll:false});return;}}
+  function sendToQuotation(){
+    const m=session?.result?.materials?.find(x=>x.id===selectedMaterial);if(!m)return;
+    const p=profile(m.id),area=materialArea(m,p,excluded(m.id));
+    const sheet=quickSheetEstimate(area,p.sheetWidthCm,p.sheetHeightCm,p.wastePct);
+    const detail={schemaVersion:2,source:'leaves-quantity-review-only',fileName:session.file.name,
+      materialId:m.id,materialName:p.alias||m.name,originalMaterialName:m.name,
+      quantity:area,unit:'m²',sheet:{widthCm:p.sheetWidthCm,heightCm:p.sheetHeightCm,wastePct:p.wastePct,
+      estimatedPieces:sheet.wasteSheets},takeoffMode:p.takeoffMode,mode:session.mode,
+      integrityReport:session.result.integrityReport||null,authoritative:false,quoteTransferAllowed:false,
+      createdAt:new Date().toISOString()};
+    const blob=new Blob([JSON.stringify(detail,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download='LEAVES-quantity-REVIEW-ONLY.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
+    context.ui?.alert?.('已匯出「參考資料」，沒有修改 Quotation，也沒有建立可直接報價的數字。等原始結構與獨立 Golden 驗證通過後，才會啟用正式橋接。','算量安全閘門');
+  }
+
+  function mountAdminUpgradeEntrypoints(){
+    if(!['owner','admin'].includes(context.accessRole))return;
+    const host=document.getElementById('moduleCenterList');if(!host||document.getElementById('leavesSandboxUpgradeEntries'))return;
+    adminButtons=document.createElement('div');adminButtons.id='leavesSandboxUpgradeEntries';
+    adminButtons.className='skp-admin-upgrade-entries';
+    adminButtons.innerHTML='<span>Sandbox 模組升級管理 · 本機驗證，不直接發布</span><button data-upgrade="quantity">3D 引擎升級</button><button data-upgrade="quotation">AI 報價單升級</button>';
+    adminButtons.onclick=e=>{const name=e.target?.closest?.('[data-upgrade]')?.dataset.upgrade;if(name)openUpgradeWindow(name)};
+    host.parentElement?.insertBefore(adminButtons,host);
+  }
+  function mount(){if(disposed)return;const dock=context.getComposerDock?.(),row=dock?.querySelector('.glass-mono');if(row&&!fileInput){fileInput=document.createElement('input');fileInput.type='file';fileInput.accept='.skp';fileInput.hidden=true;fileInput.onchange=()=>{const f=fileInput.files?.[0];if(f)ingest(f);fileInput.value='';};row.append(fileInput);}if(row&&!button){button=document.createElement('button');button.type='button';button.className='quotation-composer-btn text-neutral-400 hover:text-white p-2 text-sm transition rounded-xl hover:bg-white/10 mr-1 shrink-0';button.title='匯入 SKP · 3D 算量';button.innerHTML='<i class="fa-solid fa-cubes-stacked"></i>';button.onclick=()=>fileInput?.click();row.append(button);}if(!dropHandlers){const drawer=context.getMountRoot?.();if(drawer){const over=e=>{if([...(e.dataTransfer?.items||[])].some(x=>x.kind==='file')){e.preventDefault();drawer.classList.add('skp-drop-over');}},leave=()=>drawer.classList.remove('skp-drop-over'),drop=e=>{const f=[...(e.dataTransfer?.files||[])].find(x=>/\.skp$/i.test(x.name));if(f){e.preventDefault();e.stopImmediatePropagation();drawer.classList.remove('skp-drop-over');ingest(f);}};drawer.addEventListener('dragover',over,true);drawer.addEventListener('dragleave',leave,true);drawer.addEventListener('drop',drop,true);dropHandlers=()=>{drawer.removeEventListener('dragover',over,true);drawer.removeEventListener('dragleave',leave,true);drawer.removeEventListener('drop',drop,true);drawer.classList.remove('skp-drop-over');};}}if(!chatDispose&&context.chat?.registerContextProvider)chatDispose=context.chat.registerContextProvider(async({text})=>{if(!aiContextOptIn||!session||!relevant(String(text||'')))return null;const rows=session.result.materials.slice(0,30).map(m=>{const p=profile(m.id),area=materialArea(m,p,excluded(m.id)),sheet=quickSheetEstimate(area,p.sheetWidthCm,p.sheetHeightCm,p.wastePct);return`${p.alias||m.name}: ${fmt(area)} m²；${fmt(p.sheetWidthCm,1)}×${fmt(p.sheetHeightCm,1)} cm；快速 ${sheet.wasteSheets} 片`;}).join('\n');return{label:'LEAVES 3D Quantity 2.0.0-alpha.2',priority:86,content:`目前 SKP：${session.file.name}；模式 ${session.mode}。\n${rows}\n快速片數為面積＋損耗估算，不是 2D nesting。`};});mountAdminUpgradeEntrypoints();context.ui?.markCapabilityReady?.('quantity',true);}
+  function dispose(){cancelLoad();destroyWindow();closeUpgradeWindow();pendingModeResolve?.(null);pendingModeResolve=null;modeDialog?.remove();modeDialog=null;dropHandlers?.();dropHandlers=null;adminButtons?.remove();adminButtons=null;fileInput?.remove();fileInput=null;button?.remove();button=null;session=null;aiContextOptIn=false;profiles.clear();excludedByMaterial.clear();chatDispose?.();chatDispose=null;window.removeEventListener('keydown',onKeyDown,true);window.removeEventListener('keyup',onKeyUp,true);context.ui?.markCapabilityReady?.('quantity',false);}
+  const engineTest=()=>runQuantityEngineSelfTest();
+  return Object.freeze({async open(){mount();context.ui?.openChat?.();if(session)openWindow();else fileInput?.click();return{ok:true,version:VERSION};},async close(){cancelLoad();aiContextOptIn=false;closeUpgradeWindow();pendingModeResolve?.(null);pendingModeResolve=null;modeDialog?.remove();modeDialog=null;destroyWindow();session=null;selection=null;selectedMaterial='';profiles.clear();excludedByMaterial.clear();},async openFile(file){mount();context.ui?.openChat?.();return ingest(file);},async onSessionEnd(){dispose();disposed=true;return{ok:true};},async selfTest(){mount();const e=engineTest();return{ok:e.ok&&!!Worker&&!!THREE.WebGLRenderer,version:VERSION,engine:e,features:{worker:!!Worker,webgl:!!document.createElement('canvas').getContext('webgl2')||!!document.createElement('canvas').getContext('webgl'),device:deviceInfo(),cmSheetUnit:true,largeMode:true}};},getStatus(){return{version:VERSION,lastJobDiagnostics,integrity:session?.result?.integrityReport?.status||null,aiContextOptIn,loaded:!!session,busy:!!progressRoot,fileName:session?.file?.name||'',mode:session?.mode||null,profile:session?.performanceProfile||null};}});
+}
