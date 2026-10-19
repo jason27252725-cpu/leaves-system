@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T17:22:43.272Z",
+  "generatedAt": "2026-10-19T17:48:57.826Z",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
@@ -127,6 +127,32 @@
           "packageHash": "c5104e1a32b22c5215d4fed48bb6ed8c39e1311c4a69a84f94b7d6300e3899f9",
           "previousIndexSha": "019fb3e9d51866875a886613ecd8f459f64e7c59",
           "verifiedFiles": 7
+        }
+      ]
+    },
+    "assistant": {
+      "label": "AI 操作助手",
+      "description": "本機工具交易與確認任務",
+      "minCoreVersion": "v28.10.45",
+      "stableVersion": null,
+      "sandboxVersion": "0.1.1",
+      "versions": {
+        "0.1.1": {
+          "manifest": "assistant/0.1.1/module-manifest.json",
+          "status": "sandbox-candidate",
+          "packageHash": "d5648d3ad17042a2890c173750a745f78c1423e2243df83d29d9d4c51c30450f"
+        }
+      },
+      "sandboxHistory": [
+        {
+          "id": "131e5598-abe9-449a-94bf-5936cdc6c903",
+          "at": "2026-10-19T17:48:57.826Z",
+          "action": "install",
+          "from": null,
+          "to": "0.1.1",
+          "packageHash": "d5648d3ad17042a2890c173750a745f78c1423e2243df83d29d9d4c51c30450f",
+          "previousIndexSha": "d4ad53ebd9dfc64cf1df6b078eeaa5adba6cef31",
+          "verifiedFiles": 3
         }
       ]
     }
