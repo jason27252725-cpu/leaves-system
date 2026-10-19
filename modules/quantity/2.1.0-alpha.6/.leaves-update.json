@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-19T17:19:44.517Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quantity",
+    "version": "2.1.0-alpha.6",
+    "minCoreVersion": "v28.10.45",
+    "dependencies": [
+      {
+        "module": "quantity",
+        "version": "2.0.0-alpha.2"
+      }
+    ],
+    "files": [
+      {
+        "path": "MESHOPTIMIZER-LICENSE.txt",
+        "bytes": 1079,
+        "sha256": "d1bc307ff896c7fc65e3ff4823cc478194f7a5bc6436f99534ebede4d9e2017a"
+      },
+      {
+        "path": "OPENSKP-LICENSE.txt",
+        "bytes": 1076,
+        "sha256": "8365ccab973fbf4f1dada0d997d1146406f542ca9d02a164d6a27c9c30c356e8"
+      },
+      {
+        "path": "THIRD-PARTY-NOTICES.txt",
+        "bytes": 5207,
+        "sha256": "ca64a8e2927a7b36129914ffc2576ffcaf19f47320ee61e0b202b23c233651ce"
+      },
+      {
+        "path": "module-manifest.json",
+        "bytes": 886,
+        "sha256": "fb21a0edcddd0fdbb82092d0caf4ce01ebef776ecb3b8a9a331aa0608a6e2546"
+      },
+      {
+        "path": "quantity.css",
+        "bytes": 13925,
+        "sha256": "d32ace59c81aba46db313900f298691c9f957bd631a6e0f7b979f9d1d254743d"
+      },
+      {
+        "path": "quantity.module.js",
+        "bytes": 1244397,
+        "sha256": "f0b29a854826fc8e29bb99414d93792ca94c619d6453226d8b8da5b83575b774"
+      },
+      {
+        "path": "quantity.worker.js",
+        "bytes": 171122,
+        "sha256": "f1dbbf904c144fd9b46203172d18fdbd88f5f639d578545bbb4849b785672c21"
+      }
+    ]
+  },
+  "packageHash": "c5104e1a32b22c5215d4fed48bb6ed8c39e1311c4a69a84f94b7d6300e3899f9"
+}

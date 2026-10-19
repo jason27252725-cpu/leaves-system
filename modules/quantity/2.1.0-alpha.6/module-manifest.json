@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "key": "quantity",
+  "name": "3D 本機材質確認工作台",
+  "version": "2.1.0-alpha.6",
+  "minCoreVersion": "v28.10.45",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "quantity.module.js",
+  "style": "quantity.css",
+  "assets": [
+    "quantity.worker.js"
+  ],
+  "capabilities": [
+    "local-only-vff-stream",
+    "opfs-model-cache",
+    "per-definition-parse",
+    "bounded-preview",
+    "material-selection",
+    "material-review-draft",
+    "wasd-walk",
+    "resizable-workspace",
+    "cancel-and-clear",
+    "source-parsed-not-validated",
+    "local-command-bridge",
+    "confirmed-review-edit",
+    "single-undo",
+    "composer-tool-strip",
+    "assistant-tool-adapter"
+  ],
+  "notes": "本機材料確認表 AI 工具；批次修改先比較再同意，維持 quantityValidated=false，不改SKP或自動寫入報價。"
+}
