@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-19T17:21:51.077Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.8.1",
+    "minCoreVersion": "v28.10.45",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 3302,
+        "sha256": "709a36f3d6eb4afdc4f3906612c66a6e662e4c39c7755f8cb8b4d4e8f34bce23"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 13953,
+        "sha256": "3c2512e217d995ace0791c80f649d9984a1ed22e881ee7a5999d61f68c1a0672"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 10901,
+        "sha256": "016a7c4e1a02739d1e91bc6bc9a40a845cdddab80f8505204984bafdfe8259cb"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 50850,
+        "sha256": "85435771be208a96b7eb96bb5588106c6e81f1792c3e4bd203c9903cc204f73b"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8873,
+        "sha256": "68cb6519cc18cc047f11d6b98faaed20a657622e299ef12316b0760c5d235ea0"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 5073,
+        "sha256": "648217f14c4572004801445c72b096d51c1a5dd4e2af223e7481553a0a27dddb"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 19379,
+        "sha256": "72b676e9b690f291519870a70a08f25edccbe67291d040e7bed9f30fd3cb6455"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 64023,
+        "sha256": "79628a569d1e9449b2fe3c6e5ca9c1b520df3c040422d0b597e28e1ea8f3d0e5"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6381,
+        "sha256": "56193fbf7e35063b6261bc9e74d8cb00caf83218a4d069ebc77af49fc6db9e1f"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 53198,
+        "sha256": "39ae378f5de91d7b50f1003526026cdfd9abf426209a83f5caf4defca811ea66"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 36465,
+        "sha256": "86f279c6b772e53efa527bd554ff77c4c51a287cb1a6c34d57e0c712ea3a5590"
+      }
+    ]
+  },
+  "packageHash": "b8d9f08019d6c5b8d5603f89f29bb40e7fc9327c4a90f8db28e545441eb40386"
+}
