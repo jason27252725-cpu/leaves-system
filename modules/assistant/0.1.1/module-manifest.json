@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "key": "assistant",
+  "name": "AI 操作助手",
+  "version": "0.1.1",
+  "minCoreVersion": "v28.10.45",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "assistant.module.js",
+  "style": "assistant.css",
+  "capabilities": [
+    "schema-validated-planner",
+    "local-tool-registry",
+    "real-diff-approval",
+    "transaction-rollback",
+    "single-undo",
+    "session-revision-binding",
+    "no-model-context"
+  ],
+  "notes": "AI只規劃使用者指令；模型與報價內容、查詢結果不傳給規劃器。12步/500差異/10分鐘限制，不執行生成程式。需新版3D或報價轉接器。"
+}
