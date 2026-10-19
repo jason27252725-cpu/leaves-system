@@ -1,0 +1,10 @@
+{
+  "id": "43db2fe6-5392-4785-b7f6-ff93058d3a48",
+  "at": "2026-10-19T17:22:43.272Z",
+  "action": "install",
+  "from": "0.7.1",
+  "to": "0.8.1",
+  "packageHash": "b8d9f08019d6c5b8d5603f89f29bb40e7fc9327c4a90f8db28e545441eb40386",
+  "previousIndexSha": "4656db698e878a569efdba61cea30b2ce83a22d0",
+  "verifiedFiles": 11
+}
