@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "key": "quantity",
+  "name": "3D 本機材質確認工作台",
+  "version": "2.1.0-alpha.3",
+  "minCoreVersion": "v28.10.41",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "quantity.module.js",
+  "style": "quantity.css",
+  "assets": [
+    "quantity.worker.js"
+  ],
+  "capabilities": [
+    "local-only-vff-stream",
+    "opfs-model-cache",
+    "per-definition-parse",
+    "bounded-preview",
+    "material-selection",
+    "material-review-draft",
+    "wasd-walk",
+    "resizable-workspace",
+    "cancel-and-clear",
+    "source-parsed-not-validated",
+    "local-command-bridge",
+    "confirmed-review-edit",
+    "single-undo"
+  ],
+  "notes": "VFF 2021+ 分批解析、來源顏色與本機縮圖、材質確認表；正式算量尚未驗證。報價草稿只在本機交接，舊格式小檔沿用 2.0.0-alpha.2。 聊天本機操作；不註冊模型 AI Context。"
+}
