@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "assistant",
+  "name": "AI 操作助手",
+  "version": "0.2.0",
+  "minCoreVersion": "v28.10.46",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "assistant.module.js",
+  "style": "assistant.css",
+  "capabilities": [
+    "chat-integrated-tasks",
+    "automatic-intent-hints",
+    "schema-validated-planner",
+    "local-tool-registry",
+    "real-diff-approval",
+    "transaction-rollback",
+    "single-undo",
+    "session-revision-binding",
+    "verified-operation-events",
+    "no-model-context"
+  ],
+  "notes": "下載後僅顯示啟動提示；比較、確認與操作紀錄整合於聊天。一般聊天沿用原流程，@助手可明確指定。沿用 Quantity alpha.6 與 Quotation 0.8.1；模型與報價內容不傳規劃器。"
+}
