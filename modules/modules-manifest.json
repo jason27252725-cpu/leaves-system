@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T05:46:55.578Z",
+  "generatedAt": "2026-10-21T07:23:23.328Z",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
       "description": "LEAVES AI 報價／成本專業能力模組。Sandbox 0.7.1：修復 XLSX 匯出完整性（Dirty Cell Journal、calcChain reset、Shared Formula Guard）、Compare/Review 即時拖曳，以及編輯後 Viewport/鍵盤導覽。Core 維持 v28.10.36，Cost Master Atomic Publish 安全鏈不變。",
       "minCoreVersion": "v28.10.36",
       "stableVersion": null,
-      "sandboxVersion": "0.8.1",
+      "sandboxVersion": "0.8.2",
       "versions": {
         "0.1.0": {
           "manifest": "quotation/0.1.0/module-manifest.json",
@@ -61,6 +61,11 @@
           "manifest": "quotation/0.8.1/module-manifest.json",
           "status": "sandbox-candidate",
           "packageHash": "b8d9f08019d6c5b8d5603f89f29bb40e7fc9327c4a90f8db28e545441eb40386"
+        },
+        "0.8.2": {
+          "manifest": "quotation/0.8.2/module-manifest.json",
+          "status": "sandbox-candidate",
+          "packageHash": "2e023c5467bc939fc23d003c29f4af7068584a624ca60e312c95cc04bfa21a84"
         }
       },
       "sandboxHistory": [
@@ -73,6 +78,16 @@
           "packageHash": "b8d9f08019d6c5b8d5603f89f29bb40e7fc9327c4a90f8db28e545441eb40386",
           "previousIndexSha": "4656db698e878a569efdba61cea30b2ce83a22d0",
           "verifiedFiles": 11
+        },
+        {
+          "id": "c33d16bd-2742-47b7-ba8b-ceb8c41dba87",
+          "at": "2026-10-21T07:23:23.328Z",
+          "action": "install",
+          "from": "0.8.1",
+          "to": "0.8.2",
+          "packageHash": "2e023c5467bc939fc23d003c29f4af7068584a624ca60e312c95cc04bfa21a84",
+          "previousIndexSha": "d71cd5639eedcabcede861eeef39d687ed1ff91a",
+          "verifiedFiles": 13
         }
       ]
     },
