@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "key": "assistant",
+  "name": "AI 操作助手",
+  "version": "0.3.0",
+  "minCoreVersion": "v28.10.47",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "assistant.module.js",
+  "style": "assistant.css",
+  "capabilities": [
+    "chat-integrated-tasks",
+    "bound-local-diagnostics",
+    "real-diff-approval",
+    "transaction-rollback",
+    "single-undo",
+    "session-revision-binding",
+    "no-model-context",
+    "readiness-status"
+  ],
+  "notes": "同一聊天診斷後可接續預覽修正；本機結果不傳AI，確認前不套用。報價修正需Quotation0.8.2；沿用Quantity alpha.6。"
+}
