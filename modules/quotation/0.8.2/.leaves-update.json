@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-21T07:22:37.579Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.8.2",
+    "minCoreVersion": "v28.10.47",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 3405,
+        "sha256": "fdc7cee335ad6f86a737d47a804abe40c74f163d458b3893a7c475d1d84a8f82"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 11634,
+        "sha256": "3e835f723c523667736207af7a4bc0ade8180065451357719258cf3e292b532f"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 10901,
+        "sha256": "016a7c4e1a02739d1e91bc6bc9a40a845cdddab80f8505204984bafdfe8259cb"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 50850,
+        "sha256": "85435771be208a96b7eb96bb5588106c6e81f1792c3e4bd203c9903cc204f73b"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8873,
+        "sha256": "68cb6519cc18cc047f11d6b98faaed20a657622e299ef12316b0760c5d235ea0"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 5073,
+        "sha256": "648217f14c4572004801445c72b096d51c1a5dd4e2af223e7481553a0a27dddb"
+      },
+      {
+        "path": "quotation.operations.js",
+        "bytes": 7681,
+        "sha256": "d630371de28407049f5a2e4d4eef69f3670e77d55b06ee008f6979cd4a96884c"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 19379,
+        "sha256": "72b676e9b690f291519870a70a08f25edccbe67291d040e7bed9f30fd3cb6455"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 64023,
+        "sha256": "79628a569d1e9449b2fe3c6e5ca9c1b520df3c040422d0b597e28e1ea8f3d0e5"
+      },
+      {
+        "path": "quotation.visibility.js",
+        "bytes": 1128,
+        "sha256": "923a65f0b546175caff236a4042b070e56475d3f2c69695d3209351a58d247e9"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6381,
+        "sha256": "56193fbf7e35063b6261bc9e74d8cb00caf83218a4d069ebc77af49fc6db9e1f"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 53439,
+        "sha256": "932a3d10da4702dbf3a6dbd343c128e012cca0babfc394841fcca0e0aa36927b"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 37452,
+        "sha256": "ed15de8764dfc4d7095cfcb0b399c3b8e72021df7ff49814f3244e9d894c66de"
+      }
+    ]
+  },
+  "packageHash": "2e023c5467bc939fc23d003c29f4af7068584a624ca60e312c95cc04bfa21a84"
+}
