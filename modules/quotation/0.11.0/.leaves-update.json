@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-22T15:52:54.510Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.11.0",
+    "minCoreVersion": "v28.10.52",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 4375,
+        "sha256": "575f4443363f7fcf4218a071e6d1a4d595527baf99a5e1b4c80654a8b5972254"
+      },
+      {
+        "path": "quotation.agent.js",
+        "bytes": 9617,
+        "sha256": "2c9c6831f1a70fded5836207a6e35e3b9d6d35df08418b3f6faa0a0422e828bc"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 16905,
+        "sha256": "57e0c5c9368085be8f3394c4d179ee626504eac703a2150a22fe3801644d72dc"
+      },
+      {
+        "path": "quotation.cache.js",
+        "bytes": 834,
+        "sha256": "ff7cf4bc5cd4920536feee4925f156e76a08e3ff3a668c1e4617e9409695d839"
+      },
+      {
+        "path": "quotation.calculation.js",
+        "bytes": 4979,
+        "sha256": "1d778781ccde9b3034516881724b705891400fffa7b9c0fbc0808edca6b94aa1"
+      },
+      {
+        "path": "quotation.chat.js",
+        "bytes": 4001,
+        "sha256": "f862aee3c802ce10f2b5456788666f2aab6978c275e728fb20fe2858f20fc01e"
+      },
+      {
+        "path": "quotation.commands.js",
+        "bytes": 2290,
+        "sha256": "82b10e394214568503e8bbdfa36c9a38d24a5e581ee4022ba44517efafdfbacc"
+      },
+      {
+        "path": "quotation.cost-analysis.js",
+        "bytes": 16769,
+        "sha256": "90766d5b46d25f902929edac2692f2d5c0f3d0b1e9569fdc57021769d008e943"
+      },
+      {
+        "path": "quotation.cost-match.css",
+        "bytes": 8323,
+        "sha256": "0b73c53734ab5490e6526781aa38cbc8cc0a9077e9ce60d85a22f8b8bdcef0a6"
+      },
+      {
+        "path": "quotation.cost-match.js",
+        "bytes": 13514,
+        "sha256": "9a171ef17020b019267f4f0d0493a068c43b7904f499cf83c0a2e676125a175f"
+      },
+      {
+        "path": "quotation.cost-rules.js",
+        "bytes": 4678,
+        "sha256": "3cd6698eedef16602d3b116530a41c38247dcbe8938abea29683a46e929faf60"
+      },
+      {
+        "path": "quotation.cost-ui.js",
+        "bytes": 22010,
+        "sha256": "37873c64aba16df82c0a93e6922dc8d429307237aecc4b72d695e29a1ffb3ed9"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 10901,
+        "sha256": "016a7c4e1a02739d1e91bc6bc9a40a845cdddab80f8505204984bafdfe8259cb"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 52274,
+        "sha256": "0bac5380e4828349e8188ef67d7985e32a468791532af14e924071e9932eddfd"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8873,
+        "sha256": "68cb6519cc18cc047f11d6b98faaed20a657622e299ef12316b0760c5d235ea0"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 6139,
+        "sha256": "dac5237ffa2223fe990e050a8fb71e2565add84b988c952562a323e29dd06a67"
+      },
+      {
+        "path": "quotation.operations.js",
+        "bytes": 13472,
+        "sha256": "eab4a4d3f5f1f8ccb7aa278d2e7ebd19528c501412b49f06c665cc6a89c8dcac"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 19379,
+        "sha256": "72b676e9b690f291519870a70a08f25edccbe67291d040e7bed9f30fd3cb6455"
+      },
+      {
+        "path": "quotation.sequence.js",
+        "bytes": 2481,
+        "sha256": "a67e85499320e926b8fa35da690ade9941f1a95c899355c618115959b0696dbb"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 64788,
+        "sha256": "740ebd328e64c94f914590abc86133152f1a69f45d1024ff929fb6227bafcce5"
+      },
+      {
+        "path": "quotation.visibility.js",
+        "bytes": 1128,
+        "sha256": "923a65f0b546175caff236a4042b070e56475d3f2c69695d3209351a58d247e9"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6381,
+        "sha256": "56193fbf7e35063b6261bc9e74d8cb00caf83218a4d069ebc77af49fc6db9e1f"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 55718,
+        "sha256": "1fe09af1b2dc782c551c56e985af63ee8baa009bb18222daf356eee82f39b185"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 40541,
+        "sha256": "2e6f480ddff2de4be099c7297c718d66ca58de8c1d96bb6a61f8787c9002e140"
+      }
+    ]
+  },
+  "packageHash": "b8582affa9a01b8b7165fa39ea4145a85d548d35f7c621423a192dfd4140f30d"
+}
