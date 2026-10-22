@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-22T13:43:16.533Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.10.0",
+    "minCoreVersion": "v28.10.51",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 4247,
+        "sha256": "a95c434b953c670bbb1fb59b73577668f10407784bef007892d4dfe2f7391707"
+      },
+      {
+        "path": "quotation.agent.js",
+        "bytes": 9617,
+        "sha256": "2c9c6831f1a70fded5836207a6e35e3b9d6d35df08418b3f6faa0a0422e828bc"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 15721,
+        "sha256": "b2d6b1c4f580184c7991cfc9c7acca280044f5a2d047d435b37e8335f3453759"
+      },
+      {
+        "path": "quotation.cache.js",
+        "bytes": 834,
+        "sha256": "ff7cf4bc5cd4920536feee4925f156e76a08e3ff3a668c1e4617e9409695d839"
+      },
+      {
+        "path": "quotation.calculation.js",
+        "bytes": 4979,
+        "sha256": "1d778781ccde9b3034516881724b705891400fffa7b9c0fbc0808edca6b94aa1"
+      },
+      {
+        "path": "quotation.commands.js",
+        "bytes": 2290,
+        "sha256": "82b10e394214568503e8bbdfa36c9a38d24a5e581ee4022ba44517efafdfbacc"
+      },
+      {
+        "path": "quotation.cost-analysis.js",
+        "bytes": 14285,
+        "sha256": "42f19d5f8974408960ee89fac96684dfa41d99cf5c859b269346f791ffdb79f9"
+      },
+      {
+        "path": "quotation.cost-match.css",
+        "bytes": 5316,
+        "sha256": "b97f4431a3fa599dbed94fffa6d5e42b3dba8c031651c3a3b21deb26f10583ea"
+      },
+      {
+        "path": "quotation.cost-match.js",
+        "bytes": 13514,
+        "sha256": "9a171ef17020b019267f4f0d0493a068c43b7904f499cf83c0a2e676125a175f"
+      },
+      {
+        "path": "quotation.cost-rules.js",
+        "bytes": 4678,
+        "sha256": "3cd6698eedef16602d3b116530a41c38247dcbe8938abea29683a46e929faf60"
+      },
+      {
+        "path": "quotation.cost-ui.js",
+        "bytes": 19310,
+        "sha256": "9fe824b689c02aba349859703247b8f4e3cdb5b3b01e24e6437463a09372183f"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 10901,
+        "sha256": "016a7c4e1a02739d1e91bc6bc9a40a845cdddab80f8505204984bafdfe8259cb"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 50893,
+        "sha256": "719e2212c4fd1c5d71dd8fe6e1246c5034f383dbb077d6fa17e811d79071e8b0"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8873,
+        "sha256": "68cb6519cc18cc047f11d6b98faaed20a657622e299ef12316b0760c5d235ea0"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 5910,
+        "sha256": "2838777f616aad1643edbb0ba09c5faac5cc47019b84960b345cbb3a77a2fbfd"
+      },
+      {
+        "path": "quotation.operations.js",
+        "bytes": 13472,
+        "sha256": "eab4a4d3f5f1f8ccb7aa278d2e7ebd19528c501412b49f06c665cc6a89c8dcac"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 19379,
+        "sha256": "72b676e9b690f291519870a70a08f25edccbe67291d040e7bed9f30fd3cb6455"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 64788,
+        "sha256": "740ebd328e64c94f914590abc86133152f1a69f45d1024ff929fb6227bafcce5"
+      },
+      {
+        "path": "quotation.visibility.js",
+        "bytes": 1128,
+        "sha256": "923a65f0b546175caff236a4042b070e56475d3f2c69695d3209351a58d247e9"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6381,
+        "sha256": "56193fbf7e35063b6261bc9e74d8cb00caf83218a4d069ebc77af49fc6db9e1f"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 55718,
+        "sha256": "1fe09af1b2dc782c551c56e985af63ee8baa009bb18222daf356eee82f39b185"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 37751,
+        "sha256": "6736e5f1452816b4d14355abcf53bca215aac44d2d6263d154ca29f30f1e56d5"
+      }
+    ]
+  },
+  "packageHash": "51f740009c20f44fedf7aec3e5589252b92431bc62a0656f7f9c74bffb54ce2a"
+}
