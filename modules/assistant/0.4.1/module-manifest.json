@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "key": "assistant",
+  "name": "AI 操作助手",
+  "version": "0.4.1",
+  "minCoreVersion": "v28.10.50",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "assistant.module.js",
+  "style": "assistant.css",
+  "capabilities": [
+    "chat-integrated-tasks",
+    "bound-local-diagnostics",
+    "real-diff-approval",
+    "transaction-rollback",
+    "single-undo",
+    "session-revision-binding",
+    "no-model-context",
+    "readiness-status",
+    "short-followup-routing",
+    "focused-quotation-target",
+    "formula-repair-preview",
+    "bounded-ai-tool-loop",
+    "shared-task-dispatch-budget",
+    "analysis-to-confirmation",
+    "native-chat-typography",
+    "deterministic-cell-commands",
+    "shared-local-findings",
+    "local-decision-fallback"
+  ],
+  "notes": "明確指令不依賴AI格式；本機檢查可接續修改；AI格式修訂與失敗終態改善。需要Quotation0.9.1。"
+}
