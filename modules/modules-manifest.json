@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-23T13:45:36.208Z",
+  "generatedAt": "2026-10-23T18:34:08.964Z",
   "modules": {
     "quotation": {
       "label": "AI 報價中心",
@@ -201,7 +201,7 @@
       "description": "純瀏覽器 VFF 分批解析、OPFS 本機暫存、合批預覽、原始面參考面積；模型與資料不離開裝置。正式算量未獨立驗證。",
       "minCoreVersion": "v28.10.37",
       "stableVersion": "2.1.0-alpha.6",
-      "sandboxVersion": "2.1.0-alpha.6",
+      "sandboxVersion": "2.1.0-alpha.7",
       "versions": {
         "0.1.0": {
           "manifest": "quantity/0.1.0/module-manifest.json",
@@ -235,6 +235,11 @@
           "manifest": "quantity/2.1.0-alpha.6/module-manifest.json",
           "status": "sandbox-candidate",
           "packageHash": "c5104e1a32b22c5215d4fed48bb6ed8c39e1311c4a69a84f94b7d6300e3899f9"
+        },
+        "2.1.0-alpha.7": {
+          "manifest": "quantity/2.1.0-alpha.7/module-manifest.json",
+          "status": "sandbox-candidate",
+          "packageHash": "788fef42711194f5e34580ec6e0b72d9eea242d00a6eb199286f3c93a88f768b"
         }
       },
       "sandboxHistory": [
@@ -246,6 +251,16 @@
           "to": "2.1.0-alpha.6",
           "packageHash": "c5104e1a32b22c5215d4fed48bb6ed8c39e1311c4a69a84f94b7d6300e3899f9",
           "previousIndexSha": "019fb3e9d51866875a886613ecd8f459f64e7c59",
+          "verifiedFiles": 7
+        },
+        {
+          "id": "c9e16e5f-6f32-4200-8808-0eadfcbb0099",
+          "at": "2026-10-23T18:34:08.964Z",
+          "action": "install",
+          "from": "2.1.0-alpha.6",
+          "to": "2.1.0-alpha.7",
+          "packageHash": "788fef42711194f5e34580ec6e0b72d9eea242d00a6eb199286f3c93a88f768b",
+          "previousIndexSha": "7663284130c12d52f10e1df27fe4d05ce3e3e25d",
           "verifiedFiles": 7
         }
       ]
