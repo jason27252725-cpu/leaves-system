@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-23T03:54:36.052Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.12.0",
+    "minCoreVersion": "v28.10.53",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 4596,
+        "sha256": "3a80aec8de3f246a40f2706793f8cf7e774921c73a71ea15bdd6b42dfcd5be90"
+      },
+      {
+        "path": "quotation.agent.js",
+        "bytes": 9618,
+        "sha256": "0d30ddae8329951b391e37b88106949eb5964e8642d407d190cbdcd8329b905c"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 17098,
+        "sha256": "233169dc52f1e7f409c668a579768f3e0ca1d559243df49a67ec35a03d49a939"
+      },
+      {
+        "path": "quotation.cache.js",
+        "bytes": 834,
+        "sha256": "ff7cf4bc5cd4920536feee4925f156e76a08e3ff3a668c1e4617e9409695d839"
+      },
+      {
+        "path": "quotation.calculation.js",
+        "bytes": 4979,
+        "sha256": "1d778781ccde9b3034516881724b705891400fffa7b9c0fbc0808edca6b94aa1"
+      },
+      {
+        "path": "quotation.card-selection.js",
+        "bytes": 6352,
+        "sha256": "9dfd670d51d49ed5209274b21539db128b3b5a79225883526374a353d118e47e"
+      },
+      {
+        "path": "quotation.chat.js",
+        "bytes": 4001,
+        "sha256": "f862aee3c802ce10f2b5456788666f2aab6978c275e728fb20fe2858f20fc01e"
+      },
+      {
+        "path": "quotation.commands.js",
+        "bytes": 2290,
+        "sha256": "82b10e394214568503e8bbdfa36c9a38d24a5e581ee4022ba44517efafdfbacc"
+      },
+      {
+        "path": "quotation.cost-analysis.js",
+        "bytes": 21693,
+        "sha256": "c4dc5c265cd4186f7a5831e8dc9bcdc302f56cfa9603461a1c5dd1cdf1d50974"
+      },
+      {
+        "path": "quotation.cost-match.css",
+        "bytes": 8323,
+        "sha256": "0b73c53734ab5490e6526781aa38cbc8cc0a9077e9ce60d85a22f8b8bdcef0a6"
+      },
+      {
+        "path": "quotation.cost-match.js",
+        "bytes": 13688,
+        "sha256": "dc0dd4104ae9661131d5e50fd35fd5b16fba128d1e38aa672b4f3cdc403b1e4f"
+      },
+      {
+        "path": "quotation.cost-rules.js",
+        "bytes": 4678,
+        "sha256": "3cd6698eedef16602d3b116530a41c38247dcbe8938abea29683a46e929faf60"
+      },
+      {
+        "path": "quotation.cost-ui.js",
+        "bytes": 36902,
+        "sha256": "9395f07b984b1396b4782d7b72c294a7ef2cec681d937eb5cc1135d2335a65a7"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 10901,
+        "sha256": "016a7c4e1a02739d1e91bc6bc9a40a845cdddab80f8505204984bafdfe8259cb"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 62807,
+        "sha256": "20570e8ad32a9b8b55d3a007c39be0fa77f60f9be5c23054ab74375ea7b6d109"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8874,
+        "sha256": "7669f6540875cbfec5a7f6634b87afd898f728897b3a5afbe5c25481f9cbff9f"
+      },
+      {
+        "path": "quotation.hidden.js",
+        "bytes": 2358,
+        "sha256": "9ae58bfa2f3d4b08015f4f981de867b8e0eb45882ca139c5cc6d2b06c71916bf"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 6388,
+        "sha256": "5ea7bca865708c64eb837d01b566378794e1c9fedd353930a5cf35649cf7c64f"
+      },
+      {
+        "path": "quotation.objects.js",
+        "bytes": 12582,
+        "sha256": "c66912be65d32ba6eb3af971f9c28aa71a05a2a8a542719012cc72bedb52836f"
+      },
+      {
+        "path": "quotation.operations.js",
+        "bytes": 14665,
+        "sha256": "c8bba4a6a77e79779f6e0ead560eebd0ad8fb96708e76e6b7684ea8ef6aef73a"
+      },
+      {
+        "path": "quotation.review.css",
+        "bytes": 10531,
+        "sha256": "303914c5e2040072a062d96e307cc6d676fc7699fd195ff33824d8522133b8ca"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 19379,
+        "sha256": "72b676e9b690f291519870a70a08f25edccbe67291d040e7bed9f30fd3cb6455"
+      },
+      {
+        "path": "quotation.sequence.js",
+        "bytes": 2481,
+        "sha256": "a67e85499320e926b8fa35da690ade9941f1a95c899355c618115959b0696dbb"
+      },
+      {
+        "path": "quotation.sheet-view.js",
+        "bytes": 6683,
+        "sha256": "8085edfc286e7aa226fd652d631b76165e6e1dcb7699fd1ee79825ec41d89092"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 64788,
+        "sha256": "740ebd328e64c94f914590abc86133152f1a69f45d1024ff929fb6227bafcce5"
+      },
+      {
+        "path": "quotation.visibility.js",
+        "bytes": 1254,
+        "sha256": "014753a5501237d32cd1808c3340a5bc6b6b542df98f68b4f766b2114e919fb6"
+      },
+      {
+        "path": "quotation.window-stack.js",
+        "bytes": 4385,
+        "sha256": "df9d7ed476df854fc6f8eeec8d634355fb4f6923ff9153dacb9fb729da32e442"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6757,
+        "sha256": "19c8c25b9ad4c08b4d583c982ebd2794a97c0a50bf63a482f7904a7964f72ef4"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 57296,
+        "sha256": "4399c848e603b7b0841d4760bbe103127bd4743c549ef0bc1e41b39ba90f12d6"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 39513,
+        "sha256": "347da1f1e22bb3077eb002d8c084192880f8967ee99d92a0f20505dc91f93280"
+      }
+    ]
+  },
+  "packageHash": "996085151527abefb2d992ade7850ebfc50c0c3e7ff5653837cfa54b9a1a90d0"
+}
