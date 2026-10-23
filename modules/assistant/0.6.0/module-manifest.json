@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "key": "assistant",
+  "name": "AI 操作助手",
+  "version": "0.6.0",
+  "minCoreVersion": "v28.10.53",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "assistant.module.js",
+  "style": "assistant.css",
+  "capabilities": [
+    "chat-integrated-tasks",
+    "bound-local-diagnostics",
+    "real-diff-approval",
+    "transaction-rollback",
+    "single-undo",
+    "session-revision-binding",
+    "no-model-context",
+    "readiness-status",
+    "short-followup-routing",
+    "focused-quotation-target",
+    "formula-repair-preview",
+    "bounded-ai-tool-loop",
+    "shared-task-dispatch-budget",
+    "analysis-to-confirmation",
+    "native-chat-typography",
+    "deterministic-cell-commands",
+    "shared-local-findings",
+    "local-decision-fallback",
+    "progressive-verified-execution",
+    "issue-attachments",
+    "native-chat-progress",
+    "bulk-issue-attachments",
+    "clarification-forms",
+    "streamed-task-narrative"
+  ],
+  "notes": "批次問題附件、結構化澄清、真實串流說明，所有修改仍需完整比較及確認。"
+}
