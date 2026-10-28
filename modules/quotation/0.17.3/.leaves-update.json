@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-28T11:32:38.684Z",
+  "package": {
+    "schemaVersion": 1,
+    "module": "quotation",
+    "version": "0.17.3",
+    "minCoreVersion": "v28.10.64",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "module-manifest.json",
+        "bytes": 4682,
+        "sha256": "a8f20011e5acab54195b896dbe27ea8dd25b773f0503881dd03115bbe1f0a174"
+      },
+      {
+        "path": "quotation.agent.js",
+        "bytes": 9618,
+        "sha256": "0d30ddae8329951b391e37b88106949eb5964e8642d407d190cbdcd8329b905c"
+      },
+      {
+        "path": "quotation.assistant.js",
+        "bytes": 17217,
+        "sha256": "229b7c787573efd35fa8d3e427014be68b6658c230a0d9e180b0b074517ef137"
+      },
+      {
+        "path": "quotation.cache.js",
+        "bytes": 834,
+        "sha256": "ff7cf4bc5cd4920536feee4925f156e76a08e3ff3a668c1e4617e9409695d839"
+      },
+      {
+        "path": "quotation.calculation.js",
+        "bytes": 4979,
+        "sha256": "1d778781ccde9b3034516881724b705891400fffa7b9c0fbc0808edca6b94aa1"
+      },
+      {
+        "path": "quotation.card-selection.js",
+        "bytes": 6352,
+        "sha256": "9dfd670d51d49ed5209274b21539db128b3b5a79225883526374a353d118e47e"
+      },
+      {
+        "path": "quotation.chat.js",
+        "bytes": 5386,
+        "sha256": "de229a8f431458b903d451f7cf55781899f2cd1e86f88712b31c4c0b40be8364"
+      },
+      {
+        "path": "quotation.commands.js",
+        "bytes": 2290,
+        "sha256": "82b10e394214568503e8bbdfa36c9a38d24a5e581ee4022ba44517efafdfbacc"
+      },
+      {
+        "path": "quotation.cost-analysis.js",
+        "bytes": 22987,
+        "sha256": "a82235cb1fda3175d6854cbacd3b5266343f5bd7ec1deb0c9611a9facce943f5"
+      },
+      {
+        "path": "quotation.cost-center-v2.js",
+        "bytes": 31998,
+        "sha256": "22d917b541ea7200fb62ea9522906d70eb43b11113119b8c942825c891d995d7"
+      },
+      {
+        "path": "quotation.cost-center.js",
+        "bytes": 20604,
+        "sha256": "ae42109e3747cbaf4b6614ff5461ed8d183a3da6e4fcddd1cb8671c0f596d1e3"
+      },
+      {
+        "path": "quotation.cost-match.css",
+        "bytes": 8323,
+        "sha256": "0b73c53734ab5490e6526781aa38cbc8cc0a9077e9ce60d85a22f8b8bdcef0a6"
+      },
+      {
+        "path": "quotation.cost-match.js",
+        "bytes": 19668,
+        "sha256": "cac085ca28e823579c95b8b48b24b1674a17ff0ffd63eb11497a348c0cfbac4f"
+      },
+      {
+        "path": "quotation.cost-rules.js",
+        "bytes": 4685,
+        "sha256": "352694ecb16acbb129c32dccbde7449ffa9e8dc7c4500262dede8a6860235ebe"
+      },
+      {
+        "path": "quotation.cost-ui.js",
+        "bytes": 48890,
+        "sha256": "97ae7400c4795fc2bcb52ba243d8fb1e304ef48a0f204e7f4bda522e715ff1f6"
+      },
+      {
+        "path": "quotation.cost-updates.js",
+        "bytes": 4537,
+        "sha256": "b2147cfc6796c7951feb13f15621766aed6902dc1ec7c900dae18f27e49f50a9"
+      },
+      {
+        "path": "quotation.cost.js",
+        "bytes": 13003,
+        "sha256": "627f80ab7e984fd53c08c551f44eaa65f7dbd70eb39adc29d0bc03b3b04fe102"
+      },
+      {
+        "path": "quotation.css",
+        "bytes": 81374,
+        "sha256": "e12ea07945ac47f67e65850716809234946b7d817a86d0ba17b5fab30a59c357"
+      },
+      {
+        "path": "quotation.engine.js",
+        "bytes": 8874,
+        "sha256": "83c2e8d3d0eb1cb68f35a11ab7bfa1940ccebd8974654e60c688f1f7175bcb1b"
+      },
+      {
+        "path": "quotation.hidden.js",
+        "bytes": 2358,
+        "sha256": "9ae58bfa2f3d4b08015f4f981de867b8e0eb45882ca139c5cc6d2b06c71916bf"
+      },
+      {
+        "path": "quotation.module.js",
+        "bytes": 8180,
+        "sha256": "51298841cae2222a325ac121eac9cfe3a24500ebe71d7b16a28f524dd5cea3eb"
+      },
+      {
+        "path": "quotation.objects.js",
+        "bytes": 12582,
+        "sha256": "c66912be65d32ba6eb3af971f9c28aa71a05a2a8a542719012cc72bedb52836f"
+      },
+      {
+        "path": "quotation.operations.js",
+        "bytes": 14809,
+        "sha256": "128681bbd99f253fbd4aa8fa4f5be6a7007e593a4596c32b871b2a74d1b26908"
+      },
+      {
+        "path": "quotation.review-state.js",
+        "bytes": 2169,
+        "sha256": "02a660c86077168640a672638f73098cfbe8b6e37dd2f13ec9c523157aef96d0"
+      },
+      {
+        "path": "quotation.review.css",
+        "bytes": 13827,
+        "sha256": "10c429192b979374226ddf7d06e1a127f3dacf71620ea2b447147b60179c15f4"
+      },
+      {
+        "path": "quotation.revision.js",
+        "bytes": 21779,
+        "sha256": "78be81c8ca42b9e6623672e1c059b8dc18631fa34045ca43d294f1259c671db4"
+      },
+      {
+        "path": "quotation.sequence.js",
+        "bytes": 2481,
+        "sha256": "a67e85499320e926b8fa35da690ade9941f1a95c899355c618115959b0696dbb"
+      },
+      {
+        "path": "quotation.sheet-view.js",
+        "bytes": 6683,
+        "sha256": "8085edfc286e7aa226fd652d631b76165e6e1dcb7699fd1ee79825ec41d89092"
+      },
+      {
+        "path": "quotation.ui.js",
+        "bytes": 48306,
+        "sha256": "d22293ff26716211f2d878a67ade2ca4eed06fbba3aac8dd62c6b65b1ba6361e"
+      },
+      {
+        "path": "quotation.visibility.js",
+        "bytes": 1254,
+        "sha256": "014753a5501237d32cd1808c3340a5bc6b6b542df98f68b4f766b2114e919fb6"
+      },
+      {
+        "path": "quotation.window-stack.js",
+        "bytes": 4385,
+        "sha256": "df9d7ed476df854fc6f8eeec8d634355fb4f6923ff9153dacb9fb729da32e442"
+      },
+      {
+        "path": "quotation.window.js",
+        "bytes": 6757,
+        "sha256": "775a2f501f1e3cb6baebb6d481fb3cda424006fef5437511f141fb4ddf1f9412"
+      },
+      {
+        "path": "quotation.workbook.js",
+        "bytes": 57630,
+        "sha256": "292423f2aac7b48ff0bab6a335b51dbb4721c31048ca1e1be1cf4d9e093177fc"
+      },
+      {
+        "path": "quotation.workspace.js",
+        "bytes": 44989,
+        "sha256": "69eb5750f11af84e5a6308c83324c8b310b9bebf4b6f557309998b0f84271732"
+      }
+    ]
+  },
+  "packageHash": "41eded148edf6a99f0ae031d7605968950e618036a3836fecafe98fa3acb09dd"
+}
