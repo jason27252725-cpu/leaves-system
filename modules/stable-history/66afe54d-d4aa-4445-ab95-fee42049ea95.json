@@ -1,0 +1,41 @@
+{
+  "id": "66afe54d-d4aa-4445-ab95-fee42049ea95",
+  "at": "2026-10-28T12:15:16.679Z",
+  "action": "publish",
+  "coreVersion": "v28.10.64",
+  "from": {
+    "quantity": "2.1.0-alpha.7",
+    "quotation": "0.17.2",
+    "assistant": "0.7.0"
+  },
+  "to": {
+    "quantity": "2.1.0-alpha.7",
+    "quotation": "0.17.3",
+    "assistant": "0.7.0"
+  },
+  "checks": [
+    {
+      "module": "quantity",
+      "version": "2.1.0-alpha.7",
+      "files": 15,
+      "minimum": "v28.10.58",
+      "packageHash": "788fef42711194f5e34580ec6e0b72d9eea242d00a6eb199286f3c93a88f768b"
+    },
+    {
+      "module": "quotation",
+      "version": "0.17.3",
+      "files": 34,
+      "minimum": "v28.10.64",
+      "packageHash": "41eded148edf6a99f0ae031d7605968950e618036a3836fecafe98fa3acb09dd"
+    },
+    {
+      "module": "assistant",
+      "version": "0.7.0",
+      "files": 3,
+      "minimum": "v28.10.58",
+      "packageHash": "bb5d2253107ac5511af87a317af8670078223c46f163c476227f50a15b897df1"
+    }
+  ],
+  "preflightHash": "63d7fede04b41c8f0d93c671564aed49b2697798fabe6f24c9b6e760173a731b",
+  "previousIndexSha": "9022594d83662c686e17b14aeaf3aaa064a681c0"
+}
