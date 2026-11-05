@@ -1,0 +1,28 @@
+import {el,button,select,busy,errorText} from '../shared/dom.mjs';
+import {createIdentityClient} from '../identity/identity-client.mjs';
+import {inspectWebsiteHtml} from './website-bundle.mjs';
+import {mountPublicationControls} from './publication-controls.mjs';
+export function mountSandboxHtml(root,api){
+ let disposed=false,sequence=0,verifiedUntil=0,bundle=null,processing=false,remote=null,controls=null;
+ const epoch=api.epoch(),own=api.person()?.environment;
+ const target=select('更新目的地',[['sandbox','沙盒版'],['stable','正式版']],own),status=el('p',{role:'status'}),progress=el('progress',{max:5,value:0}),progressText=el('p',{},'尚未選擇檔案'),authStatus=el('p',{},'尚未驗證'),password=el('input',{type:'password',autocomplete:'current-password',placeholder:'輸入所選環境的最高管理員通行碼','aria-label':'最高管理員通行碼'}),input=el('input',{type:'file',accept:'.html',hidden:true});
+ const check=()=>{if(disposed||api.epoch()!==epoch||!api.can('technical.release')||api.person()?.role!=='owner')throw Error('登入或發布權限已變更');};
+ const authorize=()=>{check();if(Date.now()>=verifiedUntil)throw Error('請先驗證所選環境的最高管理員身分');};
+ const call=(body,write=false)=>{check();return target.input.value===own?api.publisher(body,write):remote?remote.service('publisher',body,{mutation:write}):Promise.reject(Error('請先驗證正式版最高管理員身分'));};
+ const step=(n,text)=>{if(n===null)progress.removeAttribute('value');else progress.value=n;progressText.textContent=text;};
+ function mountControls(){controls?.dispose();controls=mountPublicationControls(root,{call,check,authorize,environment:target.input.value,onProgress:step});}
+ function resetTarget(){sequence++;verifiedUntil=0;password.value='';authStatus.textContent='請驗證'+(target.input.value==='stable'?'正式版':'沙盒版')+'最高管理員身分';controls?.dispose();controls=null;if(remote){const old=remote;remote=null;old.logout().catch(()=>old.forget());}stage.textContent='上傳'+(target.input.value==='stable'?'正式版候選':'沙盒');if(target.input.value===own)mountControls();}
+ target.input.onchange=()=>{if(processing){target.input.value=target.input.dataset.active||own;return;}target.input.dataset.active=target.input.value;resetTarget();};
+ async function inspect(file){if(processing)return;const at=++sequence;bundle=null;verifiedUntil=0;controls?.invalidate();processing=true;target.input.disabled=true;try{check();step(0,'本機逐檔核對中');const result=await inspectWebsiteHtml(file,n=>step(n,'檔案校驗 '+Math.round(n*100)+'%'));check();if(at!==sequence)return;bundle=result;status.textContent='已核對 '+file.name+' · Core '+result.coreVersion+' · 沙盒／正式版各自具備完整程式。';step(1,'檔案已核對，等待身分驗證');authStatus.textContent='檔案已變更，請重新驗證';}catch(e){if(at===sequence)status.textContent=errorText(e);}finally{processing=false;target.input.disabled=false;}}
+ const drop=button('將整站 HTML 拖曳至此，或點此選擇 HTML',()=>input.click(),'li-package-drop');drop.append(el('small',{},'一份完整更新檔，內含沙盒與正式版；公司資料不包含在內'));
+ input.onchange=()=>{if(input.files?.[0])inspect(input.files[0]);input.value='';};drop.ondragover=e=>e.preventDefault();drop.ondrop=e=>{e.preventDefault();if(e.dataTransfer.files.length===1)inspect(e.dataTransfer.files[0]);else if(!processing){sequence++;bundle=null;verifiedUntil=0;controls?.invalidate();step(0,'檔案數量不符');status.textContent='請一次選擇一個 HTML';}};
+ const verify=button('驗證身分',()=>busy(verify,authStatus,async()=>{check();if(processing)throw Error('檔案處理中');const at=sequence,environment=target.input.value,code=password.value;password.value='';verifiedUntil=0;processing=true;target.input.disabled=true;try{if(environment===own)await api.reauthenticate(code);else{
+  if(remote)await remote.logout();remote=createIdentityClient({config:{environment,endpoint:'https://'+(environment==='stable'?'dadlmrmzupmmzthlvrmo':'gjeenpvcvcmfnwlvmriv')+'.supabase.co/functions/v1/leaves-identity-gateway'}});
+  const s=await remote.login(code,'網站發布窗口');if(s.person.role!=='owner'||!s.person.permissions?.['technical.release']){await remote.logout();remote=null;throw Error('此環境需要最高管理員身分');}
+ }check();if(at!==sequence)throw Error('目的地或檔案已變更');verifiedUntil=Date.now()+300000;authStatus.textContent='身分已驗證，有效五分鐘';if(!controls)mountControls();}finally{processing=false;target.input.disabled=false;}}));
+ const stage=button('上傳'+(own==='stable'?'正式版候選':'沙盒'),()=>busy(stage,status,async()=>{authorize();if(processing||!bundle)throw Error('請先選擇完整更新 HTML');processing=true;target.input.disabled=true;const at=sequence,environment=target.input.value,selected=bundle.bundles[environment];try{step(null,'上傳並核對伺服器檔案中');const r=await call({action:'stage',payload:selected},true);check();if(at!==sequence)throw Error('檔案已變更');controls.offer(r.releaseId);status.textContent='已上傳 '+r.releaseId+'；等待 GitHub Pages 部署後，開啟版本測試，再按「核對並發布」。入口尚未切換。';step(2,'候選已保存，等待部署與發布核對');}catch(e){step(1,'上傳結果未確認；可重新核對相同更新檔，服務會拒絕不同內容覆寫');throw e;}finally{processing=false;target.input.disabled=false;}}),'li-primary');
+ root.classList.add('li-release-console');root.replaceChildren(el('h1',{},'正式版／沙盒'),el('p',{},'Core v29.0.0 · 上傳 → 核對 → 確認發布 → 可回滾'),target.node,input,drop,status,el('section',{class:'li-auth-card'},el('h2',{},'最高管理員身分驗證'),el('div',{class:'li-auth-row'},password,verify),authStatus),el('section',{class:'li-progress-card'},progress,progressText),stage);
+ if(own==='stable')target.input.querySelector('option[value="sandbox"]').disabled=true;
+ mountControls();
+ return{dispose(){disposed=true;sequence++;verifiedUntil=0;password.value='';bundle=null;controls?.dispose();controls=null;if(remote){const old=remote;remote=null;old.logout().catch(()=>old.forget());}root.replaceChildren();}};
+}
