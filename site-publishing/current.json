@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "environment": "stable",
+  "releaseId": "identity-v29-release-20261105-2",
+  "entry": "site-releases/stable/identity-v29-release-20261105-2/candidates/core/index.html",
+  "manifestHash": "1121ec5e3cf4812dc6b9b3eaf9e268e55587551e79c41b79ac2f4d67077557fb",
+  "operationId": "84b886b07117a9e75bad35a8d57859a18a6e350b995265e84df033851a185c7d",
+  "previousRootSha": "ac8277e4824f4c4419c0d389ef61e4aa9b0dbfa1",
+  "previousCommit": "fec59a6ec2431d39d1aa410f69b556fd5ebb273b",
+  "previousReleaseId": null,
+  "createdAt": "2026-11-06T17:50:56.469Z",
+  "history": [
+    {
+      "releaseId": "identity-v29-release-20261105-2",
+      "operation": "publish",
+      "previousCommit": "fec59a6ec2431d39d1aa410f69b556fd5ebb273b",
+      "createdAt": "2026-11-06T17:50:56.469Z"
+    }
+  ]
+}
