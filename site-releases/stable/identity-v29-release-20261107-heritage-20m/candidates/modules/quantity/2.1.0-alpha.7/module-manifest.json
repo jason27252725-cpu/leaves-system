@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "key": "quantity",
+  "name": "3D 本機材質確認工作台",
+  "version": "2.1.0-alpha.7",
+  "minCoreVersion": "v28.10.58",
+  "permissions": [
+    "member",
+    "admin",
+    "owner"
+  ],
+  "entry": "quantity.module.js",
+  "style": "quantity.css",
+  "assets": [
+    "quantity.worker.js"
+  ],
+  "capabilities": [
+    "local-only-vff-stream",
+    "opfs-model-cache",
+    "per-definition-parse",
+    "bounded-preview",
+    "material-selection",
+    "material-review-draft",
+    "wasd-walk",
+    "resizable-workspace",
+    "cancel-and-clear",
+    "source-parsed-not-validated",
+    "local-command-bridge",
+    "confirmed-review-edit",
+    "single-undo",
+    "composer-tool-strip",
+    "assistant-tool-adapter"
+  ],
+  "notes": "統一黑灰霧面工作介面；原本本機解析與未驗證算量邊界保留。"
+}
