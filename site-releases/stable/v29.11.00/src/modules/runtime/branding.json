@@ -1,0 +1,38 @@
+{
+  "bgList": [
+    "https://www.leaves-id.com/upload/portfolio/260617-024645.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260617-024643.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260617-024640.jpg",
+    "https://www.leaves-id.com/upload/portfolio/220805-023752.jpg",
+    "https://www.leaves-id.com/upload/portfolio/220805-023747.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260617-024635.jpg",
+    "https://www.leaves-id.com/upload/portfolio/250421-024195.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260617-024632.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260617-024629.jpg",
+    "https://www.leaves-id.com/upload/portfolio/251008-024212.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260420-024485.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260420-024486.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260420-024488.jpg",
+    "https://www.leaves-id.com/upload/portfolio/260420-024491.jpg"
+  ],
+  "uiSettings": {
+    "pc": {
+      "blur": 32,
+      "opacity": 0.85,
+      "fontScale": 1,
+      "pcDrawerW": 880,
+      "bodyWeight": 400,
+      "titleWeight": 600
+    },
+    "ipad": {
+      "blur": 28,
+      "opacity": 0.88,
+      "fontScale": 1.05
+    },
+    "mobile": {
+      "blur": 24,
+      "opacity": 0.92,
+      "fontScale": 0.95
+    }
+  }
+}
