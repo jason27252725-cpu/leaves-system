@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-10T12:00:00.000Z",
+  "package": {
+    "schemaVersion": 2,
+    "module": "workforce",
+    "version": "0.1.0-alpha.29",
+    "minCoreVersion": "v29.0.0",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "company-form.mjs",
+        "bytes": 63915,
+        "sha256": "0cce69342e36b487b38d664f9832cab89007d7b743e48f471a4e39a1eeee8d08"
+      },
+      {
+        "path": "entry.mjs",
+        "bytes": 340,
+        "sha256": "a114f8f85cbc917d2d51931c54f54fa3938d3982a8f972b4a260b1c3d00e28d2"
+      },
+      {
+        "path": "history-model.mjs",
+        "bytes": 2686,
+        "sha256": "f290441ef9665fe302f44f8f757e69338d42cda01517c0eb903cd640c66a56b5"
+      },
+      {
+        "path": "history.mjs",
+        "bytes": 5346,
+        "sha256": "1cedb72fa7f71fff2e35af9c622df97c6957c9f103a6437f94902874ff683f4f"
+      },
+      {
+        "path": "model.mjs",
+        "bytes": 4438,
+        "sha256": "f93a91f11df7b84524eb43e4f40089d319299d0212ba4259496e4d8be8c2d244"
+      },
+      {
+        "path": "module-manifest.json",
+        "bytes": 306,
+        "sha256": "bfba48cd20e58163d74e0d62e7f3933d74e99bd80971664abb940bbc158f9c56"
+      },
+      {
+        "path": "monthly.mjs",
+        "bytes": 7661,
+        "sha256": "4b81c7edfda0eca8bfa413e0c11f3ba48aeeb2d5e6627fb279e272ada2138657"
+      },
+      {
+        "path": "report-ai.mjs",
+        "bytes": 1601,
+        "sha256": "07a63dad0a24708148ef667ff54b5459a1c7b4c37eaa5d34473d58b2bf034393"
+      },
+      {
+        "path": "shared/dom.mjs",
+        "bytes": 7626,
+        "sha256": "07d9302540664b35681434bd8f6d879508a5ff7fa378820c115dac76abdcd0bb"
+      },
+      {
+        "path": "workforce.mjs",
+        "bytes": 27079,
+        "sha256": "6129ef0b71948b351d809f1db51df7374c14f91e1d7053ada2e3a5c4391bd118"
+      },
+      {
+        "path": "xlsx.mjs",
+        "bytes": 7290,
+        "sha256": "0bf4f0a9c56332acff1f6a2dec49d00dc978f6795ba9b6eb6be79cbb144dbc6a"
+      }
+    ],
+    "contract": {
+      "environment": "stable",
+      "apiVersion": 1,
+      "maxCoreVersion": "v29.0.0",
+      "activation": "safe-point",
+      "backend": {
+        "identityApi": 1,
+        "schemaRevision": 17,
+        "capabilities": [
+          "module-contract-v2",
+          "progress-leave-v1",
+          "monthly-layouts-v1",
+          "company-forms-v1",
+          "month-context-v1"
+        ]
+      }
+    }
+  },
+  "packageHash": "d31e0eeda07f4365f44f0f024e646b1fa68b39f872f79db7f168562fd70b3c3b"
+}

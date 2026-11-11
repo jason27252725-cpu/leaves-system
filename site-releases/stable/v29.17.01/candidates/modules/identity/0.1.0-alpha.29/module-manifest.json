@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "key": "identity",
+  "version": "0.1.0-alpha.29",
+  "minCoreVersion": "v29.0.0",
+  "entry": "entry.mjs",
+  "sharedApi": {
+    "specifier": "leaves:core-api/v1",
+    "version": 1
+  },
+  "stylesFromCore": [
+    "src/modules/identity/identity.css"
+  ],
+  "productionReady": false
+}

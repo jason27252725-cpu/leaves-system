@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "modules": {
+    "quotation": {
+      "sandboxVersion": null,
+      "stableVersion": "0.20.1",
+      "versions": {
+        "0.20.1": {
+          "manifest": "quotation/0.20.1/module-manifest.json",
+          "status": "stable",
+          "packageHash": "e0cf0c465a5d2ec45a105edd493581f7ed1c51b6f6dac0897a69ceba553a730e"
+        }
+      },
+      "sandboxHistory": [],
+      "label": "AI 報價中心",
+      "minCoreVersion": "v28.10.66"
+    },
+    "assistant": {
+      "sandboxVersion": null,
+      "stableVersion": "0.7.0",
+      "versions": {
+        "0.7.0": {
+          "manifest": "assistant/0.7.0/module-manifest.json",
+          "status": "stable",
+          "packageHash": "bb5d2253107ac5511af87a317af8670078223c46f163c476227f50a15b897df1"
+        }
+      },
+      "sandboxHistory": [],
+      "label": "AI 操作助手",
+      "minCoreVersion": "v28.10.58"
+    },
+    "quantity": {
+      "sandboxVersion": null,
+      "stableVersion": "2.1.0-alpha.9",
+      "versions": {
+        "2.1.0-alpha.9": {
+          "manifest": "quantity/2.1.0-alpha.9/module-manifest.json",
+          "status": "stable",
+          "packageHash": "5eaaa73f623a17a5eb613c0823be343b3af61f6e63bb48370691fade79fa0f21"
+        }
+      },
+      "sandboxHistory": [],
+      "label": "3D 算量引擎",
+      "minCoreVersion": "v28.10.58"
+    },
+    "identity": {
+      "sandboxVersion": null,
+      "stableVersion": "0.1.0-alpha.29",
+      "versions": {
+        "0.1.0-alpha.29": {
+          "manifest": "identity/0.1.0-alpha.29/module-manifest.json",
+          "packageHash": "6ae4e19fe29472f51e9ddc6a7c4201ce0b90bb337d7e34a6edee4208deb39fab"
+        }
+      },
+      "sandboxHistory": [],
+      "label": "人員與權限",
+      "minCoreVersion": "v29.0.0"
+    },
+    "workforce": {
+      "sandboxVersion": null,
+      "stableVersion": "0.1.0-alpha.29",
+      "versions": {
+        "0.1.0-alpha.29": {
+          "manifest": "workforce/0.1.0-alpha.29/module-manifest.json",
+          "packageHash": "d31e0eeda07f4365f44f0f024e646b1fa68b39f872f79db7f168562fd70b3c3b"
+        }
+      },
+      "sandboxHistory": [],
+      "label": "進度與報表",
+      "minCoreVersion": "v29.0.0"
+    }
+  }
+}

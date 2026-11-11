@@ -1,0 +1,65 @@
+import {el,button,select,dialog,busy,errorText} from '../shared/dom.mjs';
+export function mountPublicationControls(root,{call,check=()=>{},authorize=()=>{},environment,onProgress=()=>{},pageUrl=import.meta.url,retryDelays=[5000,10000,20000,...Array(17).fill(30000)]}){
+ let disposed=false,sequence=0,confirmation=null;
+ let pollGeneration=0, pollTimer=null, publishedId=null;
+ function stopPolling(){
+  pollGeneration++;
+  clearTimeout(pollTimer);
+  pollTimer=null;
+ }
+ function verifyDeployment(expectedId,showProgress){
+  stopPolling();
+  const generation=pollGeneration;
+  const active=()=>!disposed&&generation===pollGeneration;
+  const report=(message,step)=>{
+   status.textContent=message;
+   if(showProgress)onProgress(step,message);
+  };
+  async function attempt(retry){
+   if(!active())return;
+   try{
+    valid();
+    const result=await call({action:'verify-public'});
+    if(!active())return;
+    valid();
+    if(result.publicVerified!==true)throw Error('公開入口核對未完成');
+    if(expectedId&&result.releaseId!==expectedId){
+     report('發布版本已變更，請重新讀取版本。',4);
+     return;
+    }
+    report('公開入口已核對：'+result.releaseId,5);
+   }catch(error){
+    if(!active())return;
+    if((error.code||error.message)!=='PAGES_DEPLOYMENT_PENDING'){
+     report('公開入口核對中止：'+errorText(error)+'。可按「核對公開入口」再查。',4);
+     return;
+    }
+    if(retry>=retryDelays.length){
+     report('部署尚待核對。請查看 GitHub Pages 部署紀錄，再按「核對公開入口」。',4);
+     return;
+    }
+    const delay=retryDelays[retry];
+    report('已送出發布，等候 Pages 部署。'+Math.ceil(delay/1000)+' 秒後自動核對。',4);
+    pollTimer=setTimeout(()=>void attempt(retry+1),delay);
+   }
+  }
+  return attempt(0);
+ }
+ const label=environment==='stable'?'正式版':'沙盒版',status=el('p',{role:'status'}),current=el('p'),selection=select('選擇已上傳版本',[],''),preview=el('a',{target:'_blank',rel:'noopener',hidden:true},'開啟此版本');
+ const location=new URL(pageUrl).pathname.match(/\/site-releases\/(sandbox|stable)\/([^/]+)\//),initial=location?.[1]===environment?location[2]:null;
+ const valid=()=>{check();if(disposed)throw Error('窗口已關閉');};
+ const invalidate=()=>{sequence++;stopPolling();confirmation?.close();confirmation=null;};
+ function offer(id){if(!/^[a-z0-9][a-z0-9.-]{0,63}$/.test(id||''))return;invalidate();if(![...selection.input.options].some(o=>o.value===id))selection.input.append(el('option',{value:id},id));selection.input.value=id;showPreview();}
+ function showPreview(){const id=selection.input.value;if(!/^[a-z0-9][a-z0-9.-]{0,63}$/.test(id||'')){preview.hidden=true;return;}preview.href='https://jason27252725-cpu.github.io/'+(environment==='stable'?'leaves-system':'leaves-identity-sandbox')+'/site-releases/'+environment+'/'+id+'/candidates/core/index.html';preview.hidden=false;}
+ selection.input.onchange=()=>{invalidate();showPreview();};
+ async function refresh(probe=false){valid();const at=sequence;const result=await call({action:'status'});valid();const unchanged=at===sequence;publishedId=result.published?.releaseId||null;current.textContent='網站入口：'+(result.published?.releaseId||'原有入口')+'；服務版本紀錄：'+(result.route?.releaseId||'無');const selected=selection.input.value;for(const v of result.history||[])if(![...selection.input.options].some(o=>o.value===v.release_id))selection.input.append(el('option',{value:v.release_id},v.release_id));if(selected)selection.input.value=selected;else if(result.published?.releaseId)offer(result.published.releaseId);else if(result.history?.[0]?.release_id)offer(result.history[0].release_id);restore.disabled=!result.canRestorePrevious;status.textContent='版本與發布服務已讀取。';if(probe&&unchanged&&publishedId)void verifyDeployment(publishedId,false);return result;}
+ async function plan(rollback=false){valid();authorize();invalidate();const seq=sequence,id=selection.input.value;onProgress(null,'伺服器逐檔核對中');const r=await call({action:rollback?'rollback-plan':'plan',payload:rollback?{}:{releaseId:id}},true);valid();authorize();if(seq!==sequence)throw Error('選擇已變更，請重新核對');onProgress(3,'核對完成，等待確認');
+  status.textContent='核對完成，請在確認視窗選擇發布或關閉取消。';let committed=false;
+  const d=dialog((rollback?'確認回滾':'確認發布')+label,{close:()=>{if(confirmation===d){confirmation=null;if(!committed){status.textContent='已取消確認；網站入口未因取消操作而變更。';onProgress(2,'已取消發布確認');}}}});confirmation=d;d.content.append(el('p',{},r.preview.from+' → '+r.preview.to),el('p',{},'確認後將更新此入口：'+r.preview.willChange),el('p',{},'公司資料不會由沙盒複製或覆蓋至正式資料庫。'));
+  const confirm=button(rollback?'確認回滾入口':'確認發布'+label,()=>busy(confirm,d.status,async()=>{valid();authorize();if(seq!==sequence||confirmation!==d)throw Error('確認已變更');confirm.dataset.locked='true';const result=await call({action:'commit',payload:{ticket:r.ticket,confirm:'CONFIRM_WEBSITE_PUBLISH'}},true);valid();if(seq!==sequence||confirmation!==d)return;status.textContent='GitHub 已接受 '+result.releaseId+'，請按「核對公開入口」確認部署。';onProgress(4,'已送出發布，等候 GitHub Pages 部署');committed=true;d.close();const afterCommit=sequence;try{await refresh();}catch{if(disposed)return;}if(!disposed&&afterCommit===sequence)void verifyDeployment(result.releaseId,true);}),'li-primary');d.content.append(confirm);
+ }
+ const prepare=async rollback=>{try{return await plan(rollback);}catch(e){onProgress(2,'核對未完成：'+errorText(e));throw e;}};
+ const read=button('重新讀取版本',()=>busy(read,status,()=>refresh(true))),publish=button('核對並發布'+label,()=>busy(publish,status,()=>prepare(false))),restore=button('回滾上一次入口',()=>busy(restore,status,()=>prepare(true))),verify=button('核對公開入口',()=>busy(verify,status,()=>verifyDeployment(publishedId,true)));restore.disabled=true;
+ const card=el('section',{class:'li-card'},el('h2',{},label+'發布與回滾'),current,selection.node,preview,el('div',{class:'li-actions'},read,publish,restore,verify),status);root.append(card);if(initial)offer(initial);refresh(true).catch(e=>{if(!disposed)status.textContent=errorText(e);});
+ return{offer,invalidate,refresh,dispose(){disposed=true;invalidate();card.remove();}};
+}
