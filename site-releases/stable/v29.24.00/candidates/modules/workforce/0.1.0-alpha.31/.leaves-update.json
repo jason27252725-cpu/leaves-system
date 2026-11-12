@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-12T12:00:00Z",
+  "package": {
+    "schemaVersion": 2,
+    "module": "workforce",
+    "version": "0.1.0-alpha.31",
+    "minCoreVersion": "v29.0.0",
+    "dependencies": [],
+    "files": [
+      {
+        "path": "company-form.mjs",
+        "bytes": 64300,
+        "sha256": "a663762ef1412fd5622974ad964626d1ed135fb09fbcc67da467a3094592806e"
+      },
+      {
+        "path": "entry.mjs",
+        "bytes": 340,
+        "sha256": "8fd201a513e471fe109201b690838536f32545ea57daff04e335f7331a038b39"
+      },
+      {
+        "path": "history-model.mjs",
+        "bytes": 2686,
+        "sha256": "f290441ef9665fe302f44f8f757e69338d42cda01517c0eb903cd640c66a56b5"
+      },
+      {
+        "path": "history.mjs",
+        "bytes": 5346,
+        "sha256": "1cedb72fa7f71fff2e35af9c622df97c6957c9f103a6437f94902874ff683f4f"
+      },
+      {
+        "path": "model.mjs",
+        "bytes": 4438,
+        "sha256": "f93a91f11df7b84524eb43e4f40089d319299d0212ba4259496e4d8be8c2d244"
+      },
+      {
+        "path": "module-manifest.json",
+        "bytes": 306,
+        "sha256": "a88926dc689bc1ee4d5166b780778d2b56a05b6c53b6a2c2ce320089f56db10a"
+      },
+      {
+        "path": "monthly.mjs",
+        "bytes": 7639,
+        "sha256": "ceb46d0332bfe82738033a9c9e095ecc58d8abc94a3b58026f7cfba9433ea2b6"
+      },
+      {
+        "path": "report-ai.mjs",
+        "bytes": 1601,
+        "sha256": "07a63dad0a24708148ef667ff54b5459a1c7b4c37eaa5d34473d58b2bf034393"
+      },
+      {
+        "path": "shared/dom.mjs",
+        "bytes": 9282,
+        "sha256": "c6381edaa3ddd3aa458ba11eceeb24545c53cc846ff87b6b3a8bf54ac65e2641"
+      },
+      {
+        "path": "workforce.mjs",
+        "bytes": 26031,
+        "sha256": "b6204360989d9b153fd442bab2b4bfbe3a3e9c6df66efe1e68832521c920b06b"
+      },
+      {
+        "path": "xlsx.mjs",
+        "bytes": 7290,
+        "sha256": "0bf4f0a9c56332acff1f6a2dec49d00dc978f6795ba9b6eb6be79cbb144dbc6a"
+      },
+      {
+        "path": "company-preview.mjs",
+        "bytes": 5005,
+        "sha256": "460b03bacaede384d4a2f48d4ba6db61fc12009b32d90c2e48aeb23cf990efeb"
+      }
+    ],
+    "contract": {
+      "environment": "stable",
+      "apiVersion": 1,
+      "maxCoreVersion": "v29.0.0",
+      "activation": "safe-point",
+      "backend": {
+        "identityApi": 1,
+        "schemaRevision": 17,
+        "capabilities": [
+          "module-contract-v2",
+          "progress-leave-v1",
+          "monthly-layouts-v1",
+          "company-forms-v1",
+          "month-context-v1"
+        ]
+      }
+    }
+  },
+  "packageHash": "e55a73dce1c69a63fd717d6073e45febb9aceb7ce773d7a33a5940337c88e8b4"
+}

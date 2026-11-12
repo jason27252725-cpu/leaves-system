@@ -1,0 +1,13 @@
+const PREFIX='leaves:identity-sandbox:v1:draft:';
+const enc=new TextEncoder(),dec=new TextDecoder();
+function b64(buffer){
+ const bytes=new Uint8Array(buffer),parts=[];
+ for(let i=0;i<bytes.length;i+=32768)parts.push(String.fromCharCode(...bytes.subarray(i,i+32768)));
+ return btoa(parts.join(''));
+}
+const un64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+export function createDraftVault(storage){let key=null,owner='',epoch=0;const sequence=new Map();
+ return {async unlock(code,employeeId){const at=++epoch;key=null;owner='';const material=await crypto.subtle.importKey('raw',enc.encode(code.trim().toUpperCase()),'PBKDF2',false,['deriveKey']);const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:enc.encode('gjeenpvcvcmfnwlvmriv|'+employeeId),iterations:150000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);if(at!==epoch)throw Error('登入已變更');key=k;owner=employeeId;},lock(){epoch++;key=null;owner='';},
+ async save(name,value){if(!key)throw Error('草稿尚未解鎖');const seq=(sequence.get(name)||0)+1;sequence.set(name,seq);const at=epoch,id=owner,k=key,iv=crypto.getRandomValues(new Uint8Array(12));const bytes=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:enc.encode(id+'|'+name)},k,enc.encode(JSON.stringify({...value,_draftSavedAt:new Date().toISOString()})));if(at!==epoch)throw Error('登入已變更');if(sequence.get(name)!==seq)return;storage.setItem(PREFIX+id+':'+name,JSON.stringify({v:1,iv:b64(iv),data:b64(bytes)}));},
+ async load(name){if(!key)return null;const at=epoch,id=owner,k=key,raw=storage.getItem(PREFIX+id+':'+name);if(!raw)return null;try{const r=JSON.parse(raw);const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(r.iv),additionalData:enc.encode(id+'|'+name)},k,un64(r.data));if(at!==epoch)throw Error('STALE_DRAFT');return JSON.parse(dec.decode(bytes));}catch(e){if(e.message==='STALE_DRAFT')throw e;throw Error('草稿無法解鎖；可能已更換通行碼或資料損毀，原檔仍保留。');}},remove(name){sequence.set(name,(sequence.get(name)||0)+1);if(key)storage.removeItem(PREFIX+owner+':'+name);}};
+}
